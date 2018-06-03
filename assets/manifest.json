@@ -1,0 +1,10 @@
+{
+    "lang": "ja",
+    "name": "Portal",
+    "short_name": "Portal",
+    "icons": [
+    ],
+    "theme_color": "#FFFFFF",
+    "background_color": "#FAFBFD",
+    "display": "standalone"
+}

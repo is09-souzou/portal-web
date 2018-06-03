@@ -1,0 +1,50 @@
+{
+  "name": "portal-web",
+  "version": "0.1.0",
+  "main": "src/index.js",
+  "repository": "https://github.com/is09-souzou/portal-web",
+  "author": "NozomiSugiyama <rioc.sugiyama@gmail.com>",
+  "license": "MIT",
+  "bin": "./index.js",
+  "scripts": {
+    "start": "webpack-serve webpack.config.dev.js",
+    "build": "webpack --run-prod",
+    "lint": "tslint -p ./ -c ./tslint.json './src/**/*.ts{,x}'"
+  },
+  "dependencies": {
+    "@material-ui/core": "^1.1.0",
+    "@material-ui/icons": "^1.1.0",
+    "apollo-client": "^2.3.2",
+    "aws-appsync": "^1.0.21",
+    "aws-appsync-react": "^1.0.12",
+    "graphql": "^0.13.2",
+    "graphql-tag": "^2.9.2",
+    "moment": "^2.19.2",
+    "react": "^16.4.0",
+    "react-apollo": "^2.1.4",
+    "react-dom": "^16.4.0",
+    "react-router-dom": "^4.2.2",
+    "styled-components": "^3.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "v7.0.0-beta.49",
+    "@babel/node": "7.0.0-beta.49",
+    "@babel/preset-env": "v7.0.0-beta.49",
+    "@babel/preset-react": "v7.0.0-beta.49",
+    "@babel/preset-stage-3": "^7.0.0-beta.49",
+    "@babel/preset-typescript": "v7.0.0-beta.49",
+    "@types/react": "^16.3.14",
+    "@types/react-dom": "^16.0.5",
+    "@types/react-router-dom": "^4.2.6",
+    "babel-loader": "next",
+    "connect-history-api-fallback": "^1.5.0",
+    "koa-connect": "^2.0.1",
+    "tslint": "^5.10.0",
+    "tslint-config-airbnb": "^5.9.2",
+    "tslint-loader": "^3.6.0",
+    "tslint-react": "^3.6.0",
+    "typescript": "^2.8.3",
+    "webpack": "^4.9.1",
+    "webpack-serve": "^1.0.2"
+  }
+}
