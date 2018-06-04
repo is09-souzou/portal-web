@@ -1,23 +1,14 @@
-import React, { SFC } from "react";
+import React from "react";
 import Header from "./Header";
 import styled from "styled-components";
 import {
-    Divider,
     Drawer,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Typography
+    Typography,
+    Button
 } from "@material-ui/core";
 
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import DraftsIcon from "@material-ui/icons/Drafts";
-import StarIcon from "@material-ui/icons/Star";
-import SendIcon from "@material-ui/icons/Send";
-import MailIcon from "@material-ui/icons/Mail";
-import DeleteIcon from "@material-ui/icons/Delete";
-import ReportIcon from "@material-ui/icons/Report";
+import AddIcon from "@material-ui/icons/Add";
+import Navigator from "./Navigator"
 
 export default class extends React.Component {
 
@@ -31,6 +22,8 @@ export default class extends React.Component {
 
     render() {
 
+        console.log(this.props)
+
         return (
             <Host>
                 <div>
@@ -43,7 +36,7 @@ export default class extends React.Component {
                             keepMounted: true, // Better open performance on mobile.
                         }}
                     >
-                        {nav}
+                        <Navigator/>
                     </Drawer>
                 </div>
                 <div>
@@ -51,7 +44,7 @@ export default class extends React.Component {
                         variant="permanent"
                         open
                     >
-                        {nav}
+                        <Navigator/>
                     </Drawer>
                 </div>
                 <Content>
@@ -61,6 +54,9 @@ export default class extends React.Component {
                     <main>
                         {this.props.children}
                     </main>
+                    <FAB variant="fab" color="primary" aria-label="add" >
+                        <AddIcon />
+                    </FAB>
                 </Content>
             </Host>
         );
@@ -68,6 +64,7 @@ export default class extends React.Component {
 }
 
 const Host = styled.div`
+    background-color: #fafbfd;
     > :nth-child(1) {
         display: none;
     }
@@ -88,76 +85,21 @@ const Host = styled.div`
 const Content = styled.div`
     position: relative;
     width: calc(100% - 15rem);
-    left: 15rem;
+    margin-left: 15rem;
     @media (max-width: 767px) {
         width: 100%;
-        left: 0rem;
+        margin-left: 0rem;
+    }
+    > :nth-child(2) {
+        margin-top: 7rem;
     }
 `;
 
-
-const Title = styled(Typography)`
-    padding-top: 2.5rem;
-    padding-bottom: .5rem;
-    text-align: center;
+const FAB = styled(Button)`
+    && {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        margin: 2rem;
+    }
 `
-
-const nav = (
-    <div
-        style={{
-            width: "15rem"
-        }}
-    >
-        <Title variant="headline">
-            Portal
-        </Title>
-        <Divider />
-        <List>
-            <ListItem button>
-                <ListItemIcon>
-                    <InboxIcon />
-                </ListItemIcon>
-                <ListItemText primary="Inbox" />
-            </ListItem>
-            <ListItem button>
-                <ListItemIcon>
-                    <StarIcon />
-                </ListItemIcon>
-                <ListItemText primary="Starred" />
-            </ListItem>
-            <ListItem button>
-                <ListItemIcon>
-                    <SendIcon />
-                </ListItemIcon>
-                <ListItemText primary="Send mail" />
-            </ListItem>
-            <ListItem button>
-                <ListItemIcon>
-                    <DraftsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Drafts" />
-            </ListItem>
-        </List>
-        <Divider />
-        <List>
-            <ListItem button>
-                <ListItemIcon>
-                    <MailIcon />
-                </ListItemIcon>
-                <ListItemText primary="All mail" />
-            </ListItem>
-            <ListItem button>
-                <ListItemIcon>
-                    <DeleteIcon />
-                </ListItemIcon>
-                <ListItemText primary="Trash" />
-            </ListItem>
-            <ListItem button>
-                <ListItemIcon>
-                    <ReportIcon />
-                </ListItemIcon>
-                <ListItemText primary="Spam" />
-            </ListItem>
-        </List>
-    </div>
-)

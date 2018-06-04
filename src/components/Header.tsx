@@ -34,7 +34,7 @@ export default class extends React.Component<{onMenuButtonClick: (event: React.M
         } = this.props
 
         return (
-            <StyledAppBar position="static">
+            <StyledAppBar position="fixed">
                 <StyledToolbar>
                     <MenuIconButton
                         color="inherit"
@@ -44,7 +44,7 @@ export default class extends React.Component<{onMenuButtonClick: (event: React.M
                         <MenuIcon />
                     </MenuIconButton>
                     <Typography variant="title" color="inherit">
-                        Title
+                        Work List
                     </Typography>
                     <div>
                         <IconButton
@@ -75,11 +75,14 @@ export default class extends React.Component<{onMenuButtonClick: (event: React.M
 
 const StyledAppBar = styled(AppBar)`
     && {
-        width: calc(100% - 4rem);
-        margin: 1rem 2rem;
+        width: calc(100% - 15rem - 6rem);
+        margin: 1rem 3rem 0 2rem;
         border-radius: 8px;
         color: #333;
-        background-color: #f2f2f2;
+        background-color: white;
+        @media (max-width: 767px) {
+            width: calc(100% - 6rem);
+        }
     }
 `;
 
@@ -91,10 +94,9 @@ const MenuIconButton = styled(IconButton)`
     }
 `
 
-
 const StyledToolbar = styled(Toolbar)`
     && {
-        dispaly: flex;
+        display: flex;
         > :nth-child(2) {
             flex-grow: 1;
         }

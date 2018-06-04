@@ -1,35 +1,37 @@
-import React, { SFC }                     from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import appSyncConfig                      from "./appSyncConfig";
-import gql                                from "graphql-tag";
-import MainLayout                         from "./components/MainLayout";
-
+import React from "react";
+import { 
+    BrowserRouter,
+    Route,
+    Switch
+} from "react-router-dom";
+import appSyncConfig from "./appSyncConfig";
 // https://github.com/awslabs/aws-mobile-appsync-sdk-js/pull/141
 // https://github.com/awslabs/aws-mobile-appsync-sdk-js/issues/48
 declare const require: any;
 const { Rehydrated }       = require("aws-appsync-react");
 const { AWSAppSyncClient } = require("aws-appsync");
-import { ApolloProvider }       from "react-apollo";
+import { ApolloProvider }   from "react-apollo"
+import { createMuiTheme }   from "@material-ui/core/styles";
+import { MuiThemeProvider } from "@material-ui/core";
 
-const query = gql(`
-mutation($name: String!) {
-    createEvent(
-        name: $name
-    ) {
-        name
-    }
-}`);
+import MainLayout from "./components/MainLayout";
+import WorkPage   from "./components/WorkPage"
 
-const Test = () => <div/>;
-
-const App = () => (
-    <Router>
-        <MainLayout>
-            <Route exact={true} path="/" component={Test} />
-            <Route path="/event/:id" component={Test} />
-            <Route path="/newEvent" component={Test} />
-        </MainLayout>
-    </Router>
+export default () => (
+    <BrowserRouter>
+        <ApolloProvider client={client}>
+            <MuiThemeProvider theme={theme}>
+                <Rehydrated>
+                    <MainLayout>
+                        <ComposingSwitch>
+                            <ComposingRoute path="/"      component={() => <div>test</div>} exact={true} />
+                            <ComposingRoute path="/works" component={WorkPage} />
+                        </ComposingSwitch>
+                    </MainLayout>
+                </Rehydrated>
+            </MuiThemeProvider>
+        </ApolloProvider>
+    </BrowserRouter>
 );
 
 const client = new AWSAppSyncClient({
@@ -41,10 +43,42 @@ const client = new AWSAppSyncClient({
     }
 });
 
-export default () => (
-    <ApolloProvider client={client}>
-        <Rehydrated>
-            <App />
-        </Rehydrated>
-    </ApolloProvider>
+
+const theme = createMuiTheme({
+    palette: {
+        primary: {
+            light: "#ffc246",
+            main: "#ff9100",
+            dark: "#c56200",
+            contrastText: "#fff",
+        },
+    },
+});
+
+const ComposingRoute = ({
+    component,
+    Component = component,
+    path,
+    ...props
+}: any) =>
+    <Route
+        path={path}
+        render={x => <Component {...x} {...props} />}
+    />
+
+const ComposingSwitch = ({
+    children,
+    ...props
+}: any) => (
+    <Switch>
+        {React.Children.toArray(children).map(
+            (x: any) => React.cloneElement(
+                x,
+                {
+                    ...props,
+                    ...x.props
+                }
+            )
+        )}
+    </Switch>
 );
