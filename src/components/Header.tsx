@@ -31,7 +31,7 @@ export default class extends React.Component<{onMenuButtonClick: (event: React.M
 
         const {
             onMenuButtonClick
-        } = this.props
+        } = this.props;
 
         return (
             <StyledAppBar position="fixed">
@@ -92,7 +92,7 @@ const MenuIconButton = styled(IconButton)`
             display: none;
         }
     }
-`
+`;
 
 const StyledToolbar = styled(Toolbar)`
     && {
@@ -101,4 +101,4 @@ const StyledToolbar = styled(Toolbar)`
             flex-grow: 1;
         }
     }
-`
+`;

@@ -1,5 +1,5 @@
 import React from "react";
-import { 
+import {
     BrowserRouter,
     Route,
     Switch
@@ -10,12 +10,12 @@ import appSyncConfig from "./appSyncConfig";
 declare const require: any;
 const { Rehydrated }       = require("aws-appsync-react");
 const { AWSAppSyncClient } = require("aws-appsync");
-import { ApolloProvider }   from "react-apollo"
+import { ApolloProvider }   from "react-apollo";
 import { createMuiTheme }   from "@material-ui/core/styles";
 import { MuiThemeProvider } from "@material-ui/core";
 
 import MainLayout from "./components/MainLayout";
-import WorkPage   from "./components/WorkPage"
+import WorkPage   from "./components/WorkPage";
 
 export default () => (
     <BrowserRouter>
@@ -24,7 +24,7 @@ export default () => (
                 <Rehydrated>
                     <MainLayout>
                         <ComposingSwitch>
-                            <ComposingRoute path="/"      component={() => <div>test</div>} exact={true} />
+                            <ComposingRoute path="/"      component={WorkPage} exact={true} />
                             <ComposingRoute path="/works" component={WorkPage} />
                         </ComposingSwitch>
                     </MainLayout>
@@ -43,7 +43,6 @@ const client = new AWSAppSyncClient({
     }
 });
 
-
 const theme = createMuiTheme({
     palette: {
         primary: {
@@ -60,12 +59,15 @@ const ComposingRoute = ({
     Component = component,
     path,
     ...props
-}: any) =>
+}: any) => (
     <Route
         path={path}
+        // tslint:disable-next-line:jsx-no-lambda
         render={x => <Component {...x} {...props} />}
     />
+);
 
+// tslint:disable-next-line:jsx-no-multiline-js
 const ComposingSwitch = ({
     children,
     ...props

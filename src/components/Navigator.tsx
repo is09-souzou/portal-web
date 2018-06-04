@@ -13,6 +13,7 @@ import {
 
 import {
     Star as StarIcon,
+    NewReleases as NewReleasesIcon,
     ExpandMore as ExpandMoreIcon,
     ExpandLess as ExpandLessIcon
 }from "@material-ui/icons";
@@ -20,15 +21,13 @@ import {
 export default class extends React.Component {
     state = {
         worksTypeListVisible: false
-    }
+    };
+
+    toggleWorksTypeListVisible = () => this.setState({ worksTypeListVisible: !this.state.worksTypeListVisible });
 
     render() {
         return (
-            <div
-                style={{
-                    width: "15rem"
-                }}
-            >
+            <Host>
                 <Title variant="headline">
                     PORTAL
                 </Title>
@@ -44,11 +43,14 @@ export default class extends React.Component {
                     </ListItem>
                     <ListItem button>
                         <ListItemIcon>
-                            <StarIcon />
+                            <NewReleasesIcon />
                         </ListItemIcon>
                         <ListItemText primary="New" />
                     </ListItem>
-                    <ListItem button onClick={() => this.setState({worksTypeListVisible: !this.state.worksTypeListVisible})}>
+                    <ListItem
+                        button
+                        onClick={this.toggleWorksTypeListVisible}
+                    >
                         <ListItemIcon>
                             <StarIcon />
                         </ListItemIcon>
@@ -83,15 +85,19 @@ export default class extends React.Component {
                     </ListItem>
                     <ListItem button>
                         <ListItemIcon>
-                            <StarIcon />
+                            <NewReleasesIcon />
                         </ListItemIcon>
                         <ListItemText primary="New" />
                     </ListItem>
                 </List>
-            </div>
+            </Host>
         );
     }
-};
+}
+
+const Host = styled.div`
+    width: 15rem;
+`;
 
 const Title = styled(Typography)`
     padding-top: 2.5rem;
@@ -102,4 +108,4 @@ const Title = styled(Typography)`
 
 const NestedListItem = styled(ListItem)`
     paddingLeft: 1rem;
-`
+`;

@@ -8,6 +8,7 @@
         "max-line-length": [true, 120],
         "trailing-comma": false,
         "jsx-boolean-value": false,
+        "jsx-no-multiline-js": false
     },
     "tslint": [
         "disable-next-line"

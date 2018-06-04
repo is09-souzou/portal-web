@@ -3,26 +3,23 @@ import Header from "./Header";
 import styled from "styled-components";
 import {
     Drawer,
-    Typography,
     Button
 } from "@material-ui/core";
 
 import AddIcon from "@material-ui/icons/Add";
-import Navigator from "./Navigator"
+import Navigator from "./Navigator";
 
 export default class extends React.Component {
 
     state = {
         drawerOpend: false
-    }
+    };
 
     toggleDrawer = () => {
         this.setState({ drawerOpend: !this.state.drawerOpend });
-    };
+    }
 
     render() {
-
-        console.log(this.props)
 
         return (
             <Host>
@@ -32,9 +29,7 @@ export default class extends React.Component {
                         anchor={"left"}
                         open={this.state.drawerOpend}
                         onClose={this.toggleDrawer}
-                        ModalProps={{
-                            keepMounted: true, // Better open performance on mobile.
-                        }}
+                        ModalProps={{ keepMounted: true }}
                     >
                         <Navigator/>
                     </Drawer>
@@ -102,4 +97,4 @@ const FAB = styled(Button)`
         bottom: 0;
         margin: 2rem;
     }
-`
+`;
