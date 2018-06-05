@@ -67,7 +67,6 @@ const ComposingRoute = ({
     />
 );
 
-// tslint:disable-next-line:jsx-no-multiline-js
 const ComposingSwitch = ({
     children,
     ...props

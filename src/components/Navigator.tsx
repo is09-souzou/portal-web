@@ -39,7 +39,7 @@ export default class extends React.Component {
                         <ListItemIcon>
                             <StarIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Popularity" />
+                        <ListItemText primary="Popular" />
                     </ListItem>
                     <ListItem button>
                         <ListItemIcon>
@@ -81,7 +81,7 @@ export default class extends React.Component {
                         <ListItemIcon>
                             <StarIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Popularity" />
+                        <ListItemText primary="Popular" />
                     </ListItem>
                     <ListItem button>
                         <ListItemIcon>
