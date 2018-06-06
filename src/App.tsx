@@ -15,8 +15,9 @@ import { ApolloProvider }   from "react-apollo";
 import { createMuiTheme }   from "@material-ui/core/styles";
 import { MuiThemeProvider } from "@material-ui/core";
 
-import MainLayout from "./components/MainLayout";
-import WorkPage   from "./components/WorkPage";
+import MainLayout     from "./components/MainLayout";
+import WorkPage       from "./components/WorkPage";
+import CreateWorkPage from "./components/CreateWorkPage";
 
 const Root = withRouter(props => (
     <ApolloProvider client={client}>
@@ -35,7 +36,8 @@ export default () => (
         <Root>
             <ComposingSwitch>
                 <ComposingRoute path="/"      component={WorkPage} exact={true} />
-                <ComposingRoute path="/works" component={WorkPage} />
+                <ComposingRoute path="/works/new" component={WorkPage} exact={true} />
+                <ComposingRoute path="/works/create-work" component={CreateWorkPage} exact={true} />
             </ComposingSwitch>
         </Root>
     </BrowserRouter>
