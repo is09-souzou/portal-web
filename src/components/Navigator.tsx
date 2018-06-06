@@ -10,7 +10,8 @@ import {
     ListSubheader,
     Typography,
     withStyles,
-    withTheme
+    withTheme,
+    WithTheme,
 } from "@material-ui/core";
 
 import {
@@ -154,11 +155,11 @@ const NestedListItem = styled(ListItem)`
     paddingLeft: 1rem;
 `;
 
-const A = styled.span`
+const StyledSpan = styled.span`
     border-top: 1px;
     color: ${(props: any) => props.selected ? props.theme.palette.primary.main : "black"};
 `;
 
 const StyledText = withTheme()(
-    (props: any) => console.log(props) || <A {...props}/>
+    (props: any) => <StyledSpan {...props}/>
 );
