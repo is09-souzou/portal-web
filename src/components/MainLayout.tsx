@@ -8,6 +8,7 @@ import {
 import AddIcon from "@material-ui/icons/Add";
 
 import Navigator from "./Navigator";
+import Link from "./Link";
 
 export default class extends React.Component<any> {
 
@@ -57,9 +58,13 @@ export default class extends React.Component<any> {
                             }
                         )}
                     </main>
-                    <FAB variant="fab" color="primary" aria-label="add" >
-                        <AddIcon />
-                    </FAB>
+                    <Link
+                        to="/works/create-work"
+                    >
+                      <FAB variant="fab" color="primary" aria-label="add" >
+                          <AddIcon />
+                      </FAB>
+                    </Link>
                 </Content>
             </Host>
         );
