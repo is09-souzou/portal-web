@@ -92,28 +92,60 @@ export default class extends React.Component<{histroy: any}> {
                                 to="/works/type1"
                             >
                                 <NestedListItem button>
-                                    <ListItemText inset primary="type1" />
+                                    <ListItemText
+                                        primary={
+                                            <StyledText
+                                                selected={this.props.histroy.location.pathname === "/works/type1"}
+                                            >
+                                                type1
+                                            </StyledText>
+                                        }
+                                    />
                                 </NestedListItem>
                             </Link>
                             <Link
                                 to="/works/type2"
                             >
                                 <NestedListItem button>
-                                    <ListItemText inset primary="type2" />
+                                    <ListItemText
+                                        primary={
+                                            <StyledText
+                                                selected={this.props.histroy.location.pathname === "/works/type2"}
+                                            >
+                                                type2
+                                            </StyledText>
+                                        }
+                                    />
                                 </NestedListItem>
                             </Link>
                             <Link
                                 to="/works/type3"
                             >
                                 <NestedListItem button>
-                                    <ListItemText inset primary="type3" />
+                                    <ListItemText
+                                        primary={
+                                            <StyledText
+                                                selected={this.props.histroy.location.pathname === "/works/type3"}
+                                            >
+                                                type3
+                                            </StyledText>
+                                        }
+                                    />
                                 </NestedListItem>
                             </Link>
                             <Link
                                 to="/works/type4"
                             >
                                 <NestedListItem button>
-                                    <ListItemText inset primary="type4" />
+                                    <ListItemText
+                                        primary={
+                                            <StyledText
+                                                selected={this.props.histroy.location.pathname === "/works/type4"}
+                                            >
+                                                type4
+                                            </StyledText>
+                                        }
+                                    />
                                 </NestedListItem>
                             </Link>
                         </List>
