@@ -62,6 +62,15 @@ const theme = createMuiTheme({
             contrastText: "#fff",
         },
     },
+    overrides: {
+        MuiDialog: {
+            paper: {
+                borderRadius: 8,
+                border: 0,
+                color: "white",
+            },
+        },
+    },
 });
 
 const ComposingRoute = ({
