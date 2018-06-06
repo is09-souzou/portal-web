@@ -1,15 +1,15 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import Header from "./Header";
 import styled from "styled-components";
 import {
     Drawer,
     Button
 } from "@material-ui/core";
-
 import AddIcon from "@material-ui/icons/Add";
+
 import Navigator from "./Navigator";
 
-export default class extends React.Component {
+export default class extends React.Component<any> {
 
     state = {
         drawerOpend: false
@@ -20,7 +20,6 @@ export default class extends React.Component {
     }
 
     render() {
-
         return (
             <Host>
                 <div>
@@ -31,7 +30,9 @@ export default class extends React.Component {
                         onClose={this.toggleDrawer}
                         ModalProps={{ keepMounted: true }}
                     >
-                        <Navigator/>
+                        <Navigator
+                            histroy={this.props.history}
+                        />
                     </Drawer>
                 </div>
                 <div>
@@ -39,7 +40,9 @@ export default class extends React.Component {
                         variant="permanent"
                         open
                     >
-                        <Navigator/>
+                        <Navigator
+                            histroy={this.props.history}
+                        />
                     </Drawer>
                 </div>
                 <Content>
@@ -47,7 +50,12 @@ export default class extends React.Component {
                         onMenuButtonClick={this.toggleDrawer}
                     />
                     <main>
-                        {this.props.children}
+                        {React.cloneElement(
+                            this.props.children as ReactElement<any>,
+                            {
+                                ...this.props
+                            }
+                        )}
                     </main>
                     <FAB variant="fab" color="primary" aria-label="add" >
                         <AddIcon />

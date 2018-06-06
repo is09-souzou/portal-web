@@ -2,7 +2,8 @@ import React from "react";
 import {
     BrowserRouter,
     Route,
-    Switch
+    Switch,
+    withRouter
 } from "react-router-dom";
 import appSyncConfig from "./appSyncConfig";
 // https://github.com/awslabs/aws-mobile-appsync-sdk-js/pull/141
@@ -17,20 +18,26 @@ import { MuiThemeProvider } from "@material-ui/core";
 import MainLayout from "./components/MainLayout";
 import WorkPage   from "./components/WorkPage";
 
+const Root = withRouter(props => (
+    <ApolloProvider client={client}>
+        <MuiThemeProvider theme={theme}>
+            <Rehydrated>
+                <MainLayout
+                    {...props}
+                />
+            </Rehydrated>
+        </MuiThemeProvider>
+    </ApolloProvider>
+));
+
 export default () => (
     <BrowserRouter>
-        <ApolloProvider client={client}>
-            <MuiThemeProvider theme={theme}>
-                <Rehydrated>
-                    <MainLayout>
-                        <ComposingSwitch>
-                            <ComposingRoute path="/"      component={WorkPage} exact={true} />
-                            <ComposingRoute path="/works" component={WorkPage} />
-                        </ComposingSwitch>
-                    </MainLayout>
-                </Rehydrated>
-            </MuiThemeProvider>
-        </ApolloProvider>
+        <Root>
+            <ComposingSwitch>
+                <ComposingRoute path="/"      component={WorkPage} exact={true} />
+                <ComposingRoute path="/works" component={WorkPage} />
+            </ComposingSwitch>
+        </Root>
     </BrowserRouter>
 );
 

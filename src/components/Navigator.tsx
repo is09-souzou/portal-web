@@ -8,7 +8,8 @@ import {
     ListItemIcon,
     ListItemText,
     ListSubheader,
-    Typography
+    Typography,
+    withStyles
 } from "@material-ui/core";
 
 import {
@@ -16,9 +17,11 @@ import {
     NewReleases as NewReleasesIcon,
     ExpandMore as ExpandMoreIcon,
     ExpandLess as ExpandLessIcon
-}from "@material-ui/icons";
+} from "@material-ui/icons";
 
-export default class extends React.Component {
+import Link from "./Link";
+
+export default class extends React.Component<{histroy: any}> {
     state = {
         worksTypeListVisible: false
     };
@@ -35,18 +38,52 @@ export default class extends React.Component {
                 <List
                     subheader={<ListSubheader component="div">Works</ListSubheader>}
                 >
-                    <ListItem button>
-                        <ListItemIcon>
-                            <StarIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Popular" />
-                    </ListItem>
-                    <ListItem button>
-                        <ListItemIcon>
-                            <NewReleasesIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="New" />
-                    </ListItem>
+                    <Link
+                        to="/works/popular"
+                    >
+                        <ListItem button>
+                            <ListItemIcon>
+                                <StarIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={
+                                    <StyledText
+                                        style={{
+                                            color: (
+                                                this.props.histroy.location.pathname === "/works/popular" ?  "blue"
+                                              :                                                              "inherit"
+                                            )
+                                        }}
+                                    >
+                                        Popular
+                                    </StyledText>
+                                }
+                            />
+                        </ListItem>
+                    </Link>
+                    <Link
+                        to="/works/new"
+                    >
+                        <ListItem button>
+                            <ListItemIcon>
+                                <NewReleasesIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={
+                                    <span
+                                        style={{
+                                            color: (
+                                                this.props.histroy.location.pathname === "/works/new" ?  "blue"
+                                              :                                                          "inherit"
+                                            )
+                                        }}
+                                    >
+                                        New
+                                    </span>
+                                }
+                            />
+                        </ListItem>
+                    </Link>
                     <ListItem
                         button
                         onClick={this.toggleWorksTypeListVisible}
@@ -59,18 +96,34 @@ export default class extends React.Component {
                     </ListItem>
                     <Collapse in={this.state.worksTypeListVisible} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding>
-                            <NestedListItem button>
-                                <ListItemText inset primary="type1" />
-                            </NestedListItem>
-                            <NestedListItem button>
-                                <ListItemText inset primary="type2" />
-                            </NestedListItem>
-                            <NestedListItem button>
-                                <ListItemText inset primary="type3" />
-                            </NestedListItem>
-                            <NestedListItem button>
-                                <ListItemText inset primary="type4" />
-                            </NestedListItem>
+                            <Link
+                                to="/works/type1"
+                            >
+                                <NestedListItem button>
+                                    <ListItemText inset primary="type1" />
+                                </NestedListItem>
+                            </Link>
+                            <Link
+                                to="/works/type2"
+                            >
+                                <NestedListItem button>
+                                    <ListItemText inset primary="type2" />
+                                </NestedListItem>
+                            </Link>
+                            <Link
+                                to="/works/type3"
+                            >
+                                <NestedListItem button>
+                                    <ListItemText inset primary="type3" />
+                                </NestedListItem>
+                            </Link>
+                            <Link
+                                to="/works/type4"
+                            >
+                                <NestedListItem button>
+                                    <ListItemText inset primary="type4" />
+                                </NestedListItem>
+                            </Link>
                         </List>
                     </Collapse>
                 </List>
@@ -108,4 +161,9 @@ const Title = styled(Typography)`
 
 const NestedListItem = styled(ListItem)`
     paddingLeft: 1rem;
+`;
+
+const StyledText = styled(Typography)`
+    border: solid black;
+    border-top: 1px;
 `;
