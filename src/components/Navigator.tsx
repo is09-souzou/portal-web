@@ -9,7 +9,8 @@ import {
     ListItemText,
     ListSubheader,
     Typography,
-    withStyles
+    withStyles,
+    withTheme
 } from "@material-ui/core";
 
 import {
@@ -48,12 +49,7 @@ export default class extends React.Component<{histroy: any}> {
                             <ListItemText
                                 primary={
                                     <StyledText
-                                        style={{
-                                            color: (
-                                                this.props.histroy.location.pathname === "/works/popular" ?  "blue"
-                                              :                                                              "inherit"
-                                            )
-                                        }}
+                                        selected={this.props.histroy.location.pathname === "/works/popular"}
                                     >
                                         Popular
                                     </StyledText>
@@ -70,16 +66,11 @@ export default class extends React.Component<{histroy: any}> {
                             </ListItemIcon>
                             <ListItemText
                                 primary={
-                                    <span
-                                        style={{
-                                            color: (
-                                                this.props.histroy.location.pathname === "/works/new" ?  "blue"
-                                              :                                                          "inherit"
-                                            )
-                                        }}
+                                    <StyledText
+                                        selected={this.props.histroy.location.pathname === "/works/new"}
                                     >
                                         New
-                                    </span>
+                                    </StyledText>
                                 }
                             />
                         </ListItem>
@@ -163,7 +154,11 @@ const NestedListItem = styled(ListItem)`
     paddingLeft: 1rem;
 `;
 
-const StyledText = styled(Typography)`
-    border: solid black;
+const A = styled.span`
     border-top: 1px;
+    color: ${(props: any) => props.selected ? props.theme.palette.primary.main : "black"};
 `;
+
+const StyledText = withTheme()(
+    (props: any) => console.log(props) || <A {...props}/>
+);
