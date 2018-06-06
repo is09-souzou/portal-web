@@ -5,7 +5,7 @@ import {
     Switch,
     withRouter
 } from "react-router-dom";
-import appSyncConfig from "./appSyncConfig";
+import config from "./config";
 // https://github.com/awslabs/aws-mobile-appsync-sdk-js/pull/141
 // https://github.com/awslabs/aws-mobile-appsync-sdk-js/issues/48
 declare const require: any;
@@ -35,7 +35,8 @@ export default () => (
     <BrowserRouter>
         <Root>
             <ComposingSwitch>
-                <ComposingRoute path="/"      component={WorkPage} exact={true} />
+                <ComposingRoute path="/"          component={WorkPage} exact={true} />
+                <ComposingRoute path="/works"     component={WorkPage} exact={true} />
                 <ComposingRoute path="/works/new" component={WorkPage} exact={true} />
                 <ComposingRoute path="/works/create-work" component={CreateWorkPage} exact={true} />
             </ComposingSwitch>
@@ -44,11 +45,11 @@ export default () => (
 );
 
 const client = new AWSAppSyncClient({
-    url: appSyncConfig.graphqlEndpoint,
-    region: appSyncConfig.region,
+    url: config.appSync.graphqlEndpoint,
+    region: config.appSync.region,
     auth: {
-        type: appSyncConfig.authenticationType,
-        apiKey: appSyncConfig.apiKey,
+        type: config.appSync.authenticationType,
+        apiKey: config.appSync.apiKey,
     }
 });
 

@@ -6,6 +6,7 @@ import {
  } from "@material-ui/icons";
 import {
     AppBar,
+    Button,
     Toolbar,
     Typography,
     IconButton,
@@ -13,19 +14,23 @@ import {
     MenuItem
 } from "@material-ui/core";
 
+import SignInDialog from "./SignInDialog";
+
 export default class extends React.Component<{onMenuButtonClick: (event: React.MouseEvent<HTMLElement>) => void}> {
     state = {
         userMenuAnchorEl: undefined,
-        userMenuOpend: false
+        userMenuOpend: false,
+        signInDialogVisible: false
     };
 
-    handleMenu = (event: React.MouseEvent<HTMLElement>): void => {
-        this.setState({ userMenuAnchorEl: event.currentTarget });
-    }
+    handleMenu = (event: React.MouseEvent<HTMLElement>): void =>
+        this.setState({ userMenuAnchorEl: event.currentTarget })
 
-    handleClose = () => {
-        this.setState({ userMenuAnchorEl: null });
-    }
+    handleMenuClose = () => this.setState({ userMenuAnchorEl: null });
+
+    signInDialogOpen = () => this.setState({ signInDialogVisible: true });
+
+    signInDialogClose = () => this.setState({ signInDialogVisible: false });
 
     render () {
 
@@ -47,6 +52,9 @@ export default class extends React.Component<{onMenuButtonClick: (event: React.M
                         Work List
                     </Typography>
                     <div>
+                        <Button onClick={this.signInDialogOpen} >
+                            Sign In
+                        </Button>
                         <IconButton
                             aria-owns={this.state.userMenuOpend ? "menu-appbar" : undefined}
                             aria-haspopup="true"
@@ -61,13 +69,17 @@ export default class extends React.Component<{onMenuButtonClick: (event: React.M
                             anchorOrigin={{ vertical: "top", horizontal: "right" }}
                             transformOrigin={{ vertical: "top", horizontal: "right" }}
                             open={!!this.state.userMenuAnchorEl}
-                            onClose={this.handleClose}
+                            onClose={this.handleMenuClose}
                         >
                             <MenuItem>Profile</MenuItem>
                             <MenuItem>My account</MenuItem>
                         </Menu>
                     </div>
                 </StyledToolbar>
+                <SignInDialog
+                    open={this.state.signInDialogVisible}
+                    onClose={this.signInDialogClose}
+                />
             </StyledAppBar>
         );
     }
