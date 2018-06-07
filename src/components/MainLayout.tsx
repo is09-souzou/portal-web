@@ -10,7 +10,16 @@ import AddIcon from "@material-ui/icons/Add";
 import Navigator from "./Navigator";
 import Link from "./Link";
 
-export default class extends React.Component<any> {
+interface PropsModel {
+    auth: any | undefined | null;
+    history: any;
+}
+
+interface StateModel {
+    drawerOpend: boolean;
+}
+
+export default class extends React.Component<PropsModel, StateModel> {
 
     state = {
         drawerOpend: false
@@ -21,6 +30,14 @@ export default class extends React.Component<any> {
     }
 
     render() {
+
+        const {
+            auth,
+            children,
+            history,
+            ...props
+        } = this.props;
+
         return (
             <Host>
                 <div>
@@ -32,7 +49,7 @@ export default class extends React.Component<any> {
                         ModalProps={{ keepMounted: true }}
                     >
                         <Navigator
-                            histroy={this.props.history}
+                            histroy={history}
                         />
                     </Drawer>
                 </div>
@@ -42,19 +59,21 @@ export default class extends React.Component<any> {
                         open
                     >
                         <Navigator
-                            histroy={this.props.history}
+                            histroy={history}
                         />
                     </Drawer>
                 </div>
                 <Content>
                     <Header
                         onMenuButtonClick={this.toggleDrawer}
+                        auth={auth}
                     />
                     <main>
                         {React.cloneElement(
-                            this.props.children as ReactElement<any>,
+                            children as ReactElement<any>,
                             {
-                                ...this.props
+                                auth,
+                                ...props
                             }
                         )}
                     </main>

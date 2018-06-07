@@ -1,6 +1,6 @@
 export default {
     appSync : {
-        graphqlEndpoint: "https://5vs7vq5vszeirjko52wveee2ym.appsync-api.ap-northeast-1.amazonaws.com/graphql",
+        graphqlEndpoint: "https://2aaga5kxevcnbag3di6fzbm53y.appsync-api.ap-northeast-1.amazonaws.com/graphql",
         region: "ap-northeast-1",
         authenticationType: "API_KEY",
         apiKey: "da2-zdk6vnvwybb2lkmnccbdy5rjpu",
@@ -8,6 +8,6 @@ export default {
     cognito: {
         region: "ap-northeast-1",
         UserPoolId: "ap-northeast-1_cl74QBXUP",
-        ClientId: "xxxxxxxxxxxxxx",
+        ClientId: "7f1ltcm2dc09egbr38mnqe2tga",
     }
 };

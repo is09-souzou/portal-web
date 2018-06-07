@@ -9,12 +9,11 @@ import {
     ListItemText,
     ListSubheader,
     Typography,
-    withStyles,
     withTheme,
-    WithTheme,
 } from "@material-ui/core";
 
 import {
+    ColorLens as ColorLensIcon,
     Star as StarIcon,
     NewReleases as NewReleasesIcon,
     ExpandMore as ExpandMoreIcon,
@@ -23,7 +22,15 @@ import {
 
 import Link from "./Link";
 
-export default class extends React.Component<{histroy: any}> {
+interface PropsModel {
+    histroy: any;
+}
+
+interface StateModel {
+    worksTypeListVisible: boolean;
+}
+
+export default class extends React.Component<PropsModel, StateModel> {
     state = {
         worksTypeListVisible: false
     };
@@ -81,7 +88,7 @@ export default class extends React.Component<{histroy: any}> {
                         onClick={this.toggleWorksTypeListVisible}
                     >
                         <ListItemIcon>
-                            <StarIcon />
+                            <ColorLensIcon />
                         </ListItemIcon>
                         <ListItemText primary="Designer" />
                         {this.state.worksTypeListVisible ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -184,7 +191,9 @@ const Title = styled(Typography)`
 `;
 
 const NestedListItem = styled(ListItem)`
-    paddingLeft: 1rem;
+    && {
+        padding-left: 3rem;
+    }
 `;
 
 const StyledSpan = styled.span`
