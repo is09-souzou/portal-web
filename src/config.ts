@@ -8,6 +8,6 @@ export default {
     cognito: {
         region: "ap-northeast-1",
         UserPoolId: "ap-northeast-1_cl74QBXUP",
-        ClientId: "xxxxxxxxxxxxxx",
+        ClientId: "7f1ltcm2dc09egbr38mnqe2tga",
     }
 };

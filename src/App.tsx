@@ -18,14 +18,18 @@ import { MuiThemeProvider } from "@material-ui/core";
 import MainLayout     from "./components/MainLayout";
 import WorkPage       from "./components/WorkPage";
 import CreateWorkPage from "./components/CreateWorkPage";
+import Auth           from "./components/wrapper/Auth";
 
 const Root = withRouter(props => (
     <ApolloProvider client={client}>
         <MuiThemeProvider theme={theme}>
             <Rehydrated>
-                <MainLayout
-                    {...props}
-                />
+                <Auth>
+                    <MainLayout
+                        auth={undefined}
+                        {...props}
+                    />
+                </Auth>
             </Rehydrated>
         </MuiThemeProvider>
     </ApolloProvider>

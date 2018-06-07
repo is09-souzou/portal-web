@@ -9,7 +9,16 @@ import {
     Typography
 } from "@material-ui/core";
 
-export default class extends React.Component<{onMenuButtonClick: (event: React.MouseEvent<HTMLElement>) => void}> {
+interface PropsModel {
+    onMenuButtonClick: (event: React.MouseEvent<HTMLElement>) => void;
+}
+
+interface StateModel {
+    userMenuAnchorEl: boolean | undefined;
+    userMenuOpend: boolean;
+}
+
+export default class extends React.Component<PropsModel, StateModel> {
     state = {
         userMenuAnchorEl: undefined,
         userMenuOpend: false

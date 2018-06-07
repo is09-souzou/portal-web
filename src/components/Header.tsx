@@ -3,20 +3,30 @@ import styled from "styled-components";
 import {
     AccountCircle as AccountCircleIcon,
     Menu as MenuIcon,
- } from "@material-ui/icons";
+} from "@material-ui/icons";
 import {
     AppBar,
     Button,
     Toolbar,
     Typography,
     IconButton,
-    Menu,
-    MenuItem
+    Popover
 } from "@material-ui/core";
 
 import SignInDialog from "./SignInDialog";
 
-export default class extends React.Component<{onMenuButtonClick: (event: React.MouseEvent<HTMLElement>) => void}> {
+interface PropsModel {
+    auth: any;
+    onMenuButtonClick: (event: React.MouseEvent<HTMLElement>) => void;
+}
+
+interface StateModel {
+    userMenuAnchorEl: EventTarget | undefined;
+    userMenuOpend: boolean;
+    signInDialogVisible: boolean;
+}
+
+export default class extends React.Component<PropsModel, StateModel> {
     state = {
         userMenuAnchorEl: undefined,
         userMenuOpend: false,
@@ -26,7 +36,7 @@ export default class extends React.Component<{onMenuButtonClick: (event: React.M
     handleMenu = (event: React.MouseEvent<HTMLElement>): void =>
         this.setState({ userMenuAnchorEl: event.currentTarget })
 
-    handleMenuClose = () => this.setState({ userMenuAnchorEl: null });
+    handleMenuClose = () => this.setState({ userMenuAnchorEl: undefined });
 
     signInDialogOpen = () => this.setState({ signInDialogVisible: true });
 
@@ -35,6 +45,7 @@ export default class extends React.Component<{onMenuButtonClick: (event: React.M
     render () {
 
         const {
+            auth,
             onMenuButtonClick
         } = this.props;
 
@@ -52,33 +63,49 @@ export default class extends React.Component<{onMenuButtonClick: (event: React.M
                         Work List
                     </Typography>
                     <div>
-                        <Button onClick={this.signInDialogOpen} >
-                            Sign In
-                        </Button>
-                        <IconButton
-                            aria-owns={this.state.userMenuOpend ? "menu-appbar" : undefined}
-                            aria-haspopup="true"
-                            onClick={this.handleMenu}
-                            color="inherit"
-                        >
-                            <AccountCircleIcon />
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={this.state.userMenuAnchorEl}
-                            anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                            transformOrigin={{ vertical: "top", horizontal: "right" }}
-                            open={!!this.state.userMenuAnchorEl}
-                            onClose={this.handleMenuClose}
-                        >
-                            <MenuItem>Profile</MenuItem>
-                            <MenuItem>My account</MenuItem>
-                        </Menu>
+                        {!auth.jwtToken ?
+                            <Button onClick={this.signInDialogOpen} >
+                                Sign In
+                            </Button>
+                      :     <div>
+                                <IconButton
+                                    aria-owns={this.state.userMenuOpend ? "menu-appbar" : undefined}
+                                    aria-haspopup="true"
+                                    onClick={this.handleMenu}
+                                    color="inherit"
+                                >
+                                    <AccountCircleIcon />
+                                </IconButton>
+                                <Popover
+                                    id="menu-appbar"
+                                    anchorEl={this.state.userMenuAnchorEl}
+                                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                                    transformOrigin={{ vertical: "top", horizontal: "right" }}
+                                    open={!!this.state.userMenuAnchorEl}
+                                    onClose={this.handleMenuClose}
+                                >
+                                    <PopoverContent>
+                                        <div>
+                                            <span>Name</span>
+                                            <span>Designer</span>
+                                        </div>
+                                        <div>
+                                            <Button
+                                                onClick={auth.signOut}
+                                            >
+                                                sign-out
+                                            </Button>
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+                        }
                     </div>
                 </StyledToolbar>
                 <SignInDialog
                     open={this.state.signInDialogVisible}
                     onClose={this.signInDialogClose}
+                    onSignIn={auth.signIn}
                 />
             </StyledAppBar>
         );
@@ -112,5 +139,13 @@ const StyledToolbar = styled(Toolbar)`
         > :nth-child(2) {
             flex-grow: 1;
         }
+    }
+`;
+
+const PopoverContent = styled.div`
+    padding: 1rem;
+    > :nth-child(2) {
+        display: flex;
+        justify-content: flex-end;
     }
 `;
