@@ -18,7 +18,7 @@ export default class extends React.Component<PropsModel, StateModel> {
 
         const cognitoUserPool = new CognitoUserPool(config.cognito);
 
-        const cognitoUser = this.state.cognitoUserPool.getCurrentUser();
+        const cognitoUser = cognitoUserPool.getCurrentUser();
 
         this.setState({
             cognitoUser,

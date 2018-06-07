@@ -21,7 +21,7 @@ interface PropsModel {
 }
 
 interface StateModel {
-    userMenuAnchorEl: EventTarget | undefined;
+    userMenuAnchorEl: HTMLElement | undefined;
     userMenuOpend: boolean;
     signInDialogVisible: boolean;
 }
@@ -89,8 +89,7 @@ export default class extends React.Component<PropsModel, StateModel> {
                                     anchorEl={this.state.userMenuAnchorEl}
                                     anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                                     transformOrigin={{ vertical: "top", horizontal: "right" }}
-                                    // open={!!this.state.userMenuAnchorEl}
-                                    open={true}
+                                    open={!!this.state.userMenuAnchorEl}
                                     onClose={this.handleMenuClose}
                                 >
                                     <PopoverContent>
