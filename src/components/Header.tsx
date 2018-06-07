@@ -42,6 +42,11 @@ export default class extends React.Component<PropsModel, StateModel> {
 
     signInDialogClose = () => this.setState({ signInDialogVisible: false });
 
+    signIn = async (email: string, password: string) => {
+        await this.props.auth.signIn(email, password);
+        this.signInDialogClose();
+    }
+
     render () {
 
         const {
@@ -105,7 +110,7 @@ export default class extends React.Component<PropsModel, StateModel> {
                 <SignInDialog
                     open={this.state.signInDialogVisible}
                     onClose={this.signInDialogClose}
-                    onSignIn={auth.signIn}
+                    onSignIn={this.signIn}
                 />
             </StyledAppBar>
         );

@@ -5,34 +5,33 @@ import {
     Switch,
     withRouter
 } from "react-router-dom";
-import config from "./config";
-// https://github.com/awslabs/aws-mobile-appsync-sdk-js/pull/141
-// https://github.com/awslabs/aws-mobile-appsync-sdk-js/issues/48
-declare const require: any;
-const { Rehydrated }       = require("aws-appsync-react");
-const { AWSAppSyncClient } = require("aws-appsync");
-import { ApolloProvider }   from "react-apollo";
 import { createMuiTheme }   from "@material-ui/core/styles";
 import { MuiThemeProvider } from "@material-ui/core";
 
 import MainLayout     from "./components/MainLayout";
-import WorkPage       from "./components/WorkPage";
-import CreateWorkPage from "./components/CreateWorkPage";
+import WorkPage       from "./components/page/WorkPage";
+// TODO test
+import UserListPage   from "./components/page/UserListPage";
+import CreateWorkPage from "./components/page/CreateWorkPage";
 import Auth           from "./components/wrapper/Auth";
+import AppSyncClient  from "./components/wrapper/AppSyncClient";
 
 const Root = withRouter(props => (
-    <ApolloProvider client={client}>
-        <MuiThemeProvider theme={theme}>
-            <Rehydrated>
-                <Auth>
+    <Auth
+        // tslint:disable-next-line:jsx-no-lambda
+        render={(authProps: any) => (
+            <AppSyncClient
+                {...authProps}
+            >
+                <MuiThemeProvider theme={theme}>
                     <MainLayout
-                        auth={undefined}
                         {...props}
+                        {...authProps}
                     />
-                </Auth>
-            </Rehydrated>
-        </MuiThemeProvider>
-    </ApolloProvider>
+                </MuiThemeProvider>
+            </AppSyncClient>
+        )}
+    />
 ));
 
 export default () => (
@@ -43,19 +42,11 @@ export default () => (
                 <ComposingRoute path="/works"     component={WorkPage} exact={true} />
                 <ComposingRoute path="/works/new" component={WorkPage} exact={true} />
                 <ComposingRoute path="/works/create-work" component={CreateWorkPage} exact={true} />
+                <ComposingRoute path="/users" component={UserListPage} exact={true} />
             </ComposingSwitch>
         </Root>
     </BrowserRouter>
 );
-
-const client = new AWSAppSyncClient({
-    url: config.appSync.graphqlEndpoint,
-    region: config.appSync.region,
-    auth: {
-        type: config.appSync.authenticationType,
-        apiKey: config.appSync.apiKey,
-    }
-});
 
 const theme = createMuiTheme({
     palette: {

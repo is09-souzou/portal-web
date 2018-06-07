@@ -41,8 +41,7 @@ export default (
                 const password = (e.target as any).elements["password"].value;
 
                 console.log(email, password);
-                const jwt = await onSignIn(email, password);
-                console.log(jwt);
+                await onSignIn(email, password);
             }}
         >
             <DialogTitle id="alert-dialog-slide-title">
