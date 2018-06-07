@@ -27,11 +27,14 @@ interface StateModel {
 }
 
 export default class extends React.Component<PropsModel, StateModel> {
-    state = {
-        userMenuAnchorEl: undefined,
-        userMenuOpend: false,
-        signInDialogVisible: false
-    };
+
+    componentWillMount() {
+        this.setState({
+            userMenuAnchorEl: undefined,
+            userMenuOpend: false,
+            signInDialogVisible: false
+        });
+    }
 
     handleMenu = (event: React.MouseEvent<HTMLElement>): void =>
         this.setState({ userMenuAnchorEl: event.currentTarget })
@@ -86,7 +89,8 @@ export default class extends React.Component<PropsModel, StateModel> {
                                     anchorEl={this.state.userMenuAnchorEl}
                                     anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                                     transformOrigin={{ vertical: "top", horizontal: "right" }}
-                                    open={!!this.state.userMenuAnchorEl}
+                                    // open={!!this.state.userMenuAnchorEl}
+                                    open={true}
                                     onClose={this.handleMenuClose}
                                 >
                                     <PopoverContent>

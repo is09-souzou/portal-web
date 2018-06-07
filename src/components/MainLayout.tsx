@@ -21,9 +21,11 @@ interface StateModel {
 
 export default class extends React.Component<PropsModel, StateModel> {
 
-    state = {
-        drawerOpend: false
-    };
+    componentWillMount() {
+        this.setState({
+            drawerOpend: false
+        });
+    }
 
     toggleDrawer = () => {
         this.setState({ drawerOpend: !this.state.drawerOpend });
@@ -37,6 +39,8 @@ export default class extends React.Component<PropsModel, StateModel> {
             history,
             ...props
         } = this.props;
+
+        console.log(props);
 
         return (
             <Host>

@@ -12,7 +12,6 @@ interface PropsState {
 }
 
 class UserListPage extends React.Component<PropsState> {
-    state = {};
 
     render() {
         const {

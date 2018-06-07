@@ -15,6 +15,7 @@ import UserListPage   from "./components/page/UserListPage";
 import CreateWorkPage from "./components/page/CreateWorkPage";
 import Auth           from "./components/wrapper/Auth";
 import AppSyncClient  from "./components/wrapper/AppSyncClient";
+import ErrorListener  from "./components/wrapper/ErrorListener";
 
 const Root = withRouter(props => (
     <Auth
@@ -36,15 +37,17 @@ const Root = withRouter(props => (
 
 export default () => (
     <BrowserRouter>
-        <Root>
-            <ComposingSwitch>
-                <ComposingRoute path="/"          component={WorkPage} exact={true} />
-                <ComposingRoute path="/works"     component={WorkPage} exact={true} />
-                <ComposingRoute path="/works/new" component={WorkPage} exact={true} />
-                <ComposingRoute path="/works/create-work" component={CreateWorkPage} exact={true} />
-                <ComposingRoute path="/users" component={UserListPage} exact={true} />
-            </ComposingSwitch>
-        </Root>
+        <ErrorListener>
+            <Root>
+                <ComposingSwitch>
+                    <ComposingRoute path="/"          component={WorkPage} exact={true} />
+                    <ComposingRoute path="/works"     component={WorkPage} exact={true} />
+                    <ComposingRoute path="/works/new" component={WorkPage} exact={true} />
+                    <ComposingRoute path="/works/create-work" component={CreateWorkPage} exact={true} />
+                    <ComposingRoute path="/users" component={UserListPage} exact={true} />
+                </ComposingSwitch>
+            </Root>
+        </ErrorListener>
     </BrowserRouter>
 );
 

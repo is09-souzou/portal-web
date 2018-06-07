@@ -19,10 +19,13 @@ interface StateModel {
 }
 
 export default class extends React.Component<PropsModel, StateModel> {
-    state = {
-        userMenuAnchorEl: undefined,
-        userMenuOpend: false
-    };
+
+    componentWillMount() {
+        this.setState({
+            userMenuAnchorEl: undefined,
+            userMenuOpend: false
+        });
+    }
 
     render() {
         return (

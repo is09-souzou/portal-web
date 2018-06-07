@@ -19,16 +19,18 @@ interface StateModel {
 
 export default class extends React.Component<PropsModel, StateModel> {
 
-    state = {
-        client: new AWSAppSyncClient({
-            url: config.appSync.graphqlEndpoint,
-            region: config.appSync.region,
-            auth: {
-                type: AUTH_TYPE.AMAZON_COGNITO_USER_POOLS,
-                jwtToken: () => this.props.auth.jwtToken
-            }
-        })
-    };
+    componentWillMount() {
+        this.setState({
+            client: new AWSAppSyncClient({
+                url: config.appSync.graphqlEndpoint,
+                region: config.appSync.region,
+                auth: {
+                    type: AUTH_TYPE.AMAZON_COGNITO_USER_POOLS,
+                    jwtToken: () => this.props.auth.jwtToken
+                }
+            })
+        });
+    }
 
     render () {
         const {

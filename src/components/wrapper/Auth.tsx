@@ -14,14 +14,17 @@ interface StateModel {
 
 export default class extends React.Component<PropsModel, StateModel> {
 
-    state = {
-        cognitoUserPool: new CognitoUserPool(config.cognito),
-        jwtToken: null,
-        cognitoUser: null
-    };
-
     componentWillMount() {
+
+        const cognitoUserPool = new CognitoUserPool(config.cognito);
+
         const cognitoUser = this.state.cognitoUserPool.getCurrentUser();
+
+        this.setState({
+            cognitoUser,
+            cognitoUserPool,
+            jwtToken: null,
+        });
 
         if (cognitoUser != null) {
             cognitoUser.getSession((err: any, session: any) => {
@@ -38,7 +41,13 @@ export default class extends React.Component<PropsModel, StateModel> {
     }
 
     render() {
-        return this.props.render({
+
+        const {
+            render,
+            ...props
+        } = this.props;
+
+        return render({
             auth: {
                 signIn: (email: string, password: string) => new Promise((resolve, reject) => {
                     const authenticationDetails = new AuthenticationDetails({
@@ -89,7 +98,7 @@ export default class extends React.Component<PropsModel, StateModel> {
                 jwtToken: this.state.jwtToken,
                 cognitoUserPool: this.state.cognitoUserPool
             },
-            ...this.props
+            ...props
         });
     }
 }

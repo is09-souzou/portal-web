@@ -31,9 +31,12 @@ interface StateModel {
 }
 
 export default class extends React.Component<PropsModel, StateModel> {
-    state = {
-        worksTypeListVisible: false
-    };
+
+    componentWillMount() {
+        this.setState({
+            worksTypeListVisible: false
+        });
+    }
 
     toggleWorksTypeListVisible = () => this.setState({ worksTypeListVisible: !this.state.worksTypeListVisible });
 

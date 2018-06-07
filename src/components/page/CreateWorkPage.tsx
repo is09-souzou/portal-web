@@ -11,11 +11,14 @@ import {
     InputAdornment
 } from "@material-ui/core";
 
-export default class extends React.Component<{onMenuButtonClick: (event: React.MouseEvent<HTMLElement>) => void}> {
-    state = {
-        userMenuAnchorEl: undefined,
-        userMenuOpend: false
-    };
+export default class extends React.Component {
+
+    componentWillMount() {
+        this.setState({
+            userMenuAnchorEl: undefined,
+            userMenuOpend: false
+        });
+    }
 
     render() {
         return (
