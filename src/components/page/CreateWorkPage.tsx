@@ -3,13 +3,10 @@ import styled from "styled-components";
 import {
     Button,
     Card,
-    CardActions,
     CardMedia,
-    CardContent,
-    Typography,
-    TextField,
-    InputAdornment
+    TextField
 } from "@material-ui/core";
+import ImageInput from "../ImageInput";
 
 export default class extends React.Component {
 
@@ -23,25 +20,12 @@ export default class extends React.Component {
     render() {
         return (
             <Host>
-                <StyledCard>
-                    <StyledCardMedia
-                        image={`http://placehold.jp/24/8BC34A/fff/600x400.png`}
-                        title="Contemplative Reptile"
-                    />
-                    <CardContent>
-                        <Typography gutterBottom variant="headline" component="h2">
-                            Lizard
-                        </Typography>
-                    </CardContent>
-                    <CardActions>
-                        <Button size="small" color="primary">
-                        Share
-                        </Button>
-                        <Button size="small" color="primary">
-                        Learn More
-                        </Button>
-                    </CardActions>
-                </StyledCard>
+                <ImageInput
+                    labelText="upload image"
+                    name="image"
+                    width="216"
+                    height="216"
+                />
                 <StyledForm>
                     <StyledTitleField
                         id="title"
