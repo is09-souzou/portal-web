@@ -42,11 +42,21 @@ export default class extends React.Component {
                         </Button>
                     </CardActions>
                 </StyledCard>
-                <StyleTextField
-                    id="title"
-                    label="Title"
-                    margin="normal"
-                />
+                <StyledForm>
+                    <StyledTitleField
+                        id="title"
+                        label="Title"
+                        margin="normal"
+                    />
+                    <StyledTextField
+                        id="description"
+                        label="Description"
+                        multiline
+                        rows="6"
+                        margin="normal"
+                    />
+                    <CreateButton variant="outlined" color="primary">create</CreateButton>
+                </StyledForm>
             </Host>
         );
     }
@@ -72,10 +82,28 @@ const StyledCardMedia = styled(CardMedia)`
         padding-top: 56.25%;
     }
 `;
-const StyleTextField = styled(TextField)`
+
+const StyledForm = styled.div`
+
+`;
+
+const StyledTitleField = styled(TextField)`
     && {
-      marginLeft: theme.spacing.unit;
-      marginRight: theme.spacing.unit;
-      width: 200;
+        marginLeft: theme.spacing.unit;
+        marginRight: theme.spacing.unit;
+        display: flex;
     }
+`;
+
+const StyledTextField = styled(TextField)`
+    && {
+        marginLeft: theme.spacing.unit;
+        marginRight: theme.spacing.unit;
+        display: flex;
+    }
+`;
+
+const CreateButton = styled(Button)`
+        float:right;
+        display: flex;
 `;
