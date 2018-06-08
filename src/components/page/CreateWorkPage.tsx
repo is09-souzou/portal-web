@@ -26,7 +26,7 @@ export default class extends React.Component {
                     width="216"
                     height="216"
                 />
-                <StyledForm>
+                <div>
                     <StyledTitleField
                         id="title"
                         label="Title"
@@ -40,35 +40,16 @@ export default class extends React.Component {
                         margin="normal"
                     />
                     <CreateButton variant="outlined" color="primary">create</CreateButton>
-                </StyledForm>
+                </div>
             </Host>
         );
     }
 }
 
-const Host = styled.div`
+const Host = styled.form`
     margin: 3rem;
     display: flex;
     flex-wrap: wrap;
-`;
-
-const StyledCard = styled(Card)`
-    && {
-        margin: 1rem;
-        min-width: 20rem;
-        max-width: 30rem;
-    }
-`;
-
-const StyledCardMedia = styled(CardMedia)`
-    && {
-        height: 0;
-        padding-top: 56.25%;
-    }
-`;
-
-const StyledForm = styled.div`
-
 `;
 
 const StyledTitleField = styled(TextField)`
