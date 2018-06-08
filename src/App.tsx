@@ -11,8 +11,10 @@ import { MuiThemeProvider } from "@material-ui/core";
 import MainLayout     from "./components/MainLayout";
 import WorkPage       from "./components/page/WorkPage";
 // TODO test
-import UserListPage   from "./components/page/UserListPage";
+import AccountRegistrationPage from "./components/page/AccountRegistrationPage";
 import CreateWorkPage from "./components/page/CreateWorkPage";
+import UserInformationPage from "./components/page/UserInformationPage";
+import UserListPage   from "./components/page/UserListPage";
 import Auth           from "./components/wrapper/Auth";
 import AppSyncClient  from "./components/wrapper/AppSyncClient";
 import ErrorListener  from "./components/wrapper/ErrorListener";
@@ -45,6 +47,8 @@ export default () => (
                     <ComposingRoute path="/works/new" component={WorkPage} exact={true} />
                     <ComposingRoute path="/works/create-work" component={CreateWorkPage} exact={true} />
                     <ComposingRoute path="/users" component={UserListPage} exact={true} />
+                    <ComposingRoute path="/users/user-information" component={UserInformationPage} exact={true} />
+                    <ComposingRoute path="/account-registration" component={AccountRegistrationPage} exact={true} />
                 </ComposingSwitch>
             </Root>
         </ErrorListener>
