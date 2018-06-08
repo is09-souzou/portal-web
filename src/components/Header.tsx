@@ -17,6 +17,7 @@ import SignInDialog from "./SignInDialog";
 
 interface PropsModel {
     auth: any;
+    onError: (error: Error) => void;
     onMenuButtonClick: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
@@ -54,6 +55,7 @@ export default class extends React.Component<PropsModel, StateModel> {
 
         const {
             auth,
+            onError,
             onMenuButtonClick
         } = this.props;
 
@@ -114,6 +116,7 @@ export default class extends React.Component<PropsModel, StateModel> {
                     open={this.state.signInDialogVisible}
                     onClose={this.signInDialogClose}
                     onSignIn={this.signIn}
+                    onError={onError}
                 />
             </StyledAppBar>
         );

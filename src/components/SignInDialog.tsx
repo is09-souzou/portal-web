@@ -13,6 +13,7 @@ import styled from "styled-components";
 interface Props {
     open: boolean;
     onClose: () => void;
+    onError: (error: Error) => void;
     onSignIn: (email: string, password: string) => void;
 }
 
@@ -20,6 +21,7 @@ export default (
     {
         open    = false,
         onClose,
+        onError,
         onSignIn,
         ...props
     }: Props
@@ -40,8 +42,11 @@ export default (
                 const email = (e.target as any).elements["email"].value;
                 const password = (e.target as any).elements["password"].value;
 
-                console.log(email, password);
-                await onSignIn(email, password);
+                try {
+                    await onSignIn(email, password);
+                } catch (e) {
+                    onError(e);
+                }
             }}
         >
             <DialogTitle id="alert-dialog-slide-title">

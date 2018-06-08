@@ -1,6 +1,5 @@
-import React, { ReactNode, ReactElement } from "react";
+import React, { ReactElement } from "react";
 import {
-    IconButton,
     Snackbar
 } from "@material-ui/core";
 
@@ -12,6 +11,10 @@ interface StateModel {
 }
 
 export default class extends React.Component<PropsModel, StateModel> {
+
+    onCloseByKey = (key: number) => () => this.setState({
+        errors: this.state.errors.filter(y => key !== y.key)
+    })
 
     componentWillMount() {
         this.setState({
@@ -49,7 +52,7 @@ export default class extends React.Component<PropsModel, StateModel> {
                         }}
                         open={true}
                         autoHideDuration={6000}
-                        // onClose={this.handleClose}
+                        onClose={this.onCloseByKey(x.key)}
                         ContentProps={{
                             "aria-describedby": "message-id",
                         }}
