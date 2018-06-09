@@ -9,7 +9,7 @@ import { createMuiTheme }   from "@material-ui/core/styles";
 import { MuiThemeProvider } from "@material-ui/core";
 import Auth, { AuthProps } from "./components/wrapper/Auth";
 import AppSyncClient  from "./components/wrapper/AppSyncClient";
-import ErrorListener  from "./components/wrapper/ErrorListener";
+import ErrorListener, { ErrorListenerProps }  from "./components/wrapper/ErrorListener";
 
 import WorkPage                from "./components/page/WorkPage";
 import AccountRegistrationPage from "./components/page/AccountRegistrationPage";
@@ -23,7 +23,7 @@ import ComposingSwitch from "./components/ComposingSwitch";
 import UserListPage   from "./components/page/UserListPage";
 import UserPage       from "./components/page/UserPage";
 
-const Root = withRouter((props: RouteComponentProps<any>) => (
+const Root = withRouter((props: RouteComponentProps<any> & ErrorListenerProps) => (
     <Auth
         // tslint:disable-next-line:jsx-no-lambda
         render={(authProps: AuthProps) => (
@@ -80,7 +80,6 @@ const theme = createMuiTheme({
     },
 });
 
-export interface PageComponentProps<T> extends RouteComponentProps<T>, AuthProps {
+export interface PageComponentProps<T> extends RouteComponentProps<T>, AuthProps, ErrorListenerProps {
     computedMatch?: match<T>;
-    errorListener?: any;
 }

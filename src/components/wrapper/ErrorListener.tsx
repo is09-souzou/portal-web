@@ -1,14 +1,22 @@
 import React, { ReactElement } from "react";
 import ErrorComponent from "../Error";
 
-interface PropsModel {
+export interface ErrorListenerProps {
+    errorListener: {
+        // TODO fix
+        ErrorComponent: any,
+        onError: (error: Error) => void
+    };
 }
 
-interface StateModel {
+interface Props {
+}
+
+interface Model {
     errors: {error: Error, key: number}[];
 }
 
-export default class extends React.Component<PropsModel, StateModel> {
+export default class extends React.Component<Props, Model> {
 
     onCloseByKey = (key: number) => () => this.setState({
         errors: this.state.errors.filter(y => key !== y.key)
@@ -30,7 +38,7 @@ export default class extends React.Component<PropsModel, StateModel> {
         return (
             <div>
                 {React.cloneElement(
-                    children as ReactElement<any>,
+                    children as ReactElement<ErrorListenerProps>,
                     {
                         errorListener: {
                             ErrorComponent,

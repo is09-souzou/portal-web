@@ -5,7 +5,7 @@ import { SnackbarContentProps } from "@material-ui/core/SnackbarContent";
 import { TransitionHandlerProps } from "@material-ui/core/transitions/transition";
 import { TransitionProps } from "react-transition-group/Transition";
 
-interface PropsModel extends StandardProps<
+interface Props extends StandardProps<
   React.HTMLAttributes<HTMLDivElement> & Partial<TransitionHandlerProps>,
   SnackbarClassKey
 > {
@@ -26,7 +26,7 @@ interface PropsModel extends StandardProps<
     error: Error;
 }
 
-export default class extends React.Component<PropsModel, { open: boolean }> {
+export default class extends React.Component<Props, { open: boolean }> {
 
     componentWillMount() {
         this.setState({

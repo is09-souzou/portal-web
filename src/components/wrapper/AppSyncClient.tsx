@@ -8,16 +8,16 @@ const { AWSAppSyncClient } = require("aws-appsync");
 import { ApolloProvider }   from "react-apollo";
 import config from "../../config";
 
-interface PropsModel {
+interface Props {
     auth: any;
     children: JSX.Element;
 }
 
-interface StateModel {
+interface State {
     client: any;
 }
 
-export default class extends React.Component<PropsModel, StateModel> {
+export default class extends React.Component<Props, State> {
 
     componentWillMount() {
         this.setState({

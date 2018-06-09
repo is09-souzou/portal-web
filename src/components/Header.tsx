@@ -17,19 +17,19 @@ import SignInDialog from "./SignInDialog";
 import SignUpDialog from "./SignUpDialog";
 import { AuthProps } from "./wrapper/Auth";
 
-interface PropsModel extends AuthProps {
+interface Props extends AuthProps {
     onError: (error: Error) => void;
     onMenuButtonClick: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
-interface StateModel {
+interface State {
     userMenuAnchorEl: HTMLElement | undefined;
     userMenuOpend: boolean;
     signInDialogVisible: boolean;
     signUpDialogVisible: boolean;
 }
 
-export default class extends React.Component<PropsModel, StateModel> {
+export default class extends React.Component<Props, State> {
 
     componentWillMount() {
         this.setState({
@@ -130,6 +130,7 @@ export default class extends React.Component<PropsModel, StateModel> {
                     open={this.state.signUpDialogVisible}
                     onClose={this.signUpDialogClose}
                     onSignUp={auth.signUp}
+                    onCustomError={onError}
                 />
             </StyledAppBar>
         );

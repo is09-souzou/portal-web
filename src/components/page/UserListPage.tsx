@@ -7,11 +7,11 @@ import {
 } from "@material-ui/core";
 import QueryAllUsers from "../../GraphQL/query/QueryGetUserList";
 
-interface PropsState {
+interface Props {
     errorListener: any;
 }
 
-export default class UserListPage extends React.Component<PropsState> {
+export default class UserListPage extends React.Component<Props> {
 
     render() {
 
@@ -22,7 +22,6 @@ export default class UserListPage extends React.Component<PropsState> {
         return (
             <Query query={QueryAllUsers}>
                 {({ loading, error, data }) => {
-                    console.log("userlistpage", loading, error, data);
                     if (loading) return "Loading...";
                     if (error) {
                         return ([

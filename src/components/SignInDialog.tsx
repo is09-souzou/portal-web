@@ -9,7 +9,6 @@ import {
     TextField
 } from "@material-ui/core";
 import styled from "styled-components";
-import { DialogProps } from "@material-ui/core/Dialog";
 
 interface Props {
     open: boolean;
@@ -58,14 +57,14 @@ export default (
             <StyledDialogContent>
                 <TextField
                     id="sign-in-email"
-                    label="email"
+                    label="Email Address"
                     margin="normal"
                     type="email"
                     required
                 />
                 <TextField
                     id="sign-in-password"
-                    label="password"
+                    label="Password"
                     margin="normal"
                     type="password"
                     required

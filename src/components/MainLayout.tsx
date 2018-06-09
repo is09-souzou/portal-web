@@ -10,11 +10,11 @@ import Navigator from "./Navigator";
 import Link      from "./Link";
 import { PageComponentProps } from "../App";
 
-interface StateModel {
+interface State {
     drawerOpend: boolean;
 }
 
-export default class extends React.Component<PageComponentProps<{}>, StateModel> {
+export default class extends React.Component<PageComponentProps<{}>, State> {
 
     componentWillMount() {
         this.setState({

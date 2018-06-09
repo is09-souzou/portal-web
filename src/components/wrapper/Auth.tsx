@@ -12,17 +12,17 @@ export interface AuthProps {
     };
 }
 
-interface PropsModel {
+interface Props {
     render: (auth: AuthProps) => ReactNode;
 }
 
-interface StateModel {
+interface State {
     cognitoUserPool: CognitoUserPool;
     jwtToken: string | null;
     cognitoUser: CognitoUser | null;
 }
 
-export default class extends React.Component<PropsModel, StateModel> {
+export default class extends React.Component<Props, State> {
 
     componentWillMount() {
 
@@ -39,8 +39,7 @@ export default class extends React.Component<PropsModel, StateModel> {
         if (cognitoUser != null) {
             cognitoUser.getSession((err: any, session: any) => {
                 if (err) {
-                    alert(err);
-                    return;
+                    throw err;
                 }
                 this.setState({
                     cognitoUser,
@@ -75,22 +74,19 @@ export default class extends React.Component<PropsModel, StateModel> {
                                 const jwtToken = result.getAccessToken().getJwtToken();
                                 resolve(jwtToken);
                                 this.setState({ jwtToken });
-                                console.log("access token + " + result.getAccessToken().getJwtToken());
                             },
                             onFailure: err => reject(err)
                         }
                     );
                 }),
                 signUp: (email: string, password: string) => new Promise((resolve, reject) => {
-                    this.state.cognitoUserPool.signUp(email, password, [], [], (err: any, result: any) => {
+                    this.state.cognitoUserPool.signUp(email, password, [], [], (err?: Error, result?: any) => {
                         if (err) {
                             reject(err);
-                            alert(err.message || JSON.stringify(err));
                             return;
                         }
                         const cognitoUser = result.user;
-                        console.log("user name is " + cognitoUser.getUsername());
-                        resolve(result);
+                        resolve(cognitoUser);
                     });
                 }),
                 signOut: () => new Promise((resolve, reject) => {
@@ -99,7 +95,6 @@ export default class extends React.Component<PropsModel, StateModel> {
                         (cognitoUser as CognitoUser).globalSignOut({
                             onSuccess: () => {
                                 this.setState({ jwtToken: null, cognitoUser: null });
-                                console.log("resolve");
                                 resolve();
                             },
                             onFailure: () => reject()

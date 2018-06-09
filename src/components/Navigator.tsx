@@ -22,15 +22,15 @@ import {
 
 import Link from "./Link";
 
-interface PropsModel {
+interface Props {
     histroy: any;
 }
 
-interface StateModel {
+interface State {
     worksTypeListVisible: boolean;
 }
 
-export default class extends React.Component<PropsModel, StateModel> {
+export default class extends React.Component<Props, State> {
 
     componentWillMount() {
         this.setState({

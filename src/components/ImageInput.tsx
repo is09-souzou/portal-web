@@ -3,22 +3,22 @@ import Image from "./Image";
 import styled from "styled-components";
 import withProps from "../util/withProps";
 
-interface PropsModelBase {
+interface PropsBase {
     defaultImageUrl?: string;
     hintText?: string;
     labelText?: string;
     onLoad?: (event: React.SyntheticEvent<HTMLImageElement>) => void;
 }
 
-interface StateModel {
+interface State {
     focused: boolean;
     imageUrl: string | undefined;
     invalid: boolean;
 }
 
-type PropsModel = React.InputHTMLAttributes<HTMLInputElement> & PropsModelBase;
+type Props = React.InputHTMLAttributes<HTMLInputElement> & PropsBase;
 
-export default class extends React.Component<PropsModel, StateModel> {
+export default class extends React.Component<Props, State> {
     componentWillMount() {
         this.setState({
             focused : false,

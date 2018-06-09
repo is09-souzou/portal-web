@@ -22,7 +22,6 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                         ]);
                     }
 
-                    console.log(data);
                     return (
                         <div>
                             {data.getUser}

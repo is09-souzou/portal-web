@@ -19,7 +19,7 @@ module.exports = {
                 test: /\.(jsx?|tsx?)$/,
                 use: "babel-loader",
                 exclude: /node_modules/
-            },
+            }
         ]
     },
     plugins: [
