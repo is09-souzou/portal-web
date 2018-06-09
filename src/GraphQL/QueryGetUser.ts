@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 
 export default gql(`
     query($id: ID!) {
-        getUser {
+        getUser(id: $id) {
             id
             email
             name

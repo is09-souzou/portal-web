@@ -14,7 +14,6 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
         return (
             <Query query={QueryGetUser} variables={{ id: this.props.computedMatch!.params.id }}>
                 {({ loading, error, data }) => {
-                    console.log("userlistpage", loading, error, data);
                     if (loading) return "Loading...";
                     if (error) {
                         return ([
@@ -23,9 +22,10 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                         ]);
                     }
 
+                    console.log(data);
                     return (
                         <div>
-                            {data}
+                            {data.getUser}
                         </div>
                     );
                 }}
