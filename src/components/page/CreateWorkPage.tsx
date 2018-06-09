@@ -2,9 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import {
     Button,
-    Card,
-    CardMedia,
-    TextField
+    TextField,
+    withTheme
 } from "@material-ui/core";
 import ImageInput from "../ImageInput";
 
@@ -60,15 +59,21 @@ const StyledTitleField = styled(TextField)`
     }
 `;
 
-const StyledTextField = styled(TextField)`
+const StyledTextFieldBase = styled(TextField)`
     && {
-        marginLeft: theme.spacing.unit;
-        marginRight: theme.spacing.unit;
-        display: flex;
+        border-top: 1px;
+        margin-left: ${(props: any) => props.theme.spacing.unit}px;
+        margin-right: ${(props: any) => props.theme.spacing.unit}px;
     }
 `;
 
+const StyledTextField = withTheme()(
+    (props: any) => <StyledTextFieldBase {...props}/>
+);
+
 const CreateButton = styled(Button)`
+    && {
         float:right;
         display: flex;
+    }
 `;

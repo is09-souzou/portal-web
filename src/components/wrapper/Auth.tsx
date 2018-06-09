@@ -72,16 +72,18 @@ export default class extends React.Component<PropsModel, StateModel> {
                         }
                     );
                 }),
-                signUp: (email: string, password: string) => {
+                signUp: (email: string, password: string) => new Promise((resolve, reject) => {
                     this.state.cognitoUserPool.signUp(email, password, [], [], (err: any, result: any) => {
                         if (err) {
+                            reject(err);
                             alert(err.message || JSON.stringify(err));
                             return;
                         }
                         const cognitoUser = result.user;
                         console.log("user name is " + cognitoUser.getUsername());
+                        resolve(result);
                     });
-                },
+                }),
                 signOut: () => new Promise((resolve, reject) => {
                     const cognitoUser = this.state.cognitoUser;
                     if (cognitoUser !== null) {

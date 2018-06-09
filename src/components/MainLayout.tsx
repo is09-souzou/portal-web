@@ -13,7 +13,7 @@ import Link from "./Link";
 interface PropsModel {
     auth: any | undefined | null;
     history: any;
-    onError: (error: Error) => void;
+    errorListener: any;
 }
 
 interface StateModel {
@@ -36,7 +36,7 @@ export default class extends React.Component<PropsModel, StateModel> {
 
         const {
             auth,
-            onError,
+            errorListener,
             children,
             history,
             ...props
@@ -71,14 +71,14 @@ export default class extends React.Component<PropsModel, StateModel> {
                     <Header
                         onMenuButtonClick={this.toggleDrawer}
                         auth={auth}
-                        onError={onError}
+                        onError={errorListener.onError}
                     />
                     <main>
                         {React.cloneElement(
                             children as ReactElement<any>,
                             {
                                 auth,
-                                onError,
+                                errorListener,
                                 history,
                                 ...props
                             }

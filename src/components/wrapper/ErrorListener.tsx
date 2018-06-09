@@ -1,7 +1,5 @@
 import React, { ReactElement } from "react";
-import {
-    Snackbar
-} from "@material-ui/core";
+import ErrorComponent from "../Error";
 
 interface PropsModel {
 }
@@ -34,29 +32,24 @@ export default class extends React.Component<PropsModel, StateModel> {
                 {React.cloneElement(
                     children as ReactElement<any>,
                     {
-                        onError: (error: Error) => this.setState({
-                            errors: this.state.errors.concat({
-                                error,
-                                key  : Date.now()
-                            })
-                        }),
+                        errorListener: {
+                            ErrorComponent,
+                            onError: (error: Error) => this.setState({
+                                errors: this.state.errors.concat({
+                                    error,
+                                    key  : Date.now()
+                                })
+                            }),
+                        },
                         ...props
                     }
                 )}
                 {this.state.errors.map(x =>
-                    <Snackbar
+                    <ErrorComponent
                         key={x.key}
-                        anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "left",
-                        }}
+                        error={x.error}
                         open={true}
-                        autoHideDuration={6000}
                         onClose={this.onCloseByKey(x.key)}
-                        ContentProps={{
-                            "aria-describedby": "message-id",
-                        }}
-                        message={<span id="message-id">{x.error.message}</span>}
                     />
                 )}
             </div>
