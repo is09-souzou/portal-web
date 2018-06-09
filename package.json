@@ -9,7 +9,7 @@
   "scripts": {
     "start": "webpack-serve webpack.config.dev.js",
     "build": "webpack --run-prod",
-    "lint": "tslint -p ./ -c ./tslint.json './src/**/*.ts{,x}'",
+    "lint": "tslint -p ./ -c ./tslint.json './src/**/*.ts{,x}'"
   },
   "dependencies": {
     "@material-ui/core": "^1.1.0",

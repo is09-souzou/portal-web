@@ -50,15 +50,3 @@ export default class UserListPage extends React.Component<PropsState> {
         );
     }
 }
-
-// export default graphql(
-//     QueryAllUsers,
-//     {
-//         options: {
-//             fetchPolicy: "cache-and-network",
-//         },
-//         props: ({ data: { listUsers = { items: [] } } }: any) => ({
-//             users: listUsers.items,
-//         })
-//     }
-// )(UserListPage);
