@@ -5,7 +5,7 @@ import {
     ListItem,
     ListItemText
 } from "@material-ui/core";
-import QueryAllUsers from "../../GraphQL/QueryGetUserList";
+import QueryAllUsers from "../../GraphQL/query/QueryGetUserList";
 
 interface PropsState {
     errorListener: any;

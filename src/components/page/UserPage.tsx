@@ -1,6 +1,6 @@
 import React from "react";
 import { Query } from "react-apollo";
-import QueryGetUser from "../../GraphQL/QueryGetUser";
+import QueryGetUser from "../../GraphQL/query/QueryGetUser";
 import { PageComponentProps } from "./../../App";
 
 export default class UserListPage extends React.Component<PageComponentProps<{id: string}>> {
