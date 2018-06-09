@@ -14,9 +14,10 @@ import {
 } from "@material-ui/core";
 
 import SignInDialog from "./SignInDialog";
+import SignUpDialog from "./SignUpDialog";
+import { AuthProps } from "./wrapper/Auth";
 
-interface PropsModel {
-    auth: any;
+interface PropsModel extends AuthProps {
     onError: (error: Error) => void;
     onMenuButtonClick: (event: React.MouseEvent<HTMLElement>) => void;
 }
@@ -25,6 +26,7 @@ interface StateModel {
     userMenuAnchorEl: HTMLElement | undefined;
     userMenuOpend: boolean;
     signInDialogVisible: boolean;
+    signUpDialogVisible: boolean;
 }
 
 export default class extends React.Component<PropsModel, StateModel> {
@@ -33,7 +35,8 @@ export default class extends React.Component<PropsModel, StateModel> {
         this.setState({
             userMenuAnchorEl: undefined,
             userMenuOpend: false,
-            signInDialogVisible: false
+            signInDialogVisible: false,
+            signUpDialogVisible: false
         });
     }
 
@@ -44,7 +47,11 @@ export default class extends React.Component<PropsModel, StateModel> {
 
     signInDialogOpen = () => this.setState({ signInDialogVisible: true });
 
+    signUpDialogOpen = () => this.setState({ signInDialogVisible: false, signUpDialogVisible: true });
+
     signInDialogClose = () => this.setState({ signInDialogVisible: false });
+
+    signUpDialogClose = () => this.setState({ signUpDialogVisible: false });
 
     signIn = async (email: string, password: string) => {
         await this.props.auth.signIn(email, password);
@@ -116,7 +123,13 @@ export default class extends React.Component<PropsModel, StateModel> {
                     open={this.state.signInDialogVisible}
                     onClose={this.signInDialogClose}
                     onSignIn={this.signIn}
+                    onCreateAcountButtonClick={this.signUpDialogOpen}
                     onError={onError}
+                />
+                <SignUpDialog
+                    open={this.state.signUpDialogVisible}
+                    onClose={this.signUpDialogClose}
+                    onSignUp={auth.signUp}
                 />
             </StyledAppBar>
         );

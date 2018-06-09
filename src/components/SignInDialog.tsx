@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEventHandler } from "react";
 import {
     Button,
     Dialog,
@@ -9,12 +9,14 @@ import {
     TextField
 } from "@material-ui/core";
 import styled from "styled-components";
+import { DialogProps } from "@material-ui/core/Dialog";
 
 interface Props {
     open: boolean;
     onClose: () => void;
     onError: (error: Error) => void;
     onSignIn: (email: string, password: string) => void;
+    onCreateAcountButtonClick: () => void;
 }
 
 export default (
@@ -23,10 +25,11 @@ export default (
         onClose,
         onError,
         onSignIn,
+        onCreateAcountButtonClick,
         ...props
     }: Props
 ) => (
-    <StyledDialog
+    <Dialog
         open={open}
         onClose={onClose}
         TransitionComponent={Transition}
@@ -39,8 +42,8 @@ export default (
             onSubmit={async e => {
                 e.preventDefault();
 
-                const email = (e.target as any).elements["email"].value;
-                const password = (e.target as any).elements["password"].value;
+                const email = (e.target as any).elements["sign-in-email"].value;
+                const password = (e.target as any).elements["sign-in-password"].value;
 
                 try {
                     await onSignIn(email, password);
@@ -54,14 +57,14 @@ export default (
             </DialogTitle>
             <StyledDialogContent>
                 <TextField
-                    id="email"
+                    id="sign-in-email"
                     label="email"
                     margin="normal"
                     type="email"
                     required
                 />
                 <TextField
-                    id="password"
+                    id="sign-in-password"
                     label="password"
                     margin="normal"
                     type="password"
@@ -69,7 +72,7 @@ export default (
                 />
             </StyledDialogContent>
             <DialogActions>
-                <Button onClick={onClose} color="primary">
+                <Button onClick={onCreateAcountButtonClick} color="primary">
                     Create Account
                 </Button>
                 <Button
@@ -81,14 +84,10 @@ export default (
                 </Button>
             </DialogActions>
         </form>
-    </StyledDialog>
+    </Dialog>
 );
 
 const Transition = (props:any) =>  <Slide direction="up" {...props} />;
-
-const StyledDialog = styled(Dialog)`
-    border-radius: 18rem;
-`;
 
 const StyledDialogContent = styled(DialogContent)`
     && {
