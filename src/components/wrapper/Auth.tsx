@@ -2,8 +2,18 @@ import React, { ReactNode } from "react";
 import { CognitoUserPool, CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
 import config from "./../../config";
 
+export interface AuthProps {
+    auth: {
+        signIn: (email: string, password: string) => Promise<string>;
+        signUp: (email: string, password: string) => Promise<any>;
+        signOut: () => Promise<void>;
+        jwtToken: string | null;
+        cognitoUserPool: CognitoUserPool | null;
+    };
+}
+
 interface PropsModel {
-    render: (auth: any) => ReactNode;
+    render: (auth: AuthProps) => ReactNode;
 }
 
 interface StateModel {
@@ -43,8 +53,7 @@ export default class extends React.Component<PropsModel, StateModel> {
     render() {
 
         const {
-            render,
-            ...props
+            render
         } = this.props;
 
         return render({
@@ -99,8 +108,7 @@ export default class extends React.Component<PropsModel, StateModel> {
                 }),
                 jwtToken: this.state.jwtToken,
                 cognitoUserPool: this.state.cognitoUserPool
-            },
-            ...props
+            }
         });
     }
 }

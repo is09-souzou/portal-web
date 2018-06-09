@@ -8,17 +8,14 @@ import {
     CardContent,
     Typography
 } from "@material-ui/core";
+import { PageComponentProps } from "./../../App";
 
-interface PropsModel {
-    onMenuButtonClick: (event: React.MouseEvent<HTMLElement>) => void;
-}
-
-interface StateModel {
-    userMenuAnchorEl: boolean | undefined;
+interface State {
+    userMenuAnchorEl?: boolean;
     userMenuOpend: boolean;
 }
 
-export default class extends React.Component<PropsModel, StateModel> {
+export default class extends React.Component<PageComponentProps<{}>, State> {
 
     componentWillMount() {
         this.setState({

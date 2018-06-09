@@ -1,26 +1,20 @@
 import React, { ReactElement } from "react";
-import Header from "./Header";
 import styled from "styled-components";
 import {
     Drawer,
     Button
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-
+import Header    from "./Header";
 import Navigator from "./Navigator";
-import Link from "./Link";
-
-interface PropsModel {
-    auth: any | undefined | null;
-    history: any;
-    errorListener: any;
-}
+import Link      from "./Link";
+import { PageComponentProps } from "../App";
 
 interface StateModel {
     drawerOpend: boolean;
 }
 
-export default class extends React.Component<PropsModel, StateModel> {
+export default class extends React.Component<PageComponentProps<{}>, StateModel> {
 
     componentWillMount() {
         this.setState({

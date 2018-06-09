@@ -1,35 +1,39 @@
 import React from "react";
 import {
     BrowserRouter,
-    Route,
-    Switch,
-    withRouter
+    withRouter,
+    RouteComponentProps,
+    match
 } from "react-router-dom";
 import { createMuiTheme }   from "@material-ui/core/styles";
 import { MuiThemeProvider } from "@material-ui/core";
-
-import MainLayout     from "./components/MainLayout";
-import WorkPage       from "./components/page/WorkPage";
-// TODO test
-import AccountRegistrationPage from "./components/page/AccountRegistrationPage";
-import CreateWorkPage from "./components/page/CreateWorkPage";
-import UserInformationPage from "./components/page/UserInformationPage";
-import UserListPage   from "./components/page/UserListPage";
-import Auth           from "./components/wrapper/Auth";
+import Auth, { AuthProps } from "./components/wrapper/Auth";
 import AppSyncClient  from "./components/wrapper/AppSyncClient";
 import ErrorListener  from "./components/wrapper/ErrorListener";
 
-const Root = withRouter(props => (
+import WorkPage                from "./components/page/WorkPage";
+import AccountRegistrationPage from "./components/page/AccountRegistrationPage";
+import CreateWorkPage          from "./components/page/CreateWorkPage";
+import UserInformationPage     from "./components/page/UserInformationPage";
+
+import MainLayout      from "./components/MainLayout";
+import ComposingRoute  from "./components/ComposingRoute";
+import ComposingSwitch from "./components/ComposingSwitch";
+// TODO test
+import UserListPage   from "./components/page/UserListPage";
+import UserPage       from "./components/page/UserPage";
+
+const Root = withRouter((props: RouteComponentProps<any>) => (
     <Auth
         // tslint:disable-next-line:jsx-no-lambda
-        render={(authProps: any) => (
+        render={(authProps: AuthProps) => (
             <AppSyncClient
                 {...authProps}
             >
                 <MuiThemeProvider theme={theme}>
                     <MainLayout
-                        {...props}
                         {...authProps}
+                        {...props}
                     />
                 </MuiThemeProvider>
             </AppSyncClient>
@@ -47,6 +51,7 @@ export default () => (
                     <ComposingRoute path="/works/new" component={WorkPage} exact={true} />
                     <ComposingRoute path="/works/create-work" component={CreateWorkPage} exact={true} />
                     <ComposingRoute path="/users" component={UserListPage} exact={true} />
+                    <ComposingRoute path="/users/:id" component={UserPage} exact={true} />
                     <ComposingRoute path="/users/user-information" component={UserInformationPage} exact={true} />
                     <ComposingRoute path="/account-registration" component={AccountRegistrationPage} exact={true} />
                 </ComposingSwitch>
@@ -75,32 +80,7 @@ const theme = createMuiTheme({
     },
 });
 
-const ComposingRoute = ({
-    component,
-    Component = component,
-    path,
-    ...props
-}: any) => (
-    <Route
-        path={path}
-        // tslint:disable-next-line:jsx-no-lambda
-        render={x => <Component {...x} {...props} />}
-    />
-);
-
-const ComposingSwitch = ({
-    children,
-    ...props
-}: any) => (
-    <Switch>
-        {React.Children.toArray(children).map(
-            (x: any) => React.cloneElement(
-                x,
-                {
-                    ...props,
-                    ...x.props
-                }
-            )
-        )}
-    </Switch>
-);
+export interface PageComponentProps<T> extends RouteComponentProps<T>, AuthProps {
+    computedMatch?: match<T>;
+    errorListener?: any;
+}

@@ -1,12 +1,11 @@
 import React from "react";
-import { graphql, Query } from "react-apollo";
+import { Query } from "react-apollo";
 import {
     List,
     ListItem,
     ListItemText
 } from "@material-ui/core";
 import QueryAllUsers from "../../GraphQL/QueryGetUserList";
-import QueryGetUser from "../../GraphQL/QueryGetUser";
 
 interface PropsState {
     errorListener: any;
@@ -27,7 +26,7 @@ export default class UserListPage extends React.Component<PropsState> {
                     if (loading) return "Loading...";
                     if (error) {
                         return ([
-                            <div key="page">cry</div>,
+                            <div key="page">cry；；</div>,
                             <errorListener.ErrorComponent error={error} key="error"/>
                         ]);
                     }

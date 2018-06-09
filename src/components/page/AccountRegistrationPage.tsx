@@ -13,9 +13,9 @@ export default class extends React.Component {
     render() {
         return (
             <Host>
-              testest
-              <br />
-              This is a Account Registration Page
+                testest
+                <br />
+                This is a Account Registration Page
             </Host>
         );
     }

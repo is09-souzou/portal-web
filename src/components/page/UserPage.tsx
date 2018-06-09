@@ -1,63 +1,35 @@
 import React from "react";
-import { graphql, compose } from "react-apollo";
-import {
-    List,
-    ListItem,
-    ListItemText
-} from "@material-ui/core";
-import QueryAllUsers from "../../GraphQL/QueryGetUserList";
+import { Query } from "react-apollo";
 import QueryGetUser from "../../GraphQL/QueryGetUser";
+import { PageComponentProps } from "./../../App";
 
-interface PropsState {
-    users: any[];
-}
-
-class UserListPage extends React.Component<PropsState> {
+export default class UserListPage extends React.Component<PageComponentProps<{id: string}>> {
 
     render() {
+
         const {
-            users = []
+            errorListener
         } = this.props;
 
         return (
-            <div>
-                <List>
-                    {users.map(user =>
-                        <ListItem key={user.id}>
-                            <ListItemText
-                                primary={user.name}
-                                secondary={user.id}
-                            />
-                        </ListItem>
-                    )}
-                </List>
-            </div>
+            <Query query={QueryGetUser} variables={{ id: this.props.computedMatch!.params.id }}>
+                {({ loading, error, data }) => {
+                    console.log("userlistpage", loading, error, data);
+                    if (loading) return "Loading...";
+                    if (error) {
+                        return ([
+                            <div key="page">cry；；</div>,
+                            <errorListener.ErrorComponent error={error} key="error"/>
+                        ]);
+                    }
+
+                    return (
+                        <div>
+                            {data}
+                        </div>
+                    );
+                }}
+            </Query>
         );
     }
 }
-
-export default compose(
-    graphql(
-        QueryAllUsers,
-        {
-            options: {
-                fetchPolicy: "cache-and-network",
-            },
-            props: ({ data: { listUsers = { items: [] } } }: any) => ({
-                users: listUsers.items,
-            })
-        }
-    ),
-    graphql(
-        QueryGetUser,
-        {
-            options: ({ userId: id }: any) => ({
-                fetchPolicy: "cache-and-network",
-                variables: { id }
-            }),
-            props: ({ data }) => ({
-                data,
-            })
-        }
-    )
-)(UserListPage);
