@@ -129,6 +129,7 @@ export default class extends React.Component<Props, State> {
                 <SignUpDialog
                     open={this.state.signUpDialogVisible}
                     onClose={this.signUpDialogClose}
+                    onSignIn={console.log(auth) || auth.signIn}
                     onSignUp={auth.signUp}
                     onCustomError={onError}
                 />

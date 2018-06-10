@@ -7,8 +7,8 @@ import {
 } from "react-router-dom";
 import { createMuiTheme }   from "@material-ui/core/styles";
 import { MuiThemeProvider } from "@material-ui/core";
-import Auth, { AuthProps } from "./components/wrapper/Auth";
-import AppSyncClient  from "./components/wrapper/AppSyncClient";
+import Auth, { AuthProps }                    from "./components/wrapper/Auth";
+import AppSyncClient                          from "./components/wrapper/AppSyncClient";
 import ErrorListener, { ErrorListenerProps }  from "./components/wrapper/ErrorListener";
 
 import WorkPage                from "./components/page/WorkPage";
@@ -31,39 +31,71 @@ const Root = withRouter<ErrorListenerProps & RouteComponentProps<any>>((props: R
             <AppSyncClient
                 {...authProps}
             >
-                <MuiThemeProvider theme={theme}>
-                    <MainLayout
-                        {...authProps}
-                        {...props}
-                    />
-                </MuiThemeProvider>
+                <MainLayout
+                    {...authProps}
+                    {...props}
+                />
             </AppSyncClient>
         )}
     />
 ));
 
 export default () => (
-    <BrowserRouter>
-        <ErrorListener
-            // tslint:disable-next-line:jsx-no-lambda
-            render={(errorListener: ErrorListenerProps) =>
-                <Root
-                    {...errorListener}
-                >
-                    <ComposingSwitch>
-                        <ComposingRoute path="/"          component={WorkPage} exact={true} />
-                        <ComposingRoute path="/works"     component={WorkPage} exact={true} />
-                        <ComposingRoute path="/works/new" component={WorkPage} exact={true} />
-                        <ComposingRoute path="/works/create-work" component={CreateWorkPage} exact={true} />
-                        <ComposingRoute path="/users" component={UserListPage} exact={true} />
-                        <ComposingRoute path="/users/:id" component={UserPage} exact={true} />
-                        <ComposingRoute path="/users/user-information" component={UserInformationPage} exact={true} />
-                        <ComposingRoute path="/account-registration" component={AccountRegistrationPage} exact={true} />
-                    </ComposingSwitch>
-                </Root>
-            }
-        />
-    </BrowserRouter>
+    <MuiThemeProvider theme={theme}>
+        <BrowserRouter>
+            <ErrorListener
+                // tslint:disable-next-line:jsx-no-lambda
+                render={(errorListener: ErrorListenerProps) =>
+                    <Root
+                        {...errorListener}
+                    >
+                        <ComposingSwitch>
+                            <ComposingRoute
+                                path="/"
+                                component={WorkPage}
+                                exact={true}
+                            />
+                            <ComposingRoute
+                                path="/works"
+                                component={WorkPage}
+                                exact={true}
+                            />
+                            <ComposingRoute
+                                path="/works/new"
+                                component={WorkPage}
+                                exact={true}
+                            />
+                            <ComposingRoute
+                                path="/works/create-work"
+                                component={CreateWorkPage}
+                                exact={true}
+                            />
+                            <ComposingRoute
+                                path="/users"
+                                component={UserListPage}
+                                exact={true}
+                            />
+                            <ComposingRoute
+                                path="/users/:id"
+                                component={UserPage}
+                                exact={true}
+                            />
+                            <ComposingRoute
+                                path="/users/user-information"
+                                component={UserInformationPage}
+                                exact={true}
+                            />
+                            <ComposingRoute
+                                path="/account-registration"
+                                component={AccountRegistrationPage}
+                                exact={true}
+                            />
+                        </ComposingSwitch>
+                    </Root>
+                }
+            />
+        </BrowserRouter>
+    </MuiThemeProvider>
 );
 
 const theme = createMuiTheme({

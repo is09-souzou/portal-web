@@ -1,11 +1,13 @@
-import React, { ReactElement, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import ErrorComponent from "../Error";
+
+export type OnError = (error: Error) => void;
 
 export interface ErrorListenerProps {
     errorListener: {
         // TODO fix
         ErrorComponent: any,
-        onError: (error: Error) => void
+        onError: OnError
     };
 }
 
@@ -42,12 +44,15 @@ export default class extends React.Component<Props, Model> {
                 {render({
                     errorListener: {
                         ErrorComponent,
-                        onError: (error: Error) => this.setState({
-                            errors: this.state.errors.concat({
-                                error,
-                                key  : Date.now()
-                            })
-                        }),
+                        onError: (error: Error) => {
+                            console.error(error);
+                            this.setState({
+                                errors: this.state.errors.concat({
+                                    error,
+                                    key  : Date.now()
+                                })
+                            });
+                        },
                     },
                     ...props
                 })}

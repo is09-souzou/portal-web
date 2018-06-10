@@ -1,4 +1,6 @@
 import React from "react";
+import { Mutation } from "react-apollo";
+import MutationCreateUser from "../GraphQL/mutation/MutationCreateUser";
 import styled from "styled-components";
 import {
     Dialog,
@@ -6,25 +8,26 @@ import {
     DialogContent,
     DialogTitle,
     Slide,
-    Step,
-    StepLabel,
-    Stepper,
     TextField,
     Button,
 } from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog";
+import { SingUp, SingIn } from "./wrapper/Auth";
+import { OnError } from "./wrapper/ErrorListener";
 
 const Transition = (props: any) =>  <Slide direction="up" {...props} />;
 
 interface Props extends DialogProps {
-    onCustomError: (error: Error) => void;
-    onSignUp: (email: string, password: string) => Promise<any>;
+    onCustomError: OnError;
+    onSignIn: SingIn;
+    onSignUp: SingUp;
 }
 
 export default (
     {
         onCustomError,
         onClose,
+        onSignIn,
         onSignUp,
         ...props
     }: Props
@@ -36,59 +39,73 @@ export default (
         aria-describedby="alert-dialog-slide-description"
         {...props}
     >
-        <form
-            // tslint:disable-next-line:jsx-no-lambda
-            onSubmit={async e => {
-                e.preventDefault();
+        <Mutation mutation={MutationCreateUser}>
+            {(createUser, { data }) => console.log(data) || (
+                <form
+                    // tslint:disable-next-line:jsx-no-lambda
+                    onSubmit={async e => {
+                        e.preventDefault();
 
-                const email = (e.target as any).elements["sign-up-email"].value;
-                const password = (e.target as any).elements["sign-up-password"].value;
+                        const displayName = (e.target as any).elements["sign-up-display-name"].value;
+                        const email = (e.target as any).elements["sign-up-email"].value;
+                        const password = (e.target as any).elements["sign-up-password"].value;
 
-                try {
-                    await onSignUp(email, password);
-                } catch (e) {
-                    onCustomError(e);
-                }
-                onClose && onClose(e);
-            }}
-        >
-            <DialogTitle id="alert-dialog-slide-title">
-                Create Account
-            </DialogTitle>
-            <StyledDialogContent>
-                <TextField
-                    name="sign-up-display-name"
-                    label="Display Name"
-                    margin="normal"
-                    type="none"
-                    required
-                />
-                <TextField
-                    name="sign-up-email"
-                    label="Email Address"
-                    margin="normal"
-                    type="email"
-                    required
-                />
-                <TextField
-                    name="sign-up-password"
-                    label="Password"
-                    margin="normal"
-                    type="password"
-                    required
-                />
-            </StyledDialogContent>
-            <DialogActions>
-                <Button
-                    onClick={onClose}
+                        try {
+
+                            await onSignUp(email, password, { "custom:display_name": displayName });
+                            // createUser({
+                            //     variables: {
+                            //         email,
+                            //         displayName,
+                            //         id: token.payload.sub
+                            //     }
+                            // });
+                        } catch (e) {
+                            onCustomError(e);
+                            return;
+                        }
+                        onClose && onClose(e);
+                    }}
                 >
-                    cancel
-                </Button>
-                <Button component="button" color="primary" type="submit" variant="raised">
-                    submit
-                </Button>
-            </DialogActions>
-        </form>
+                    <DialogTitle id="alert-dialog-slide-title">
+                        Create Account
+                    </DialogTitle>
+                    <StyledDialogContent>
+                        <TextField
+                            name="sign-up-display-name"
+                            label="Display Name"
+                            margin="normal"
+                            type="none"
+                            required
+                        />
+                        <TextField
+                            name="sign-up-email"
+                            label="Email Address"
+                            margin="normal"
+                            type="email"
+                            required
+                        />
+                        <TextField
+                            name="sign-up-password"
+                            label="Password"
+                            margin="normal"
+                            type="password"
+                            required
+                        />
+                    </StyledDialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={onClose}
+                        >
+                            cancel
+                        </Button>
+                        <Button component="button" color="primary" type="submit" variant="raised">
+                            submit
+                        </Button>
+                    </DialogActions>
+                </form>
+            )}
+        </Mutation>
     </Dialog>
 );
 

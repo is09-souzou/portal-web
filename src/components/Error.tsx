@@ -1,9 +1,17 @@
 import React from "react";
-import { Snackbar, StandardProps } from "@material-ui/core";
+import {
+    Snackbar,
+    SnackbarContent,
+    StandardProps,
+    IconButton,
+    withTheme
+} from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
 import { SnackbarClassKey, SnackBarOrigin } from "@material-ui/core/Snackbar";
 import { SnackbarContentProps } from "@material-ui/core/SnackbarContent";
 import { TransitionHandlerProps } from "@material-ui/core/transitions/transition";
 import { TransitionProps } from "react-transition-group/Transition";
+import styled from "styled-components";
 
 interface Props extends StandardProps<
   React.HTMLAttributes<HTMLDivElement> & Partial<TransitionHandlerProps>,
@@ -15,7 +23,7 @@ interface Props extends StandardProps<
     ContentProps?: Partial<SnackbarContentProps>;
     disableWindowBlurListener?: boolean;
     message?: React.ReactElement<any>;
-    onClose?: (event: React.SyntheticEvent<any>, reason: string) => void;
+    onClose?: () => void;
     onMouseEnter?: React.MouseEventHandler<any>;
     onMouseLeave?: React.MouseEventHandler<any>;
     open?: boolean;
@@ -44,15 +52,44 @@ export default class extends React.Component<Props, { open: boolean }> {
                     vertical: "bottom",
                     horizontal: "left",
                 }}
-                onClose={this.onClose}
+                onClose={this.props.onClose || this.onClose}
                 autoHideDuration={6000}
                 ContentProps={{
                     "aria-describedby": "message-id",
                 }}
-                message={<span id="message-id">{this.props.error.message}</span>}
                 open={this.state.open}
                 {...this.props}
-            />
+            >
+                <StyledSnackbarContent
+                    message={<span id="message-id">{this.props.error.message}</span>}
+                    action={[
+                        <IconButton
+                            key="close"
+                            aria-label="Close"
+                            color="inherit"
+                            onClick={this.props.onClose || this.onClose}
+                        >
+                            <StyledCloseIcon />
+                        </IconButton>
+                    ]}
+                />
+            </Snackbar>
         );
     }
 }
+
+const StyledSnackbarContentBase = styled(SnackbarContent)`
+    && {
+        background-color: ${(props: any) => props.theme.palette.error.dark}
+    }
+`;
+
+const StyledSnackbarContent = withTheme()(
+    (props: any) => <StyledSnackbarContentBase {...props}/>
+);
+
+const StyledCloseIcon = styled(CloseIcon)`
+    && {
+        font-size: 1.5rem;
+    }
+`;

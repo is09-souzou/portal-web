@@ -1,11 +1,11 @@
 import React from "react";
 import { Query } from "react-apollo";
+import QueryAllUsers from "../../GraphQL/query/QueryGetUserList";
 import {
     List,
     ListItem,
     ListItemText
 } from "@material-ui/core";
-import QueryAllUsers from "../../GraphQL/query/QueryGetUserList";
 
 interface Props {
     errorListener: any;

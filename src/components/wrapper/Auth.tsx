@@ -1,16 +1,27 @@
 import React, { ReactNode } from "react";
-import { CognitoUserPool, CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
+import { CognitoUserPool, CognitoUser, AuthenticationDetails, CognitoUserAttribute } from "amazon-cognito-identity-js";
 import config from "./../../config";
 
-export interface AuthProps {
-    auth: {
-        signIn: (email: string, password: string) => Promise<string>;
-        signUp: (email: string, password: string) => Promise<any>;
-        signOut: () => Promise<void>;
-        jwtToken: string | null;
-        cognitoUserPool: CognitoUserPool | null;
+interface Token {
+    jwtToken: string;
+    payload: {
+        [id: string]: any;
     };
 }
+
+export type SingIn = (email: string, password: string) => Promise<Token>;
+export type SingUp = (email: string, password: string, attribute?: {[key: string]: string}) => Promise<string>;
+export type SingOut = () => Promise<void>;
+
+export type AuthProps = {
+    auth: {
+        signIn: SingIn;
+        signUp: SingUp;
+        signOut: SingOut;
+        jwtToken?: string | null;
+        cognitoUserPool?: CognitoUserPool | null;
+    };
+};
 
 interface Props {
     render: (auth: AuthProps) => ReactNode;
@@ -59,8 +70,8 @@ export default class extends React.Component<Props, State> {
             auth: {
                 signIn: (email: string, password: string) => new Promise((resolve, reject) => {
                     const authenticationDetails = new AuthenticationDetails({
-                        Username: email,  // "rioc.sugiyama@gmail.com"
-                        Password: password // "Wasd1234",
+                        Username: email,
+                        Password: password
                     });
                     const cognitoUser = new CognitoUser({
                         Username: email,
@@ -71,23 +82,31 @@ export default class extends React.Component<Props, State> {
                         authenticationDetails,
                         {
                             onSuccess: result => {
-                                const jwtToken = result.getAccessToken().getJwtToken();
-                                resolve(jwtToken);
+                                const accessToken = result.getAccessToken();
+                                const jwtToken = accessToken.getJwtToken();
+                                resolve({ jwtToken, payload: accessToken.decodePayload() });
                                 this.setState({ jwtToken });
                             },
                             onFailure: err => reject(err)
                         }
                     );
                 }),
-                signUp: (email: string, password: string) => new Promise((resolve, reject) => {
-                    this.state.cognitoUserPool.signUp(email, password, [], [], (err?: Error, result?: any) => {
-                        if (err) {
-                            reject(err);
-                            return;
+                signUp: (email, password, attribute) => new Promise((resolve, reject) => {
+                    this.state.cognitoUserPool.signUp(
+                        email,
+                        password,
+                        Object.entries(attribute || []).map(([Name, Value]) =>
+                            new CognitoUserAttribute({ Name, Value })
+                        ),
+                        [],
+                        (err?, result?) => {
+                            if (err || !result) {
+                                reject(err);
+                                return;
+                            }
+                            resolve(result.userSub);
                         }
-                        const cognitoUser = result.user;
-                        resolve(cognitoUser);
-                    });
+                    );
                 }),
                 signOut: () => new Promise((resolve, reject) => {
                     const cognitoUser = this.state.cognitoUser;
@@ -97,13 +116,13 @@ export default class extends React.Component<Props, State> {
                                 this.setState({ jwtToken: null, cognitoUser: null });
                                 resolve();
                             },
-                            onFailure: () => reject()
+                            onFailure: e => reject(e)
                         });
                     }
                 }),
                 jwtToken: this.state.jwtToken,
                 cognitoUserPool: this.state.cognitoUserPool
-            },
+            }
         });
     }
 }

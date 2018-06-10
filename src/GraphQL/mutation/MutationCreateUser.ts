@@ -1,27 +1,28 @@
 import gql from "graphql-tag";
 
 export default gql(`
-    mutation createUser($user: User!) {
+    mutation createUser(
+        $id: ID!
+        $email: String!
+        $displayName: String!
+        $avatorURI: String
+        $career: String
+        $messeage: String
+    ) {
         createUser(
-            user: {
-                id: "8a1f706a-1182-4912-8eb1-2e154f174b30"
-                name: "III"
-                email: "SDAF"
-            }
+            id: $id
+            email: $email
+            displayName: $displayName
+            avatorURI: $avatarURI
+            career: $career
+            messeage: $message
         ) {
             id
             email
-            name
+            displayName
             avatorURI
             career
             messeage
         }
     }`
 );
-
-// mutation addTodo($type: String!) {
-//     addTodo(type: $type) {
-//       id
-//       type
-//     }
-//   }
