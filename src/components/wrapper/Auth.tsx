@@ -103,7 +103,7 @@ export default class extends React.Component<Props, State> {
                 }),
                 jwtToken: this.state.jwtToken,
                 cognitoUserPool: this.state.cognitoUserPool
-            }
+            },
         });
     }
 }
