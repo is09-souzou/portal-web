@@ -23,7 +23,8 @@ import ComposingSwitch from "./components/ComposingSwitch";
 import UserListPage   from "./components/page/UserListPage";
 import UserPage       from "./components/page/UserPage";
 
-const Root = withRouter((props: RouteComponentProps<any> & ErrorListenerProps) => (
+// tslint:disable-next-line:max-line-length
+const Root = withRouter<ErrorListenerProps & RouteComponentProps<any>>((props: RouteComponentProps<any> & ErrorListenerProps) => (
     <Auth
         // tslint:disable-next-line:jsx-no-lambda
         render={(authProps: AuthProps) => (
@@ -43,20 +44,25 @@ const Root = withRouter((props: RouteComponentProps<any> & ErrorListenerProps) =
 
 export default () => (
     <BrowserRouter>
-        <ErrorListener>
-            <Root>
-                <ComposingSwitch>
-                    <ComposingRoute path="/"          component={WorkPage} exact={true} />
-                    <ComposingRoute path="/works"     component={WorkPage} exact={true} />
-                    <ComposingRoute path="/works/new" component={WorkPage} exact={true} />
-                    <ComposingRoute path="/works/create-work" component={CreateWorkPage} exact={true} />
-                    <ComposingRoute path="/users" component={UserListPage} exact={true} />
-                    <ComposingRoute path="/users/:id" component={UserPage} exact={true} />
-                    <ComposingRoute path="/users/user-information" component={UserInformationPage} exact={true} />
-                    <ComposingRoute path="/account-registration" component={AccountRegistrationPage} exact={true} />
-                </ComposingSwitch>
-            </Root>
-        </ErrorListener>
+        <ErrorListener
+            // tslint:disable-next-line:jsx-no-lambda
+            render={(errorListener: ErrorListenerProps) =>
+                <Root
+                    {...errorListener}
+                >
+                    <ComposingSwitch>
+                        <ComposingRoute path="/"          component={WorkPage} exact={true} />
+                        <ComposingRoute path="/works"     component={WorkPage} exact={true} />
+                        <ComposingRoute path="/works/new" component={WorkPage} exact={true} />
+                        <ComposingRoute path="/works/create-work" component={CreateWorkPage} exact={true} />
+                        <ComposingRoute path="/users" component={UserListPage} exact={true} />
+                        <ComposingRoute path="/users/:id" component={UserPage} exact={true} />
+                        <ComposingRoute path="/users/user-information" component={UserInformationPage} exact={true} />
+                        <ComposingRoute path="/account-registration" component={AccountRegistrationPage} exact={true} />
+                    </ComposingSwitch>
+                </Root>
+            }
+        />
     </BrowserRouter>
 );
 

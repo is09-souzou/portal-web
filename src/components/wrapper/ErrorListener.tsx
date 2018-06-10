@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, ReactNode } from "react";
 import ErrorComponent from "../Error";
 
 export interface ErrorListenerProps {
@@ -10,6 +10,7 @@ export interface ErrorListenerProps {
 }
 
 interface Props {
+    render: (auth: ErrorListenerProps) => ReactNode;
 }
 
 interface Model {
@@ -32,26 +33,24 @@ export default class extends React.Component<Props, Model> {
 
         const {
             children,
+            render,
             ...props
         } = this.props;
 
         return (
             <div>
-                {React.cloneElement(
-                    children as ReactElement<ErrorListenerProps>,
-                    {
-                        errorListener: {
-                            ErrorComponent,
-                            onError: (error: Error) => this.setState({
-                                errors: this.state.errors.concat({
-                                    error,
-                                    key  : Date.now()
-                                })
-                            }),
-                        },
-                        ...props
-                    }
-                )}
+                {render({
+                    errorListener: {
+                        ErrorComponent,
+                        onError: (error: Error) => this.setState({
+                            errors: this.state.errors.concat({
+                                error,
+                                key  : Date.now()
+                            })
+                        }),
+                    },
+                    ...props
+                })}
                 {this.state.errors.map(x =>
                     <ErrorComponent
                         key={x.key}
