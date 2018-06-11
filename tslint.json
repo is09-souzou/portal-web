@@ -1,6 +1,7 @@
 {
     "extends": ["tslint-config-airbnb", "tslint-react"],
     "rules": {
+        "curly"              : false,
         "import-name"        : false,
         "variable-name"      : false,
         "quotemark"          : [true, "double"],
