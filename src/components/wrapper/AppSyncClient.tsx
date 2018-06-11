@@ -1,5 +1,5 @@
 declare const require: any;
-import React, { ReactNode } from "react";
+import React, { ReactChild } from "react";
 // https://github.com/awslabs/aws-mobile-appsync-sdk-js/pull/141
 // https://github.com/awslabs/aws-mobile-appsync-sdk-js/issues/48
 const { Rehydrated }       = require("aws-appsync-react");
@@ -10,7 +10,7 @@ import config from "../../config";
 import { AuthProps } from "./Auth";
 
 interface Props extends AuthProps {
-    children: ReactNode;
+    children: ReactChild;
 }
 
 interface State {
