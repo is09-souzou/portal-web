@@ -18,7 +18,7 @@ export type AuthProps = {
         signIn: SingIn;
         signUp: SingUp;
         signOut: SingOut;
-        jwtToken?: string | null;
+        token: Token | null;
         cognitoUserPool?: CognitoUserPool | null;
     };
 };
@@ -29,7 +29,7 @@ interface Props {
 
 interface State {
     cognitoUserPool: CognitoUserPool;
-    jwtToken: string | null;
+    token: Token | null;
     cognitoUser: CognitoUser | null;
 }
 
@@ -44,7 +44,7 @@ export default class extends React.Component<Props, State> {
         this.setState({
             cognitoUser,
             cognitoUserPool,
-            jwtToken: null,
+            token: null
         });
 
         if (cognitoUser != null) {
@@ -54,7 +54,7 @@ export default class extends React.Component<Props, State> {
                 }
                 this.setState({
                     cognitoUser,
-                    jwtToken: session.accessToken.jwtToken
+                    token: session.accessToken
                 });
             });
         }
@@ -84,8 +84,9 @@ export default class extends React.Component<Props, State> {
                             onSuccess: result => {
                                 const accessToken = result.getAccessToken();
                                 const jwtToken = accessToken.getJwtToken();
-                                resolve({ jwtToken, payload: accessToken.decodePayload() });
-                                this.setState({ jwtToken });
+                                const token = { jwtToken, payload: accessToken.decodePayload() };
+                                resolve(token);
+                                this.setState({ token });
                             },
                             onFailure: err => reject(err)
                         }
@@ -113,14 +114,14 @@ export default class extends React.Component<Props, State> {
                     if (cognitoUser !== null) {
                         (cognitoUser as CognitoUser).globalSignOut({
                             onSuccess: () => {
-                                this.setState({ jwtToken: null, cognitoUser: null });
+                                this.setState({ token: null, cognitoUser: null });
                                 resolve();
                             },
                             onFailure: e => reject(e)
                         });
                     }
                 }),
-                jwtToken: this.state.jwtToken,
+                token: this.state.token,
                 cognitoUserPool: this.state.cognitoUserPool
             }
         });

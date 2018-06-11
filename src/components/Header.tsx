@@ -10,12 +10,13 @@ import {
     Toolbar,
     Typography,
     IconButton,
-    Popover
+    Popover,
 } from "@material-ui/core";
 
+import { AuthProps } from "./wrapper/Auth";
 import SignInDialog from "./SignInDialog";
 import SignUpDialog from "./SignUpDialog";
-import { AuthProps } from "./wrapper/Auth";
+import Link         from "./Link";
 
 interface Props extends AuthProps {
     onError: (error: Error) => void;
@@ -43,7 +44,7 @@ export default class extends React.Component<Props, State> {
     handleMenu = (event: React.MouseEvent<HTMLElement>): void =>
         this.setState({ userMenuAnchorEl: event.currentTarget })
 
-    handleMenuClose = () => this.setState({ userMenuAnchorEl: undefined });
+    menuClose = () => this.setState({ userMenuAnchorEl: undefined });
 
     signInDialogOpen = () => this.setState({ signInDialogVisible: true });
 
@@ -80,7 +81,7 @@ export default class extends React.Component<Props, State> {
                         Work List
                     </Typography>
                     <div>
-                        {!auth.jwtToken ?
+                        {!auth.token ?
                             <Button onClick={this.signInDialogOpen} >
                                 Sign In
                             </Button>
@@ -99,21 +100,27 @@ export default class extends React.Component<Props, State> {
                                     anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                                     transformOrigin={{ vertical: "top", horizontal: "right" }}
                                     open={!!this.state.userMenuAnchorEl}
-                                    onClose={this.handleMenuClose}
+                                    onClose={this.menuClose}
                                 >
                                     <PopoverContent>
-                                        <div>
-                                            <span>Name</span>
-                                            <span>Designer</span>
-                                        </div>
-                                        <div>
-                                            <Button
-                                                onClick={auth.signOut}
-                                            >
-                                                sign-out
+                                        <span>Name</span>
+                                        <span>Designer</span>
+                                        <Link
+                                            to="/profile"
+                                            onClick={this.menuClose}
+                                        >
+                                            <Button>
+                                                Profile
                                             </Button>
-                                        </div>
+                                        </Link>
                                     </PopoverContent>
+                                    <PopoverAction>
+                                        <Button
+                                            onClick={auth.signOut}
+                                        >
+                                            sign-out
+                                        </Button>
+                                    </PopoverAction>
                                 </Popover>
                             </div>
                         }
@@ -129,7 +136,6 @@ export default class extends React.Component<Props, State> {
                 <SignUpDialog
                     open={this.state.signUpDialogVisible}
                     onClose={this.signUpDialogClose}
-                    onSignIn={console.log(auth) || auth.signIn}
                     onSignUp={auth.signUp}
                     onCustomError={onError}
                 />
@@ -174,4 +180,8 @@ const PopoverContent = styled.div`
         display: flex;
         justify-content: flex-end;
     }
+`;
+
+const PopoverAction = styled.div`
+    display: flex;
 `;

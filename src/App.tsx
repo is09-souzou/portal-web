@@ -14,7 +14,7 @@ import ErrorListener, { ErrorListenerProps }  from "./components/wrapper/ErrorLi
 import WorkPage                from "./components/page/WorkPage";
 import AccountRegistrationPage from "./components/page/AccountRegistrationPage";
 import CreateWorkPage          from "./components/page/CreateWorkPage";
-import UserInformationPage     from "./components/page/UserInformationPage";
+import SelfPage                from "./components/page/SelfPage";
 
 import MainLayout      from "./components/MainLayout";
 import ComposingRoute  from "./components/ComposingRoute";
@@ -81,8 +81,8 @@ export default () => (
                                 exact={true}
                             />
                             <ComposingRoute
-                                path="/users/user-information"
-                                component={UserInformationPage}
+                                path="/self"
+                                component={SelfPage}
                                 exact={true}
                             />
                             <ComposingRoute

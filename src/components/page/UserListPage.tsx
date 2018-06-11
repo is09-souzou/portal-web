@@ -6,12 +6,9 @@ import {
     ListItem,
     ListItemText
 } from "@material-ui/core";
+import { PageComponentProps } from "../../App";
 
-interface Props {
-    errorListener: any;
-}
-
-export default class UserListPage extends React.Component<Props> {
+export default class UserListPage extends React.Component<PageComponentProps<{id: string}>>{
 
     render() {
 
