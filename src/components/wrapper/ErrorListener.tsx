@@ -12,7 +12,7 @@ export interface ErrorListenerProps {
 }
 
 interface Props {
-    render: (auth: ErrorListenerProps) => ReactNode;
+    render: (errorListener: ErrorListenerProps) => ReactNode;
 }
 
 interface Model {
