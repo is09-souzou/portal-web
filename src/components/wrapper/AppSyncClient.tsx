@@ -45,7 +45,7 @@ export default class extends React.Component<Props, State> {
                     {children &&
                         React.cloneElement(
                             children as React.ReactElement<AuthProps>,
-                            props
+                            this.props
                         )
                     }
                 </Rehydrated>
