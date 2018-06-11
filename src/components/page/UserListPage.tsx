@@ -7,6 +7,7 @@ import {
     ListItemText
 } from "@material-ui/core";
 import { PageComponentProps } from "../../App";
+import NotFound from "../NotFound";
 
 export default class UserListPage extends React.Component<PageComponentProps<{id: string}>>{
 
@@ -26,6 +27,9 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                             <errorListener.ErrorComponent error={error} key="error"/>
                         ]);
                     }
+
+                    if (!data.listUsers || !data.listUsers.items)
+                        return <NotFound/>;
 
                     return (
                         <div>

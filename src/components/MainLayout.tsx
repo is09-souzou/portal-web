@@ -67,7 +67,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                         auth={auth}
                         onError={errorListener.onError}
                     />
-                    <main>
+                    <Main>
                         {React.cloneElement(
                             children as ReactElement<any>,
                             {
@@ -77,7 +77,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 ...props
                             }
                         )}
-                    </main>
+                    </Main>
                     <Link
                         to="/works/create-work"
                     >
@@ -130,4 +130,8 @@ const FAB = styled(Button)`
         bottom: 0;
         margin: 2rem;
     }
+`;
+
+const Main = styled.main`
+    min-height: calc(100vh - 7rem);
 `;
