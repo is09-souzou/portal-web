@@ -40,7 +40,7 @@ export default class extends React.Component<Props, State> {
         } = this.props;
 
         return (
-        <ApolloProvider client={this.state.client}>
+            <ApolloProvider client={this.state.client}>
                 <Rehydrated>
                     {children &&
                         React.cloneElement(
