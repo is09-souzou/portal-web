@@ -7,9 +7,9 @@ const { AUTH_TYPE }        = require("aws-appsync/lib/link/auth-link");
 const { AWSAppSyncClient } = require("aws-appsync");
 import { ApolloProvider }   from "react-apollo";
 import config from "../../config";
+import { AuthProps } from "./Auth";
 
-interface Props {
-    auth: any;
+interface Props extends AuthProps {
     children: JSX.Element;
 }
 
