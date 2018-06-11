@@ -17,7 +17,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
         } = this.props;
 
         return (
-            <Query query={QueryAllUsers}>
+            <Query query={QueryAllUsers} variables={{ limit: 20 }}>
                 {({ loading, error, data }) => {
                     if (loading) return "Loading...";
                     if (error) {
@@ -30,7 +30,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                     return (
                         <div>
                             <List>
-                                {data.users.map((user: any) =>
+                                {data.listUsers.items.map((user: any) =>
                                     <ListItem key={user.id}>
                                         <ListItemText
                                             primary={user.name}
