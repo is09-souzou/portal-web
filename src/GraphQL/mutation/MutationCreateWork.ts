@@ -1,11 +1,11 @@
 import gql from "graphql-tag";
 
 export default gql(`
-    mutation (
-        $WorkInput: work
+    mutation createWork(
+        $work: work
     ) {
         createWork(
-            work: $WorkInput
+            work: $work
         ) {
             id
             userId
