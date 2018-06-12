@@ -11,6 +11,7 @@ import {
     TextField,
     Typography
 } from "@material-ui/core"
+// TODO ↑ セミコロン忘れ エディタにtslintの拡張いれてない？
 import { PageComponentProps } from "../../App";
 
 interface State {
@@ -51,6 +52,8 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 
                     return (
                         <div>
+                            {/* TODO  <StyledCard> は条件分岐によって変化ないので共通化していいかと　*/}
+                            {/* TODO ↓ this.state.userEditing */}
                             {this.userEditing ?
                                 <StyledCard>
                                     <CardContent>

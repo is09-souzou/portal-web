@@ -20,7 +20,7 @@ export default class extends React.Component<PageComponentProps<{}>> {
 
         return (
             <Mutation mutation={MutationCreateWork} >
-                {(createWork) => console.log("call") || (
+                {(createWork, { data }) => console.log(data) || (
                     <Host
                     // tslint:disable-next-line jsx-no-lambda
                         onSubmit={e => {
