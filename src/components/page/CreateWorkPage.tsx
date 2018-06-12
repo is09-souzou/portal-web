@@ -6,41 +6,95 @@ import {
     withTheme
 } from "@material-ui/core";
 import ImageInput from "../ImageInput";
+import { Mutation } from "react-apollo";
+import MutationCreateWork from "../../GraphQL/mutation/MutationCreateWork";
+import { PageComponentProps } from "../../App";
 
-export default class extends React.Component {
-
-    componentWillMount() {
-        this.setState({
-            userMenuAnchorEl: undefined,
-            userMenuOpend: false
-        });
-    }
+export default class extends React.Component<PageComponentProps<{}>> {
 
     render() {
+
+        const {
+            auth
+        } = this.props;
+
         return (
-            <Host>
-                <ImageInput
-                    labelText="upload image"
-                    name="image"
-                    width="216"
-                    height="216"
-                />
-                <div>
-                    <StyledTitleField
-                        id="title"
-                        label="Title"
-                        margin="normal"
-                    />
-                    <StyledTextField
-                        id="description"
-                        label="Description"
-                        multiline
-                        rows="6"
-                        margin="normal"
-                    />
-                    <CreateButton variant="outlined" color="primary">create</CreateButton>
-                </div>
-            </Host>
+            <Mutation mutation={MutationCreateWork} >
+                {(createWork) => console.log("call") || (
+                    <Host
+                    // tslint:disable-next-line jsx-no-lambda
+                        onSubmit={e => {
+                            e.preventDefault();
+
+                            const title = (e.target as any).elements["title"].value;
+                            const description = (e.target as any).elements["description"].value;
+                            console.log("TITLE:" + title);
+                            console.log("DESCRIPTION:" + description);
+                            createWork({
+                                variables: {
+                                    work: {
+                                        title,
+                                        description,
+                                        imageUri: "test.comyy/test",
+                                        userId: auth.token!.payload.sub
+                                    }
+                                }
+                            });
+                        }}
+                    >
+                        <InputImages>
+                            <ImageInput
+                                labelText="upload image"
+                                name="image1"
+                                width="216"
+                                height="216"
+                            />
+                            <SubImages>
+                                <ImageInput
+                                    labelText="upload image"
+                                    name="image2"
+                                    width="108"
+                                    height="108"
+                                />
+                                <ImageInput
+                                    labelText="upload image"
+                                    name="image3"
+                                    width="108"
+                                    height="108"
+                                />
+                                <ImageInput
+                                    labelText="upload image"
+                                    name="image4"
+                                    width="108"
+                                    height="108"
+                                />
+                            </SubImages>
+                            <div>
+                                <StyledTitleField
+                                    id="title"
+                                    label="Title"
+                                    margin="normal"
+                                />
+                                <StyledTextField
+                                    id="description"
+                                    label="Description"
+                                    multiline
+                                    rows="6"
+                                    margin="normal"
+                                />
+                                <CreateButton
+                                    type="submit"
+                                    component="button"
+                                    variant="outlined"
+                                    color="primary"
+                                >
+                                    create
+                                </CreateButton>
+                            </div>
+                        </InputImages>
+                    </Host>
+                )}
+            </Mutation>
         );
     }
 }
@@ -49,6 +103,18 @@ const Host = styled.form`
     margin: 3rem;
     display: flex;
     flex-wrap: wrap;
+`;
+
+const SubImages = styled.div`
+    &&{
+        display: flex;
+    }
+`;
+
+const InputImages = styled.div`
+    && {
+        margin: 1erm;
+    }
 `;
 
 const StyledTitleField = styled(TextField)`

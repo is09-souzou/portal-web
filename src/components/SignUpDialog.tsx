@@ -19,6 +19,7 @@ const Transition = (props: any) =>  <Slide direction="up" {...props} />;
 
 interface Props extends DialogProps {
     onCustomError: OnError;
+    onSignIn: SingIn;
     onSignUp: SingUp;
 }
 
@@ -26,6 +27,7 @@ export default (
     {
         onCustomError,
         onClose,
+        onSignIn,
         onSignUp,
         ...props
     }: Props
