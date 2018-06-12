@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 
 export default gql(`
     mutation createWork(
-        $work: work
+        $work: WorkCreate
     ) {
         createWork(
             work: $work
