@@ -117,7 +117,10 @@ export default class extends React.Component<Props, State> {
                                 this.setState({ token: null, cognitoUser: null });
                                 resolve();
                             },
-                            onFailure: e => reject(e)
+                            onFailure: e => {
+                                localStorage.clear()
+                                reject(e);
+                            }
                         });
                     }
                 }),

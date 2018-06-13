@@ -5,6 +5,9 @@ export default {
         authenticationType: "API_KEY",
         apiKey: "da2-zdk6vnvwybb2lkmnccbdy5rjpu",
     },
+    apiGateway: {
+        uri: "https://qh0uqafx50.execute-api.ap-northeast-1.amazonaws.com/dev"
+    },
     cognito: {
         region: "ap-northeast-1",
         UserPoolId: "ap-northeast-1_cl74QBXUP",

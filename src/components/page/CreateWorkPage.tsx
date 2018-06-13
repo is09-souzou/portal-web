@@ -9,6 +9,7 @@ import ImageInput from "../ImageInput";
 import { Mutation } from "react-apollo";
 import MutationCreateWork from "../../GraphQL/mutation/MutationCreateWork";
 import { PageComponentProps } from "../../App";
+import createSignedUrl from "../../api/createSignedUrl";
 
 export default class extends React.Component<PageComponentProps<{}>> {
 
@@ -23,7 +24,7 @@ export default class extends React.Component<PageComponentProps<{}>> {
                 {(createWork, { data }) => console.log(data) || (
                     <Host
                     // tslint:disable-next-line jsx-no-lambda
-                        onSubmit={e => {
+                        onSubmit={async e => {
                             e.preventDefault();
 
                             const title = (e.target as any).elements["title"].value;
@@ -40,6 +41,17 @@ export default class extends React.Component<PageComponentProps<{}>> {
                                     }
                                 }
                             });
+
+                            // Memo Testでここを使わせてもらいます。
+
+                            const image = (e.target as any).elements["image1"].files[0];
+                            console.log("image", image);
+                            const res = await createSignedUrl({
+                                jwt: auth.token!.jwtToken,
+                                filename: "test/test",
+                                mimetype: image.type
+                            });
+                            console.log(res);
                         }}
                     >
                         <InputImages>
