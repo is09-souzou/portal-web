@@ -18,7 +18,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
         } = this.props;
 
         return (
-            <Query query={QueryAllUsers} variables={{ limit: 20 }}>
+            <Query query={QueryAllUsers} variables={{ limit: 20 }} fetchPolicy="cache-and-network">
                 {({ loading, error, data }) => {
                     if (loading) return "Loading...";
                     if (error) {

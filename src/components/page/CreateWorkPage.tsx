@@ -32,37 +32,41 @@ export default class extends React.Component<PageComponentProps<{}>> {
                             const description = (e.target as any).elements["description"].value;
                             console.log("TITLE:" + title);
                             console.log("DESCRIPTION:" + description);
-                            createWork({
-                                variables: {
-                                    work: {
-                                        title,
-                                        description,
-                                        imageUri: "test.comyy/test",
-                                        userId: auth.token!.payload.sub
-                                    }
-                                },
-                                optimisticResponse: {
-                                    __typename: "Mutation",
-                                    createWork: {
-                                        title,
-                                        id: "",
-                                        userId: auth.token!.payload.sub,
-                                        tags: [],
-                                        imageUri: "test.comyy/test",
-                                        createdAt: "",
-                                        __typename: "Work"
-                                    }
-                                }
-                            });
 
                             // Memo Testでここを使わせてもらいます。
 
                             const image = (e.target as any).elements["image1"].files[0];
-                            const signedUrl = await createSignedUrl({
-                                jwt: auth.token!.jwtToken,
-                                filename: `/users/${auth.token!.payload.sub}/works/`,
-                                mimetype: image.type
-                            });
+                            const results = await Promise.all([
+                                createWork({
+                                    variables: {
+                                        work: {
+                                            title,
+                                            description,
+                                            imageUri: "test.comyy/test",
+                                            userId: auth.token!.payload.sub
+                                        }
+                                    },
+                                    optimisticResponse: {
+                                        __typename: "Mutation",
+                                        createWork: {
+                                            title,
+                                            id: "",
+                                            userId: auth.token!.payload.sub,
+                                            tags: [],
+                                            imageUri: "test.comyy/test",
+                                            createdAt: "",
+                                            __typename: "Work"
+                                        }
+                                    }
+                                }),
+                                createSignedUrl({
+                                    jwt: auth.token!.jwtToken,
+                                    filename: `/users/${auth.token!.payload.sub}/works/`,
+                                    mimetype: image.type
+                                })
+                            ]);
+                            const signedUrl = results[1];
+
                             await new Promise(resolve => setTimeout(() => resolve(), 60000));
                             await fileUploadToS3({
                                 url: signedUrl,

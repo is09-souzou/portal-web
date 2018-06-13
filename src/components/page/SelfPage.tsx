@@ -40,7 +40,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
             return "";
 
         return (
-            <Query query={QueryGetUser} variables={{ id: auth.token.payload.sub }}>
+            <Query query={QueryGetUser} variables={{ id: auth.token.payload.sub }} fetchPolicy="cache-and-network">
                 {({ loading, error, data }) => {
                     if (loading) return "Loading...";
                     if (error) {
