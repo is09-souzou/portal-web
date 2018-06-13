@@ -10,6 +10,7 @@ import { Mutation } from "react-apollo";
 import MutationCreateWork from "../../GraphQL/mutation/MutationCreateWork";
 import { PageComponentProps } from "../../App";
 import createSignedUrl from "../../api/createSignedUrl";
+import fileUploadToS3  from "../../api/fileUploadToS3";
 
 export default class extends React.Component<PageComponentProps<{}>> {
 
@@ -21,9 +22,9 @@ export default class extends React.Component<PageComponentProps<{}>> {
 
         return (
             <Mutation mutation={MutationCreateWork} >
-                {(createWork, { data }) => console.log(data) || (
+                {(createWork, data) => console.log(data) || (
                     <Host
-                    // tslint:disable-next-line jsx-no-lambda
+                        // tslint:disable-next-line jsx-no-lambda
                         onSubmit={async e => {
                             e.preventDefault();
 
@@ -39,19 +40,34 @@ export default class extends React.Component<PageComponentProps<{}>> {
                                         imageUri: "test.comyy/test",
                                         userId: auth.token!.payload.sub
                                     }
+                                },
+                                optimisticResponse: {
+                                    __typename: "Mutation",
+                                    createWork: {
+                                        title,
+                                        id: "",
+                                        userId: auth.token!.payload.sub,
+                                        tags: [],
+                                        imageUri: "test.comyy/test",
+                                        createdAt: "",
+                                        __typename: "Work"
+                                    }
                                 }
                             });
 
                             // Memo Testでここを使わせてもらいます。
 
                             const image = (e.target as any).elements["image1"].files[0];
-                            console.log("image", image);
-                            const res = await createSignedUrl({
+                            const signedUrl = await createSignedUrl({
                                 jwt: auth.token!.jwtToken,
-                                filename: "test/test",
+                                filename: `/users/${auth.token!.payload.sub}/works/`,
                                 mimetype: image.type
                             });
-                            console.log(res);
+                            await new Promise(resolve => setTimeout(() => resolve(), 60000));
+                            await fileUploadToS3({
+                                url: signedUrl,
+                                file: image
+                            });
                         }}
                     >
                         <InputImages>
