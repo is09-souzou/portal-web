@@ -118,7 +118,7 @@ export default class extends React.Component<Props, State> {
                                 resolve();
                             },
                             onFailure: e => {
-                                localStorage.clear()
+                                localStorage.clear();
                                 reject(e);
                             }
                         });
