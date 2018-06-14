@@ -50,7 +50,10 @@ export default (
 
                         try {
 
-                            await onSignUp(email, password, { "custom:display_name": displayName });
+                            await onSignUp(
+                                email, password,
+                                { email, "custom:display_name": displayName }
+                            );
                             // createUser({
                             //     variables: {
                             //         email,
