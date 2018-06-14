@@ -10,7 +10,7 @@ export default {
     },
     cognito: {
         region: "ap-northeast-1",
-        UserPoolId: "ap-northeast-1_cl74QBXUP",
-        ClientId: "7f1ltcm2dc09egbr38mnqe2tga",
+        UserPoolId: "ap-northeast-1_pf2BvmaQs",
+        ClientId: "1mpr870so7jgsaptaf1qes2tvc",
     }
 };

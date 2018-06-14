@@ -21,7 +21,7 @@ export default class extends React.Component<PageComponentProps<{}>> {
         } = this.props;
 
         return (
-            <Mutation mutation={MutationCreateWork} >
+            <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
                 {(createWork, data) => console.log(data) || (
                     <Host
                         // tslint:disable-next-line jsx-no-lambda
