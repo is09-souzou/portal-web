@@ -14,7 +14,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
     render() {
 
         const {
-            errorListener
+            notificationListener
         } = this.props;
 
         return (
@@ -24,7 +24,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                     if (error) {
                         return ([
                             <div key="page">cry；；</div>,
-                            <errorListener.ErrorComponent error={error} key="error"/>
+                            <notificationListener.ErrorComponent error={error} key="error"/>
                         ]);
                     }
 

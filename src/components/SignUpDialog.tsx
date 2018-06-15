@@ -1,30 +1,29 @@
 import React from "react";
-import { Mutation } from "react-apollo";
-import MutationCreateUser from "../GraphQL/mutation/MutationCreateUser";
 import styled from "styled-components";
 import {
+    Slide,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    Slide,
     TextField,
     Button,
 } from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog";
-import { SingUp, SingIn } from "./wrapper/Auth";
-import { OnError } from "./wrapper/ErrorListener";
+import { SingUp } from "./wrapper/Auth";
+import { NotificationListener } from "./wrapper/NotificationListener";
+import { SlideProps } from "@material-ui/core/Slide";
 
-const Transition = (props: any) =>  <Slide direction="up" {...props} />;
+const Transition = (props: SlideProps) =>  <Slide direction="up" {...props} />;
 
 interface Props extends DialogProps {
-    onCustomError: OnError;
+    notificationListener: NotificationListener;
     onSignUp: SingUp;
 }
 
 export default (
     {
-        onCustomError,
+        notificationListener,
         onClose,
         onSignUp,
         ...props
@@ -37,76 +36,65 @@ export default (
         aria-describedby="alert-dialog-slide-description"
         {...props}
     >
-        <Mutation mutation={MutationCreateUser}>
-            {(createUser, { data }) => console.log(data) || (
-                <form
-                    // tslint:disable-next-line:jsx-no-lambda
-                    onSubmit={async e => {
-                        e.preventDefault();
+        <form
+            // tslint:disable-next-line:jsx-no-lambda
+            onSubmit={async e => {
+                e.preventDefault();
 
-                        const displayName = (e.target as any).elements["sign-up-display-name"].value;
-                        const email = (e.target as any).elements["sign-up-email"].value;
-                        const password = (e.target as any).elements["sign-up-password"].value;
+                const displayName = (e.target as any).elements["sign-up-display-name"].value;
+                const email = (e.target as any).elements["sign-up-email"].value;
+                const password = (e.target as any).elements["sign-up-password"].value;
 
-                        try {
-
-                            await onSignUp(
-                                email, password,
-                                { email, "custom:display_name": displayName }
-                            );
-                            // createUser({
-                            //     variables: {
-                            //         email,
-                            //         displayName,
-                            //         id: token.payload.sub
-                            //     }
-                            // });
-                        } catch (e) {
-                            onCustomError(e);
-                            return;
-                        }
-                        onClose && onClose(e);
-                    }}
+                try {
+                    await onSignUp(
+                        email, password,
+                        { email, "custom:display_name": displayName }
+                    );
+                    notificationListener.notification("info", "Send Mail");
+                } catch (e) {
+                    notificationListener.errorNotification(e);
+                    return;
+                }
+                onClose && onClose(e);
+            }}
+        >
+            <DialogTitle id="alert-dialog-slide-title">
+                Create Account
+            </DialogTitle>
+            <StyledDialogContent>
+                <TextField
+                    name="sign-up-email"
+                    label="Email Address"
+                    margin="normal"
+                    type="email"
+                    required
+                />
+                <TextField
+                    name="sign-up-password"
+                    label="Password"
+                    margin="normal"
+                    type="password"
+                    required
+                />
+                <TextField
+                    name="sign-up-display-name"
+                    label="Display Name"
+                    margin="normal"
+                    type="none"
+                    required
+                />
+            </StyledDialogContent>
+            <DialogActions>
+                <Button
+                    onClick={onClose}
                 >
-                    <DialogTitle id="alert-dialog-slide-title">
-                        Create Account
-                    </DialogTitle>
-                    <StyledDialogContent>
-                        <TextField
-                            name="sign-up-display-name"
-                            label="Display Name"
-                            margin="normal"
-                            type="none"
-                            required
-                        />
-                        <TextField
-                            name="sign-up-email"
-                            label="Email Address"
-                            margin="normal"
-                            type="email"
-                            required
-                        />
-                        <TextField
-                            name="sign-up-password"
-                            label="Password"
-                            margin="normal"
-                            type="password"
-                            required
-                        />
-                    </StyledDialogContent>
-                    <DialogActions>
-                        <Button
-                            onClick={onClose}
-                        >
-                            cancel
-                        </Button>
-                        <Button component="button" color="primary" type="submit" variant="raised">
-                            submit
-                        </Button>
-                    </DialogActions>
-                </form>
-            )}
-        </Mutation>
+                    cancel
+                </Button>
+                <Button component="button" color="primary" type="submit" variant="raised">
+                    submit
+                </Button>
+            </DialogActions>
+        </form>
     </Dialog>
 );
 

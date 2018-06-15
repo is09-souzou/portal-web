@@ -7,9 +7,9 @@ import {
 } from "react-router-dom";
 import { createMuiTheme }   from "@material-ui/core/styles";
 import { MuiThemeProvider } from "@material-ui/core";
-import Auth, { AuthProps }                    from "./components/wrapper/Auth";
-import AppSyncClient                          from "./components/wrapper/AppSyncClient";
-import ErrorListener, { ErrorListenerProps }  from "./components/wrapper/ErrorListener";
+import Auth, { AuthProps }                                  from "./components/wrapper/Auth";
+import AppSyncClient                                        from "./components/wrapper/AppSyncClient";
+import NotificationListener, { NotificationListenerProps }  from "./components/wrapper/NotificationListener";
 
 import WorkPage                from "./components/page/WorkPage";
 import AccountRegistrationPage from "./components/page/AccountRegistrationPage";
@@ -24,7 +24,7 @@ import UserListPage   from "./components/page/UserListPage";
 import UserPage       from "./components/page/UserPage";
 
 // tslint:disable-next-line:max-line-length
-const Root = withRouter<ErrorListenerProps & RouteComponentProps<any>>((props: RouteComponentProps<any> & ErrorListenerProps) => (
+const Root = withRouter<NotificationListenerProps & RouteComponentProps<any>>((props: RouteComponentProps<any> & NotificationListenerProps) => (
     <Auth
         // tslint:disable-next-line:jsx-no-lambda
         render={(authProps: AuthProps) => (
@@ -43,11 +43,11 @@ const Root = withRouter<ErrorListenerProps & RouteComponentProps<any>>((props: R
 export default () => (
     <MuiThemeProvider theme={theme}>
         <BrowserRouter>
-            <ErrorListener
+            <NotificationListener
                 // tslint:disable-next-line:jsx-no-lambda
-                render={(errorListener: ErrorListenerProps) =>
+                render={(notificationListener: NotificationListenerProps) =>
                     <Root
-                        {...errorListener}
+                        {...notificationListener}
                     >
                         <ComposingSwitch>
                             <ComposingRoute
@@ -118,6 +118,6 @@ const theme = createMuiTheme({
     },
 });
 
-export interface PageComponentProps<T> extends RouteComponentProps<T>, AuthProps, ErrorListenerProps {
+export interface PageComponentProps<T> extends RouteComponentProps<T>, AuthProps, NotificationListenerProps {
     computedMatch?: match<T>;
 }

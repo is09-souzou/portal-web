@@ -30,7 +30,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 
         const {
             auth,
-            errorListener,
+            notificationListener,
             children,
             history,
             ...props
@@ -65,14 +65,15 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     <Header
                         onMenuButtonClick={this.toggleDrawer}
                         auth={auth}
-                        onError={errorListener.onError}
+                        history={history}
+                        notificationListener={notificationListener}
                     />
                     <Main>
                         {React.cloneElement(
                             children as ReactElement<any>,
                             {
                                 auth,
-                                errorListener,
+                                notificationListener,
                                 history,
                                 ...props
                             }

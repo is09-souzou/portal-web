@@ -9,11 +9,13 @@ import {
     TextField
 } from "@material-ui/core";
 import styled from "styled-components";
+import { SlideProps } from "@material-ui/core/Slide";
+import { ErrorNotification } from "./wrapper/NotificationListener";
 
 interface Props {
     open: boolean;
     onClose: () => void;
-    onError: (error: Error) => void;
+    onError: ErrorNotification;
     onSignIn: (email: string, password: string) => void;
     onCreateAcountButtonClick: () => void;
 }
@@ -86,7 +88,7 @@ export default (
     </Dialog>
 );
 
-const Transition = (props:any) =>  <Slide direction="up" {...props} />;
+const Transition = (props:SlideProps) =>  <Slide direction="up" {...props} />;
 
 const StyledDialogContent = styled(DialogContent)`
     && {

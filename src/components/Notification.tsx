@@ -22,7 +22,7 @@ interface Props extends StandardProps<
     autoHideDuration?: number;
     ContentProps?: Partial<SnackbarContentProps>;
     disableWindowBlurListener?: boolean;
-    message?: React.ReactElement<any>;
+    message: string;
     onClose?: () => void;
     onMouseEnter?: React.MouseEventHandler<any>;
     onMouseLeave?: React.MouseEventHandler<any>;
@@ -31,7 +31,7 @@ interface Props extends StandardProps<
     TransitionComponent?: React.ReactType;
     transitionDuration?: TransitionProps["timeout"];
     TransitionProps?: TransitionProps;
-    error: Error;
+    type: "info" | "error";
 }
 
 export default class extends React.Component<Props, { open: boolean }> {
@@ -46,22 +46,30 @@ export default class extends React.Component<Props, { open: boolean }> {
 
     render() {
 
+        const {
+            onClose,
+            type,
+            message,
+            ...props
+        } = this.props;
+
         return (
             <Snackbar
                 anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "left",
                 }}
-                onClose={this.props.onClose || this.onClose}
+                onClose={onClose || this.onClose}
                 autoHideDuration={6000}
                 ContentProps={{
                     "aria-describedby": "message-id",
                 }}
                 open={this.state.open}
-                {...this.props}
+                {...props}
             >
                 <StyledSnackbarContent
-                    message={<span id="message-id">{this.props.error.message}</span>}
+                    type={type}
+                    message={<span id="message-id">{message}</span>}
                     action={[
                         <IconButton
                             key="close"
@@ -80,7 +88,7 @@ export default class extends React.Component<Props, { open: boolean }> {
 
 const StyledSnackbarContentBase = styled(SnackbarContent)`
     && {
-        background-color: ${(props: any) => props.theme.palette.error.dark}
+        ${(props: any) => props.type === "error" ? `background-color: ${props.theme.palette.error.dark}` : ""}
     }
 `;
 

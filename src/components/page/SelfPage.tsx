@@ -33,7 +33,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     render() {
         const {
             auth,
-            errorListener
+            notificationListener
         } = this.props;
 
         if (!auth.token)
@@ -50,7 +50,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     if (error) {
                         return ([
                             <div key="page">cry；；</div>,
-                            <errorListener.ErrorComponent error={error} key="error"/>
+                            <notificationListener.ErrorComponent error={error} key="error"/>
                         ]);
                     }
 

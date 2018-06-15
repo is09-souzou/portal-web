@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import * as H from "history";
 import {
     AccountCircle as AccountCircleIcon,
     Menu as MenuIcon,
@@ -17,17 +18,18 @@ import { AuthProps } from "./wrapper/Auth";
 import SignInDialog from "./SignInDialog";
 import SignUpDialog from "./SignUpDialog";
 import Link         from "./Link";
+import toObjectFromURIQuery from "../api/toObjectFromURIQuery";
+import { NotificationListener } from "./wrapper/NotificationListener";
 
 interface Props extends AuthProps {
-    onError: (error: Error) => void;
+    history: H.History;
+    notificationListener: NotificationListener;
     onMenuButtonClick: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
 interface State {
     userMenuAnchorEl: HTMLElement | undefined;
     userMenuOpend: boolean;
-    signInDialogVisible: boolean;
-    signUpDialogVisible: boolean;
 }
 
 export default class extends React.Component<Props, State> {
@@ -36,8 +38,6 @@ export default class extends React.Component<Props, State> {
         this.setState({
             userMenuAnchorEl: undefined,
             userMenuOpend: false,
-            signInDialogVisible: false,
-            signUpDialogVisible: false
         });
     }
 
@@ -46,13 +46,13 @@ export default class extends React.Component<Props, State> {
 
     menuClose = () => this.setState({ userMenuAnchorEl: undefined });
 
-    signInDialogOpen = () => this.setState({ signInDialogVisible: true });
+    signInDialogOpen = () => this.props.history.push("?sign-in=true");
 
-    signUpDialogOpen = () => this.setState({ signInDialogVisible: false, signUpDialogVisible: true });
+    signUpDialogOpen = () => this.props.history.push("?sign-up=true");
 
-    signInDialogClose = () => this.setState({ signInDialogVisible: false });
+    signInDialogClose = () => this.props.history.push("?sign-in=false");
 
-    signUpDialogClose = () => this.setState({ signUpDialogVisible: false });
+    signUpDialogClose = () =>  this.props.history.push("?sign-up=false");
 
     signIn = async (email: string, password: string) => {
         await this.props.auth.signIn(email, password);
@@ -63,9 +63,14 @@ export default class extends React.Component<Props, State> {
 
         const {
             auth,
-            onError,
+            history,
+            notificationListener,
             onMenuButtonClick
         } = this.props;
+
+        const queryParam = toObjectFromURIQuery(history.location.search);
+        const signInDialogVisible = queryParam ? queryParam["sign-in"] === "true" : false;
+        const signUpDialogVisible = queryParam ? queryParam["sign-up"] === "true" : false;
 
         return (
             <StyledAppBar position="fixed">
@@ -127,17 +132,17 @@ export default class extends React.Component<Props, State> {
                     </div>
                 </StyledToolbar>
                 <SignInDialog
-                    open={this.state.signInDialogVisible}
+                    open={signInDialogVisible}
                     onClose={this.signInDialogClose}
                     onSignIn={this.signIn}
                     onCreateAcountButtonClick={this.signUpDialogOpen}
-                    onError={onError}
+                    onError={notificationListener.errorNotification}
                 />
                 <SignUpDialog
-                    open={this.state.signUpDialogVisible}
+                    notificationListener={notificationListener}
+                    open={signUpDialogVisible}
                     onClose={this.signUpDialogClose}
                     onSignUp={auth.signUp}
-                    onCustomError={onError}
                 />
             </StyledAppBar>
         );
