@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import {
     Button,
+    Chip,
     TextField,
     withTheme
 } from "@material-ui/core";
@@ -12,10 +13,29 @@ import { PageComponentProps } from "../../App";
 import createSignedUrl from "../../api/createSignedUrl";
 import fileUploadToS3  from "../../api/fileUploadToS3";
 
-export default class extends React.Component<PageComponentProps<{}>> {
+interface State {
+    Chipdata: any;
+}
+
+export default class extends React.Component<PageComponentProps<{}>, State> {
+
+    componentWillMount() {
+        this.setState({
+            Chipdata: [
+                {
+                    key: 0,
+                    label: "testLabel-0"
+                },
+                {
+                    key: 1,
+                    label: "testLabel-1"
+                },
+            ]
+        });
+    }
 
     render() {
-
+        console.log(this.state.Chipdata);
         const {
             auth
         } = this.props;
@@ -101,6 +121,7 @@ export default class extends React.Component<PageComponentProps<{}>> {
                                     height="108"
                                 />
                             </SubImages>
+                        </InputImages>
                             <div>
                                 <StyledTitleField
                                     id="title"
@@ -123,7 +144,15 @@ export default class extends React.Component<PageComponentProps<{}>> {
                                     create
                                 </CreateButton>
                             </div>
-                        </InputImages>
+                        {this.state.Chipdata.map(data => {
+                            return(
+                                // tslint:disable-next-line:jsx-key
+                                <Chip
+                                    key={data.label}
+                                    label={data.label}
+                                />
+                            );
+                        })}
                     </Host>
                 )}
             </Mutation>
