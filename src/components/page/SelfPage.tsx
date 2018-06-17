@@ -74,7 +74,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             <StyledPanel>
                                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                                     <Typography>
-                                        displayName
+                                        DisplayName
                                     </Typography>
                                 </ExpansionPanelSummary>
                                 <StyledPanelDetails>
@@ -174,12 +174,12 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     {this.state.messageEditing ?
                                         <StyledTextField
                                             id="self-name"
-                                            default={data.getUser.messeage}
+                                            default={data.getUser.message}
                                             margin="normal"
                                         />
                                     :
                                         <StyledPersonalData>
-                                            {data.getUser.messeage}
+                                            {data.getUser.message}
                                         </StyledPersonalData>
                                     }
                                 </StyledPanelDetails>
