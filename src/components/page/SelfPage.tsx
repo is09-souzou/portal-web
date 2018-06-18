@@ -15,35 +15,23 @@ import {
 } from "@material-ui/core";
 import { PageComponentProps } from "../../App";
 
+type Item = "displayName" | "email";
+
 interface State {
-    userEditing: boolean;
-    emailEditing: boolean;
-    careerEditing: boolean;
-    messageEditing: boolean;
+    opendItem?: Item;
 }
 
 export default class extends React.Component<PageComponentProps<{}>, State> {
 
     componentWillMount() {
         this.setState({
-            nameEditing: false,
-            emailEditing: false,
-            careerEditing: false,
-            messageEditing: false
+            opendItem: undefined
         });
     }
 
-    nameEditingStart = () => this.setState({ nameEditing: true });
-    nameEditingEnd = () => this.setState({ nameEditing: false });
-
-    emailEditingStart = () => this.setState({ emailEditing: true });
-    emailEditingEnd = () => this.setState({ emailEditing: false });
-
-    careerEditingStart = () => this.setState({ careerEditing: true });
-    careerEditingEnd = () => this.setState({ careerEditing: false });
-
-    messageEditingStart = () => this.setState({ messageEditing: true });
-    messageEditingEnd = () => this.setState({ messageEditing: false });
+    handleChange = (item: Item) => () => this.setState({
+        opendItem: this.state.opendItem === item ? undefined : item
+    })
 
     render() {
         const {
@@ -71,176 +59,48 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 
                     return (
                         <div>
-                            {/* StyledPanelの下に三項演算子を置くとなぜかAction要素でエラーを吐くため一時的にStylePanelの上に三項演算子を置いてます */}
-                            {/* 解決策が見つかり次第修正します */}
-                            {this.state.nameEditing ?
-                                <StyledPanel>
-                                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                        <Typography>
-                                            DisplayName
-                                        </Typography>
-                                    </ExpansionPanelSummary>
-                                    <StyledPanelDetails>
-                                        <StyledTextField
-                                            required
-                                            id="self-name"
-                                            defaultValue={data.getUser.name}
-                                            margin="normal"
-                                        />
-                                    </StyledPanelDetails>
-                                    <Divider />
-                                    <StyledPanelActions>
-                                        <Button color="primary" onClick={this.nameEditingEnd}>
-                                            Save
-                                        </Button>
-                                    </StyledPanelActions>
-                                </StyledPanel>
-                            :
-                                <StyledPanel>
-                                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                        <Typography>
-                                            DisplayName
-                                        </Typography>
-                                    </ExpansionPanelSummary>
-                                    <StyledPanelDetails>
-                                        <StyledPersonalData>
-                                            {data.getUser.name}
-                                        </StyledPersonalData>
-                                    </StyledPanelDetails>
-                                    <Divider />
-                                    <StyledPanelActions>
-                                        <Button color="primary" onClick={this.nameEditingStart}>
-                                            Edit
-                                        </Button>
-                                    </StyledPanelActions>
-                                </StyledPanel>
-                            }
-                            {this.state.emailEditing ?
-                                <StyledPanel>
-                                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                        <Typography>
-                                            Email
-                                        </Typography>
-                                    </ExpansionPanelSummary>
-                                    <StyledPanelDetails>
-                                        <StyledTextField
-                                            required
-                                            id="self-email"
-                                            defaultValue={data.getUser.email}
-                                            margin="normal"
-                                        />
-                                    </StyledPanelDetails>
-                                    <Divider />
-                                    <StyledPanelActions>
-                                        <Button color="primary" onClick={this.emailEditingEnd}>
-                                            Save
-                                        </Button>
-                                    </StyledPanelActions>
-                                </StyledPanel>
-                            :
-                                <StyledPanel>
-                                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                        <Typography>
-                                            Email
-                                        </Typography>
-                                    </ExpansionPanelSummary>
-                                    <StyledPanelDetails>
-                                        <StyledPersonalData>
-                                            {data.getUser.email}
-                                        </StyledPersonalData>
-                                    </StyledPanelDetails>
-                                    <Divider />
-                                    <StyledPanelActions>
-                                        <Button color="primary" onClick={this.emailEditingStart}>
-                                            Edit
-                                        </Button>
-                                    </StyledPanelActions>
-                                </StyledPanel>
-                            }
-                            {this.state.careerEditing ?
-                                <StyledPanel>
-                                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                        <Typography>
-                                            Career
-                                        </Typography>
-                                    </ExpansionPanelSummary>
-                                    <StyledPanelDetails>
-                                        <StyledTextField
-                                            required
-                                            id="self-career"
-                                            defaultValue={data.getUser.career}
-                                            margin="normal"
-                                        />
-                                    </StyledPanelDetails>
-                                    <Divider />
-                                    <StyledPanelActions>
-                                        <Button color="primary" onClick={this.careerEditingEnd}>
-                                            Save
-                                        </Button>
-                                    </StyledPanelActions>
-                                </StyledPanel>
-                            :
-                                <StyledPanel>
-                                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                        <Typography>
-                                            Career
-                                        </Typography>
-                                    </ExpansionPanelSummary>
-                                    <StyledPanelDetails>
-                                        <StyledPersonalData>
-                                            {data.getUser.career}
-                                        </StyledPersonalData>
-                                    </StyledPanelDetails>
-                                    <Divider />
-                                    <StyledPanelActions>
-                                        <Button color="primary" onClick={this.careerEditingStart}>
-                                            Edit
-                                        </Button>
-                                    </StyledPanelActions>
-                                </StyledPanel>
-                            }
-                            {this.state.messageEditing ?
-                                <StyledPanel>
-                                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                        <Typography>
-                                            Message
-                                        </Typography>
-                                    </ExpansionPanelSummary>
-                                    <StyledPanelDetails>
-                                        <StyledTextField
-                                            required
-                                            id="self-message"
-                                            defaultValue={data.getUser.message}
-                                            margin="normal"
-                                        />
-                                    </StyledPanelDetails>
-                                    <Divider />
-                                    <StyledPanelActions>
-                                        <Button color="primary" onClick={this.messageEditingEnd}>
-                                            Save
-                                        </Button>
-                                    </StyledPanelActions>
-                                </StyledPanel>
-                            :
-                                <StyledPanel>
-                                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                        <Typography>
-                                            Message
-                                        </Typography>
-                                    </ExpansionPanelSummary>
-                                    <StyledPanelDetails>
-                                        <StyledPersonalData>
-                                            {data.getUser.message}
-                                        </StyledPersonalData>
-                                    </StyledPanelDetails>
-                                    <Divider />
-                                    <StyledPanelActions>
-                                        <Button color="primary" onClick={this.messageEditingStart}>
-                                            Edit
-                                        </Button>
-                                    </StyledPanelActions>
-                                </StyledPanel>
-                            }
+                            <StyledPanel
+                                expanded={this.state.opendItem === "displayName"}
+                                onChange={this.handleChange("displayName")}
+                            >
+                                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                    <Typography>
+                                        DisplayName
+                                    </Typography>
+                                </ExpansionPanelSummary>
+                                <StyledPanelDetails>
+                                    <StyledPersonalData>
+                                        {data.getUser.name}
+                                    </StyledPersonalData>
+                                </StyledPanelDetails>
+                                <Divider />
+                                <StyledPanelActions>
+                                    <Button color="primary">
+                                        edit
+                                    </Button>
+                                </StyledPanelActions>
+                            </StyledPanel>
+                            <StyledPanel
+                                expanded={this.state.opendItem === `email`}
+                                onChange={this.handleChange("email")}
+                            >
+                                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                    <Typography>
+                                        Email
+                                    </Typography>
+                                </ExpansionPanelSummary>
+                                <StyledPanelDetails>
+                                    <StyledPersonalData>
+                                        {data.getUser.email}
+                                    </StyledPersonalData>
+                                </StyledPanelDetails>
+                                <Divider />
+                                <StyledPanelActions>
+                                    <Button color="primary">
+                                        edit
+                                    </Button>
+                                </StyledPanelActions>
+                            </StyledPanel>
                         </div>
                     );
                 }}
