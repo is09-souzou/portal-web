@@ -1,14 +1,14 @@
 import gql from "graphql-tag";
 
 export default gql(`
-    query($id: ID!) {
+    query($id: String!) {
         getUser(id: $id) {
             id
             email
             name
             career
-            avatorURI
-            messeage
+            avatarUri
+            message
         }
     }`
 );
