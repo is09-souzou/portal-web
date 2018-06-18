@@ -13,15 +13,22 @@ import { PageComponentProps } from "../../App";
 import createSignedUrl from "../../api/createSignedUrl";
 import fileUploadToS3  from "../../api/fileUploadToS3";
 
-interface State {
-    Chipdata: any;
+interface Chip {
+    key  : number;
+    label: string;
 }
 
-export default class extends React.Component<PageComponentProps<{}>, State> {
+interface State {
+    // chipData: any;
+    // tslint:disable-next-line:prefer-array-literal
+    chipData: Array<Chip>;
+}
+
+export default class extends React.Component<PageComponentProps<void>, State> {
 
     componentWillMount() {
         this.setState({
-            Chipdata: [
+            chipData: [
                 {
                     key: 0,
                     label: "testLabel-0"
@@ -34,15 +41,12 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
         });
     }
 
-    chipDelete = data => () => {
-        const chips = [...this.state.Chipdata];
-        console.log(data.key);
-        const chipToDelete = chips.filter(x => data.key !== x.key);
-        this.setState({ chips });
-    }
+    deleteChip = (data: Chip) => () => this.setState({
+        chipData: this.state.chipData.filter(x => data.key !== x.key)
+    })
 
     render() {
-        console.log(this.state.Chipdata);
+        console.log(this.state.chipData);
         const {
             auth
         } = this.props;
@@ -151,16 +155,13 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     create
                                 </CreateButton>
                             </div>
-                        {this.state.Chipdata.map(data => {
-                            return(
-                                // tslint:disable-next-line:jsx-key
-                                <Chip
-                                    key={data.key}
-                                    label={data.label}
-                                    onDelete={this.chipDelete(data)}
-                                />
-                            );
-                        })}
+                        {this.state.chipData.map(data =>
+                            <Chip
+                                key={data.key}
+                                label={data.label}
+                                onDelete={this.deleteChip(data)}
+                            />
+                        )}
                     </Host>
                 )}
             </Mutation>
