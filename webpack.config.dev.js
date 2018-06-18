@@ -11,6 +11,7 @@ module.exports = {
         path: path.resolve(__dirname, "dist")
     },
     resolve: {
+        modules: ["node_modules"],
         extensions: [".js", ".jsx", ".ts", ".tsx", ".json"]
     },
     module: {
@@ -35,5 +36,5 @@ module.exports = {
         },
         content: path.resolve(__dirname, 'assets'),
         open: true
-	  },
+    }
 };
