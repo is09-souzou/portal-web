@@ -4,7 +4,7 @@ import {
     Drawer,
     Button
 } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
+import { Add as AddIcon } from "@material-ui/icons";
 import Header    from "./Header";
 import Navigator from "./Navigator";
 import Link      from "./Link";

@@ -20,6 +20,10 @@ module.exports = {
                 test: /\.(jsx?|tsx?)$/,
                 use: "babel-loader",
                 exclude: /node_modules/
+            },
+            {
+                test: /\.tsx?$/,
+                loader: 'ts-loader'
             }
         ]
     },

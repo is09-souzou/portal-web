@@ -6,7 +6,7 @@ import {
     IconButton,
     withTheme
 } from "@material-ui/core";
-import CloseIcon from "@material-ui/icons/Close";
+import { Close as CloseIcon } from "@material-ui/icons";
 import { SnackbarClassKey, SnackBarOrigin } from "@material-ui/core/Snackbar";
 import { SnackbarContentProps } from "@material-ui/core/SnackbarContent";
 import { TransitionHandlerProps } from "@material-ui/core/transitions/transition";

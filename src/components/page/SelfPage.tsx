@@ -2,7 +2,7 @@ import React from "react";
 import { Query } from "react-apollo";
 import styled from "styled-components";
 import QueryGetUser from "../../GraphQL/query/QueryGetUser";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { ExpandMore as ExpandMoreIcon } from "@material-ui/icons";
 import {
     Button,
     Divider,
@@ -10,7 +10,6 @@ import {
     ExpansionPanelDetails,
     ExpansionPanelSummary,
     ExpansionPanelActions,
-    TextField,
     Typography
 } from "@material-ui/core";
 import { PageComponentProps } from "../../App";
@@ -131,11 +130,5 @@ const StyledPanelActions = styled(ExpansionPanelActions)`
     && {
         height: 1rem;
         padding-top: 2%;
-    }
-`;
-const StyledTextField = styled(TextField)`
-    && {
-        margin-left: 2rem;
-        width: 20rem;
     }
 `;
