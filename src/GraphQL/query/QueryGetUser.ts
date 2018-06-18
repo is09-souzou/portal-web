@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export default gql(`
-    query($id: String!) {
+    query($id: ID!) {
         getUser(id: $id) {
             id
             email
