@@ -34,6 +34,13 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
         });
     }
 
+    chipDelete = data => () => {
+        const chips = [...this.state.Chipdata];
+        console.log(data.key);
+        const chipToDelete = chips.filter(x => data.key !== x.key);
+        this.setState({ chips });
+    }
+
     render() {
         console.log(this.state.Chipdata);
         const {
@@ -148,8 +155,9 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             return(
                                 // tslint:disable-next-line:jsx-key
                                 <Chip
-                                    key={data.label}
+                                    key={data.key}
                                     label={data.label}
+                                    onDelete={this.chipDelete(data)}
                                 />
                             );
                         })}
