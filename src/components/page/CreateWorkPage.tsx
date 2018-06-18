@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {
     Button,
     Chip,
+    Input,
     TextField,
     withTheme
 } from "@material-ui/core";
@@ -14,39 +15,44 @@ import createSignedUrl from "../../api/createSignedUrl";
 import fileUploadToS3  from "../../api/fileUploadToS3";
 
 interface Chip {
-    key  : number;
+    key  : string;
     label: string;
 }
 
 interface State {
-    // chipData: any;
+    // chipsData: any;
     // tslint:disable-next-line:prefer-array-literal
-    chipData: Array<Chip>;
+    chipsData: Array<Chip>;
 }
 
 export default class extends React.Component<PageComponentProps<void>, State> {
 
     componentWillMount() {
         this.setState({
-            chipData: [
-                {
-                    key: 0,
-                    label: "testLabel-0"
-                },
-                {
-                    key: 1,
-                    label: "testLabel-1"
-                },
+            chipsData: [
             ]
         });
     }
 
     deleteChip = (data: Chip) => () => this.setState({
-        chipData: this.state.chipData.filter(x => data.key !== x.key)
+        chipsData: this.state.chipsData.filter(x => data.key !== x.key)
     })
 
+    tagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+            e.preventDefault();
+            this.setState({
+                chipsData: this.state.chipsData.some(x => x.label === (e.target as any).value) ? this.state.chipsData :
+                this.state.chipsData.concat({
+                    key: (e.target as any).value,
+                    label: (e.target as any).value,
+                })
+            });
+            (e.target as any).value = "";
+        }
+    }
     render() {
-        console.log(this.state.chipData);
+        console.log(this.state.chipsData);
         const {
             auth
         } = this.props;
@@ -155,13 +161,21 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                     create
                                 </CreateButton>
                             </div>
-                        {this.state.chipData.map(data =>
-                            <Chip
-                                key={data.key}
-                                label={data.label}
-                                onDelete={this.deleteChip(data)}
+                        <div>
+                            {this.state.chipsData.map(data =>
+                                <Chip
+                                    key={data.key}
+                                    clickable={false}
+                                    label={data.label}
+                                    onDelete={this.deleteChip(data)}
+                                />
+                            )}
+                            <Input
+                                placeholder="tags"
+                                // tslint:disable-next-line:jsx-no-lambda
+                                onKeyDown={this.tagInputKeyDown}
                             />
-                        )}
+                        </div>
                     </Host>
                 )}
             </Mutation>
