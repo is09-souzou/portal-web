@@ -29,6 +29,7 @@ export default class extends React.Component<Props, State> {
 
     render() {
         const {
+            className,
             defaultImageUrl,
             disabled = false,
             height = "128",
@@ -45,7 +46,9 @@ export default class extends React.Component<Props, State> {
         } = this.props;
 
         return (
-            <Host>
+            <Host
+                className={className}
+            >
                 <label
                     htmlFor={id}
                 >
