@@ -5,7 +5,9 @@ import {
     Chip,
     Input,
     TextField,
-    withTheme
+    withTheme,
+    MuiThemeProvider,
+    createMuiTheme
 } from "@material-ui/core";
 import ImageInput from "../ImageInput";
 import { Mutation } from "react-apollo";
@@ -112,11 +114,13 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                         }}
                     >
                     <div>
+                    <MuiThemeProvider theme={theme}>
                         <StyledTitleField
                                 id="title"
                                 label="Title"
                                 margin="normal"
                         />
+                    </MuiThemeProvider>
                         <InputDiv>
                             <StyledImageInput
                                 labelText="upload image"
@@ -132,11 +136,13 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                     height="144"
                                 />
                                 <StyledImageInput
+                                    labelText="upload image"
                                     name="image3"
                                     width="256"
                                     height="144"
                                 />
                                 <StyledImageInput
+                                    labelText="upload image"
                                     name="image4"
                                     width="256"
                                     height="144"
@@ -183,6 +189,16 @@ export default class extends React.Component<PageComponentProps<void>, State> {
     }
 }
 
+const theme = createMuiTheme({
+    overrides: {
+        MuiInput: {
+            root: {
+                fontSize: "2rem",
+            },
+        },
+    },
+});
+
 const Host = styled.form`
     margin: 3rem;
     display: flex;
@@ -203,7 +219,7 @@ const SubImages = styled.div`
 `;
 
 const StyledImageInput = styled(ImageInput)`
-    margin: 4rem;
+    margin: 0;
 `;
 
 const StyledTitleFieldBase = styled(TextField)`
