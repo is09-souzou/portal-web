@@ -111,70 +111,70 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                             });
                         }}
                     >
-                        <InputImages>
-                            <ImageInput
+                    <div>
+                        <StyledTitleField
+                                id="title"
+                                label="Title"
+                                margin="normal"
+                        />
+                        <InputDiv>
+                            <StyledImageInput
                                 labelText="upload image"
                                 name="image1"
-                                width="216"
-                                height="216"
+                                width="736"
+                                height="414"
                             />
                             <SubImages>
-                                <ImageInput
+                                <StyledImageInput
                                     labelText="upload image"
                                     name="image2"
-                                    width="108"
-                                    height="108"
+                                    width="256"
+                                    height="144"
                                 />
-                                <ImageInput
-                                    labelText="upload image"
+                                <StyledImageInput
                                     name="image3"
-                                    width="108"
-                                    height="108"
+                                    width="256"
+                                    height="144"
                                 />
-                                <ImageInput
-                                    labelText="upload image"
+                                <StyledImageInput
                                     name="image4"
-                                    width="108"
-                                    height="108"
+                                    width="256"
+                                    height="144"
                                 />
                             </SubImages>
-                        </InputImages>
-                            <div>
-                                <StyledTitleField
-                                    id="title"
-                                    label="Title"
-                                    margin="normal"
-                                />
-                                <StyledTextField
-                                    id="description"
-                                    label="Description"
-                                    multiline
-                                    rows="6"
-                                    margin="normal"
-                                />
-                                <CreateButton
-                                    type="submit"
-                                    component="button"
-                                    variant="outlined"
-                                    color="primary"
-                                >
-                                    create
-                                </CreateButton>
-                            </div>
+                        </InputDiv>
                         <div>
-                            {this.state.chipsData.map(data =>
-                                <Chip
-                                    key={data.key}
-                                    clickable={false}
-                                    label={data.label}
-                                    onDelete={this.deleteChip(data)}
-                                />
-                            )}
-                            <Input
-                                placeholder="tags"
-                                // tslint:disable-next-line:jsx-no-lambda
-                                onKeyDown={this.tagInputKeyDown}
+                            <StyledTextField
+                                id="description"
+                                label="Description"
+                                multiline
+                                rows="8"
+                                margin="normal"
                             />
+                            <TagsInput>
+                                {this.state.chipsData.map(data =>
+                                    <Chip
+                                        key={data.key}
+                                        clickable={false}
+                                        label={data.label}
+                                        onDelete={this.deleteChip(data)}
+                                    />
+                                )}
+                                <Input
+                                    placeholder="tags"
+                                    // tslint:disable-next-line:jsx-no-lambda
+                                    onKeyDown={this.tagInputKeyDown}
+                                />
+                            </TagsInput>
+                            <CreateButton
+                                type="submit"
+                                component="button"
+                                variant="outlined"
+                                color="primary"
+                            >
+                                create
+                            </CreateButton>
+                        </div>
                         </div>
                     </Host>
                 )}
@@ -189,31 +189,44 @@ const Host = styled.form`
     flex-wrap: wrap;
 `;
 
+const InputDiv = styled.div`
+    display:flex;
+    flex-direction: row;
+`;
+
 const SubImages = styled.div`
     &&{
+        margin-left: 1rem;
         display: flex;
+        flex-direction: column;
     }
 `;
 
-const InputImages = styled.div`
+const StyledImageInput = styled(ImageInput)`
+    margin: 4rem;
+`;
+
+const StyledTitleFieldBase = styled(TextField)`
     && {
-        margin: 1erm;
+        margin-top: 2rem;
+        margin-left: ${(props: any) => props.theme.spacing.unit}px;
+        margin-right: ${(props: any) => props.theme.spacing.unit}px;
+        display: flex;
+        width: 20rem;
     }
 `;
 
-const StyledTitleField = styled(TextField)`
-    && {
-        marginLeft: theme.spacing.unit;
-        marginRight: theme.spacing.unit;
-        display: flex;
-    }
-`;
+const StyledTitleField = withTheme()(
+    (props: any) => <StyledTitleFieldBase {...props}/>
+);
 
 const StyledTextFieldBase = styled(TextField)`
     && {
-        border-top: 1px;
+        border-top: 2rem;
         margin-left: ${(props: any) => props.theme.spacing.unit}px;
         margin-right: ${(props: any) => props.theme.spacing.unit}px;
+        display: flex;
+        width: 20rem;
     }
 `;
 
@@ -221,9 +234,18 @@ const StyledTextField = withTheme()(
     (props: any) => <StyledTextFieldBase {...props}/>
 );
 
+const TagsInput = styled.div`
+    margin-top: 2rem;
+    margin-left: 8px;
+    margin-right: 8px;
+`;
+
 const CreateButton = styled(Button)`
     && {
-        float:right;
+        margin-top: 6rem;
+        width: 3rem;
+        height: 1rem;
+        float: right;
         display: flex;
     }
 `;
