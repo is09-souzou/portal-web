@@ -113,74 +113,80 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                             });
                         }}
                     >
-                    <div>
-                    <MuiThemeProvider theme={theme}>
-                        <StyledTitleField
-                                id="title"
-                                label="Title"
-                                margin="normal"
-                        />
-                    </MuiThemeProvider>
-                        <InputDiv>
-                            <StyledImageInput
-                                labelText="upload image"
-                                name="image1"
-                                width="736"
-                                height="414"
-                            />
-                            <SubImages>
-                                <StyledImageInput
-                                    labelText="upload image"
-                                    name="image2"
-                                    width="256"
-                                    height="144"
-                                />
-                                <StyledImageInput
-                                    labelText="upload image"
-                                    name="image3"
-                                    width="256"
-                                    height="144"
-                                />
-                                <StyledImageInput
-                                    labelText="upload image"
-                                    name="image4"
-                                    width="256"
-                                    height="144"
-                                />
-                            </SubImages>
-                        </InputDiv>
                         <div>
-                            <StyledTextField
-                                id="description"
-                                label="Description"
-                                multiline
-                                rows="8"
-                                margin="normal"
-                            />
-                            <TagsInput>
-                                {this.state.chipsData.map(data =>
-                                    <Chip
-                                        key={data.key}
-                                        clickable={false}
-                                        label={data.label}
-                                        onDelete={this.deleteChip(data)}
-                                    />
-                                )}
-                                <Input
-                                    placeholder="tags"
-                                    // tslint:disable-next-line:jsx-no-lambda
-                                    onKeyDown={this.tagInputKeyDown}
+                            <MuiThemeProvider theme={theme}>
+                                <StyledTitleField
+                                        id="title"
+                                        label="Title"
+                                        margin="normal"
                                 />
-                            </TagsInput>
-                            <CreateButton
-                                type="submit"
-                                component="button"
-                                variant="outlined"
-                                color="primary"
-                            >
-                                create
-                            </CreateButton>
-                        </div>
+                            </MuiThemeProvider>
+                            <InputDiv>
+                                <StyledMainImageInput
+                                    labelText="upload image"
+                                    name="image1"
+                                    width="480"
+                                    height="376"
+                                />
+                                <SubImages>
+                                    <StyledSubImageInput
+                                        labelText="upload image"
+                                        name="image2"
+                                        width="192"
+                                        height="104"
+                                    />
+                                    <StyledSubImageInput
+                                        labelText="upload image"
+                                        name="image3"
+                                        width="192"
+                                        height="104"
+                                    />
+                                    <StyledSubImageInput
+                                        labelText="upload image"
+                                        name="image4"
+                                        width="192"
+                                        height="104"
+                                    />
+                                </SubImages>
+                            </InputDiv>
+                            <FormWrap>
+                                <Discription>
+                                    <MuiThemeProvider theme={theme}>
+                                        <StyledTextField
+                                            id="description"
+                                            label="Description"
+                                            multiline
+                                            rows="8"
+                                            margin="normal"
+                                        />
+                                    </MuiThemeProvider>
+                                </Discription>
+                                <TagsDiv>
+                                    <TagsInput>
+                                        {this.state.chipsData.map(data =>
+                                            <Chip
+                                                key={data.key}
+                                                clickable={false}
+                                                label={data.label}
+                                                onDelete={this.deleteChip(data)}
+                                            />
+                                        )}
+                                        <Input
+                                            placeholder="tags"
+                                            // tslint:disable-next-line:jsx-no-lambda
+                                            onKeyDown={this.tagInputKeyDown}
+                                        />
+                                    </TagsInput>
+                                    <CreateButton
+                                        type="submit"
+                                        component="button"
+                                        variant="outlined"
+                                        color="primary"
+                                    >
+                                        create
+                                    </CreateButton>
+                                </TagsDiv>
+                            </FormWrap>
                         </div>
                     </Host>
                 )}
@@ -190,24 +196,59 @@ export default class extends React.Component<PageComponentProps<void>, State> {
 }
 
 const theme = createMuiTheme({
+    palette: {
+        primary: {
+            light: "#ffc246",
+            main: "#ff9100",
+            dark: "#c56200",
+            contrastText: "#fff",
+        },
+    },
     overrides: {
         MuiInput: {
             root: {
-                fontSize: "2rem",
+                fontSize: "1.5rem",
             },
         },
     },
 });
 
 const Host = styled.form`
-    margin: 3rem;
+    margin: 5rem;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
 `;
 
 const InputDiv = styled.div`
     display:flex;
     flex-direction: row;
+    justify-content: flex-start;
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+`;
+
+const FormWrap = styled.div`
+    && {
+        display: flex;
+        flex-direction: row;
+        @media (max-width: 768px) {
+            flex-direction: column;
+        }
+    }
+`;
+
+const Discription = styled.div`
+    && {
+    }
+`;
+
+const TagsDiv = styled.div`
+    && {
+        display: flex;
+        flex-direction: column;
+    }
 `;
 
 const SubImages = styled.div`
@@ -215,11 +256,31 @@ const SubImages = styled.div`
         margin-left: 1rem;
         display: flex;
         flex-direction: column;
+        @media (max-width: 768px) {
+            margin-left: 0rem;
+            flex-direction: row;
+
+        }
     }
 `;
 
-const StyledImageInput = styled(ImageInput)`
-    margin: 0;
+const StyledMainImageInput = styled(ImageInput)`
+    && {
+        margin: 0;
+        display: flex;
+        width="480"
+        height="368"
+        }
+    }
+`;
+
+const StyledSubImageInput = styled(ImageInput)`
+    &&{
+        margin: 0;
+        display: flex;
+        width="192"
+        height="104"
+    }
 `;
 
 const StyledTitleFieldBase = styled(TextField)`
@@ -228,7 +289,7 @@ const StyledTitleFieldBase = styled(TextField)`
         margin-left: ${(props: any) => props.theme.spacing.unit}px;
         margin-right: ${(props: any) => props.theme.spacing.unit}px;
         display: flex;
-        width: 20rem;
+        width: 30rem;
     }
 `;
 
@@ -238,11 +299,10 @@ const StyledTitleField = withTheme()(
 
 const StyledTextFieldBase = styled(TextField)`
     && {
-        border-top: 2rem;
         margin-left: ${(props: any) => props.theme.spacing.unit}px;
         margin-right: ${(props: any) => props.theme.spacing.unit}px;
         display: flex;
-        width: 20rem;
+        width: 30rem;
     }
 `;
 
@@ -258,10 +318,10 @@ const TagsInput = styled.div`
 
 const CreateButton = styled(Button)`
     && {
-        margin-top: 6rem;
+        margin-top: 10rem;
+        margin-left: auto;
         width: 3rem;
-        height: 1rem;
-        float: right;
+        height: 2rem;
         display: flex;
     }
 `;
