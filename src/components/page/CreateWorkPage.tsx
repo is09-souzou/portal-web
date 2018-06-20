@@ -44,11 +44,11 @@ export default class extends React.Component<PageComponentProps<void>, State> {
         if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
             e.preventDefault();
             this.setState({
-                chipsData: this.state.chipsData.some(x => x.label === (e.target as any).value) ? this.state.chipsData :
-                this.state.chipsData.concat({
-                    key: (e.target as any).value,
-                    label: (e.target as any).value,
-                })
+                chipsData: this.state.chipsData.some(x => x.label === (e.target as any).value) ? this.state.chipsData
+                         : this.state.chipsData.concat({
+                             key: (e.target as any).value,
+                             label: (e.target as any).value,
+                         })
             });
             (e.target as any).value = "";
         }
@@ -116,9 +116,9 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                         <div>
                             <MuiThemeProvider theme={theme}>
                                 <StyledTitleField
-                                        id="title"
-                                        label="Title"
-                                        margin="normal"
+                                    id="title"
+                                    label="Title"
+                                    margin="normal"
                                 />
                             </MuiThemeProvider>
                             <InputDiv>
@@ -173,7 +173,6 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                         )}
                                         <Input
                                             placeholder="tags"
-                                            // tslint:disable-next-line:jsx-no-lambda
                                             onKeyDown={this.tagInputKeyDown}
                                         />
                                     </TagsInput>
