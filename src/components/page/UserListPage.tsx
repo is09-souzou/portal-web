@@ -37,7 +37,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                 {data.listUsers.items.map((user: any) =>
                                     <ListItem key={user.id}>
                                         <ListItemText
-                                            primary={user.name}
+                                            primary={user.displayName}
                                             secondary={user.id}
                                         />
                                     </ListItem>

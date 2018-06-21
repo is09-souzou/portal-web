@@ -79,7 +79,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     <StyledPanelDetails>
                                         <StyledTextField
                                             id="self-name"
-                                            defaultValue={data.getUser.name}
+                                            defaultValue={data.getUser.displayName}
                                             margin="normal"
                                             required
                                         />
@@ -103,7 +103,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     </ExpansionPanelSummary>
                                     <StyledPanelDetails>
                                         <StyledPersonalData>
-                                            {data.getUser.name}
+                                            {data.getUser.displayName}
                                         </StyledPersonalData>
                                     </StyledPanelDetails>
                                     <Divider />

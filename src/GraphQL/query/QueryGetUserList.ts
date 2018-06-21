@@ -5,7 +5,7 @@ export default gql(`
         listUsers(limit: $limit, nextToken: $nextToken) {
             items {
                 id
-                name
+                displayName
             }
         }
     }`

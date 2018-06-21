@@ -5,7 +5,7 @@ export default gql(`
         getUser(id: $id) {
             id
             email
-            name
+            displayName
             career
             avatarUri
             message
