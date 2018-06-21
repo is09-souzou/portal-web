@@ -1,7 +1,11 @@
 import React from "react";
-import { Query } from "react-apollo";
+import {
+    Query,
+    Mutation
+} from "react-apollo";
 import styled from "styled-components";
 import QueryGetUser from "../../GraphQL/query/QueryGetUser";
+import MutationUpdateUser from "../../GraphQL/mutation/MutationUpdateUser";
 import { ExpandMore as ExpandMoreIcon } from "@material-ui/icons";
 import {
     Button,
@@ -52,7 +56,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
         return (
             <Query
                 query={QueryGetUser}
-                variables={{ id: auth.token.payload.sub }}
+                variables={{ id: auth.token!.payload.sub }}
                 fetchPolicy="cache-and-network"
             >
                 {({ loading, error, data }) => {
@@ -64,33 +68,69 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                         ]);
                     }
 
+                    const displayName = data.getUser.displayName;
+                    const email = data.getUser.email;
+                    const career = data.getUser.career;
+                    const message = data.getUser.message;
+
                     return (
                         <div>
                             {this.state.userEditing ?
-                                <StyledPanel
-                                    expanded={this.state.opendItem === "displayName"}
-                                    onChange={this.handleChange("displayName")}
-                                >
-                                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                        <Typography>
-                                            DisplayName
-                                        </Typography>
-                                    </ExpansionPanelSummary>
-                                    <StyledPanelDetails>
-                                        <StyledTextField
-                                            id="self-name"
-                                            defaultValue={data.getUser.displayName}
-                                            margin="normal"
-                                            required
-                                        />
-                                    </StyledPanelDetails>
-                                    <Divider />
-                                    <StyledPanelActions>
-                                        <Button type="submit" color="primary" onClick={this.userEditingEnd}>
-                                            save
-                                        </Button>
-                                    </StyledPanelActions>
-                                </StyledPanel>
+                                <Mutation mutation={MutationUpdateUser} refetchQueries={[]}>
+                                    {(updateUser, data) => console.log(data) || (
+                                        <form
+                                            // tslint:disable-next-line jsx-no-lambda
+                                            onSubmit={e => {
+                                                e.preventDefault();
+                                                const name = (e.target as any).elements["self-displayName"].value;
+                                                console.log("DisplayName" + name);
+                                                updateUser({
+                                                    variables: {
+                                                        user: {
+                                                            id: auth.token!.payload.sub,
+                                                            displayName: name
+                                                        }
+                                                    }
+                                                });
+                                            }}
+                                        >
+                                            <StyledPanel
+                                                expanded={this.state.opendItem === "displayName"}
+                                                onChange={this.handleChange("displayName")}
+                                            >
+                                                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                                    <Typography>
+                                                        DisplayName
+                                                    </Typography>
+                                                </ExpansionPanelSummary>
+                                                <StyledPanelDetails>
+                                                    <StyledTextField
+                                                        id="self-displayName"
+                                                        defaultValue={displayName}
+                                                        margin="normal"
+                                                        required
+                                                    />
+                                                </StyledPanelDetails>
+                                                <Divider />
+                                                <StyledPanelActions>
+                                                    <Button
+                                                        component="button"
+                                                        onClick={this.userEditingEnd}
+                                                    >
+                                                        cancel
+                                                    </Button>
+                                                    <Button
+                                                        type="submit"
+                                                        color="primary"
+                                                        component="button"
+                                                    >
+                                                        save
+                                                    </Button>
+                                                </StyledPanelActions>
+                                            </StyledPanel>
+                                        </form>
+                                    )}
+                                </Mutation>
                             :
                                 <StyledPanel
                                     expanded={this.state.opendItem === "displayName"}
@@ -103,7 +143,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     </ExpansionPanelSummary>
                                     <StyledPanelDetails>
                                         <StyledPersonalData>
-                                            {data.getUser.displayName}
+                                            {displayName}
                                         </StyledPersonalData>
                                     </StyledPanelDetails>
                                     <Divider />
@@ -125,7 +165,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 </ExpansionPanelSummary>
                                 <StyledPanelDetails>
                                     <StyledPersonalData>
-                                        {data.getUser.email}
+                                        {email}
                                     </StyledPersonalData>
                                 </StyledPanelDetails>
                                 <Divider />
@@ -146,7 +186,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 </ExpansionPanelSummary>
                                 <StyledPanelDetails>
                                     <StyledPersonalData>
-                                        {data.getUser.career}
+                                        {career}
                                     </StyledPersonalData>
                                 </StyledPanelDetails>
                                 <Divider />
@@ -167,7 +207,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 </ExpansionPanelSummary>
                                 <StyledPanelDetails>
                                     <StyledPersonalData>
-                                        {data.getUser.message}
+                                        {message}
                                     </StyledPersonalData>
                                 </StyledPanelDetails>
                                 <Divider />
