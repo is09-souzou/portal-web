@@ -78,7 +78,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             {this.state.userEditing ?
                                 <Mutation mutation={MutationUpdateUser} refetchQueries={[]}>
                                     {(updateUser, data) => console.log(data) || (
-                                        <form
+                                        <Host
                                             // tslint:disable-next-line jsx-no-lambda
                                             onSubmit={async e => {
                                                 e.preventDefault();
@@ -86,26 +86,31 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 const name = (e.target as any).elements["self-displayName"].value;
                                                 console.log("DisplayName" + name);
 
-                                                await Promise.all([
-                                                    updateUser({
-                                                        variables: {
-                                                            user: {
-                                                                id: auth.token!.payload.sub,
-                                                                displayName: name
-                                                            },
-                                                            optimisticResponse: {
-                                                                __typename: "Mutation",
-                                                                updateUser: {
+                                                try {
+                                                    await Promise.all([
+                                                        updateUser({
+                                                            variables: {
+                                                                user: {
                                                                     id: auth.token!.payload.sub,
-                                                                    displayName: name,
-                                                                    __typename: "User"
+                                                                    displayName: name
+                                                                },
+                                                                optimisticResponse: {
+                                                                    __typename: "Mutation",
+                                                                    updateUser: {
+                                                                        id: auth.token!.payload.sub,
+                                                                        displayName: name,
+                                                                        __typename: "User"
+                                                                    }
                                                                 }
                                                             }
-                                                        }
-                                                    })
-                                                ]);
+                                                        })
+                                                    ]);
 
-                                                await new Promise(resolve => setTimeout(() => resolve(), 60000));
+                                                    await new Promise(resolve => setTimeout(() => resolve(), 60000));
+                                                } catch (e) {
+                                                }
+
+                                                location.reload();
                                             }}
                                         >
                                             <StyledPanel
@@ -142,7 +147,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                     </Button>
                                                 </StyledPanelActions>
                                             </StyledPanel>
-                                        </form>
+                                        </Host>
                                     )}
                                 </Mutation>
                             :
@@ -239,6 +244,9 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     }
 }
 
+const Host = styled.form`
+    margin-bottom: 1rem;
+`;
 const StyledPersonalData = styled(Typography)`
     && {
         margin-left: 2rem;
@@ -263,7 +271,6 @@ const StyledPanelActions = styled(ExpansionPanelActions)`
         padding-top: 2%;
     }
 `;
-
 const StyledTextField = styled(TextField)`
     && {
         margin-left: 2rem;
