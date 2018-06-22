@@ -80,18 +80,32 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     {(updateUser, data) => console.log(data) || (
                                         <form
                                             // tslint:disable-next-line jsx-no-lambda
-                                            onSubmit={e => {
+                                            onSubmit={async e => {
                                                 e.preventDefault();
+
                                                 const name = (e.target as any).elements["self-displayName"].value;
                                                 console.log("DisplayName" + name);
-                                                updateUser({
-                                                    variables: {
-                                                        user: {
-                                                            id: auth.token!.payload.sub,
-                                                            displayName: name
+
+                                                await Promise.all([
+                                                    updateUser({
+                                                        variables: {
+                                                            user: {
+                                                                id: auth.token!.payload.sub,
+                                                                displayName: name
+                                                            },
+                                                            optimisticResponse: {
+                                                                __typename: "Mutation",
+                                                                updateUser: {
+                                                                    id: auth.token!.payload.sub,
+                                                                    displayName: name,
+                                                                    __typename: "User"
+                                                                }
+                                                            }
                                                         }
-                                                    }
-                                                });
+                                                    })
+                                                ]);
+
+                                                await new Promise(resolve => setTimeout(() => resolve(), 60000));
                                             }}
                                         >
                                             <StyledPanel
