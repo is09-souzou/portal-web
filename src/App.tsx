@@ -14,7 +14,7 @@ import NotificationListener, { NotificationListenerProps }  from "./components/w
 import WorkPage                from "./components/page/WorkPage";
 import AccountRegistrationPage from "./components/page/AccountRegistrationPage";
 import CreateWorkPage          from "./components/page/CreateWorkPage";
-import SelfPage                from "./components/page/SelfPage";
+import ProfilePage             from "./components/page/Profile";
 
 import MainLayout      from "./components/MainLayout";
 import ComposingRoute  from "./components/ComposingRoute";
@@ -81,8 +81,8 @@ export default () => (
                                 exact={true}
                             />
                             <ComposingRoute
-                                path="/self"
-                                component={SelfPage}
+                                path="/profile"
+                                component={ProfilePage}
                                 exact={true}
                             />
                             <ComposingRoute

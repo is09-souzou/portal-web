@@ -106,7 +106,6 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                             ]);
                             const signedUrl = results[1];
 
-                            await new Promise(resolve => setTimeout(() => resolve(), 60000));
                             await fileUploadToS3({
                                 url: signedUrl,
                                 file: image
