@@ -3,27 +3,27 @@
 ### Prerequisites
 
 ```bash
-yarn -v
+$ yarn -v
 1.7.0
 
-node -v
+$ node -v
 v10.5.0
 ```
 
 ### Installing
 
-```
-yarn
+```bash
+$ yarn
 
-yarn build
+$ yarn build
 
-yarn start
+$ yarn start
 ```
 
 And repeat
 
-```
-until finished
+```bash
+$ until finished
 ```
 
 End with an example of getting some data out of the system or using it for a little demo
@@ -52,12 +52,6 @@ Give an example
 
 Add additional notes about how to deploy this on a live system
 
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
@@ -80,5 +74,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 * Hat tip to anyone whose code was used
 * Inspiration
-* etc
 
