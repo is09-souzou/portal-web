@@ -124,33 +124,30 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                             <InputDiv>
                                 <StyledMainImageInput
                                     labelText="upload image"
-                                    name="image1"
-                                    width="480"
-                                    height="376"
+                                    id="mainImage"
+                                    width="544"
+                                    height="368"
                                 />
                                 <SubImages>
                                     <StyledSubImageInput
                                         labelText="upload image"
-                                        name="image2"
-                                        width="192"
+                                        width="176"
                                         height="104"
                                     />
                                     <StyledSubImageInput
                                         labelText="upload image"
-                                        name="image3"
-                                        width="192"
+                                        width="176"
                                         height="104"
                                     />
                                     <StyledSubImageInput
                                         labelText="upload image"
-                                        name="image4"
-                                        width="192"
+                                        width="176"
                                         height="104"
                                     />
                                 </SubImages>
                             </InputDiv>
                             <FormWrap>
-                                <Discription>
+                                <div>
                                     <MuiThemeProvider theme={theme}>
                                         <StyledTextField
                                             id="description"
@@ -160,7 +157,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                             margin="normal"
                                         />
                                     </MuiThemeProvider>
-                                </Discription>
+                                </div>
                                 <TagsDiv>
                                     <TagsInput>
                                         {this.state.chipsData.map(data =>
@@ -206,7 +203,7 @@ const theme = createMuiTheme({
     overrides: {
         MuiInput: {
             root: {
-                fontSize: "1.5rem",
+                fontSize: "1.2rem",
             },
         },
     },
@@ -238,11 +235,6 @@ const FormWrap = styled.div`
     }
 `;
 
-const Discription = styled.div`
-    && {
-    }
-`;
-
 const TagsDiv = styled.div`
     && {
         display: flex;
@@ -258,7 +250,7 @@ const SubImages = styled.div`
         @media (max-width: 768px) {
             margin-left: 0rem;
             flex-direction: row;
-
+            justify-content: space-between;
         }
     }
 `;
@@ -269,7 +261,6 @@ const StyledMainImageInput = styled(ImageInput)`
         display: flex;
         width="480"
         height="368"
-        }
     }
 `;
 
