@@ -43,14 +43,17 @@ export default class extends React.Component<PageComponentProps<void>, State> {
     tagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
             e.preventDefault();
-            this.setState({
-                chipsData: this.state.chipsData.some(x => x.label === (e.target as any).value) ? this.state.chipsData
+            if ((e.target as any).value.length > 1 && (e.target as any).value.length <= 10) {
+                this.setState({
+                    chipsData: this.state.chipsData.some(x => x.label === (e.target as any).value)
+                    ? this.state.chipsData
                          : this.state.chipsData.concat({
                              key: (e.target as any).value,
                              label: (e.target as any).value,
                          })
-            });
-            (e.target as any).value = "";
+                });
+                (e.target as any).value = "";
+            }
         }
     }
     render() {
