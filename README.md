@@ -2,7 +2,7 @@
 ## Getting Started
 ### Prerequisites
 
-```
+```bash
 yarn -v
 1.7.0
 
