@@ -61,7 +61,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
         const {
             auth
         } = this.props;
-
+        console.log("TagsInput:" + document.getElementsByTagName("TagsInput"));
         return (
             <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
                 {(createWork, data) => console.log(data) || (
@@ -92,6 +92,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                         __typename: "Mutation",
                                         createWork: {
                                             title,
+                                            description,
                                             id: "",
                                             userId: auth.token!.payload.sub,
                                             tags: [],
@@ -127,6 +128,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                 <StyledMainImageInput
                                     labelText="upload image"
                                     id="mainImage"
+                                    name="image1"
                                     width="544"
                                     height="368"
                                 />
