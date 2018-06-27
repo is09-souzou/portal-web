@@ -9,10 +9,10 @@ import {
 import {
     AppBar,
     Button,
-    TextField,
     Toolbar,
     Typography,
     IconButton,
+    Input,
     Popover,
 } from "@material-ui/core";
 import InputAdornments from "@material-ui/core/InputAdornment";
@@ -47,6 +47,12 @@ export default class extends React.Component<Props, State> {
     handleMenu = (event: React.MouseEvent<HTMLElement>): void =>
         this.setState({ userMenuAnchorEl: event.currentTarget })
 
+    handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const val = (e.target as any).value;
+        if (e.keyCode && e.keyCode === 13) {
+            console.log("if:" + val);
+        }
+    }
     menuClose = () => this.setState({ userMenuAnchorEl: undefined });
 
     signInDialogOpen = () => this.props.history.push("?sign-in=true");
@@ -88,18 +94,14 @@ export default class extends React.Component<Props, State> {
                     <Typography variant="title" color="inherit">
                         Work List
                     </Typography>
-                    <TextField
-                        type="search"
-                        label="search bar"
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornments
-                                    position="end"
-                                >
-                                    <SearchIcon />
-                                </InputAdornments>
-                            ),
-                        }}
+                    <Input
+                        type="text"
+                        startAdornment={
+                            <InputAdornments position="start">
+                                <SearchIcon />
+                            </InputAdornments>
+                        }
+                        onKeyDown={this.handleSearch}
                     />
                     <div>
                         {!auth.token ?
