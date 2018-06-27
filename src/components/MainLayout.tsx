@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React from "react";
 import styled from "styled-components";
 import {
     Drawer,
@@ -70,7 +70,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     />
                     <Main>
                         {React.cloneElement(
-                            children as ReactElement<any>,
+                            children as React.ReactElement<PageComponentProps<{}>>,
                             {
                                 auth,
                                 notificationListener,
@@ -135,4 +135,5 @@ const FAB = styled(Button)`
 
 const Main = styled.main`
     min-height: calc(100vh - 7rem);
+    height: 100%;
 `;

@@ -52,13 +52,17 @@ export default class extends React.Component<Props, State> {
                 <label
                     htmlFor={id}
                 >
-                    <LabelText
-                        invalid={this.state.invalid}
-                        focused={this.state.focused}
-                        disabled={disabled}
-                    >
-                        {labelText}
-                    </LabelText><br />
+                    { labelText && [
+                        <LabelText
+                            key={labelText}
+                            invalid={this.state.invalid}
+                            focused={this.state.focused}
+                            disabled={disabled}
+                        >
+                            {labelText}
+                        </LabelText>,
+                        <br key={`${labelText}-br`}/>
+                    ]}
                     <StyledImage
                         alt={hintText}
                         height={height}

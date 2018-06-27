@@ -3,11 +3,7 @@ import styled from "styled-components";
 import {
     Button,
     Chip,
-    Input,
     TextField,
-    withTheme,
-    MuiThemeProvider,
-    createMuiTheme
 } from "@material-ui/core";
 import ImageInput from "../ImageInput";
 import { Mutation } from "react-apollo";
@@ -22,46 +18,48 @@ interface Chip {
 }
 
 interface State {
-    // chipsData: any;
-    // tslint:disable-next-line:prefer-array-literal
-    chipsData: Array<Chip>;
+    chipsData: Chip[];
 }
 
 export default class extends React.Component<PageComponentProps<void>, State> {
+    host: any;
 
     componentWillMount() {
         this.setState({
-            chipsData: [
-            ]
+            chipsData: [],
         });
     }
 
     deleteChip = (data: Chip) => () => this.setState({
-        chipsData: this.state.chipsData.filter(x => data.key !== x.key)
+        chipsData: this.state.chipsData.filter((x: Chip): boolean => data.key !== x.key)
     })
 
-    tagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+    tagInputKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (this.state.chipsData.length >= 5)
+            return e.preventDefault();
+
+        const inputValue = (e.target as any).value;
+        if (e.which === 13 || e.keyCode === 13) {
             e.preventDefault();
-            if ((e.target as any).value.length > 1 && (e.target as any).value.length <= 10) {
-                this.setState({
-                    chipsData: this.state.chipsData.some(x => x.label === (e.target as any).value)
-                    ? this.state.chipsData
-                         : this.state.chipsData.concat({
-                             key: (e.target as any).value,
-                             label: (e.target as any).value,
-                         })
-                });
+            if (inputValue.length > 1) {
+                if (!this.state.chipsData.some(x => x.label === inputValue))
+                    this.setState({
+                        chipsData: this.state.chipsData.concat({
+                            key: (e.target as any).value,
+                            label: (e.target as any).value
+                        })
+                    });
+
                 (e.target as any).value = "";
             }
         }
     }
+
     render() {
-        console.log(this.state.chipsData);
         const {
             auth
         } = this.props;
-        console.log("TagsInput:" + document.getElementsByTagName("TagsInput"));
+
         return (
             <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
                 {(createWork, data) => console.log(data) || (
@@ -104,7 +102,8 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                 }),
                                 createSignedUrl({
                                     jwt: auth.token!.jwtToken,
-                                    filename: `/users/${auth.token!.payload.sub}/works/`,
+                                    userId: auth.token!.payload.sub,
+                                    type: "work",
                                     mimetype: image.type
                                 })
                             ]);
@@ -115,78 +114,74 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                 file: image
                             });
                         }}
+                        ref={(host:any) => this.host = host}
                     >
                         <div>
-                            <MuiThemeProvider theme={theme}>
-                                <StyledTitleField
-                                    id="title"
-                                    label="Title"
-                                    margin="normal"
-                                />
-                            </MuiThemeProvider>
-                            <InputDiv>
-                                <StyledMainImageInput
+                            <TextField
+                                id="title"
+                                label="Title"
+                                margin="normal"
+                                fullWidth
+                            />
+                            <ImageSelectArea>
+                                <ImageInput
                                     labelText="upload image"
-                                    id="mainImage"
-                                    name="image1"
+                                    name="mainImage"
                                     width="544"
                                     height="368"
                                 />
-                                <SubImages>
-                                    <StyledSubImageInput
-                                        labelText="upload image"
-                                        width="176"
-                                        height="104"
-                                    />
-                                    <StyledSubImageInput
-                                        labelText="upload image"
-                                        width="176"
-                                        height="104"
-                                    />
-                                    <StyledSubImageInput
-                                        labelText="upload image"
-                                        width="176"
-                                        height="104"
-                                    />
-                                </SubImages>
-                            </InputDiv>
-                            <FormWrap>
                                 <div>
-                                    <MuiThemeProvider theme={theme}>
-                                        <StyledTextField
-                                            id="description"
-                                            label="Description"
-                                            multiline
-                                            rows="8"
-                                            margin="normal"
-                                        />
-                                    </MuiThemeProvider>
+                                    <ImageInput
+                                        name="subImage1"
+                                        width="176"
+                                        height="104"
+                                    />
+                                    <ImageInput
+                                        name="subImage2"
+                                        width="176"
+                                        height="104"
+                                    />
+                                    <ImageInput
+                                        name="subImage3"
+                                        width="176"
+                                        height="104"
+                                    />
                                 </div>
-                                <TagsDiv>
-                                    <TagsInput>
-                                        {this.state.chipsData.map(data =>
-                                            <Chip
-                                                key={data.key}
-                                                clickable={false}
-                                                label={data.label}
-                                                onDelete={this.deleteChip(data)}
-                                            />
-                                        )}
-                                        <Input
-                                            placeholder="tags"
-                                            onKeyDown={this.tagInputKeyDown}
-                                        />
-                                    </TagsInput>
-                                    <CreateButton
-                                        type="submit"
-                                        component="button"
-                                        variant="outlined"
-                                        color="primary"
-                                    >
-                                        create
-                                    </CreateButton>
-                                </TagsDiv>
-                            </FormWrap>
+                            </ImageSelectArea>
+                            <TextField
+                                id="description"
+                                label="Description"
+                                multiline
+                                rows="8"
+                                margin="normal"
+                                fullWidth
+                            />
+                            <div>
+                                <TextField
+                                    placeholder="tags"
+                                    onKeyDown={this.tagInputKeyDown}
+                                    inputProps={{
+                                        maxLength: 10,
+                                    }}
+                                />
+                                {this.state.chipsData.map(data =>
+                                    <Chip
+                                        key={data.key}
+                                        clickable={false}
+                                        label={data.label}
+                                        onDelete={this.deleteChip(data)}
+                                    />
+                                )}
+                            </div>
+                            <ActionArea>
+                                <div/>
+                                <Button
+                                    variant="raised"
+                                    color="primary"
+                                >
+                                    create
+                                </Button>
+                            </ActionArea>
                         </div>
                     </Host>
                 )}
@@ -195,24 +190,6 @@ export default class extends React.Component<PageComponentProps<void>, State> {
     }
 }
 
-const theme = createMuiTheme({
-    palette: {
-        primary: {
-            light: "#ffc246",
-            main: "#ff9100",
-            dark: "#c56200",
-            contrastText: "#fff",
-        },
-    },
-    overrides: {
-        MuiInput: {
-            root: {
-                fontSize: "1.2rem",
-            },
-        },
-    },
-});
-
 const Host = styled.form`
     margin: 5rem;
     display: flex;
@@ -220,38 +197,19 @@ const Host = styled.form`
     justify-content: center;
 `;
 
-const InputDiv = styled.div`
+const ImageSelectArea = styled.div`
     display:flex;
     flex-direction: row;
-    justify-content: flex-start;
+    align-items: flex-end;
     @media (max-width: 768px) {
         flex-direction: column;
     }
-`;
-
-const FormWrap = styled.div`
-    && {
-        display: flex;
-        flex-direction: row;
-        @media (max-width: 768px) {
-            flex-direction: column;
-        }
-    }
-`;
-
-const TagsDiv = styled.div`
-    && {
+    > :last-child {
         display: flex;
         flex-direction: column;
-    }
-`;
-
-const SubImages = styled.div`
-    &&{
         margin-left: 1rem;
-        display: flex;
-        flex-direction: column;
         @media (max-width: 768px) {
+            width: 100%;
             margin-left: 0rem;
             flex-direction: row;
             justify-content: space-between;
@@ -259,63 +217,9 @@ const SubImages = styled.div`
     }
 `;
 
-const StyledMainImageInput = styled(ImageInput)`
-    && {
-        margin: 0;
-        display: flex;
-        width="480"
-        height="368"
-    }
-`;
-
-const StyledSubImageInput = styled(ImageInput)`
-    &&{
-        margin: 0;
-        display: flex;
-        width="192"
-        height="104"
-    }
-`;
-
-const StyledTitleFieldBase = styled(TextField)`
-    && {
-        margin-top: 2rem;
-        margin-left: ${(props: any) => props.theme.spacing.unit}px;
-        margin-right: ${(props: any) => props.theme.spacing.unit}px;
-        display: flex;
-        width: 30rem;
-    }
-`;
-
-const StyledTitleField = withTheme()(
-    (props: any) => <StyledTitleFieldBase {...props}/>
-);
-
-const StyledTextFieldBase = styled(TextField)`
-    && {
-        margin-left: ${(props: any) => props.theme.spacing.unit}px;
-        margin-right: ${(props: any) => props.theme.spacing.unit}px;
-        display: flex;
-        width: 30rem;
-    }
-`;
-
-const StyledTextField = withTheme()(
-    (props: any) => <StyledTextFieldBase {...props}/>
-);
-
-const TagsInput = styled.div`
-    margin-top: 2rem;
-    margin-left: 8px;
-    margin-right: 8px;
-`;
-
-const CreateButton = styled(Button)`
-    && {
-        margin-top: 10rem;
-        margin-left: auto;
-        width: 3rem;
-        height: 2rem;
-        display: flex;
+const ActionArea = styled.div`
+    display: flex;
+    > :first-child {
+        flex-grow: 1
     }
 `;

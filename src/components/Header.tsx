@@ -12,10 +12,10 @@ import {
     Toolbar,
     Typography,
     IconButton,
+    InputAdornment,
     Input,
     Popover,
 } from "@material-ui/core";
-import InputAdornments from "@material-ui/core/InputAdornment";
 
 import { AuthProps } from "./wrapper/Auth";
 import SignInDialog from "./SignInDialog";
@@ -97,9 +97,9 @@ export default class extends React.Component<Props, State> {
                     <Input
                         type="text"
                         startAdornment={
-                            <InputAdornments position="start">
+                            <InputAdornment position="start">
                                 <SearchIcon />
-                            </InputAdornments>
+                            </InputAdornment>
                         }
                         onKeyDown={this.handleSearch}
                     />
