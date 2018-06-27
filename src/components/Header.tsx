@@ -4,15 +4,18 @@ import * as H from "history";
 import {
     AccountCircle as AccountCircleIcon,
     Menu as MenuIcon,
+    Search as SearchIcon,
 } from "@material-ui/icons";
 import {
     AppBar,
     Button,
+    TextField,
     Toolbar,
     Typography,
     IconButton,
     Popover,
 } from "@material-ui/core";
+import InputAdornments from "@material-ui/core/InputAdornment";
 
 import { AuthProps } from "./wrapper/Auth";
 import SignInDialog from "./SignInDialog";
@@ -85,6 +88,19 @@ export default class extends React.Component<Props, State> {
                     <Typography variant="title" color="inherit">
                         Work List
                     </Typography>
+                    <TextField
+                        type="search"
+                        label="search bar"
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornments
+                                    position="end"
+                                >
+                                    <SearchIcon />
+                                </InputAdornments>
+                            ),
+                        }}
+                    />
                     <div>
                         {!auth.token ?
                             <Button onClick={this.signInDialogOpen} >
