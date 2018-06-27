@@ -8,6 +8,11 @@ interface Props {
     jwt     : string;
 }
 
+type ResponseJson = {
+    signedUrl: string;
+    uploadedUrl: string;
+};
+
 export default async (
     {
         userId,
@@ -15,7 +20,7 @@ export default async (
         mimetype,
         jwt,
     }: Props
-): Promise<string> => {
+): Promise<ResponseJson> => {
     const response = await fetch(
         `${config.apiGateway.uri}/signed-url?${toURIQuery({ userId, type, mimetype })}`,
         {
@@ -30,5 +35,5 @@ export default async (
     if (!response.ok)
         throw response;
 
-    return (await response.json());
+    return (await response.json()) as ResponseJson;
 };

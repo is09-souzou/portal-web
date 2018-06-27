@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 
 export default gql(`
-    mutation createWork(
-        $work: WorkCreate!
+    mutation updateWork(
+        $work: WorkUpdate!
     ) {
         createWork(
             work: $work

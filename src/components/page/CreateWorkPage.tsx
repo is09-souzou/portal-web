@@ -11,6 +11,7 @@ import MutationCreateWork from "../../GraphQL/mutation/MutationCreateWork";
 import { PageComponentProps } from "../../App";
 import createSignedUrl from "../../api/createSignedUrl";
 import fileUploadToS3  from "../../api/fileUploadToS3";
+import MutationUpdateWork from "../../GraphQL/mutation/MutationUpdateWork";
 
 interface Chip {
     key  : string;
@@ -62,128 +63,159 @@ export default class extends React.Component<PageComponentProps<void>, State> {
 
         return (
             <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
-                {(createWork, data) => console.log(data) || (
-                    <Host
-                        // tslint:disable-next-line jsx-no-lambda
-                        onSubmit={async e => {
-                            e.preventDefault();
+                {createWork => (
+                    <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
+                        {updateWork => (
+                            <Host
+                                // tslint:disable-next-line jsx-no-lambda
+                                onSubmit={async e => {
+                                    e.preventDefault();
 
-                            const title = (e.target as any).elements["title"].value;
-                            const description = (e.target as any).elements["description"].value;
-                            console.log("TITLE:" + title);
-                            console.log("DESCRIPTION:" + description);
+                                    const title = (e.target as any).elements["title"].value;
+                                    const description = (e.target as any).elements["description"].value;
+                                    console.log("TITLE:" + title);
+                                    console.log("DESCRIPTION:" + description);
 
-                            // Memo Testでここを使わせてもらいます。
+                                    // Memo Testでここを使わせてもらいます。
 
-                            const image = (e.target as any).elements["image1"].files[0];
-                            const results = await Promise.all([
-                                createWork({
-                                    variables: {
-                                        work: {
-                                            title,
-                                            description,
-                                            imageUri: "test.comyy/test",
-                                            userId: auth.token!.payload.sub
-                                        }
-                                    },
-                                    optimisticResponse: {
-                                        __typename: "Mutation",
-                                        createWork: {
-                                            title,
-                                            description,
-                                            id: "",
+                                    const image = (e.target as any).elements["mainImage"].files[0];
+                                    const results = await Promise.all([
+                                        createWork({
+                                            variables: {
+                                                work: {
+                                                    title,
+                                                    description,
+                                                    userId: auth.token!.payload.sub,
+                                                    tags: this.state.chipsData.map(x => x.label),
+                                                    imageUri: ""
+                                                }
+                                            },
+                                            optimisticResponse: {
+                                                __typename: "Mutation",
+                                                createWork: {
+                                                    title,
+                                                    description,
+                                                    id: "new",
+                                                    userId: auth.token!.payload.sub,
+                                                    tags: this.state.chipsData.map(x => x.label),
+                                                    createdAt: +new Date(),
+                                                    __typename: "Work"
+                                                }
+                                            }
+                                        }),
+                                        createSignedUrl({
+                                            jwt: auth.token!.jwtToken,
                                             userId: auth.token!.payload.sub,
-                                            tags: [],
-                                            imageUri: "test.comyy/test",
-                                            createdAt: "",
-                                            __typename: "Work"
-                                        }
-                                    }
-                                }),
-                                createSignedUrl({
-                                    jwt: auth.token!.jwtToken,
-                                    userId: auth.token!.payload.sub,
-                                    type: "work",
-                                    mimetype: image.type
-                                })
-                            ]);
-                            const signedUrl = results[1];
+                                            type: "work",
+                                            mimetype: image.type
+                                        })
+                                    ]);
 
-                            await fileUploadToS3({
-                                url: signedUrl,
-                                file: image
-                            });
-                        }}
-                        ref={(host:any) => this.host = host}
-                    >
-                        <div>
-                            <TextField
-                                id="title"
-                                label="Title"
-                                margin="normal"
-                                fullWidth
-                            />
-                            <ImageSelectArea>
-                                <ImageInput
-                                    labelText="upload image"
-                                    name="mainImage"
-                                    width="544"
-                                    height="368"
-                                />
+                                    const {
+                                        signedUrl,
+                                        uploadedUrl
+                                    } = results[1];
+
+                                    await fileUploadToS3({
+                                        url: signedUrl,
+                                        file: image
+                                    });
+
+                                    await updateWork({
+                                        variables: {
+                                            work: {
+                                                imageUri: uploadedUrl
+                                            }
+                                        },
+                                        optimisticResponse: {
+                                            __typename: "Mutation",
+                                            updateWork: {
+                                                title,
+                                                description,
+                                                id: "new",
+                                                userId: auth.token!.payload.sub,
+                                                tags: this.state.chipsData.map(x => x.label),
+                                                imageUri: uploadedUrl,
+                                                createdAt: +new Date(),
+                                                __typename: "Work"
+                                            }
+                                        }
+                                    });
+                                }}
+                                ref={(host:any) => this.host = host}
+                            >
                                 <div>
-                                    <ImageInput
-                                        name="subImage1"
-                                        width="176"
-                                        height="104"
+                                    <TextField
+                                        id="title"
+                                        label="Title"
+                                        margin="normal"
+                                        fullWidth
                                     />
-                                    <ImageInput
-                                        name="subImage2"
-                                        width="176"
-                                        height="104"
+                                    <ImageSelectArea>
+                                        <ImageInput
+                                            labelText="upload image"
+                                            name="mainImage"
+                                            width="544"
+                                            height="368"
+                                        />
+                                        <div>
+                                            <ImageInput
+                                                name="subImage1"
+                                                width="176"
+                                                height="104"
+                                            />
+                                            <ImageInput
+                                                name="subImage2"
+                                                width="176"
+                                                height="104"
+                                            />
+                                            <ImageInput
+                                                name="subImage3"
+                                                width="176"
+                                                height="104"
+                                            />
+                                        </div>
+                                    </ImageSelectArea>
+                                    <TextField
+                                        id="description"
+                                        label="Description"
+                                        multiline
+                                        rows="8"
+                                        margin="normal"
+                                        fullWidth
                                     />
-                                    <ImageInput
-                                        name="subImage3"
-                                        width="176"
-                                        height="104"
-                                    />
+                                    <div>
+                                        <TextField
+                                            placeholder="tags"
+                                            onKeyDown={this.tagInputKeyDown}
+                                            inputProps={{
+                                                maxLength: 10,
+                                            }}
+                                        />
+                                        {this.state.chipsData.map(data =>
+                                            <Chip
+                                                key={data.key}
+                                                clickable={false}
+                                                label={data.label}
+                                                onDelete={this.deleteChip(data)}
+                                            />
+                                        )}
+                                    </div>
+                                    <ActionArea>
+                                        <div/>
+                                        <Button
+                                            type="submit"
+                                            component="button"
+                                            variant="raised"
+                                            color="primary"
+                                        >
+                                            create
+                                        </Button>
+                                    </ActionArea>
                                 </div>
-                            </ImageSelectArea>
-                            <TextField
-                                id="description"
-                                label="Description"
-                                multiline
-                                rows="8"
-                                margin="normal"
-                                fullWidth
-                            />
-                            <div>
-                                <TextField
-                                    placeholder="tags"
-                                    onKeyDown={this.tagInputKeyDown}
-                                    inputProps={{
-                                        maxLength: 10,
-                                    }}
-                                />
-                                {this.state.chipsData.map(data =>
-                                    <Chip
-                                        key={data.key}
-                                        clickable={false}
-                                        label={data.label}
-                                        onDelete={this.deleteChip(data)}
-                                    />
-                                )}
-                            </div>
-                            <ActionArea>
-                                <div/>
-                                <Button
-                                    variant="raised"
-                                    color="primary"
-                                >
-                                    create
-                                </Button>
-                            </ActionArea>
-                        </div>
-                    </Host>
+                            </Host>
+                        )}
+                    </Mutation>
                 )}
             </Mutation>
         );
