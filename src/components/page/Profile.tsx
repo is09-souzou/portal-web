@@ -8,35 +8,42 @@ import QueryGetUser from "../../GraphQL/query/QueryGetUser";
 import MutationUpdateUser from "../../GraphQL/mutation/MutationUpdateUser";
 import { ExpandMore as ExpandMoreIcon } from "@material-ui/icons";
 import {
+    Avatar,
     Button,
+    Divider,
     ExpansionPanel,
     ExpansionPanelDetails,
     ExpansionPanelSummary,
     ExpansionPanelActions,
     TextField,
-    Typography,
-    withTheme
+    Typography
 } from "@material-ui/core";
 import { PageComponentProps } from "../../App";
 import NotFound from "../NotFound";
 
-type Item = "displayName" | "email" | "career" | "message";
+type Item = "user" | "work";
 
 interface State {
     opendItem?: Item;
+    userEditing: boolean;
 }
 
 export default class extends React.Component<PageComponentProps<{}>, State> {
 
     componentWillMount() {
         this.setState({
-            opendItem: undefined,
+            opendItem: "user",
+            userEditing: false
         });
     }
 
     handleChange = (item: Item) => () => this.setState({
         opendItem: this.state.opendItem === item ? undefined : item,
     })
+
+    userEditingStart = () => this.setState({ userEditing: true });
+
+    userEditingEnd = () => this.setState({ userEditing: false });
 
     render() {
         const {
@@ -72,247 +79,172 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                         <Mutation mutation={MutationUpdateUser} refetchQueries={[]}>
                             {updateUser => (
                                 <Host>
-                                    <ExpansionPanel
-                                        component="form"
-                                        expanded={this.state.opendItem === "displayName"}
-                                        onChange={this.handleChange("displayName")}
-                                        // tslint:disable-next-line jsx-no-lambda
-                                        onSubmit={async e => {
-                                            e.preventDefault();
+                                    { this.state.userEditing ?
+                                        <ExpansionPanel
+                                            component="form"
+                                            expanded={this.state.opendItem === "user"}
+                                            onChange={this.handleChange("user")}
+                                            // tslint:disable-next-line jsx-no-lambda
+                                            onSubmit={async e => {
+                                                e.preventDefault();
 
-                                            const displayName = (e.target as any).elements["profile-DisplayName"].value;
+                                                const displayName =
+                                                    (e.target as any).elements["profile-DisplayName"].value;
+                                                const email = (e.target as any).elements["profile-Email"].value;
+                                                const career = (e.target as any).elements["profile-Career"].value;
+                                                const message = (e.target as any).elements["profile-Message"].value;
 
-                                            try {
-                                                await Promise.all([
-                                                    updateUser({
-                                                        variables: {
-                                                            user: {
-                                                                displayName,
-                                                                id: auth.token!.payload.sub,
-                                                            },
-                                                            optimisticResponse: {
-                                                                __typename: "Mutation",
-                                                                updateUser: {
+                                                try {
+                                                    await Promise.all([
+                                                        updateUser({
+                                                            variables: {
+                                                                user: {
                                                                     displayName,
-                                                                    id: auth.token!.payload.sub,
-                                                                    __typename: "User"
-                                                                }
-                                                            }
-                                                        }
-                                                    })
-                                                ]);
-
-                                                await new Promise(resolve => setTimeout(() => resolve(), 60000));
-                                            } catch (err) {
-                                                console.log(err);
-                                            }
-
-                                            location.reload();
-                                        }}
-                                    >
-                                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                            <Heading>DisplayName</Heading>
-                                            <SecondaryHeading>{currentUser.displayName}</SecondaryHeading>
-                                        </ExpansionPanelSummary>
-                                        <ExpansionPanelDetails>
-                                            <TextField
-                                                id="profile-DisplayName"
-                                                label="DisplayName"
-                                                margin="none"
-                                                fullWidth
-                                            />
-                                        </ExpansionPanelDetails>
-                                        <ExpansionPanelActions>
-                                            <Button
-                                                color="primary"
-                                                type="submit"
-                                            >
-                                                save
-                                            </Button>
-                                        </ExpansionPanelActions>
-                                    </ExpansionPanel>
-                                    <ExpansionPanel
-                                        component="form"
-                                        expanded={this.state.opendItem === "email"}
-                                        onChange={this.handleChange("email")}
-                                        // tslint:disable-next-line jsx-no-lambda
-                                        onSubmit={async e => {
-                                            e.preventDefault();
-
-                                            const email = (e.target as any).elements["profile-Email"].value;
-
-                                            try {
-                                                await Promise.all([
-                                                    updateUser({
-                                                        variables: {
-                                                            user: {
-                                                                email,
-                                                                id: auth.token!.payload.sub,
-                                                            },
-                                                            optimisticResponse: {
-                                                                __typename: "Mutation",
-                                                                updateUser: {
                                                                     email,
-                                                                    id: auth.token!.payload.sub,
-                                                                    __typename: "User"
-                                                                }
-                                                            }
-                                                        }
-                                                    })
-                                                ]);
-
-                                                await new Promise(resolve => setTimeout(() => resolve(), 60000));
-                                            } catch (err) {
-                                                console.log(err);
-                                            }
-
-                                            location.reload();
-                                        }}
-
-                                    >
-                                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                            <Heading>Mail Address</Heading>
-                                            <SecondaryHeading>{currentUser.email}</SecondaryHeading>
-                                        </ExpansionPanelSummary>
-                                        <ExpansionPanelDetails>
-                                            <TextField
-                                                id="profile-Email"
-                                                label="Mail Address"
-                                                margin="none"
-                                                fullWidth
-                                            />
-                                        </ExpansionPanelDetails>
-                                        <ExpansionPanelActions>
-                                            <Button
-                                                color="primary"
-                                                type="submit"
-                                            >
-                                                save
-                                            </Button>
-                                        </ExpansionPanelActions>
-                                    </ExpansionPanel>
-                                    <ExpansionPanel
-                                        component="form"
-                                        expanded={this.state.opendItem === "career"}
-                                        onChange={this.handleChange("career")}
-                                        // tslint:disable-next-line jsx-no-lambda
-                                        onSubmit={async e => {
-                                            e.preventDefault();
-
-                                            const career = (e.target as any).elements["profile-Career"].value;
-
-                                            try {
-                                                await Promise.all([
-                                                    updateUser({
-                                                        variables: {
-                                                            user: {
-                                                                career,
-                                                                id: auth.token!.payload.sub,
-                                                            },
-                                                            optimisticResponse: {
-                                                                __typename: "Mutation",
-                                                                updateUser: {
                                                                     career,
-                                                                    id: auth.token!.payload.sub,
-                                                                    __typename: "User"
-                                                                }
-                                                            }
-                                                        }
-                                                    })
-                                                ]);
-
-                                                await new Promise(resolve => setTimeout(() => resolve(), 60000));
-                                            } catch (err) {
-                                                console.log(err);
-                                            }
-
-                                            location.reload();
-                                        }}
-
-                                    >
-                                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                            <Heading>Career</Heading>
-                                            <SecondaryHeading>{currentUser.career}</SecondaryHeading>
-                                        </ExpansionPanelSummary>
-                                        <ExpansionPanelDetails>
-                                            <TextField
-                                                id="profile-Career"
-                                                label="Career"
-                                                margin="none"
-                                                multiline
-                                                rows="5"
-                                                fullWidth
-                                            />
-                                        </ExpansionPanelDetails>
-                                        <ExpansionPanelActions>
-                                            <Button
-                                                color="primary"
-                                                type="submit"
-                                            >
-                                                save
-                                            </Button>
-                                        </ExpansionPanelActions>
-                                    </ExpansionPanel>
-                                    <ExpansionPanel
-                                        component="form"
-                                        expanded={this.state.opendItem === "message"}
-                                        onChange={this.handleChange("message")}
-                                        // tslint:disable-next-line jsx-no-lambda
-                                        onSubmit={async e => {
-                                            e.preventDefault();
-
-                                            const message = (e.target as any).elements["profile-Message"].value;
-
-                                            try {
-                                                await Promise.all([
-                                                    updateUser({
-                                                        variables: {
-                                                            user: {
-                                                                message,
-                                                                id: auth.token!.payload.sub,
-                                                            },
-                                                            optimisticResponse: {
-                                                                __typename: "Mutation",
-                                                                updateUser: {
                                                                     message,
                                                                     id: auth.token!.payload.sub,
-                                                                    __typename: "User"
+                                                                },
+                                                                optimisticResponse: {
+                                                                    __typename: "Mutation",
+                                                                    updateUser: {
+                                                                        displayName,
+                                                                        email,
+                                                                        career,
+                                                                        message,
+                                                                        id: auth.token!.payload.sub,
+                                                                        __typename: "User"
+                                                                    }
                                                                 }
                                                             }
-                                                        }
-                                                    })
-                                                ]);
+                                                        })
+                                                    ]);
 
-                                                await new Promise(resolve => setTimeout(() => resolve(), 60000));
-                                            } catch (err) {
-                                                console.log(err);
-                                            }
+                                                    await new Promise(resolve => setTimeout(() => resolve(), 60000));
+                                                } catch (err) {
+                                                    console.log(err);
+                                                }
 
-                                            location.reload();
-                                        }}
-
-                                    >
-                                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                            <Heading>Message</Heading>
-                                            <SecondaryHeading>{currentUser.message}</SecondaryHeading>
-                                        </ExpansionPanelSummary>
-                                        <ExpansionPanelDetails>
-                                            <TextField
-                                                id="profile-Message"
-                                                label="Message"
-                                                margin="none"
-                                                fullWidth
-                                            />
-                                        </ExpansionPanelDetails>
-                                        <ExpansionPanelActions>
-                                            <Button
-                                                color="primary"
-                                                type="submit"
-                                            >
-                                                save
-                                            </Button>
-                                        </ExpansionPanelActions>
-                                    </ExpansionPanel>
+                                                location.reload();
+                                            }}
+                                        >
+                                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                                <Heading>Parsonal Data</Heading>
+                                            </ExpansionPanelSummary>
+                                            <Divider />
+                                            <ExpansionPanelDetails>
+                                                <AvatarDiv>
+                                                    <Typography gutterBottom>
+                                                        Avatar
+                                                    </Typography>
+                                                    <UserAvatar>
+                                                        HS
+                                                    </UserAvatar>
+                                                </AvatarDiv>
+                                                <ParsonalDiv>
+                                                    <ParsonalTextField
+                                                        id="profile-DisplayName"
+                                                        label="DisplayName"
+                                                        defaultValue={currentUser.displayName}
+                                                        margin="none"
+                                                        fullWidth
+                                                    />
+                                                    <ParsonalTextField
+                                                        id="profile-Email"
+                                                        label="Mail Address"
+                                                        defaultValue={currentUser.email}
+                                                        margin="none"
+                                                        fullWidth
+                                                    />
+                                                    <ParsonalTextField
+                                                        id="profile-Career"
+                                                        label="Career"
+                                                        defaultValue={currentUser.career}
+                                                        margin="none"
+                                                        fullWidth
+                                                        multiline
+                                                        rows="4"
+                                                    />
+                                                    <ParsonalTextField
+                                                        id="profile-Message"
+                                                        label="Message"
+                                                        defaultValue={currentUser.message}
+                                                        margin="none"
+                                                        fullWidth
+                                                    />
+                                                </ParsonalDiv>
+                                            </ExpansionPanelDetails>
+                                            <Divider />
+                                            <ExpansionPanelActions>
+                                                <Button
+                                                    onClick={this.userEditingEnd}
+                                                >
+                                                    cancel
+                                                </Button>
+                                                <Button
+                                                    color="primary"
+                                                    type="submit"
+                                                >
+                                                    save
+                                                </Button>
+                                            </ExpansionPanelActions>
+                                        </ExpansionPanel>
+                                    :
+                                        <ExpansionPanel
+                                            expanded={this.state.opendItem === "user"}
+                                            onChange={this.handleChange("user")}
+                                        >
+                                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                                <Heading>Parsonal Data</Heading>
+                                            </ExpansionPanelSummary>
+                                            <Divider />
+                                            <ExpansionPanelDetails>
+                                                <AvatarDiv>
+                                                    <Typography gutterBottom>
+                                                        Avatar
+                                                    </Typography>
+                                                    <UserAvatar>
+                                                        HS
+                                                    </UserAvatar>
+                                                </AvatarDiv>
+                                                <ParsonalDiv>
+                                                    <Typography gutterBottom>
+                                                        DisplayName
+                                                    </Typography>
+                                                    <ParsonalTypography gutterBottom>
+                                                        {currentUser.displayName}
+                                                    </ParsonalTypography>
+                                                    <Typography gutterBottom>
+                                                        Mail Address
+                                                    </Typography>
+                                                    <ParsonalTypography gutterBottom>
+                                                        {currentUser.email}
+                                                    </ParsonalTypography>
+                                                    <Typography gutterBottom>
+                                                        Career
+                                                    </Typography>
+                                                    <ParsonalTypography gutterBottom>
+                                                        {currentUser.career}
+                                                    </ParsonalTypography>
+                                                    <Typography gutterBottom>
+                                                        Message
+                                                    </Typography>
+                                                    <ParsonalTypography gutterBottom>
+                                                        {currentUser.message}
+                                                    </ParsonalTypography>
+                                                </ParsonalDiv>
+                                            </ExpansionPanelDetails>
+                                            <Divider />
+                                            <ExpansionPanelActions>
+                                                <Button
+                                                    color="primary"
+                                                    onClick={this.userEditingStart}
+                                                >
+                                                    edit
+                                                </Button>
+                                            </ExpansionPanelActions>
+                                        </ExpansionPanel>
+                                    }
                                 </Host>
                             )}
                         </Mutation>
@@ -323,8 +255,24 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     }
 }
 
+const AvatarDiv = styled.div`
+    && {
+        display: block;
+        margin-left: 1rem;
+    }
+`;
+
+const ParsonalDiv = styled.div`
+    && {
+        display: block;
+        margin-left: 4rem;
+    }
+`;
+
 const Host = styled.div`
-    margin: 1rem 4rem;
+    && {
+        margin: 1rem 4rem;
+    }
 `;
 
 const Heading = styled(Typography)`
@@ -334,12 +282,22 @@ const Heading = styled(Typography)`
     }
 `;
 
-const SecondaryHeadingBase = styled(Typography)`
+const ParsonalTextField = styled(TextField)`
     && {
-        color: ${(props: any) => props.theme.palette.text.secondary};
+        margin-bottom: 1rem
     }
 `;
 
-const SecondaryHeading = withTheme()(
-    (props: any) => <SecondaryHeadingBase {...props}/>
-);
+const ParsonalTypography = styled(Typography)`
+    &&{
+        margin-left: 1rem;
+    }
+`;
+
+const UserAvatar = styled(Avatar)`
+    &&{
+        width: 6rem;
+        height: 6rem;
+        margin: 1rem 1rem;
+    }
+`;
