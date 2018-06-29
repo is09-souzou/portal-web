@@ -108,7 +108,7 @@ export default class extends React.Component<Props, State> {
                             <Button onClick={this.signInDialogOpen} >
                                 Sign In
                             </Button>
-                      :     <div>
+                    :     <div>
                                 <IconButton
                                     aria-owns={this.state.userMenuOpend ? "menu-appbar" : undefined}
                                     aria-haspopup="true"

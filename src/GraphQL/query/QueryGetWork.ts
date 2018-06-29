@@ -1,14 +1,15 @@
 import gql from "graphql-tag";
 
 export default gql(`
-    query($id: ID!) {
-        getUser(id: $id) {
+    query{
+        gethWorkByTag(tags:"tag"){
+        items{
             id
-            email
-            name
-            career
-            avatorURI
-            messeage
+            tags
+            userId
+            title
+        },
+        nextToken
         }
     }`
 );
