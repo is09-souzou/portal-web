@@ -6,15 +6,13 @@ import {
 import styled from "styled-components";
 import QueryGetUser from "../../GraphQL/query/QueryGetUser";
 import MutationUpdateUser from "../../GraphQL/mutation/MutationUpdateUser";
-import { ExpandMore as ExpandMoreIcon } from "@material-ui/icons";
 import {
     Avatar,
     Button,
-    Divider,
-    ExpansionPanel,
-    ExpansionPanelDetails,
-    ExpansionPanelSummary,
-    ExpansionPanelActions,
+    Card,
+    CardActions,
+    CardContent,
+    CardMedia,
     TextField,
     Typography
 } from "@material-ui/core";
@@ -80,16 +78,14 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             {updateUser => (
                                 <Host>
                                     { this.state.userEditing ?
-                                        <ExpansionPanel
+                                        <Card
                                             component="form"
-                                            expanded={this.state.opendItem === "user"}
-                                            onChange={this.handleChange("user")}
                                             // tslint:disable-next-line jsx-no-lambda
                                             onSubmit={async e => {
                                                 e.preventDefault();
 
                                                 const displayName =
-                                                    (e.target as any).elements["profile-DisplayName"].value;
+                                                (e.target as any).elements["profile-DisplayName"].value;
                                                 const email = (e.target as any).elements["profile-Email"].value;
                                                 const career = (e.target as any).elements["profile-Career"].value;
                                                 const message = (e.target as any).elements["profile-Message"].value;
@@ -128,54 +124,53 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 location.reload();
                                             }}
                                         >
-                                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                                <Heading>Parsonal Data</Heading>
-                                            </ExpansionPanelSummary>
-                                            <Divider />
-                                            <ExpansionPanelDetails>
-                                                <AvatarDiv>
-                                                    <Typography gutterBottom>
-                                                        Avatar
-                                                    </Typography>
-                                                    <UserAvatar>
-                                                        HS
-                                                    </UserAvatar>
-                                                </AvatarDiv>
-                                                <ParsonalDiv>
-                                                    <ParsonalTextField
-                                                        id="profile-DisplayName"
-                                                        label="DisplayName"
-                                                        defaultValue={currentUser.displayName}
-                                                        margin="none"
-                                                        fullWidth
-                                                    />
-                                                    <ParsonalTextField
-                                                        id="profile-Email"
-                                                        label="Mail Address"
-                                                        defaultValue={currentUser.email}
-                                                        margin="none"
-                                                        fullWidth
-                                                    />
-                                                    <ParsonalTextField
-                                                        id="profile-Career"
-                                                        label="Career"
-                                                        defaultValue={currentUser.career}
-                                                        margin="none"
-                                                        fullWidth
-                                                        multiline
-                                                        rows="4"
-                                                    />
-                                                    <ParsonalTextField
-                                                        id="profile-Message"
-                                                        label="Message"
-                                                        defaultValue={currentUser.message}
-                                                        margin="none"
-                                                        fullWidth
-                                                    />
-                                                </ParsonalDiv>
-                                            </ExpansionPanelDetails>
-                                            <Divider />
-                                            <ExpansionPanelActions>
+                                            <FlexDiv>
+                                                <CardMedia>
+                                                    <AvatarDiv>
+                                                        <Typography gutterBottom>
+                                                            Avatar
+                                                        </Typography>
+                                                        <UserAvatar>
+                                                            HS
+                                                        </UserAvatar>
+                                                    </AvatarDiv>
+                                                </CardMedia>
+                                                <CardContent>
+                                                    <ParsonalDiv>
+                                                        <ParsonalTextField
+                                                            id="profile-DisplayName"
+                                                            label="DisplayName"
+                                                            defaultValue={currentUser.displayName}
+                                                            margin="none"
+                                                            fullWidth
+                                                        />
+                                                        <ParsonalTextField
+                                                            id="profile-Email"
+                                                            label="Mail Address"
+                                                            defaultValue={currentUser.email}
+                                                            margin="none"
+                                                            fullWidth
+                                                        />
+                                                        <ParsonalTextField
+                                                            id="profile-Career"
+                                                            label="Career"
+                                                            defaultValue={currentUser.career}
+                                                            margin="none"
+                                                            fullWidth
+                                                            multiline
+                                                            rows="4"
+                                                        />
+                                                        <ParsonalTextField
+                                                            id="profile-Message"
+                                                            label="Message"
+                                                            defaultValue={currentUser.message}
+                                                            margin="none"
+                                                            fullWidth
+                                                        />
+                                                    </ParsonalDiv>
+                                                </CardContent>
+                                            </FlexDiv>
+                                            <StyledCardActions>
                                                 <Button
                                                     onClick={this.userEditingEnd}
                                                 >
@@ -187,63 +182,59 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 >
                                                     save
                                                 </Button>
-                                            </ExpansionPanelActions>
-                                        </ExpansionPanel>
+                                            </StyledCardActions>
+                                        </Card>
                                     :
-                                        <ExpansionPanel
-                                            expanded={this.state.opendItem === "user"}
-                                            onChange={this.handleChange("user")}
-                                        >
-                                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                                <Heading>Parsonal Data</Heading>
-                                            </ExpansionPanelSummary>
-                                            <Divider />
-                                            <ExpansionPanelDetails>
-                                                <AvatarDiv>
-                                                    <Typography gutterBottom>
-                                                        Avatar
-                                                    </Typography>
-                                                    <UserAvatar>
-                                                        HS
-                                                    </UserAvatar>
-                                                </AvatarDiv>
-                                                <ParsonalDiv>
-                                                    <Typography gutterBottom>
-                                                        DisplayName
-                                                    </Typography>
-                                                    <ParsonalTypography gutterBottom>
-                                                        {currentUser.displayName}
-                                                    </ParsonalTypography>
-                                                    <Typography gutterBottom>
-                                                        Mail Address
-                                                    </Typography>
-                                                    <ParsonalTypography gutterBottom>
-                                                        {currentUser.email}
-                                                    </ParsonalTypography>
-                                                    <Typography gutterBottom>
-                                                        Career
-                                                    </Typography>
-                                                    <ParsonalTypography gutterBottom>
-                                                        {currentUser.career}
-                                                    </ParsonalTypography>
-                                                    <Typography gutterBottom>
-                                                        Message
-                                                    </Typography>
-                                                    <ParsonalTypography gutterBottom>
-                                                        {currentUser.message}
-                                                    </ParsonalTypography>
-                                                </ParsonalDiv>
-                                            </ExpansionPanelDetails>
-                                            <Divider />
-                                            <ExpansionPanelActions>
+                                        <Card>
+                                            <FlexDiv>
+                                                <CardMedia>
+                                                    <AvatarDiv>
+                                                        <Typography gutterBottom>
+                                                            Avatar
+                                                        </Typography>
+                                                        <UserAvatar>
+                                                            HS
+                                                        </UserAvatar>
+                                                    </AvatarDiv>
+                                                </CardMedia>
+                                                <CardContent>
+                                                    <ParsonalDiv>
+                                                        <Typography gutterBottom>
+                                                            DisplayName
+                                                        </Typography>
+                                                        <ParsonalTypography gutterBottom>
+                                                            {currentUser.displayName}
+                                                        </ParsonalTypography>
+                                                        <Typography gutterBottom>
+                                                            Mail Address
+                                                        </Typography>
+                                                        <ParsonalTypography gutterBottom>
+                                                            {currentUser.email}
+                                                        </ParsonalTypography>
+                                                        <Typography gutterBottom>
+                                                            Career
+                                                        </Typography>
+                                                        <ParsonalTypography gutterBottom>
+                                                            {currentUser.career}
+                                                        </ParsonalTypography>
+                                                        <Typography gutterBottom>
+                                                            Message
+                                                        </Typography>
+                                                        <ParsonalTypography gutterBottom>
+                                                            {currentUser.message}
+                                                        </ParsonalTypography>
+                                                    </ParsonalDiv>
+                                                </CardContent>
+                                            </FlexDiv>
+                                            <StyledCardActions>
                                                 <Button
                                                     color="primary"
                                                     onClick={this.userEditingStart}
                                                 >
                                                     edit
                                                 </Button>
-                                            </ExpansionPanelActions>
-                                        </ExpansionPanel>
+                                            </StyledCardActions>
+                                        </Card>
                                     }
                                 </Host>
                             )}
@@ -256,30 +247,22 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 }
 
 const AvatarDiv = styled.div`
-    && {
-        display: block;
-        margin-left: 1rem;
-    }
+    display: block;
+    margin-left: 4rem;
 `;
 
-const ParsonalDiv = styled.div`
-    && {
-        display: block;
-        margin-left: 4rem;
-    }
+const FlexDiv = styled.div`
+    display: flex;
+    align-items: center;
 `;
 
 const Host = styled.div`
-    && {
-        margin: 1rem 4rem;
-    }
+    margin: 1rem 4rem;
 `;
 
-const Heading = styled(Typography)`
-    && {
-        flex-basis: 33.33%;
-        flex-shrink: 0;
-    }
+const ParsonalDiv = styled.div`
+    display: block;
+    margin-left: 4rem;
 `;
 
 const ParsonalTextField = styled(TextField)`
@@ -291,6 +274,12 @@ const ParsonalTextField = styled(TextField)`
 const ParsonalTypography = styled(Typography)`
     &&{
         margin-left: 1rem;
+    }
+`;
+
+const StyledCardActions = styled(CardActions)`
+    && {
+        float: right;
     }
 `;
 
