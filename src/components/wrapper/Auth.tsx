@@ -12,7 +12,7 @@ interface Token {
 export type SingIn = (email: string, password: string) => Promise<Token>;
 export type SingUp = (email: string, password: string, attribute?: {[key: string]: string}) => Promise<string>;
 export type SingOut = () => Promise<void>;
-export type ChangePassword = (oldPassword: string, newPassword: string) => Promise<void>;
+export type ChangePassword = (password: string, newPassword: string) => Promise<void>;
 
 export type AuthProps = {
     auth: {
