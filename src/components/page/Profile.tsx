@@ -24,6 +24,9 @@ interface State {
 export default class extends React.Component<PageComponentProps<{}>, State> {
 
     displayNameInput?: any;
+    emailInput?: any;
+    careerInput?: any;
+    messageInput?: any;
 
     componentWillMount() {
         this.setState({
@@ -46,18 +49,17 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     user: {
                         [item]: value,
                         id: this.props.auth.token!.payload.sub,
-                    },
-                    optimisticResponse: {
-                        __typename: "Mutation",
-                        createWork: {
-                            id: "new",
-                            userId: this.props.auth.token!.payload.sub,
-                            createdAt: +new Date(),
-                            __typename: "Work"
-                        }
-                    },
-                }
+                    }
+                },
+                optimisticResponse: {
+                    __typename: "Mutation",
+                    updateUser: {
+                        id: this.props.auth.token!.payload.sub,
+                        __typename: "User"
+                    }
+                },
             });
+            this.setState({ whileEditingItem: this.state.whileEditingItem.filter(x => x !== item) });
         } catch (err) {
             this.props.notificationListener.errorNotification(err);
         }
@@ -98,19 +100,13 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     return (
                         <Mutation
                             mutation={MutationUpdateUser}
-                            refetchQueries={[]}
-                            // tslint:disable-next-line:jsx-no-lambda
-                            update={(cache, { data: { user } }) => {
-                                cache.writeQuery({
-                                    query: QueryGetUser,
-                                    data: { user }
-                                });
-                            }}
                         >
                             {(updateUser) => (
                                 <Host>
                                     <div>
-                                        <UserAvatar>
+                                        <UserAvatar
+                                            src={currentUser.avatarUri}
+                                        >
                                             HS
                                         </UserAvatar>
                                         <div>
@@ -132,7 +128,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                         >
                                                             Save
                                                         </Button>
-                                                    ),
+                                                    )
                                                 }}
                                                 onChange={this.addWhileEditingItem("displayName")}
                                                 defaultValue={currentUser.displayName}
@@ -148,13 +144,27 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 InputProps={{
                                                     endAdornment: (
                                                         this.state.whileEditingItem.includes("email")
-                                                    && <Button>Save</Button>
-                                                    ),
+                                                        && <Button
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onClick={() =>
+                                                                this.callUpdateUser(
+                                                                    updateUser,
+                                                                    "email",
+                                                                    this.emailInput.value
+                                                                )
+                                                            }
+                                                        >
+                                                            Save
+                                                        </Button>
+                                                    )
                                                 }}
+                                                type="email"
                                                 onChange={this.addWhileEditingItem("email")}
                                                 defaultValue={currentUser.email}
                                                 fullWidth
                                                 required
+                                                // tslint:disable-next-line:jsx-no-lambda
+                                                inputRef={x => this.emailInput = x}
                                             />
                                         </div>
                                     </div>
@@ -166,13 +176,26 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                             InputProps={{
                                                 endAdornment: (
                                                     this.state.whileEditingItem.includes("career")
-                                                 && <Button>Save</Button>
-                                                ),
+                                                    && <Button
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        onClick={() =>
+                                                            this.callUpdateUser(
+                                                                updateUser,
+                                                                "career",
+                                                                this.careerInput.value
+                                                            )
+                                                        }
+                                                    >
+                                                        Save
+                                                    </Button>
+                                                )
                                             }}
                                             onChange={this.addWhileEditingItem("career")}
                                             defaultValue={currentUser.career}
                                             multiline
                                             rows={4}
+                                            // tslint:disable-next-line:jsx-no-lambda
+                                            inputRef={x => this.careerInput = x}
                                         />
                                         <TextField
                                             id="profile-message"
@@ -181,11 +204,24 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                             InputProps={{
                                                 endAdornment: (
                                                     this.state.whileEditingItem.includes("message")
-                                                 && <Button>Save</Button>
-                                                ),
+                                                    && <Button
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        onClick={() =>
+                                                            this.callUpdateUser(
+                                                                updateUser,
+                                                                "message",
+                                                                this.messageInput.value
+                                                            )
+                                                        }
+                                                    >
+                                                        Save
+                                                    </Button>
+                                                )
                                             }}
                                             onChange={this.addWhileEditingItem("message")}
                                             defaultValue={currentUser.message}
+                                            // tslint:disable-next-line:jsx-no-lambda
+                                            inputRef={x => this.messageInput = x}
                                         />
                                     </div>
                                 </Host>
@@ -228,6 +264,6 @@ const UserAvatar = styled(Avatar)`
     && {
         width: 8rem;
         height: 8rem;
-        margin: 1rem;
+        margin: 1rem 4rem 0 1rem;
     }
 `;
