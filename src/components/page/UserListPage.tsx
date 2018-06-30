@@ -1,6 +1,5 @@
 import React, { Fragment } from "react";
 import { Query } from "react-apollo";
-import QueryAllUsers from "../../GraphQL/query/QueryGetUserList";
 import {
     List,
     ListItem,
@@ -8,6 +7,18 @@ import {
 } from "@material-ui/core";
 import { PageComponentProps } from "../../App";
 import NotFound from "../NotFound";
+import gql from "graphql-tag";
+
+const QueryGetUserList = gql(`
+    query($limit: Int, $nextToken: ID) {
+        listUsers(limit: $limit, nextToken: $nextToken) {
+            items {
+                id
+                displayName
+            }
+        }
+    }
+`);
 
 export default class UserListPage extends React.Component<PageComponentProps<{id: string}>>{
 
@@ -18,7 +29,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
         } = this.props;
 
         return (
-            <Query query={QueryAllUsers} variables={{ limit: 20 }} fetchPolicy="cache-and-network">
+            <Query query={QueryGetUserList} variables={{ limit: 20 }} fetchPolicy="cache-and-network">
                 {({ loading, error, data }) => {
                     if (loading) return "Loading...";
                     if (error) {

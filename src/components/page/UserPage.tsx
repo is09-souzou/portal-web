@@ -1,7 +1,20 @@
 import React, { Fragment } from "react";
 import { Query } from "react-apollo";
-import QueryGetUser from "../../GraphQL/query/QueryGetUser";
 import { PageComponentProps } from "./../../App";
+import gql from "graphql-tag";
+
+const QueryGetUser = gql(`
+    query($id: ID!) {
+        getUser(id: $id) {
+            id
+            email
+            displayName
+            career
+            avatarUri
+            message
+        }
+    }
+`);
 
 export default class UserListPage extends React.Component<PageComponentProps<{id: string}>> {
 

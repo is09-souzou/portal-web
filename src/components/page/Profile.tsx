@@ -4,8 +4,6 @@ import {
     Mutation
 } from "react-apollo";
 import styled from "styled-components";
-import QueryGetUser from "../../GraphQL/query/QueryGetUser";
-import MutationUpdateUser from "../../GraphQL/mutation/MutationUpdateUser";
 import {
     Avatar,
     Button,
@@ -13,6 +11,7 @@ import {
 } from "@material-ui/core";
 import { PageComponentProps } from "../../App";
 import NotFound from "../NotFound";
+import gql from "graphql-tag";
 
 type Item = "displayName" | "email" | "career" | "message";
 
@@ -20,6 +19,31 @@ interface State {
     whileEditingItem: Item[];
     userEditing: boolean;
 }
+
+const QueryGetUser = gql(`
+    query($id: ID!) {
+        getUser(id: $id) {
+            id
+            email
+            displayName
+            career
+            avatarUri
+            message
+        }
+    }
+`);
+
+const MutationUpdateUser = gql(`
+    mutation updateUser(
+        $user: UserUpdate!
+    ) {
+        updateUser(
+            user: $user
+        ) {
+            id
+        }
+    }
+`);
 
 export default class extends React.Component<PageComponentProps<{}>, State> {
 
@@ -262,6 +286,7 @@ const Host = styled.form`
 
 const UserAvatar = styled(Avatar)`
     && {
+        border: 1px solid #ccc;
         width: 8rem;
         height: 8rem;
         margin: 1rem 4rem 0 1rem;

@@ -12,7 +12,6 @@ import AppSyncClient                                        from "./components/w
 import NotificationListener, { NotificationListenerProps }  from "./components/wrapper/NotificationListener";
 
 import WorkPage                from "./components/page/WorkPage";
-import AccountRegistrationPage from "./components/page/AccountRegistrationPage";
 import CreateWorkPage          from "./components/page/CreateWorkPage";
 import ProfilePage             from "./components/page/Profile";
 
@@ -83,11 +82,6 @@ export default () => (
                             <ComposingRoute
                                 path="/profile"
                                 component={ProfilePage}
-                                exact={true}
-                            />
-                            <ComposingRoute
-                                path="/account-registration"
-                                component={AccountRegistrationPage}
                                 exact={true}
                             />
                         </ComposingSwitch>
