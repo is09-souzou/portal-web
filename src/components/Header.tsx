@@ -1,4 +1,5 @@
-import React from "react";
+import React, { Fragment } from "react";
+import { Query } from "react-apollo";
 import styled from "styled-components";
 import * as H from "history";
 import {
@@ -23,6 +24,8 @@ import SignUpDialog from "./SignUpDialog";
 import Link         from "./Link";
 import toObjectFromURIQuery from "../api/toObjectFromURIQuery";
 import { NotificationListener } from "./wrapper/NotificationListener";
+import gql from "graphql-tag";
+import { Redirect } from "react-router";
 
 interface Props extends AuthProps {
     history: H.History;
@@ -34,6 +37,19 @@ interface State {
     userMenuAnchorEl: HTMLElement | undefined;
     userMenuOpend: boolean;
 }
+
+const QueryGetUser = gql(`
+    query($id: ID!) {
+        getUser(id: $id) {
+            id
+            email
+            displayName
+            career
+            avatarUri
+            message
+        }
+    }
+`);
 
 export default class extends React.Component<Props, State> {
 
@@ -108,44 +124,81 @@ export default class extends React.Component<Props, State> {
                             <Button onClick={this.signInDialogOpen} >
                                 Sign In
                             </Button>
-                    :     <div>
-                                <IconButton
-                                    aria-owns={this.state.userMenuOpend ? "menu-appbar" : undefined}
-                                    aria-haspopup="true"
-                                    onClick={this.handleMenu}
-                                    color="inherit"
+                      :     (
+                                <Query
+                                    query={QueryGetUser}
+                                    variables={{ id: auth.token!.payload.sub }}
+                                    fetchPolicy="cache-and-network"
                                 >
-                                    <AccountCircleIcon />
-                                </IconButton>
-                                <Popover
-                                    id="menu-appbar"
-                                    anchorEl={this.state.userMenuAnchorEl}
-                                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                                    transformOrigin={{ vertical: "top", horizontal: "right" }}
-                                    open={!!this.state.userMenuAnchorEl}
-                                    onClose={this.menuClose}
-                                >
-                                    <PopoverContent>
-                                        <span>Name</span>
-                                        <span>Designer</span>
-                                        <Link
-                                            to="/profile"
-                                            onClick={this.menuClose}
-                                        >
-                                            <Button>
-                                                Profile
-                                            </Button>
-                                        </Link>
-                                    </PopoverContent>
-                                    <PopoverAction>
-                                        <Button
-                                            onClick={auth.signOut}
-                                        >
-                                            sign-out
-                                        </Button>
-                                    </PopoverAction>
-                                </Popover>
-                            </div>
+                                    {({ loading, error, data }) => {
+                                        if (loading) return "Loading...";
+                                        if (error) {
+                                            return (
+                                                <Fragment>
+                                                    <div key="page">cry；；</div>
+                                                    <notificationListener.ErrorComponent error={error} key="error"/>
+                                                </Fragment>
+                                            );
+                                        }
+
+                                        if (!data.getUser)
+                                            return <Redirect to="initial-stem" />;
+
+                                        return (
+                                            <Fragment>
+                                                <IconButton
+                                                    aria-owns={this.state.userMenuOpend ? "menu-appbar" : undefined}
+                                                    aria-haspopup="true"
+                                                    onClick={this.handleMenu}
+                                                    color="inherit"
+                                                >
+                                                    <AccountCircleIcon />
+                                                </IconButton>
+                                                <Popover
+                                                    id="menu-appbar"
+                                                    anchorEl={this.state.userMenuAnchorEl}
+                                                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                                                    transformOrigin={{ vertical: "top", horizontal: "right" }}
+                                                    open={!!this.state.userMenuAnchorEl}
+                                                    onClose={this.menuClose}
+                                                >
+                                                    <PopoverContent>
+                                                        <div>
+                                                            <div>
+                                                                <Typography variant="caption">Name</Typography>
+                                                                <Typography gutterBottom>
+                                                                    {data.getUser.displayName}
+                                                                </Typography>
+                                                            </div>
+                                                            <div>
+                                                                <Typography variant="caption">Mail Address</Typography>
+                                                                <Typography gutterBottom>
+                                                                    {data.getUser.email}
+                                                                </Typography>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <Link
+                                                                to="/profile"
+                                                                onClick={this.menuClose}
+                                                            >
+                                                                <Button>
+                                                                    Profile
+                                                                </Button>
+                                                            </Link>
+                                                            <Button
+                                                                onClick={auth.signOut}
+                                                            >
+                                                                sign-out
+                                                            </Button>
+                                                        </div>
+                                                    </PopoverContent>
+                                                </Popover>
+                                            </Fragment>
+                                        );
+                                    }}
+                                </Query>
+                            )
                         }
                     </div>
                 </StyledToolbar>
@@ -201,10 +254,5 @@ const PopoverContent = styled.div`
     padding: 1rem;
     > :nth-child(2) {
         display: flex;
-        justify-content: flex-end;
     }
-`;
-
-const PopoverAction = styled.div`
-    display: flex;
 `;
