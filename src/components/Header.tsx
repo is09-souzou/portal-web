@@ -41,6 +41,7 @@ interface State {
 const QueryGetUser = gql(`
     query($id: ID!) {
         getUser(id: $id) {
+            id
             email
             displayName
         }
