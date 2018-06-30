@@ -259,7 +259,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 }
 
 const Host = styled.form`
-    width: 40rem;
+    max-width: 40rem;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
