@@ -12,7 +12,7 @@ interface Token {
 export type SingIn = (email: string, password: string) => Promise<Token>;
 export type SingUp = (email: string, password: string, attribute?: {[key: string]: string}) => Promise<string>;
 export type SingOut = () => Promise<void>;
-export type ChangePassword = (oldPassword: string, newPassword: string) => Promise<string>;
+export type ChangePassword = (oldPassword: string, newPassword: string) => Promise<void>;
 
 export type AuthProps = {
     auth: {
@@ -119,27 +119,20 @@ export default class extends React.Component<Props, State> {
                                 this.setState({ token: null, cognitoUser: null });
                                 resolve();
                             },
-                            onFailure: e => {
+                            onFailure: err => {
                                 this.setState({ token: null, cognitoUser: null });
-                                reject(e);
+                                reject(err);
                             }
                         });
                     }
                 }),
-                changePassword:(oldPassword, newPassword) => new Promise((resolve, reject) => {
-                    const cognitoUser = this.state.cognitoUser;
-                    cognitoUser!.changePassword(
+                changePassword: (oldPassword, newPassword) => new Promise((resolve, reject) =>
+                    this.state.cognitoUser!.changePassword(
                         oldPassword,
                         newPassword,
-                        (err?, result?) => {
-                            if (err || !result) {
-                                reject(err);
-                                return;
-                            }
-                            resolve(result);
-                        }
-                    );
-                }),
+                        (err, result) => (err || !result) ? reject(err) : resolve()
+                    )
+                ),
                 token: this.state.token,
                 cognitoUserPool: this.state.cognitoUserPool
             }
