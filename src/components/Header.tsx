@@ -41,12 +41,8 @@ interface State {
 const QueryGetUser = gql(`
     query($id: ID!) {
         getUser(id: $id) {
-            id
             email
             displayName
-            career
-            avatarUri
-            message
         }
     }
 `);
@@ -133,10 +129,11 @@ export default class extends React.Component<Props, State> {
                                     {({ loading, error, data }) => {
                                         if (loading) return "Loading...";
                                         if (error) {
+                                            console.error(error);
                                             return (
                                                 <Fragment>
-                                                    <div key="page">cry；；</div>
-                                                    <notificationListener.ErrorComponent error={error} key="error"/>
+                                                    <div>cry；；</div>
+                                                    <notificationListener.ErrorComponent error={error} />
                                                 </Fragment>
                                             );
                                         }
