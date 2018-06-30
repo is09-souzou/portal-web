@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Query } from "react-apollo";
 import QueryGetUser from "../../GraphQL/query/QueryGetUser";
 import { PageComponentProps } from "./../../App";
@@ -20,10 +20,12 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                 {({ loading, error, data }) => {
                     if (loading) return "Loading...";
                     if (error) {
-                        return ([
-                            <div key="page">cry；；</div>,
-                            <notificationListener.ErrorComponent error={error} key="error"/>
-                        ]);
+                        return (
+                            <Fragment>
+                                <div key="page">cry；；</div>,
+                                <notificationListener.ErrorComponent error={error} key="error"/>
+                            </Fragment>
+                        );
                     }
 
                     return (

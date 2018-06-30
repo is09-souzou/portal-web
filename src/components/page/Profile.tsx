@@ -9,39 +9,59 @@ import MutationUpdateUser from "../../GraphQL/mutation/MutationUpdateUser";
 import {
     Avatar,
     Button,
-    Card,
-    CardActions,
-    CardContent,
-    CardMedia,
-    TextField,
-    Typography
+    TextField
 } from "@material-ui/core";
 import { PageComponentProps } from "../../App";
 import NotFound from "../NotFound";
 
-type Item = "user" | "work";
+type Item = "displayName" | "email" | "career" | "message";
 
 interface State {
-    opendItem?: Item;
+    whileEditingItem: Item[];
     userEditing: boolean;
 }
 
 export default class extends React.Component<PageComponentProps<{}>, State> {
 
+    // displayNameInput?: React.Component<TextFieldProps, React.ComponentState, any> | null;
+    displayNameInput?: any;
+
     componentWillMount() {
         this.setState({
-            opendItem: "user",
+            whileEditingItem: [],
             userEditing: false
         });
     }
 
-    handleChange = (item: Item) => () => this.setState({
-        opendItem: this.state.opendItem === item ? undefined : item,
-    })
+    addWhileEditingItem = (item: Item) => (
+        () => (
+            !this.state.whileEditingItem.includes(item)
+         && this.setState({ whileEditingItem: this.state.whileEditingItem.concat(item) })
+        )
+    )
 
-    userEditingStart = () => this.setState({ userEditing: true });
-
-    userEditingEnd = () => this.setState({ userEditing: false });
+    callUpdateUser = async (updateUser: Function, item: Item, value: any) => {
+        try {
+            await updateUser({
+                variables: {
+                    user: {
+                        [item]: value,
+                        id: this.props.auth.token!.payload.sub,
+                    },
+                    optimisticResponse: {
+                        __typename: "Mutation",
+                        updateUser: {
+                            [item]: value,
+                            id: this.props.auth.token!.payload.sub,
+                            __typename: "User"
+                        }
+                    }
+                }
+            });
+        } catch (err) {
+            this.props.notificationListener.errorNotification(err);
+        }
+    }
 
     render() {
         const {
@@ -74,168 +94,98 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     const currentUser = data.getUser;
 
                     return (
-                        <Mutation mutation={MutationUpdateUser} refetchQueries={[]}>
-                            {updateUser => (
+                        <Mutation
+                            mutation={MutationUpdateUser}
+                            refetchQueries={[]}
+                            // tslint:disable-next-line:jsx-no-lambda
+                            update={(cache, { data: { user } }) => {
+                                cache.writeQuery({
+                                    query: QueryGetUser,
+                                    data: { user }
+                                });
+                            }}
+                        >
+                            {(updateUser) => (
                                 <Host>
-                                    { this.state.userEditing ?
-                                        <Card
-                                            component="form"
-                                            // tslint:disable-next-line jsx-no-lambda
-                                            onSubmit={async e => {
-                                                e.preventDefault();
-
-                                                const displayName =
-                                                (e.target as any).elements["profile-DisplayName"].value;
-                                                const email = (e.target as any).elements["profile-Email"].value;
-                                                const career = (e.target as any).elements["profile-Career"].value;
-                                                const message = (e.target as any).elements["profile-Message"].value;
-
-                                                try {
-                                                    await Promise.all([
-                                                        updateUser({
-                                                            variables: {
-                                                                user: {
-                                                                    displayName,
-                                                                    email,
-                                                                    career,
-                                                                    message,
-                                                                    id: auth.token!.payload.sub,
-                                                                },
-                                                                optimisticResponse: {
-                                                                    __typename: "Mutation",
-                                                                    updateUser: {
-                                                                        displayName,
-                                                                        email,
-                                                                        career,
-                                                                        message,
-                                                                        id: auth.token!.payload.sub,
-                                                                        __typename: "User"
-                                                                    }
-                                                                }
+                                    <div>
+                                        <UserAvatar>
+                                            HS
+                                        </UserAvatar>
+                                        <div>
+                                            <TextField
+                                                label="DisplayName"
+                                                margin="normal"
+                                                InputProps={{
+                                                    endAdornment: (
+                                                        this.state.whileEditingItem.includes("displayName")
+                                                        && <Button
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onClick={() =>
+                                                                this.callUpdateUser(
+                                                                    updateUser,
+                                                                    "displayName",
+                                                                    this.displayNameInput.value
+                                                                )
                                                             }
-                                                        })
-                                                    ]);
-
-                                                    await new Promise(resolve => setTimeout(() => resolve(), 60000));
-                                                } catch (err) {
-                                                    console.log(err);
-                                                }
-
-                                                location.reload();
+                                                        >
+                                                            Save
+                                                        </Button>
+                                                    ),
+                                                }}
+                                                onChange={this.addWhileEditingItem("displayName")}
+                                                defaultValue={currentUser.displayName}
+                                                fullWidth
+                                                required
+                                                // tslint:disable-next-line:jsx-no-lambda
+                                                inputRef={x => this.displayNameInput = x}
+                                            />
+                                            <TextField
+                                                id="profile-email"
+                                                label="Mail Address"
+                                                margin="normal"
+                                                InputProps={{
+                                                    endAdornment: (
+                                                        this.state.whileEditingItem.includes("email")
+                                                    && <Button>Save</Button>
+                                                    ),
+                                                }}
+                                                onChange={this.addWhileEditingItem("email")}
+                                                defaultValue={currentUser.email}
+                                                fullWidth
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <TextField
+                                            id="profile-career"
+                                            label="Career"
+                                            margin="normal"
+                                            InputProps={{
+                                                endAdornment: (
+                                                    this.state.whileEditingItem.includes("career")
+                                                 && <Button>Save</Button>
+                                                ),
                                             }}
-                                        >
-                                            <FlexDiv>
-                                                <CardMedia>
-                                                    <AvatarDiv>
-                                                        <Typography gutterBottom>
-                                                            Avatar
-                                                        </Typography>
-                                                        <UserAvatar>
-                                                            HS
-                                                        </UserAvatar>
-                                                    </AvatarDiv>
-                                                </CardMedia>
-                                                <CardContent>
-                                                    <ParsonalDiv>
-                                                        <ParsonalTextField
-                                                            id="profile-DisplayName"
-                                                            label="DisplayName"
-                                                            defaultValue={currentUser.displayName}
-                                                            margin="none"
-                                                            fullWidth
-                                                        />
-                                                        <ParsonalTextField
-                                                            id="profile-Email"
-                                                            label="Mail Address"
-                                                            defaultValue={currentUser.email}
-                                                            margin="none"
-                                                            fullWidth
-                                                        />
-                                                        <ParsonalTextField
-                                                            id="profile-Career"
-                                                            label="Career"
-                                                            defaultValue={currentUser.career}
-                                                            margin="none"
-                                                            fullWidth
-                                                            multiline
-                                                            rows="4"
-                                                        />
-                                                        <ParsonalTextField
-                                                            id="profile-Message"
-                                                            label="Message"
-                                                            defaultValue={currentUser.message}
-                                                            margin="none"
-                                                            fullWidth
-                                                        />
-                                                    </ParsonalDiv>
-                                                </CardContent>
-                                            </FlexDiv>
-                                            <StyledCardActions>
-                                                <Button
-                                                    onClick={this.userEditingEnd}
-                                                >
-                                                    cancel
-                                                </Button>
-                                                <Button
-                                                    color="primary"
-                                                    type="submit"
-                                                >
-                                                    save
-                                                </Button>
-                                            </StyledCardActions>
-                                        </Card>
-                                    :
-                                        <Card>
-                                            <FlexDiv>
-                                                <CardMedia>
-                                                    <AvatarDiv>
-                                                        <Typography gutterBottom>
-                                                            Avatar
-                                                        </Typography>
-                                                        <UserAvatar>
-                                                            HS
-                                                        </UserAvatar>
-                                                    </AvatarDiv>
-                                                </CardMedia>
-                                                <CardContent>
-                                                    <ParsonalDiv>
-                                                        <Typography gutterBottom>
-                                                            DisplayName
-                                                        </Typography>
-                                                        <ParsonalTypography gutterBottom>
-                                                            {currentUser.displayName}
-                                                        </ParsonalTypography>
-                                                        <Typography gutterBottom>
-                                                            Mail Address
-                                                        </Typography>
-                                                        <ParsonalTypography gutterBottom>
-                                                            {currentUser.email}
-                                                        </ParsonalTypography>
-                                                        <Typography gutterBottom>
-                                                            Career
-                                                        </Typography>
-                                                        <ParsonalTypography gutterBottom>
-                                                            {currentUser.career}
-                                                        </ParsonalTypography>
-                                                        <Typography gutterBottom>
-                                                            Message
-                                                        </Typography>
-                                                        <ParsonalTypography gutterBottom>
-                                                            {currentUser.message}
-                                                        </ParsonalTypography>
-                                                    </ParsonalDiv>
-                                                </CardContent>
-                                            </FlexDiv>
-                                            <StyledCardActions>
-                                                <Button
-                                                    color="primary"
-                                                    onClick={this.userEditingStart}
-                                                >
-                                                    edit
-                                                </Button>
-                                            </StyledCardActions>
-                                        </Card>
-                                    }
+                                            onChange={this.addWhileEditingItem("career")}
+                                            defaultValue={currentUser.career}
+                                            multiline
+                                            rows={4}
+                                        />
+                                        <TextField
+                                            id="profile-message"
+                                            label="Message"
+                                            margin="normal"
+                                            InputProps={{
+                                                endAdornment: (
+                                                    this.state.whileEditingItem.includes("message")
+                                                 && <Button>Save</Button>
+                                                ),
+                                            }}
+                                            onChange={this.addWhileEditingItem("message")}
+                                            defaultValue={currentUser.message}
+                                        />
+                                    </div>
                                 </Host>
                             )}
                         </Mutation>
@@ -246,47 +196,36 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     }
 }
 
-const AvatarDiv = styled.div`
-    display: block;
-    margin-left: 4rem;
-`;
-
-const FlexDiv = styled.div`
+const Host = styled.form`
+    width: 40rem;
+    margin: 0 auto;
     display: flex;
-    align-items: center;
-`;
-
-const Host = styled.div`
-    margin: 1rem 4rem;
-`;
-
-const ParsonalDiv = styled.div`
-    display: block;
-    margin-left: 4rem;
-`;
-
-const ParsonalTextField = styled(TextField)`
-    && {
-        margin-bottom: 1rem
+    flex-direction: column;
+    > :nth-child(1) {
+        display: flex;
+        justify-content: space-evenly;
+        margin-bottom: 1rem;
+        @media (max-width: 768px) {
+            flex-direction: column;
+        }
+        > :nth-child(2) {
+            flex-grow: 1;
+        }
     }
-`;
-
-const ParsonalTypography = styled(Typography)`
-    &&{
-        margin-left: 1rem;
+    > :nth-child(2) {
+        display: flex;
+        flex-direction: column;
     }
-`;
-
-const StyledCardActions = styled(CardActions)`
-    && {
-        float: right;
+    @media (max-width: 768px) {
+        width: unset;
+        margin: 0 4rem;
     }
 `;
 
 const UserAvatar = styled(Avatar)`
-    &&{
-        width: 6rem;
-        height: 6rem;
-        margin: 1rem 1rem;
+    && {
+        width: 8rem;
+        height: 8rem;
+        margin: 1rem;
     }
 `;

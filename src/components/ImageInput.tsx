@@ -1,7 +1,6 @@
 import React from "react";
 import Image from "./Image";
 import styled from "styled-components";
-import withProps from "../util/withProps";
 
 interface PropsBase {
     defaultImageUrl?: string;
@@ -114,7 +113,7 @@ const Host = styled.div`
     margin: 16px 0 8px 0;
 `;
 
-const StyledImage = withProps<React.ImgHTMLAttributes<HTMLImageElement>>()(styled(Image))`
+const StyledImage = styled(Image)`
     border: 1px solid #DDD;
     cursor: pointer;
 `;
@@ -125,7 +124,7 @@ interface LabelTextProps {
     disabled: boolean;
 }
 
-const LabelText = withProps<LabelTextProps>()(styled.span)`
+const LabelText = styled<LabelTextProps, any>("span")`
     :not(:empty) {
         display      : inline-block;
         margin-bottom: 8px;

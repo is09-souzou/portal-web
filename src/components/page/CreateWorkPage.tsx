@@ -23,7 +23,6 @@ interface State {
 }
 
 export default class extends React.Component<PageComponentProps<void>, State> {
-    host: any;
 
     componentWillMount() {
         this.setState({
@@ -142,7 +141,6 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                         }
                                     });
                                 }}
-                                ref={(host:any) => this.host = host}
                             >
                                 <div>
                                     <TextField

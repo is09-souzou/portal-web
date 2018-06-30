@@ -8,11 +8,6 @@ export default gql(`
             user: $user
         ) {
             id
-            email
-            displayName
-            career
-            avatarUri
-            message
         }
     }
 `);
