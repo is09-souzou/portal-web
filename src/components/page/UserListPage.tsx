@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Query } from "react-apollo";
 import QueryAllUsers from "../../GraphQL/query/QueryGetUserList";
 import {
@@ -22,10 +22,12 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                 {({ loading, error, data }) => {
                     if (loading) return "Loading...";
                     if (error) {
-                        return ([
-                            <div key="page">cry；；</div>,
-                            <notificationListener.ErrorComponent error={error} key="error"/>
-                        ]);
+                        return (
+                            <Fragment>
+                                <div key="page">cry；；</div>
+                                <notificationListener.ErrorComponent error={error} key="error"/>
+                            </Fragment>
+                        );
                     }
 
                     if (!data.listUsers || !data.listUsers.items)

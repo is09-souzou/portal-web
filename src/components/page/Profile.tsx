@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
     Query,
     Mutation
@@ -23,7 +23,6 @@ interface State {
 
 export default class extends React.Component<PageComponentProps<{}>, State> {
 
-    // displayNameInput?: React.Component<TextFieldProps, React.ComponentState, any> | null;
     displayNameInput?: any;
 
     componentWillMount() {
@@ -50,12 +49,13 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     },
                     optimisticResponse: {
                         __typename: "Mutation",
-                        updateUser: {
-                            [item]: value,
-                            id: this.props.auth.token!.payload.sub,
-                            __typename: "User"
+                        createWork: {
+                            id: "new",
+                            userId: this.props.auth.token!.payload.sub,
+                            createdAt: +new Date(),
+                            __typename: "Work"
                         }
-                    }
+                    },
                 }
             });
         } catch (err) {
@@ -82,10 +82,12 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     if (loading) return "Loading...";
                     if (error) {
                         console.error(error);
-                        return ([
-                            <div key="page">cry；；</div>,
-                            <notificationListener.ErrorComponent error={error} key="error"/>
-                        ]);
+                        return (
+                            <Fragment>
+                                <div>cry；；</div>
+                                <notificationListener.ErrorComponent error={error}/>
+                            </Fragment>
+                        );
                     }
 
                     if (!data.getUser)
