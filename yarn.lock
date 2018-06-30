@@ -674,7 +674,7 @@
     lodash "^4.17.5"
     to-fast-properties "^2.0.0"
 
-"@emmetio/extract-abbreviation@^0.1.4":
+"@emmetio/extract-abbreviation@0.1.6":
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/@emmetio/extract-abbreviation/-/extract-abbreviation-0.1.6.tgz#e4a9856c1057f0aff7d443b8536477c243abe28c"
 
@@ -695,9 +695,9 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
-"@material-ui/core@^1.1.0":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-1.2.1.tgz#f8c73da10b875762b37be7167ec2ac79b027499f"
+"@material-ui/core@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-1.3.0.tgz#cc06d2ddc594c5563e73c0364763b8502dbc260e"
   dependencies:
     "@babel/runtime" "^7.0.0-beta.42"
     "@types/jss" "^9.5.3"
@@ -723,7 +723,7 @@
     react-jss "^8.1.0"
     react-popper "^0.10.0"
     react-transition-group "^2.2.1"
-    recompose "^0.26.0 || ^0.27.0"
+    recompose "^0.27.0"
     scroll "^2.0.3"
     warning "^4.0.1"
 
@@ -817,9 +817,15 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^16.3.14":
+"@types/react@*":
   version "16.3.18"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.3.18.tgz#bf195aed4d77dc86f06e4c9bb760214a3b822b8d"
+  dependencies:
+    csstype "^2.2.0"
+
+"@types/react@^16.4.6":
+  version "16.4.6"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.4.6.tgz#5024957c6bcef4f02823accf5974faba2e54fada"
   dependencies:
     csstype "^2.2.0"
 
@@ -1021,9 +1027,9 @@ ajv@^6.1.0:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.1"
 
-amazon-cognito-identity-js@^2.0.9:
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/amazon-cognito-identity-js/-/amazon-cognito-identity-js-2.0.9.tgz#5a8fd6e97c513d753c14cc9e17091b105fb65d22"
+amazon-cognito-identity-js@^2.0.13:
+  version "2.0.13"
+  resolved "https://registry.yarnpkg.com/amazon-cognito-identity-js/-/amazon-cognito-identity-js-2.0.13.tgz#47afd2fb4d5de56bc1c9a842bc5727003a16802a"
   dependencies:
     buffer "4.9.1"
     crypto-browserify "1.0.9"
@@ -1082,6 +1088,12 @@ apollo-cache@^1.1.11, apollo-cache@^1.1.5:
   dependencies:
     apollo-utilities "^1.0.15"
 
+apollo-cache@^1.1.12:
+  version "1.1.12"
+  resolved "https://registry.yarnpkg.com/apollo-cache/-/apollo-cache-1.1.12.tgz#070015c9051b2ebb69676beb10466a9c0b259f91"
+  dependencies:
+    apollo-utilities "^1.0.16"
+
 apollo-client@2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/apollo-client/-/apollo-client-2.2.6.tgz#38b5a197976f3c22b63623c455d4c4606e420b66"
@@ -1096,15 +1108,15 @@ apollo-client@2.2.6:
   optionalDependencies:
     "@types/async" "2.0.47"
 
-apollo-client@^2.3.2:
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/apollo-client/-/apollo-client-2.3.4.tgz#308fbfa95423f9bde6827376d9a85802fe93e28d"
+apollo-client@^2.3.5:
+  version "2.3.5"
+  resolved "https://registry.yarnpkg.com/apollo-client/-/apollo-client-2.3.5.tgz#74b62bd7e7bd7030d01c35e2e221ed65a807af23"
   dependencies:
     "@types/zen-observable" "^0.5.3"
-    apollo-cache "^1.1.11"
+    apollo-cache "^1.1.12"
     apollo-link "^1.0.0"
     apollo-link-dedup "^1.0.0"
-    apollo-utilities "^1.0.15"
+    apollo-utilities "^1.0.16"
     symbol-observable "^1.0.2"
     zen-observable "^0.8.0"
   optionalDependencies:
@@ -1146,6 +1158,12 @@ apollo-link@^1.0.0, apollo-link@^1.2.2:
 apollo-utilities@^1.0.0, apollo-utilities@^1.0.15, apollo-utilities@^1.0.9:
   version "1.0.15"
   resolved "https://registry.yarnpkg.com/apollo-utilities/-/apollo-utilities-1.0.15.tgz#8f1ba6e4ed9b92cb0de2ce7c032315a768860aae"
+  dependencies:
+    fast-json-stable-stringify "^2.0.0"
+
+apollo-utilities@^1.0.16:
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/apollo-utilities/-/apollo-utilities-1.0.16.tgz#787310df4c3900a68c0beb3d351c59725a588cdb"
   dependencies:
     fast-json-stable-stringify "^2.0.0"
 
@@ -1232,16 +1250,16 @@ atob@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.1.tgz#ae2d5a729477f289d60dd7f96a6314a22dd6c22a"
 
-aws-appsync-react@^1.0.12:
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/aws-appsync-react/-/aws-appsync-react-1.0.14.tgz#6c81c1c92057dbde4917dff6b898231989338727"
+aws-appsync-react@^1.0.19:
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/aws-appsync-react/-/aws-appsync-react-1.0.19.tgz#2a5b2596b5b4d736322acdabd0b0742843507db8"
   dependencies:
-    aws-appsync "^1.0.23"
+    aws-appsync "^1.1.4"
     prop-types "^15.6.0"
 
-aws-appsync@^1.0.21, aws-appsync@^1.0.23:
-  version "1.0.23"
-  resolved "https://registry.yarnpkg.com/aws-appsync/-/aws-appsync-1.0.23.tgz#ff663e72159e68d5fb82a521f26222b6d3732107"
+aws-appsync@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/aws-appsync/-/aws-appsync-1.1.4.tgz#9e1cd1a16c35e343491b8674a3206adf64a09bd7"
   dependencies:
     "@redux-offline/redux-offline" "^2.2.1"
     apollo-cache-inmemory "^1.0.0"
@@ -1278,9 +1296,9 @@ babel-code-frame@^6.22.0:
     esutils "^2.0.2"
     js-tokens "^3.0.2"
 
-babel-loader@next:
-  version "8.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/babel-loader/-/babel-loader-8.0.0-beta.3.tgz#49efeea6e8058d5af860a18a6de88b8c1450645b"
+babel-loader@^8.0.0-beta.4:
+  version "8.0.0-beta.4"
+  resolved "https://registry.yarnpkg.com/babel-loader/-/babel-loader-8.0.0-beta.4.tgz#c3fab00696c385c70c04dbe486391f0eb996f345"
   dependencies:
     find-cache-dir "^1.0.0"
     loader-utils "^1.0.2"
@@ -2057,6 +2075,14 @@ end-of-stream@^1.0.0, end-of-stream@^1.1.0:
 enhanced-resolve@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-4.0.0.tgz#e34a6eaa790f62fccd71d93959f56b2b432db10a"
+  dependencies:
+    graceful-fs "^4.1.2"
+    memory-fs "^0.4.0"
+    tapable "^1.0.0"
+
+enhanced-resolve@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-4.1.0.tgz#41c7e0bfdfe74ac1ffe1e57ad6a5c6c9f3742a7f"
   dependencies:
     graceful-fs "^4.1.2"
     memory-fs "^0.4.0"
@@ -3213,7 +3239,7 @@ lodash-es@^4.17.4, lodash-es@^4.2.1:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.10.tgz#62cd7104cdf5dd87f235a837f0ede0e8e5117e05"
 
-lodash@4.17.10, lodash@^4.0.0, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.2.1, lodash@^4.3.0:
+lodash@^4.0.0, lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.2.1, lodash@^4.3.0:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
 
@@ -4041,14 +4067,14 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-apollo@^2.1.4:
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/react-apollo/-/react-apollo-2.1.5.tgz#d41302a26bd30919d31d84a40c3a3699d8a1dfa4"
+react-apollo@^2.1.8:
+  version "2.1.8"
+  resolved "https://registry.yarnpkg.com/react-apollo/-/react-apollo-2.1.8.tgz#ebac0d9bee0f0906df3ce29207f94df337009887"
   dependencies:
     fbjs "^0.8.16"
     hoist-non-react-statics "^2.5.0"
     invariant "^2.2.2"
-    lodash "4.17.10"
+    lodash "^4.17.10"
     prop-types "^15.6.0"
 
 react-dom@^16.4.0:
@@ -4198,7 +4224,7 @@ readdirp@^2.0.0:
     readable-stream "^2.0.2"
     set-immediate-shim "^1.0.1"
 
-"recompose@^0.26.0 || ^0.27.0":
+"recompose@^0.26.0 || ^0.27.0", recompose@^0.27.0:
   version "0.27.1"
   resolved "https://registry.yarnpkg.com/recompose/-/recompose-0.27.1.tgz#1a49e931f183634516633bbb4f4edbfd3f38a7ba"
   dependencies:
@@ -4688,9 +4714,9 @@ strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
-styled-components@^3.3.0:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-3.3.2.tgz#087b96830ee3d60d9a8b5ef17c132b4f29cc71df"
+styled-components@3.3.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-3.3.3.tgz#09e702055ab11f7a8eab8229b1c0d0b855095686"
   dependencies:
     buffer "^5.0.3"
     css-to-react-native "^2.0.3"
@@ -4708,8 +4734,8 @@ stylis-rule-sheet@^0.0.10:
   resolved "https://registry.yarnpkg.com/stylis-rule-sheet/-/stylis-rule-sheet-0.0.10.tgz#44e64a2b076643f4b52e5ff71efc04d8c3c4a430"
 
 stylis@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/stylis/-/stylis-3.5.0.tgz#016fa239663d77f868fef5b67cf201c4b7c701e1"
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/stylis/-/stylis-3.5.1.tgz#fd341d59f57f9aeb412bc14c9d8a8670b438e03b"
 
 supports-color@^2.0.0:
   version "2.0.0"
@@ -4851,9 +4877,9 @@ trim-right@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
 
-ts-loader@^4.4.1:
-  version "4.4.1"
-  resolved "https://registry.yarnpkg.com/ts-loader/-/ts-loader-4.4.1.tgz#c93a46eea430ebce1f790dfe438caefb8670d365"
+ts-loader@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/ts-loader/-/ts-loader-4.4.2.tgz#778d4464b24436873c78f7f9e914d88194c2a248"
   dependencies:
     chalk "^2.3.0"
     enhanced-resolve "^4.0.0"
@@ -4959,20 +4985,20 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript-styled-plugin@^0.6.3:
-  version "0.6.3"
-  resolved "https://registry.yarnpkg.com/typescript-styled-plugin/-/typescript-styled-plugin-0.6.3.tgz#c9a5e7fa0d694118ae92515f3c7e91a1162f163f"
+typescript-styled-plugin@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/typescript-styled-plugin/-/typescript-styled-plugin-0.7.0.tgz#a809efa0ea2b9b887b8224ddb4ab21dc9d262a7c"
   dependencies:
     typescript-template-language-service-decorator "^1.2.0"
-    vscode-css-languageservice "^3.0.8"
-    vscode-emmet-helper "1.1.36"
-    vscode-languageserver-types "^3.6.0-next.1"
+    vscode-css-languageservice "^3.0.9-next.19"
+    vscode-emmet-helper "1.2.10"
+    vscode-languageserver-types "^3.8.2"
 
 typescript-template-language-service-decorator@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/typescript-template-language-service-decorator/-/typescript-template-language-service-decorator-1.2.0.tgz#6d5b20b2b0f394a055390d901a4c5f273e3754ab"
 
-typescript@^2.8.3:
+typescript@^2.9.2:
   version "2.9.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.9.2.tgz#1cbf61d05d6b96269244eb6a3bce4bd914e0f00c"
 
@@ -5182,26 +5208,26 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-vscode-css-languageservice@^3.0.8:
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/vscode-css-languageservice/-/vscode-css-languageservice-3.0.8.tgz#dc27a2f6eefd191bc603be6b9c0a59232a4c2b9f"
+vscode-css-languageservice@^3.0.9-next.19:
+  version "3.0.9-next.19"
+  resolved "https://registry.yarnpkg.com/vscode-css-languageservice/-/vscode-css-languageservice-3.0.9-next.19.tgz#193b1e0aa87c28d2b0dbe6ddd655bfe10501ae68"
   dependencies:
-    vscode-languageserver-types "^3.6.1"
-    vscode-nls "^3.2.1"
+    vscode-languageserver-types "^3.7.2"
+    vscode-nls "^3.2.2"
 
-vscode-emmet-helper@1.1.36:
-  version "1.1.36"
-  resolved "https://registry.yarnpkg.com/vscode-emmet-helper/-/vscode-emmet-helper-1.1.36.tgz#537cbf91041a3d426f6f24dd9834550a26e61685"
+vscode-emmet-helper@1.2.10:
+  version "1.2.10"
+  resolved "https://registry.yarnpkg.com/vscode-emmet-helper/-/vscode-emmet-helper-1.2.10.tgz#c4e08c721fa379f57e53c6bdf2843d4b3c830d16"
   dependencies:
-    "@emmetio/extract-abbreviation" "^0.1.4"
+    "@emmetio/extract-abbreviation" "0.1.6"
     jsonc-parser "^1.0.0"
     vscode-languageserver-types "^3.6.0-next.1"
 
-vscode-languageserver-types@^3.6.0-next.1, vscode-languageserver-types@^3.6.1:
+vscode-languageserver-types@^3.6.0-next.1, vscode-languageserver-types@^3.7.2, vscode-languageserver-types@^3.8.2:
   version "3.8.2"
   resolved "https://registry.yarnpkg.com/vscode-languageserver-types/-/vscode-languageserver-types-3.8.2.tgz#2550b8d852195328a735c56dbf4e72b8da31613f"
 
-vscode-nls@^3.2.1:
+vscode-nls@^3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/vscode-nls/-/vscode-nls-3.2.2.tgz#3817eca5b985c2393de325197cf4e15eb2aa5350"
 
@@ -5309,9 +5335,9 @@ webpack-sources@^1.0.1, webpack-sources@^1.1.0:
     source-list-map "^2.0.0"
     source-map "~0.6.1"
 
-webpack@^4.9.1:
-  version "4.12.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.12.0.tgz#14758e035ae69747f68dd0edf3c5a572a82bdee9"
+webpack@^4.14.0:
+  version "4.14.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.14.0.tgz#bbcc40dbf9a34129491b431574189d3802972243"
   dependencies:
     "@webassemblyjs/ast" "1.5.12"
     "@webassemblyjs/helper-module-context" "1.5.12"
@@ -5323,7 +5349,7 @@ webpack@^4.9.1:
     ajv "^6.1.0"
     ajv-keywords "^3.1.0"
     chrome-trace-event "^1.0.0"
-    enhanced-resolve "^4.0.0"
+    enhanced-resolve "^4.1.0"
     eslint-scope "^3.7.1"
     json-parse-better-errors "^1.0.2"
     loader-runner "^2.3.0"

@@ -27,7 +27,7 @@
     "emitDecoratorMetadata": true,
     "removeComments": false,
     "allowSyntheticDefaultImports": true,
-    "noErrorTruncation": true
+    "noErrorTruncation": true,
   },
   "include": ["./src/**/*"],
   "exclude": ["node_modules"]

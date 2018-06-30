@@ -7,11 +7,10 @@ import {
 } from "@material-ui/core";
 import ImageInput from "../ImageInput";
 import { Mutation } from "react-apollo";
-import MutationCreateWork from "../../GraphQL/mutation/MutationCreateWork";
 import { PageComponentProps } from "../../App";
 import createSignedUrl from "../../api/createSignedUrl";
 import fileUploadToS3  from "../../api/fileUploadToS3";
-import MutationUpdateWork from "../../GraphQL/mutation/MutationUpdateWork";
+import gql from "graphql-tag";
 
 interface Chip {
     key  : string;
@@ -22,8 +21,43 @@ interface State {
     chipsData: Chip[];
 }
 
+const MutationCreateWork = gql(`
+    mutation createWork(
+        $work: WorkCreate!
+    ) {
+        createWork(
+            work: $work
+        ) {
+            id
+            description
+            userId
+            title
+            tags
+            imageUri
+            createdAt
+        }
+    }
+`);
+
+const MutationUpdateWork = gql(`
+    mutation updateWork(
+        $work: WorkUpdate!
+    ) {
+        createWork(
+            work: $work
+        ) {
+            id
+            description
+            userId
+            title
+            tags
+            imageUri
+            createdAt
+        }
+    }
+`);
+
 export default class extends React.Component<PageComponentProps<void>, State> {
-    host: any;
 
     componentWillMount() {
         this.setState({
@@ -73,11 +107,6 @@ export default class extends React.Component<PageComponentProps<void>, State> {
 
                                     const title = (e.target as any).elements["title"].value;
                                     const description = (e.target as any).elements["description"].value;
-                                    console.log("TITLE:" + title);
-                                    console.log("DESCRIPTION:" + description);
-
-                                    // Memo Testでここを使わせてもらいます。
-
                                     const image = (e.target as any).elements["mainImage"].files[0];
                                     const results = await Promise.all([
                                         createWork({
@@ -142,7 +171,6 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                         }
                                     });
                                 }}
-                                ref={(host:any) => this.host = host}
                             >
                                 <div>
                                     <TextField

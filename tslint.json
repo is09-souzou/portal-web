@@ -10,7 +10,8 @@
         "trailing-comma"     : false,
         "jsx-boolean-value"  : false,
         "jsx-no-multiline-js": false,
-        "ter-arrow-parens"   : false
+        "ter-arrow-parens"   : false,
+        "jsx-curly-spacing"  : false
     },
     "tslint": [
         "disable-next-line"

@@ -120,7 +120,7 @@ export default class extends React.Component<Props, State> {
                                 resolve();
                             },
                             onFailure: e => {
-                                localStorage.clear();
+                                this.setState({ token: null, cognitoUser: null });
                                 reject(e);
                             }
                         });
