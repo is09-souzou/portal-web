@@ -126,9 +126,9 @@ export default class extends React.Component<Props, State> {
                         });
                     }
                 }),
-                changePassword: (oldPassword, newPassword) => new Promise((resolve, reject) =>
+                changePassword: (password, newPassword) => new Promise((resolve, reject) =>
                     this.state.cognitoUser!.changePassword(
-                        oldPassword,
+                        password,
                         newPassword,
                         (err, result) => (err || !result) ? reject(err) : resolve()
                     )
