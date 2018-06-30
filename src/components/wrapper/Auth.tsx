@@ -12,14 +12,14 @@ interface Token {
 export type SingIn = (email: string, password: string) => Promise<Token>;
 export type SingUp = (email: string, password: string, attribute?: {[key: string]: string}) => Promise<string>;
 export type SingOut = () => Promise<void>;
-export type ChangePassword = (password: string, newPassword: string) => Promise<void>;
+export type UpdatePassword = (password: string, newPassword: string) => Promise<void>;
 
 export type AuthProps = {
     auth: {
         signIn: SingIn;
         signUp: SingUp;
         signOut: SingOut;
-        changePassword : ChangePassword;
+        updatePassword: UpdatePassword;
         token: Token | null;
         cognitoUserPool?: CognitoUserPool | null;
     };
@@ -126,7 +126,7 @@ export default class extends React.Component<Props, State> {
                         });
                     }
                 }),
-                changePassword: (password, newPassword) => new Promise((resolve, reject) =>
+                updatePassword: (password, newPassword) => new Promise((resolve, reject) =>
                     this.state.cognitoUser!.changePassword(
                         password,
                         newPassword,
