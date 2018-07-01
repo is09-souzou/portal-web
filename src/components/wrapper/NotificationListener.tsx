@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, Fragment } from "react";
 import NotificationComponent from "../Notification";
 
 export type Notification = (type: "info" | "error", message: string) => void;
@@ -46,7 +46,7 @@ export default class extends React.Component<Props, State> {
         } = this.props;
 
         return (
-            <div>
+            <Fragment>
                 {render({
                     notificationListener: {
                         ErrorComponent: (props: any) => <NotificationComponent type="error" {...props}/>,
@@ -96,7 +96,7 @@ export default class extends React.Component<Props, State> {
                         onClose={this.onCloseByKey(x.key)}
                     />
                 )}
-            </div>
+            </Fragment>
         );
     }
 }
