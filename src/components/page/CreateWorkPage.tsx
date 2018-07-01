@@ -65,6 +65,10 @@ export default class extends React.Component<PageComponentProps<void>, State> {
         });
     }
 
+    componentDidMount() {
+        this.props.fabApi.visible && this.props.fabApi.toHide();
+    }
+
     deleteChip = (data: Chip) => () => this.setState({
         chipsData: this.state.chipsData.filter((x: Chip): boolean => data.key !== x.key)
     })

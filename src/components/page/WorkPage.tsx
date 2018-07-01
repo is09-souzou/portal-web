@@ -8,11 +8,13 @@ import {
     CardContent,
     Typography
 } from "@material-ui/core";
+import { Add as AddIcon } from "@material-ui/icons";
 import { PageComponentProps } from "./../../App";
 
 interface State {
     userMenuAnchorEl?: boolean;
     userMenuOpend: boolean;
+    unSubScribeFabClick?: () => void;
 }
 
 export default class extends React.Component<PageComponentProps<{}>, State> {
@@ -22,6 +24,25 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
             userMenuAnchorEl: undefined,
             userMenuOpend: false
         });
+    }
+
+    componentDidMount() {
+        const {
+            fabApi,
+            history
+        } = this.props;
+
+        fabApi.setIcon(<AddIcon/>);
+        !fabApi.visible && fabApi.toView();
+        this.setState({
+            unSubScribeFabClick: fabApi.subscribeClick(() =>
+                history.push("/works/create-work")
+            )
+        });
+    }
+
+    componentWillUnmount() {
+        this.state.unSubScribeFabClick && this.state.unSubScribeFabClick();
     }
 
     render() {
