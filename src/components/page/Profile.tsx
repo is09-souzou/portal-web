@@ -10,6 +10,7 @@ import {
     TextField
 } from "@material-ui/core";
 import { PageComponentProps } from "../../App";
+import GraphQLProgress from "../GraphQLProgress";
 import NotFound from "../NotFound";
 import gql from "graphql-tag";
 
@@ -105,7 +106,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                 fetchPolicy="cache-and-network"
             >
                 {({ loading, error, data }) => {
-                    if (loading) return "Loading...";
+                    if (loading) return <GraphQLProgress />;
                     if (error) {
                         console.error(error);
                         return (

@@ -22,6 +22,7 @@ import { AuthProps } from "./wrapper/Auth";
 import SignInDialog from "./SignInDialog";
 import SignUpDialog from "./SignUpDialog";
 import Link         from "./Link";
+import GraphQLProgress from "./GraphQLProgress";
 import toObjectFromURIQuery from "../api/toObjectFromURIQuery";
 import { NotificationListener } from "./wrapper/NotificationListener";
 import gql from "graphql-tag";
@@ -128,7 +129,7 @@ export default class extends React.Component<Props, State> {
                                     fetchPolicy="cache-and-network"
                                 >
                                     {({ loading, error, data }) => {
-                                        if (loading) return "Loading...";
+                                        if (loading) return <GraphQLProgress size={24} />;
                                         if (error) {
                                             console.error(error);
                                             return (
