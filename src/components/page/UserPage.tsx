@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import { Query } from "react-apollo";
 import { PageComponentProps } from "./../../App";
 import gql from "graphql-tag";
+import GraphQLProgress from "./../GraphQLProgress";
 
 const QueryGetUser = gql(`
     query($id: ID!) {
@@ -31,7 +32,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                 fetchPolicy="cache-and-network"
             >
                 {({ loading, error, data }) => {
-                    if (loading) return "Loading...";
+                    if (loading) return <GraphQLProgress />;
                     if (error) {
                         return (
                             <Fragment>

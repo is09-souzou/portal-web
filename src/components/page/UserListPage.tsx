@@ -6,6 +6,7 @@ import {
     ListItemText
 } from "@material-ui/core";
 import { PageComponentProps } from "../../App";
+import GraphQLProgress from "../GraphQLProgress";
 import NotFound from "../NotFound";
 import gql from "graphql-tag";
 
@@ -31,7 +32,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
         return (
             <Query query={QueryGetUserList} variables={{ limit: 20 }} fetchPolicy="cache-and-network">
                 {({ loading, error, data }) => {
-                    if (loading) return "Loading...";
+                    if (loading) return <GraphQLProgress />;
                     if (error) {
                         return (
                             <Fragment>
