@@ -1,6 +1,6 @@
 {
   "name": "portal-web",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "src/index.js",
   "repository": "https://github.com/is09-souzou/portal-web",
   "author": "NozomiSugiyama <rioc.sugiyama@gmail.com>",
