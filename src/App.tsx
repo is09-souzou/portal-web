@@ -23,7 +23,7 @@ import UserListPage   from "./components/page/UserListPage";
 import UserPage       from "./components/page/UserPage";
 
 // tslint:disable-next-line:max-line-length
-const Root = withRouter<RouteComponentProps<any> & { children: React.ReactElement<any> }>((props: RouteComponentProps<any> & { children: React.ReactElement<any> }) => (
+const Root = withRouter<RouteComponentProps<any> & { children: React.ReactElement<PageComponentProps<any>> }>((props: RouteComponentProps<any> & { children: React.ReactElement<PageComponentProps<any>> }) => (
     <NotificationListener
         // tslint:disable-next-line:jsx-no-lambda
         render={(notificationListener: NotificationListenerProps) =>
@@ -34,12 +34,18 @@ const Root = withRouter<RouteComponentProps<any> & { children: React.ReactElemen
                         {...authProps}
                     >
                         <MainLayout
-                            render={(mainLayoutEventProps: MainLayoutEventProps) => React.cloneElement(
+                            // tslint:disable-next-line:max-line-length
+                            render={(mainLayoutEventProps: MainLayoutEventProps) => React.cloneElement<PageComponentProps<any>>(
                                 props.children,
                                 {
                                     ...authProps,
                                     ...mainLayoutEventProps,
-                                    ...props
+                                    ...notificationListener,
+                                    ...(
+                                        Object.entries(props)
+                                            .filter(x => x[0] !== "children")
+                                            .reduce((prev, next) => Object.assign(prev, { [next[0]]: next[1] }), {})
+                                    )
                                 }
                             )}
                             {...notificationListener}
