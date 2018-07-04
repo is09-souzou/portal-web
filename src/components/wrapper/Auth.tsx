@@ -15,7 +15,8 @@ interface Token {
 }
 
 export type SingIn = (email: string, password: string) => Promise<Token>;
-export type SingUp = (email: string, password: string, attribute?: {[key: string]: string}) => Promise<string>;
+// tslint:disable-next-line:max-line-length
+export type SingUp = (userName: string, password: string, attribute?: {[key: string]: string}) => Promise<string>;
 export type SingOut = () => Promise<void>;
 export type UpdatePassword = (password: string, newPassword: string) => Promise<void>;
 
@@ -99,9 +100,9 @@ export default class extends React.Component<Props, State> {
                         }
                     );
                 }),
-                signUp: (email, password, attribute) => new Promise((resolve, reject) => {
+                signUp: (userName, password, attribute) => new Promise((resolve, reject) => {
                     this.state.cognitoUserPool.signUp(
-                        email,
+                        userName,
                         password,
                         Object.entries(attribute || []).map(([Name, Value]) =>
                             new CognitoUserAttribute({ Name, Value })

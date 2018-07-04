@@ -6,8 +6,8 @@ const { Rehydrated }       = require("aws-appsync-react");
 const { AUTH_TYPE }        = require("aws-appsync/lib/link/auth-link");
 const { AWSAppSyncClient } = require("aws-appsync");
 import { ApolloProvider }   from "react-apollo";
-import config        from "../../config";
-import { AuthProps } from "./Auth";
+import config               from "../../config";
+import { AuthProps }        from "./Auth";
 
 interface Props extends AuthProps {
     children: ReactChild;

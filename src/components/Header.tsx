@@ -146,7 +146,7 @@ export default class extends React.Component<Props, State> {
                                         }
 
                                         if (!data.getUser)
-                                            return <Redirect to="initial-stem" />;
+                                            return <Redirect to="/profile?initial-registration" />;
 
                                         return (
                                             <Fragment>
