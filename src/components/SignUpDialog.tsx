@@ -11,6 +11,7 @@ import {
 import { DialogProps } from "@material-ui/core/Dialog";
 import { SlideProps }  from "@material-ui/core/Slide";
 import styled          from "styled-components";
+import uuidv4          from "uuid/v4";
 import { SingUp }               from "./wrapper/Auth";
 import { NotificationListener } from "./wrapper/NotificationListener";
 
@@ -40,6 +41,7 @@ export default (
             // tslint:disable-next-line:jsx-no-lambda
             onSubmit={async e => {
                 e.preventDefault();
+                const userName = uuidv4();
 
                 const displayName = (e.target as any).elements["sign-up-display-name"].value;
                 const email = (e.target as any).elements["sign-up-email"].value;
@@ -47,7 +49,7 @@ export default (
 
                 try {
                     await onSignUp(
-                        email, password,
+                        userName, password,
                         { email, "custom:display_name": displayName }
                     );
                     notificationListener.notification("info", "Send Mail");
