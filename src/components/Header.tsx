@@ -20,14 +20,15 @@ import { Query }    from "react-apollo";
 import { Redirect } from "react-router";
 import * as H       from "history";
 
-import toObjectFromURIQuery     from "../api/toObjectFromURIQuery";
-import { AuthProps }            from "./wrapper/Auth";
-import { DrawerContext }        from "./wrapper/MainLayout";
-import { NotificationListener } from "./wrapper/NotificationListener";
-import Link                     from "./Link";
-import SignInDialog             from "./SignInDialog";
-import SignUpDialog             from "./SignUpDialog";
-import GraphQLProgress          from "./GraphQLProgress";
+import toObjectFromURIQuery      from "../api/toObjectFromURIQuery";
+import { AuthProps }             from "./wrapper/Auth";
+import { DrawerContext }         from "./wrapper/MainLayout";
+import { NotificationListener }  from "./wrapper/NotificationListener";
+import InitialRegistrationDialog from "./InitialRegistrationDialog";
+import Link                      from "./Link";
+import SignInDialog              from "./SignInDialog";
+import SignUpDialog              from "./SignUpDialog";
+import GraphQLProgress           from "./GraphQLProgress";
 
 interface Props extends AuthProps {
     history: H.History;
@@ -79,6 +80,8 @@ export default class extends React.Component<Props, State> {
 
     signUpDialogClose = () =>  this.props.history.push("?sign-up=false");
 
+    initialRegistrationDialogClose = () => this.props.history.push("?initial-registration=false");
+
     signIn = async (email: string, password: string) => {
         await this.props.auth.signIn(email, password);
         this.signInDialogClose();
@@ -93,8 +96,12 @@ export default class extends React.Component<Props, State> {
         } = this.props;
 
         const queryParam = toObjectFromURIQuery(history.location.search);
-        const signInDialogVisible = queryParam ? queryParam["sign-in"] === "true" : false;
-        const signUpDialogVisible = queryParam ? queryParam["sign-up"] === "true" : false;
+        const signInDialogVisible = queryParam ? queryParam["sign-in"] === "true"
+                                  :              false;
+        const signUpDialogVisible = queryParam ? queryParam["sign-up"] === "true"
+                                  :              false;
+        const initialRegistrationDialogVisible = queryParam ? queryParam["initial-registration"] === "true"
+                                                            : false;
 
         return (
             <StyledAppBar position="fixed">
@@ -146,7 +153,7 @@ export default class extends React.Component<Props, State> {
                                         }
 
                                         if (!data.getUser)
-                                            return <Redirect to="/profile?initial-registration" />;
+                                            return <Redirect to="/profile?initial-registration=true" />;
 
                                         return (
                                             <Fragment>
@@ -218,6 +225,12 @@ export default class extends React.Component<Props, State> {
                     open={signUpDialogVisible}
                     onClose={this.signUpDialogClose}
                     onSignUp={auth.signUp}
+                />
+                <InitialRegistrationDialog
+                    token={auth.token!}
+                    open={initialRegistrationDialogVisible}
+                    notificationListener={notificationListener}
+                    onClose={this.initialRegistrationDialogClose}
                 />
             </StyledAppBar>
         );
