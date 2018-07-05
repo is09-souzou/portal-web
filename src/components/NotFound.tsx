@@ -2,22 +2,36 @@ import React          from "react";
 import { Typography } from "@material-ui/core";
 import styled         from "styled-components";
 
-const messages = ["(＝△＝)", "(´・ω・`)", "(＿´Д｀)", "(= ‐ω‐ =)", "(*ノω・*)"];
+const emojiList = ["(＝△＝)", "(´・ω・`)", "(＿´Д｀)", "(= ‐ω‐ =)", "(*ノω・*)"];
 
-export default (props: React.HTMLAttributes<HTMLDivElement>) => (
-    <Host {...props}>
-        <Typography
-            variant="display4"
-        >
-            {messages[Math.floor(Math.random() * messages.length)]}
-        </Typography>
-        <Typography
-            variant="display3"
-        >
-            Not Found
-        </Typography>
-    </Host>
-);
+interface State {
+    emoji: string;
+}
+
+export default class extends React.Component<React.HTMLAttributes<HTMLDivElement>, State> {
+    componentWillMount() {
+        this.setState({
+            emoji: emojiList[Math.floor(Math.random() * emojiList.length)]
+        });
+    }
+
+    render() {
+        return (
+            <Host {...this.props}>
+                <Typography
+                    variant="display4"
+                >
+                    {this.state.emoji}
+                </Typography>
+                <Typography
+                    variant="display3"
+                >
+                    Not Found
+                </Typography>
+            </Host>
+        );
+    }
+}
 
 const Host = styled.div`
     display: flex;
