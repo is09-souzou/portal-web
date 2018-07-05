@@ -7,7 +7,7 @@ import {
 } from "amazon-cognito-identity-js";
 import config from "./../../config";
 
-interface Token {
+export interface Token {
     jwtToken: string;
     payload: {
         [id: string]: any;

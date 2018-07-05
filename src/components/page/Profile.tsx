@@ -25,7 +25,6 @@ type Item = "displayName" | "email" | "career" | "message" | "avatarUri";
 
 interface State {
     whileEditingItem: Item[];
-    userEditing: boolean;
     editableAvatarDialogIsVisible: boolean;
     uploadingAvatarImage: boolean;
 }
@@ -65,7 +64,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     componentWillMount() {
         this.setState({
             whileEditingItem: [],
-            userEditing: false,
             editableAvatarDialogIsVisible: false,
             uploadingAvatarImage: false
         });
@@ -281,7 +279,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 // tslint:disable-next-line:jsx-no-lambda
                                                 onSubmit={async e => {
                                                     e.preventDefault();
-                                                    const image = (e.target as any).elements["avatarImage"].files[0];
+                                                    const image = (e.target as any).elements["avatar-image"].files[0];
 
                                                     try {
                                                         this.setState({ uploadingAvatarImage: true });
@@ -334,7 +332,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 </DialogTitle>
                                                 <DialogContent>
                                                     <ImageInput
-                                                        name="avatarImage"
+                                                        name="avatar-image"
                                                         width="256"
                                                         height="256"
                                                     />

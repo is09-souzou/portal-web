@@ -5,99 +5,206 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    LinearProgress,
     Slide,
-    Step,
-    StepLabel,
-    Stepper,
     TextField
 } from "@material-ui/core";
-import { SlideProps } from "@material-ui/core/Slide";
-import styled         from "styled-components";
+import { DialogProps }               from "@material-ui/core/Dialog";
+import { SlideProps }                from "@material-ui/core/Slide";
+import gql                           from "graphql-tag";
+import { Mutation }                  from "react-apollo";
+import styled                        from "styled-components";
+import createSignedUrl               from "../api/createSignedUrl";
+import fileUploadToS3                from "../api/fileUploadToS3";
+import { Token }                     from "./wrapper/Auth";
+import { NotificationListenerProps } from "./wrapper/NotificationListener";
+import ImageInput                    from "./ImageInput";
 
-interface Props {
-    open: boolean;
-    onClose: () => void;
+interface Props extends DialogProps, NotificationListenerProps {
+    token: Token;
+    onClose?: () => void;
 }
 
-export default (
-    {
-        open    = false,
-        onClose,
-        ...props
-    }: Props
-) => (
-    <Dialog
-        open={open}
-        onClose={onClose}
-        TransitionComponent={Transition}
-        keepMounted
-        aria-labelledby="alert-dialog-slide-title"
-        {...props}
-    >
-        <form
-            // tslint:disable-next-line:jsx-no-lambda
-            onSubmit={async e => {
-                e.preventDefault();
+interface State {
+    activeStep: number;
+    isProcessing: boolean;
+}
 
-                const displayName = (e.target as any).elements["initial-registration-display-name"].value; // required
-                const email       = (e.target as any).elements["initial-registration-dialog-email"].value; // required
-                const career      = (e.target as any).elements["initial-registration-dialog-career"].value;
-                const avatarUri   = (e.target as any).elements["initial-registration-dialog-avatar-uri"].value;
-                const message     = (e.target as any).elements["initial-registration-dialog-message"].value;
+const MutationCreateUser = gql(`
+    mutation createUser(
+        $user: UserCreate!
+    ) {
+        createUser(
+            user: $user
+        ) {
+            id
+            displayName
+            email
+            career
+            message
+        }
+    }
+`);
 
-            }}
-        >
-            <DialogTitle id="alert-dialog-slide-title">
-                Initial Registration
-            </DialogTitle>
-            <StyledDialogContent>
-                <TextField
-                    id="sign-in-email"
-                    label="Email Address"
-                    margin="normal"
-                    type="email"
-                    required
-                />
-                <TextField
-                    id="sign-in-password"
-                    label="Password"
-                    margin="normal"
-                    type="password"
-                    required
-                />
-            </StyledDialogContent>
-            <Stepper activeStep={activeStep}>
-                {["Select campaign settings", "Create an ad group", "Create an ad"].map((label, index) => {
-                    const props = {};
-                    const labelProps = {};
-                    if (this.isStepOptional(index)) {
-                        labelProps.optional = <Typography variant="caption">Optional</Typography>;
-                    }
-                    if (this.isStepSkipped(index)) {
-                        props.completed = false;
-                    }
-                    return (
-                        <Step key={label} {...props}>
-                            <StepLabel {...labelProps}>{label}</StepLabel>
-                        </Step>
-                    );
-                })}
-            </Stepper>
-            <DialogActions>
-                <Button color="primary">
-                    Create Account
-                </Button>
-                <Button
-                    component="button"
-                    color="primary"
-                    type="submit"
-                >
-                    Sign In
-                </Button>
-            </DialogActions>
-        </form>
-    </Dialog>
-);
+export default class extends React.Component<Props, State> {
+
+    handleStep = (x: number) => () => this.setState({ activeStep: x });
+
+    componentWillMount() {
+        this.setState({
+            activeStep: 0,
+            isProcessing: false
+        });
+    }
+
+    render () {
+        const {
+            token,
+            onClose,
+            notificationListener,
+            ...props
+        } = this.props;
+
+        return (
+            <Dialog
+                TransitionComponent={Transition}
+                keepMounted
+                aria-labelledby="alert-dialog-slide-title"
+                {...props}
+            >
+                <Mutation mutation={MutationCreateUser}>
+                    {createUser => (
+                        <form
+                            // tslint:disable-next-line:jsx-no-lambda
+                            onSubmit={async e => {
+                                e.preventDefault();
+                                const target = e.target as any;
+
+                                try {
+                                    // tslint:disable-next-line:max-line-length
+                                    const image = target.elements["avatar-image"].files[0];
+
+                                    this.setState({ isProcessing: true });
+
+                                    let signedUrl;
+                                    let uploadedUrl;
+
+                                    if (image) {
+                                        const result = await createSignedUrl({
+                                            jwt: token.jwtToken,
+                                            userId: token.payload.sub,
+                                            type: "profile",
+                                            mimetype: image.type
+                                        });
+                                        signedUrl = result.signedUrl;
+                                        uploadedUrl = result.uploadedUrl;
+                                    }
+
+                                    // tslint:disable-next-line:max-line-length
+                                    const displayName = target.elements["initial-registration-dialog-display-name"].value;
+                                    // tslint:disable-next-line:max-line-length
+                                    const email       = target.elements["initial-registration-dialog-email"].value;
+                                    // tslint:disable-next-line:max-line-length
+                                    const career      = target.elements["initial-registration-dialog-career"].value;
+
+                                    let variables = {};
+                                    if (displayName)
+                                        variables = { ...variables, displayName };
+                                    if (email)
+                                        variables = { ...variables, email };
+                                    if (career)
+                                        variables = { ...variables, career };
+
+                                    await Promise.all([
+                                        signedUrl ? fileUploadToS3({
+                                            url: signedUrl,
+                                            file: image
+                                        }) : new Promise(x => x()),
+                                        createUser({
+                                            variables: {
+                                                user: {
+                                                    ...(uploadedUrl ? { avatarUri: uploadedUrl } : {}),
+                                                    ...variables
+                                                }
+                                            },
+                                            optimisticResponse: {
+                                                __typename: "Mutation",
+                                                createUser: {
+                                                    email,
+                                                    displayName,
+                                                    career,
+                                                    avatarUri: uploadedUrl,
+                                                    id: token!.payload.sub,
+                                                    __typename: "User"
+                                                }
+                                            },
+                                        })
+                                    ]);
+                                    onClose && onClose();
+                                } catch (error) {
+                                    console.error(error);
+                                    notificationListener.errorNotification(error);
+                                }
+                                this.setState({ isProcessing: false });
+                            }}
+                        >
+                            <DialogTitle id="alert-dialog-slide-title">
+                                Initial Registration Profile
+                            </DialogTitle>
+                            <StyledDialogContent>
+                                <div>
+                                    <AvatarInput
+                                        name="avatar-image"
+                                        width="192"
+                                        height="192"
+                                    />
+                                    <div>
+                                        <TextField
+                                            id="initial-registration-dialog-display-name"
+                                            label="Display Name"
+                                            margin="normal"
+                                            fullWidth
+                                            required
+                                        />
+                                        <TextField
+                                            id="initial-registration-dialog-email"
+                                            label="Public Mail Address"
+                                            margin="normal"
+                                            fullWidth
+                                            type="email"
+                                        />
+                                    </div>
+                                </div>
+                                <CareerTextField
+                                    id="initial-registration-dialog-career"
+                                    label="Career"
+                                    margin="normal"
+                                    fullWidth
+                                    multiline
+                                />
+                            </StyledDialogContent>
+                            {this.state.isProcessing && <LinearProgress/>}
+                            <DialogActions>
+                                <Button
+                                    onClick={onClose}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    component="button"
+                                    color="primary"
+                                    type="submit"
+                                >
+                                    Submit
+                                </Button>
+                            </DialogActions>
+                        </form>
+                    )}
+                </Mutation>
+            </Dialog>
+        );
+    }
+}
 
 const Transition = (props:SlideProps) =>  <Slide direction="up" {...props} />;
 
@@ -105,6 +212,27 @@ const StyledDialogContent = styled(DialogContent)`
     && {
         display: flex;
         flex-direction: column;
-        width: 16rem;
+        > :nth-child(1) {
+            display: flex;
+            > :nth-child(2) {
+                flex-grow: 1;
+                margin: 0 2rem 2rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                width: 16rem;
+            }
+        }
+    }
+`;
+
+const AvatarInput = styled(ImageInput)`
+    border-radius: 50%;
+    overflow: hidden;
+`;
+
+const CareerTextField = styled(TextField)`
+    && {
+        min-height: 4rem;
     }
 `;

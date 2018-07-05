@@ -131,7 +131,7 @@ const LabelText = styled<LabelTextProps, any>("span")`
         margin-bottom: 8px;
         font-size    : .75rem;
         transition   : all .3s ease-out;
-        color        : ${(props:LabelTextProps) => (
+        color        : ${(props: LabelTextProps) => (
                              props.invalid  ? "#F40"
                            : props.focused  ? "#2196F3"
                            : props.disabled ? "#DDD"
