@@ -22,7 +22,7 @@ import ImageInput             from "../ImageInput";
 import NotFound               from "../NotFound";
 import Page                   from "../Page";
 
-type Item = "displayName" | "email" | "career" | "message" | "avatarUri" | "settingEmail";
+type Item = "displayName" | "email" | "career" | "message" | "avatarUri" | "credentialEmail";
 
 interface State {
     whileEditingItem: Item[];
@@ -368,7 +368,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             onSubmit={async e => {
                                 e.preventDefault();
 
-                                const email = (e.target as any).elements["setting-email"].value;
+                                const email = (e.target as any).elements["credential-email"].value;
 
                                 try {
                                     await this.props.auth.updateEmail(email);
@@ -383,12 +383,12 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 Setting
                             </Typography>
                             <TextField
-                                id="setting-email"
+                                id="credential-email"
                                 label="Mail Address"
                                 margin="normal"
                                 InputProps={{
                                     endAdornment: (
-                                        this.state.whileEditingItem.includes("settingEmail")
+                                        this.state.whileEditingItem.includes("credentialEmail")
                                         &&
                                         <Button
                                             type="submit"
@@ -398,7 +398,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     )
                                 }}
                                 type="email"
-                                onChange={this.addWhileEditingItem("settingEmail")}
+                                onChange={this.addWhileEditingItem("credentialEmail")}
                                 fullWidth
                                 // tslint:disable-next-line:jsx-no-lambda
                                 inputRef={x => this.settingEmailInput = x}
