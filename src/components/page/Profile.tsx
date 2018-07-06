@@ -333,7 +333,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 </DialogTitle>
                                                 <DialogContent>
                                                     <ImageInput
-                                                        name="avatar-image"
+                                                        name="newAvatarImage"
                                                         width="256"
                                                         height="256"
                                                     />
