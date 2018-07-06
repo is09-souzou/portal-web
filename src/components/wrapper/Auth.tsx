@@ -18,7 +18,7 @@ export type SingIn = (email: string, password: string) => Promise<Token>;
 // tslint:disable-next-line:max-line-length
 export type SingUp = (userName: string, password: string, attribute?: {[key: string]: string}) => Promise<string>;
 export type SingOut = () => Promise<void>;
-export type UpdateEmail = (email: string) => Promise<string>;
+export type UpdateEmail = (email: string) => Promise<void>;
 export type UpdatePassword = (password: string, newPassword: string) => Promise<void>;
 
 export type AuthProps = {
@@ -135,20 +135,17 @@ export default class extends React.Component<Props, State> {
                     }
                 }),
                 updateEmail: (email) => new Promise((resolve, reject) => {
-                    const attributeList = [];
-                    const attribute = {
-                        Name: "email",
-                        Value: email
-                    };
-                    attributeList.push(attribute);
                     this.state.cognitoUser!.updateAttributes(
-                        attributeList,
-                        (err, result) => {
+                        [{
+                            Name: "email",
+                            Value: email
+                        }],
+                        err => {
                             if (err) {
                                 reject(err);
                                 return;
                             }
-                            resolve(result);
+                            resolve();
                         }
                     );
                 }),
