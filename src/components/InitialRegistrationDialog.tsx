@@ -30,6 +30,19 @@ interface State {
     isProcessing: boolean;
 }
 
+const QueryGetUser = gql(`
+    query($id: ID!) {
+        getUser(id: $id) {
+            id
+            email
+            displayName
+            career
+            avatarUri
+            message
+        }
+    }
+`);
+
 const MutationCreateUser = gql(`
     mutation createUser(
         $user: UserCreate!
@@ -37,10 +50,11 @@ const MutationCreateUser = gql(`
         createUser(
             user: $user
         ) {
-            id
+            avatarUri
+            career
             displayName
             email
-            career
+            id
             message
         }
     }
@@ -72,7 +86,19 @@ export default class extends React.Component<Props, State> {
                 aria-labelledby="alert-dialog-slide-title"
                 {...props}
             >
-                <Mutation mutation={MutationCreateUser}>
+                <Mutation
+                    mutation={MutationCreateUser}
+                    // tslint:disable-next-line:jsx-no-lambda
+                    update={(cache, { data }) =>
+                        cache.writeQuery({
+                            data: {
+                                getUser: data.createUser
+                            },
+                            query: QueryGetUser,
+                            variables: { id: data.createUser.id }
+                        })
+                    }
+                >
                     {createUser => (
                         <form
                             // tslint:disable-next-line:jsx-no-lambda
@@ -133,7 +159,8 @@ export default class extends React.Component<Props, State> {
                                                     email,
                                                     displayName,
                                                     career,
-                                                    avatarUri: uploadedUrl,
+                                                    message: "",
+                                                    avatarUri: uploadedUrl ? uploadedUrl : "",
                                                     id: token!.payload.sub,
                                                     __typename: "User"
                                                 }
