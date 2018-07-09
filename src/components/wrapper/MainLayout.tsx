@@ -56,7 +56,7 @@ export default class extends React.Component<Props, State> {
                         ModalProps={{ keepMounted: true }}
                     >
                         <Navigator
-                            histroy={history}
+                            history={history}
                         />
                     </Drawer>
                 </div>
@@ -66,7 +66,7 @@ export default class extends React.Component<Props, State> {
                         open
                     >
                         <Navigator
-                            histroy={history}
+                            history={history}
                         />
                     </Drawer>
                 </div>
