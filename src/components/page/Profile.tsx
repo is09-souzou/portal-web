@@ -426,12 +426,14 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     id="profile-old-password"
                                     label="Old password"
                                     margin="normal"
+                                    required
                                     type="password"
                                 />
                                 <TextField
                                     id="profile-new-password"
                                     label="New password"
                                     margin="normal"
+                                    required
                                     type="password"
                                 />
                                 <Button
