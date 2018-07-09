@@ -368,7 +368,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             onSubmit={async e => {
                                 e.preventDefault();
 
-                                const email = (e.target as any).elements["credential-email"].value;
+                                const email = (e.target as any).elements["profile-credential-email"].value;
 
                                 try {
                                     await this.props.auth.updateEmail(email);
@@ -383,7 +383,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 Setting
                             </Typography>
                             <TextField
-                                id="credential-email"
+                                id="profile-credential-email"
                                 label="Mail Address"
                                 margin="normal"
                                 InputProps={{
@@ -406,44 +406,44 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                         </form>
                     </div>
                     <div>
-                    <form
-                        // tslint:disable-next-line:jsx-no-lambda
-                        onSubmit={async e => {
-                            e.preventDefault();
+                        <form
+                            // tslint:disable-next-line:jsx-no-lambda
+                            onSubmit={async e => {
+                                e.preventDefault();
 
-                            const oldPassword = (e.target as any).elements["update-oldPassword"].value;
-                            const newPassword = (e.target as any).elements["update-newPassword"].value;
-                            try {
-                                await this.props.auth.updatePassword(oldPassword, newPassword);
-                            } catch (e) {
-                                notificationListener.errorNotification(e);
-                            }
-                        }}
-                    >
-                        <div>
-                            <TextField
-                                id="update-oldPassword"
-                                label="oldPassword"
-                                margin="normal"
-                                type="password"
-                            />
-                            <TextField
-                                id="update-newPassword"
-                                label="newPassword"
-                                margin="normal"
-                                type="password"
-                            />
-                        <Button
-                            id="onSubmit"
-                            component="button"
-                            color="primary"
-                            type="submit"
+                                const oldPassword = (e.target as any).elements["profile-old-password"].value;
+                                const newPassword = (e.target as any).elements["profile-new-password"].value;
+                                try {
+                                    await this.props.auth.updatePassword(oldPassword, newPassword);
+                                } catch (e) {
+                                    notificationListener.errorNotification(e);
+                                }
+                            }}
                         >
-                            update
-                        </Button>
-                        </div>
-                    </form>
-                </div>
+                            <div>
+                                <TextField
+                                    id="profile-old-password"
+                                    label="Old password"
+                                    margin="normal"
+                                    type="password"
+                                />
+                                <TextField
+                                    id="profile-new-password"
+                                    label="New password"
+                                    margin="normal"
+                                    type="password"
+                                />
+                                <Button
+                                    id="onSubmit"
+                                    component="button"
+                                    color="primary"
+                                    type="submit"
+                                >
+                                    update
+                                </Button>
+                            </div>
+                        </form>
+                    </div>
                 </StyledSetting>
             </Page>
         );
