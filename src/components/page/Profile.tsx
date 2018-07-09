@@ -415,6 +415,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 const newPassword = (e.target as any).elements["profile-new-password"].value;
                                 try {
                                     await this.props.auth.updatePassword(oldPassword, newPassword);
+                                    notificationListener.notification("info", "Update password");
                                 } catch (e) {
                                     notificationListener.errorNotification(e);
                                 }
