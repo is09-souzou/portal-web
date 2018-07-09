@@ -434,6 +434,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 type="password"
                             />
                         <Button
+                            id="onSubmit"
                             component="button"
                             color="primary"
                             type="submit"
