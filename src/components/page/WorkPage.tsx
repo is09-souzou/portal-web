@@ -13,10 +13,16 @@ import { PageComponentProps } from "./../../App";
 import Fab                    from "../Fab";
 import Header                 from "../Header";
 import Page                   from "../Page";
+import LearnMoreDialog from "../LearnMoreDialog";
 
 interface State {
     userMenuAnchorEl?: boolean;
     userMenuOpend: boolean;
+    learnMoreDialogOpend: boolean;
+    selectedWork: {
+        title: string,
+        imagePath: string[],
+    };
 }
 
 export default class extends React.Component<PageComponentProps<{}>, State> {
@@ -24,7 +30,29 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     componentWillMount() {
         this.setState({
             userMenuAnchorEl: undefined,
-            userMenuOpend: false
+            userMenuOpend: false,
+            learnMoreDialogOpend: false,
+            selectedWork: {
+                title: "",
+                imagePath: [],
+            },
+        });
+    }
+
+    handleClickOpen = (x: State) => {
+        this.setState({
+            learnMoreDialogOpend: true,
+            selectedWork: {
+                title: x.title,
+                imagePath: x.imagePath,
+            },
+        });
+        console.log("event", this.state.selectedWork);
+    }
+
+    handleClose = () => {
+        this.setState({
+            learnMoreDialogOpend: false
         });
     }
 
@@ -36,6 +64,52 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
             notificationListener
         } = this.props;
 
+        const images :{title:string, imagePath:string[]}[] = [
+            {
+                title: "abc",
+                imagePath: [
+                    "http://placehold.jp/24/F44336/fff/600x400.png",
+                    "http://placehold.jp/24/E91E63/fff/600x400.png",
+                    "http://placehold.jp/24/9C27B0/fff/600x400.png",
+                    "http://placehold.jp/24/673AB7/fff/600x400.png",
+                ],
+            },
+            {
+                title: "def",
+                imagePath: [
+                    "http://placehold.jp/24/3F51B5/fff/600x400.png",
+                    "http://placehold.jp/24/2196F3/fff/600x400.png",
+                    "http://placehold.jp/24/03A9F4/fff/600x400.png",
+                    "http://placehold.jp/24/00BCD4/fff/600x400.png",
+                ],
+            },
+            {
+                title: "ghi",
+                imagePath: [
+                    "http://placehold.jp/24/009688/fff/600x400.png",
+                    "http://placehold.jp/24/4CAF50/fff/600x400.png",
+                    "http://placehold.jp/24/8BC34A/fff/600x400.png",
+                    "http://placehold.jp/24/CDDC39/fff/600x400.png",
+                ],
+            },
+            {
+                title: "jkl",
+                imagePath: [
+                    "http://placehold.jp/24/FFEB3B/fff/600x400.png",
+                    "http://placehold.jp/24/FFC107/fff/600x400.png",
+                    "http://placehold.jp/24/FF9800/fff/600x400.png",
+                    "http://placehold.jp/24/FF5722/fff/600x400.png",
+                ],
+            },
+            {
+                title: "mno",
+                imagePath: [
+                    "http://placehold.jp/24/795548/fff/600x400.png",
+                    "http://placehold.jp/24/9E9E9E/fff/600x400.png",
+                ],
+            },
+        ];
+
         return (
             <Page>
                 <Header
@@ -44,33 +118,38 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     notificationListener={notificationListener}
                 />
                 <Host>
-                    {[
-                        "F44336", "E91E63", "9C27B0", "673AB7",
-                        "3F51B5", "2196F3", "03A9F4", "00BCD4",
-                        "009688", "4CAF50", "8BC34A", "CDDC39",
-                        "FFEB3B", "FFC107", "FF9800", "FF5722",
-                        "795548", "9E9E9E"].map(x =>
-                            <StyledCard key={x}>
+                    {images.map(x =>
+                            <StyledCard key={x.title}>
                                 <StyledCardMedia
-                                    image={`http://placehold.jp/24/${x}/fff/600x400.png`}
-                                    title="Contemplative Reptile"
+                                    image={`${x.imagePath[0]}`}
+                                    title={x.title}
+                                    onClick={this.handleClickOpen.bind(this, x)}
                                 />
                                 <CardContent>
                                     <Typography gutterBottom variant="headline" component="h2">
-                                        Lizard
+                                        {x.title}
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
                                     <Button size="small" color="primary">
-                                    Share
+                                        Share
                                     </Button>
-                                    <Button size="small" color="primary">
-                                    Learn More
+                                    <Button
+                                        size="small"
+                                        color="primary"
+                                        onClick={this.handleClickOpen.bind(this, x)}
+                                    >
+                                        Learn More
                                     </Button>
                                 </CardActions>
                             </StyledCard>
                         )
                     }
+                    <LearnMoreDialog
+                        open={this.state.learnMoreDialogOpend}
+                        onClose={this.handleClose}
+                        selectedWork={this.state.selectedWork}
+                    />
                 </Host>
                 <Fab
                     // tslint:disable-next-line:jsx-no-lambda
