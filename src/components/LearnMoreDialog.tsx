@@ -26,30 +26,20 @@ interface Props {
 }
 
 interface State {
-    activeStep: Number;
+    activeStep: number;
 }
 
 export default class extends React.Component<Props, State> {
 
-    state = {
-        activeStep: 0
-    };
-
-    handleNext = () => {
-        this.setState(prevState => ({
-            activeStep: prevState.activeStep + 1
-        }));
+    componentWillMount() {
+        this.setState({
+            activeStep: 0
+        });
     }
 
-    handleBack = () => {
-        this.setState(prevState => ({
-            activeStep: prevState.activeStep - 1
-        }));
-    }
+    handleNext = () => this.setState(prevState => ({ activeStep: prevState.activeStep + 1 }));
 
-    handleStepChange = activeStep => {
-        this.setState({ activeStep });
-    }
+    handleBack = () => this.setState(prevState => ({ activeStep: prevState.activeStep - 1 }));
 
     render() {
         const {
@@ -59,9 +49,7 @@ export default class extends React.Component<Props, State> {
             ...props
         } = this.props;
 
-        const { activeStep } = this.state;
         const maxSteps = selectedWork.imagePath.length;
-        console.log("max", maxSteps);
 
         return (
             <MuiThemeProvider theme={theme}>
@@ -75,7 +63,6 @@ export default class extends React.Component<Props, State> {
                     <SwipeableViews
                         axis={theme.direction === "rtl" ? "x-reverse" : "x"}
                         index={this.state.activeStep}
-                        onChangeIndex={this.handleStepChange}
                         enableMouseEvents
                     >
                         {selectedWork.imagePath.map(step =>
@@ -89,12 +76,12 @@ export default class extends React.Component<Props, State> {
                     <MobileStepper
                         steps={maxSteps}
                         position="static"
-                        activeStep={activeStep}
+                        activeStep={this.state.activeStep}
                         nextButton={
                             <Button
                                 size="small"
                                 onClick={this.handleNext}
-                                disabled={activeStep === maxSteps - 1}
+                                disabled={this.state.activeStep === maxSteps - 1}
                             >
                             Next
                             {theme.direction === "rtl" ? (
@@ -108,7 +95,7 @@ export default class extends React.Component<Props, State> {
                             <Button
                                 size="small"
                                 onClick={this.handleBack}
-                                disabled={activeStep === 0}
+                                disabled={this.state.activeStep === 0}
                             >
                             {theme.direction === "rtl" ? (
                                 <KeyboardArrowRight />
@@ -172,10 +159,3 @@ const StyledDialogContent = styled(DialogContent)`
         width: 30rem;
     }
 `;
-
-// const StyledCardMedia = styled(CardMedia)`
-//     && {
-//         height: 0;
-//         padding-top: 56.25%;
-//     }
-// `;

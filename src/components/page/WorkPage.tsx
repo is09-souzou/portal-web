@@ -15,14 +15,16 @@ import Header                 from "../Header";
 import Page                   from "../Page";
 import LearnMoreDialog from "../LearnMoreDialog";
 
+interface SelectedWork {
+    title: string;
+    imagePath: string[];
+}
+
 interface State {
     userMenuAnchorEl?: boolean;
     userMenuOpend: boolean;
     learnMoreDialogOpend: boolean;
-    selectedWork: {
-        title: string,
-        imagePath: string[],
-    };
+    selectedWork: SelectedWork;
 }
 
 export default class extends React.Component<PageComponentProps<{}>, State> {
@@ -34,34 +36,29 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
             learnMoreDialogOpend: false,
             selectedWork: {
                 title: "",
-                imagePath: [],
+                imagePath: [""],
             },
         });
     }
 
-    handleClickOpen = (x: State) => {
+    handleClickOpen = (y: SelectedWork) => () => {
         this.setState({
             learnMoreDialogOpend: true,
             selectedWork: {
-                title: x.title,
-                imagePath: x.imagePath,
+                title: y.title,
+                imagePath: y.imagePath,
             },
         });
-        console.log("event", this.state.selectedWork);
     }
 
-    handleClose = () => {
-        this.setState({
-            learnMoreDialogOpend: false
-        });
-    }
+    handleClose = () => this.setState({ learnMoreDialogOpend: false });
 
     render() {
 
         const {
             auth,
             history,
-            notificationListener
+            notificationListener,
         } = this.props;
 
         const images :{title:string, imagePath:string[]}[] = [
@@ -123,7 +120,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 <StyledCardMedia
                                     image={`${x.imagePath[0]}`}
                                     title={x.title}
-                                    onClick={this.handleClickOpen.bind(this, x)}
+                                    onClick={this.handleClickOpen(x)}
                                 />
                                 <CardContent>
                                     <Typography gutterBottom variant="headline" component="h2">
@@ -137,7 +134,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     <Button
                                         size="small"
                                         color="primary"
-                                        onClick={this.handleClickOpen.bind(this, x)}
+                                        onClick={this.handleClickOpen(x)}
                                     >
                                         Learn More
                                     </Button>
