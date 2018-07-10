@@ -13,14 +13,19 @@ import {
 import gql                 from "graphql-tag";
 import { Query, Mutation } from "react-apollo";
 import styled              from "styled-components";
-import createSignedUrl        from "../../api/createSignedUrl";
-import fileUploadToS3         from "../../api/fileUploadToS3";
-import { PageComponentProps } from "../../App";
-import GraphQLProgress        from "../GraphQLProgress";
-import Header                 from "../Header";
-import ImageInput             from "../ImageInput";
-import NotFound               from "../NotFound";
-import Page                   from "../Page";
+import * as H              from "history";
+
+import toObjectFromURIQuery          from "../../api/toObjectFromURIQuery";
+import createSignedUrl               from "../../api/createSignedUrl";
+import fileUploadToS3                from "../../api/fileUploadToS3";
+import { PageComponentProps }        from "../../App";
+import { AuthProps }                 from "../wrapper/Auth";
+import { NotificationListenerProps } from "../wrapper/NotificationListener";
+import GraphQLProgress               from "../GraphQLProgress";
+import Header                        from "../Header";
+import ImageInput                    from "../ImageInput";
+import NotFound                      from "../NotFound";
+import Page                          from "../Page";
 
 type Item = "displayName" | "email" | "career" | "message" | "avatarUri" | "credentialEmail";
 
@@ -113,17 +118,27 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
         } = this.props;
 
         if (!auth.token) {
-            history.push("?sign-up=true");
-            return "";
-        }
+            const queryParam = toObjectFromURIQuery(history.location.search);
+            if (!((queryParam && queryParam["sign-in"] === "true") || (queryParam && queryParam["sign-up"] === "true")))
+                history.push("?sign-in=true");
 
-        return (
-            <Page>
-                <Header
+            return (
+                <ProfilePageHost
                     auth={auth}
                     history={history}
                     notificationListener={notificationListener}
-                />
+                >
+                    <NotFound/>
+                </ProfilePageHost>
+            );
+        }
+
+        return (
+            <ProfilePageHost
+                auth={auth}
+                history={history}
+                notificationListener={notificationListener}
+            >
                 <Query
                     query={QueryGetUser}
                     variables={{ id: auth.token!.payload.sub }}
@@ -448,7 +463,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                         </form>
                     </div>
                 </StyledSetting>
-            </Page>
+            </ProfilePageHost>
         );
     }
 }
@@ -496,3 +511,22 @@ const UserAvatar = styled(Avatar)`
         margin: 1rem 4rem 0 1rem;
     }
 `;
+
+const ProfilePageHost = (
+    {
+        auth,
+        history,
+        notificationListener,
+        children,
+        ...props
+    }: { children: any, history: H.History } & AuthProps & NotificationListenerProps
+) => (
+    <Page {...props}>
+        <Header
+            auth={auth}
+            history={history}
+            notificationListener={notificationListener}
+        />
+        {children}
+    </Page>
+);
