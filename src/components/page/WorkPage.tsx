@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
     Button,
     Card,
@@ -8,7 +8,9 @@ import {
     Typography
 } from "@material-ui/core";
 import { Add as AddIcon } from "@material-ui/icons";
+import gql                from "graphql-tag";
 import styled             from "styled-components";
+import { Query }          from "react-apollo";
 import { PageComponentProps } from "./../../App";
 import Fab                    from "../Fab";
 import Header                 from "../Header";
@@ -18,6 +20,26 @@ interface State {
     userMenuAnchorEl?: boolean;
     userMenuOpend: boolean;
 }
+
+const QueryListWorks = gql(`
+    query($limit: Int, $exclusiveStartKey: ID, $option: WorkQueryOption) {
+        listWorks (
+            limit: $limit,
+            exclusiveStartKey: $exclusiveStartKey,
+            option: $option
+        ) {
+            items {
+                id
+                userId
+                title
+                tags
+                imageUri
+                description
+            }
+            exclusiveStartKey
+        }
+    }
+`);
 
 export default class extends React.Component<PageComponentProps<{}>, State> {
 
@@ -43,35 +65,55 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     history={history}
                     notificationListener={notificationListener}
                 />
-                <Host>
-                    {[
-                        "F44336", "E91E63", "9C27B0", "673AB7",
-                        "3F51B5", "2196F3", "03A9F4", "00BCD4",
-                        "009688", "4CAF50", "8BC34A", "CDDC39",
-                        "FFEB3B", "FFC107", "FF9800", "FF5722",
-                        "795548", "9E9E9E"].map(x =>
-                            <StyledCard key={x}>
-                                <StyledCardMedia
-                                    image={`http://placehold.jp/24/${x}/fff/600x400.png`}
-                                    title="Contemplative Reptile"
-                                />
-                                <CardContent>
-                                    <Typography gutterBottom variant="headline" component="h2">
-                                        Lizard
-                                    </Typography>
-                                </CardContent>
-                                <CardActions>
-                                    <Button size="small" color="primary">
-                                    Share
-                                    </Button>
-                                    <Button size="small" color="primary">
-                                    Learn More
-                                    </Button>
-                                </CardActions>
-                            </StyledCard>
-                        )
-                    }
-                </Host>
+                <Query
+                    query={QueryListWorks}
+                    variables={{
+                        limit: 12,
+                        exclusiveStartKey: null,
+                        option: {
+                        }
+                    }}
+                >
+                    {({ loading, error, data }) => {
+                        if (loading) return "loading..." ;
+                        if (error) {
+                            console.error(error);
+                            return (
+                                <Fragment>
+                                    <div>error</div>
+                                    <notificationListener.ErrorComponent message={error.message} key="error"/>
+                                </Fragment>
+                            );
+                        }
+                        return(
+                            <Host>
+                                {data.listWorks.items.map((x: any) =>
+                                    <StyledCard key={x.id}>
+                                        <StyledCardMedia
+                                            id={x.id}
+                                            // tslint:disable-next-line:max-line-length
+                                            image={(x.imageUri && x.imageUri.length !== 0) ? x.imageUri[0] : "https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/system/broken-image.png"}
+                                            title={x.title}
+                                        />
+                                        <CardContent>
+                                            <Typography gutterBottom variant="headline" component="h2">
+                                                Lizard
+                                            </Typography>
+                                        </CardContent>
+                                        <CardActions>
+                                            <Button size="small" color="primary">
+                                            Share
+                                            </Button>
+                                            <Button size="small" color="primary">
+                                            Learn More
+                                            </Button>
+                                        </CardActions>
+                                    </StyledCard>
+                                )}
+                            </Host>
+                        );
+                    }}
+                </Query>
                 <Fab
                     // tslint:disable-next-line:jsx-no-lambda
                     onClick={() => history.push("/works/create-work")}
