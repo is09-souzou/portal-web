@@ -454,6 +454,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 this.closeUpdatePasswordDialog();
                                 notificationListener.notification("info", "Success update password");
                             } catch (e) {
+                                console.error(e);
                                 notificationListener.errorNotification(e);
                             }
                         }}
@@ -536,6 +537,7 @@ const UserAvatar = styled(Avatar)`
 
 const StyledDialogContent = styled(DialogContent)`
     && {
+        width: 20rem;
         display: flex;
         flex-direction: column;
     }
