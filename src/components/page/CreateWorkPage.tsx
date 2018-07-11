@@ -35,7 +35,7 @@ const MutationCreateWork = gql(`
             userId
             title
             tags
-            imageUri
+            imageUris
             createdAt
         }
     }
@@ -53,7 +53,7 @@ const MutationUpdateWork = gql(`
             userId
             title
             tags
-            imageUri
+            imageUris
             createdAt
         }
     }
@@ -127,7 +127,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                         userId: auth.token!.payload.sub,
                                                         tags: this.state.chipsData.map(x => x.label),
                                                         // tslint:disable-next-line:max-line-length
-                                                        imageUri: "https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/system/broken-image.png"
+                                                        imageUris: "https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/system/broken-image.png"
                                                     }
                                                 },
                                                 optimisticResponse: {
@@ -164,7 +164,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                         await updateWork({
                                             variables: {
                                                 work: {
-                                                    imageUri: uploadedUrl
+                                                    imageUris: uploadedUrl
                                                 }
                                             },
                                             optimisticResponse: {
@@ -175,7 +175,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                     id: "new",
                                                     userId: auth.token!.payload.sub,
                                                     tags: this.state.chipsData.map(x => x.label),
-                                                    imageUri: uploadedUrl,
+                                                    imageUris: uploadedUrl,
                                                     createdAt: +new Date(),
                                                     __typename: "Work"
                                                 }
