@@ -1,11 +1,9 @@
 import React from "react";
 import {
-    Button,
     Card,
-    CardActions,
     CardMedia,
     CardContent,
-    Typography
+    Typography,
 } from "@material-ui/core";
 import { Add as AddIcon } from "@material-ui/icons";
 import styled             from "styled-components";
@@ -36,7 +34,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
             learnMoreDialogOpend: false,
             selectedWork: {
                 title: "",
-                imagePath: [""],
+                imagePath: [],
             },
         });
     }
@@ -116,29 +114,19 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                 />
                 <Host>
                     {images.map(x =>
-                            <StyledCard key={x.title}>
+                            <StyledCard
+                                key={x.title}
+                                onClick={this.handleClickOpen(x)}
+                            >
                                 <StyledCardMedia
                                     image={`${x.imagePath[0]}`}
                                     title={x.title}
-                                    onClick={this.handleClickOpen(x)}
                                 />
                                 <CardContent>
                                     <Typography gutterBottom variant="headline" component="h2">
                                         {x.title}
                                     </Typography>
                                 </CardContent>
-                                <CardActions>
-                                    <Button size="small" color="primary">
-                                        Share
-                                    </Button>
-                                    <Button
-                                        size="small"
-                                        color="primary"
-                                        onClick={this.handleClickOpen(x)}
-                                    >
-                                        Learn More
-                                    </Button>
-                                </CardActions>
                             </StyledCard>
                         )
                     }
@@ -170,6 +158,10 @@ const StyledCard = styled(Card)`
         margin: 1rem;
         min-width: 20rem;
         max-width: 30rem;
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        :hover{
+            box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
+        }
     }
 `;
 

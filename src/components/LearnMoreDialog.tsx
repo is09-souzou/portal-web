@@ -8,6 +8,7 @@ import {
     createMuiTheme,
     MuiThemeProvider,
     MobileStepper,
+    Chip,
 } from "@material-ui/core";
 import {
     KeyboardArrowLeft,
@@ -25,15 +26,31 @@ interface Props {
     };
 }
 
+interface Chip {
+    key  : string;
+    label: string;
+}
+
 interface State {
     activeStep: number;
+    chipsData: Chip[];
 }
 
 export default class extends React.Component<Props, State> {
 
     componentWillMount() {
         this.setState({
-            activeStep: 0
+            activeStep: 0,
+            chipsData: [
+                {
+                    key: "b",
+                    label: "a",
+                },
+                {
+                    key: "ba",
+                    label: "af",
+                },
+            ]
         });
     }
 
@@ -111,13 +128,21 @@ export default class extends React.Component<Props, State> {
                         {selectedWork.title}
                     </DialogTitle>
                     <StyledDialogContent>
-                        <p>説明てきなやつ？</p>
-                        <p>タグタグ？</p>
-                        <p>制作期間？</p>
+                        <div>説明てきなやつ？</div>
+                        <div>制作期間？</div>
+                        <div>
+                            {this.state.chipsData.map(data =>
+                                <StyledChip
+                                    key={data.key}
+                                    clickable={false}
+                                    label={data.label}
+                                />
+                            )}
+                        </div>
                     </StyledDialogContent>
                     <DialogActions>
                         <Button color="primary">
-                            Copy URL
+                            LEARN MORE
                         </Button>
                     </DialogActions>
                 </StyledDialog>
@@ -158,4 +183,13 @@ const StyledDialogContent = styled(DialogContent)`
         flex-direction: column;
         width: 30rem;
     }
+`;
+
+const StyledChip = styled(Chip)`
+    && {
+        > :not(:last-child) {
+            margin-right: 1rem;
+        }
+    }
+
 `;
