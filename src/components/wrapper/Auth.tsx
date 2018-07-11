@@ -129,6 +129,8 @@ export default class extends React.Component<Props, State> {
                             },
                             onFailure: err => {
                                 this.setState({ token: null, cognitoUser: null });
+                                localStorage.clear();
+                                location.reload();
                                 reject(err);
                             }
                         });
