@@ -117,7 +117,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
 
                                         const title = (e.target as any).elements["title"].value;
                                         const description = (e.target as any).elements["description"].value;
-                                        const imageFiles = (e.target as any).elements["mainImage"].files[0];
+                                        const imageFiles = (e.target as any).elements["mainImage"].files;
                                         const results = await Promise.all([
                                             createWork({
                                                 variables: {
@@ -144,18 +144,22 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                 }
                                             }),
                                             // tslint:disable-next-line:max-line-length
-                                            Promise.all(imageFiles.map(async image => new Promise(async (resolve, reject) => {
-                                                const result = await createSignedUrl({
-                                                    jwt: auth.token!.jwtToken,
-                                                    userId: auth.token!.payload.sub,
-                                                    type: "work",
-                                                    mimetype: image.type
-                                                });
-                                                await fileUploadToS3({
-                                                    url: result.signedUrl,
-                                                    file: image
-                                                });
-                                                resolve(result.uploadedUrl);
+                                            Promise.all(imageFiles.map(async (image: any) => new Promise(async (resolve, reject) => {
+                                                try {
+                                                    const result = await createSignedUrl({
+                                                        jwt: auth.token!.jwtToken,
+                                                        userId: auth.token!.payload.sub,
+                                                        type: "work",
+                                                        mimetype: image.type
+                                                    });
+                                                    await fileUploadToS3({
+                                                        url: result.signedUrl,
+                                                        file: image
+                                                    });
+                                                    resolve(result.uploadedUrl);
+                                                } catch (e) {
+                                                    reject(e);
+                                                }
                                             })))
                                         ]);
                                         await updateWork({
@@ -172,7 +176,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                     id: "new",
                                                     userId: auth.token!.payload.sub,
                                                     tags: this.state.chipsData.map(x => x.label),
-                                                    imageUris: uploadedUrl,
+                                                    imageUris: results[1],
                                                     createdAt: +new Date(),
                                                     __typename: "Work"
                                                 }
