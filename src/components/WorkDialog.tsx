@@ -14,14 +14,14 @@ import {
     KeyboardArrowLeft,
     KeyboardArrowRight,
 } from "@material-ui/icons";
-import styled from "styled-components";
+import styled         from "styled-components";
 import SwipeableViews from "react-swipeable-views";
-import { Work } from "../graphQL/type";
+import { Work }       from "../graphQL/type";
 
 interface Props {
     open: boolean;
     onClose: () => void;
-    work: Work;
+    work?: Work;
 }
 
 interface Chip {
@@ -64,6 +64,9 @@ export default class extends React.Component<Props, State> {
             ...props
         } = this.props;
 
+        if (!work)
+            return null;
+
         const maxSteps = work.imageUris! ? work.imageUris!.length : 0;
 
         return (
@@ -98,12 +101,12 @@ export default class extends React.Component<Props, State> {
                                 onClick={this.handleNext}
                                 disabled={this.state.activeStep === maxSteps - 1}
                             >
-                            Next
-                            {theme.direction === "rtl" ? (
-                                <KeyboardArrowLeft />
-                            ) : (
-                                <KeyboardArrowRight />
-                            )}
+                                Next
+                                {theme.direction === "rtl" ? (
+                                    <KeyboardArrowLeft />
+                                ) : (
+                                    <KeyboardArrowRight />
+                                )}
                             </Button>
                         }
                         backButton={
@@ -112,12 +115,12 @@ export default class extends React.Component<Props, State> {
                                 onClick={this.handleBack}
                                 disabled={this.state.activeStep === 0}
                             >
-                            {theme.direction === "rtl" ? (
-                                <KeyboardArrowRight />
-                            ) : (
-                                <KeyboardArrowLeft />
-                            )}
-                            Back
+                                {theme.direction === "rtl" ? (
+                                    <KeyboardArrowRight />
+                                ) : (
+                                    <KeyboardArrowLeft />
+                                )}
+                                Back
                             </Button>
                         }
                     />

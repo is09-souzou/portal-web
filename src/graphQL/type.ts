@@ -1,9 +1,14 @@
 export type Work = {
-    id: number;
-    userId: number;
+    id: string;
+    userId: string;
     tags?: [string];
     createdAt: number;
     title: string
     imageUris?: [string]
     description: string
+};
+
+export type WorkConnection = {
+    items: [Work];
+    exclusiveStartKey: string;
 };
