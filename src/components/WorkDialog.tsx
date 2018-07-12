@@ -75,7 +75,7 @@ export default class extends React.Component<Props, State> {
                             )
                         ) : (
                             <img
-                                src={"img/no-image.png"}
+                                src={"/img/no-image.png"}
                             />
                         )}
                     </SwipeableViews>
