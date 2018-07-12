@@ -4,8 +4,6 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    createMuiTheme,
-    MuiThemeProvider,
     MobileStepper,
     Chip,
 } from "@material-ui/core";
@@ -53,113 +51,76 @@ export default class extends React.Component<Props, State> {
         const maxSteps = work.imageUris ? work.imageUris!.length : 0;
 
         return (
-            <MuiThemeProvider theme={theme}>
-                <StyledDialog
-                    open={open}
-                    onClose={onClose}
-                    keepMounted
-                    aria-labelledby="simple-dialog-title"
-                    {...props}
+            <Dialog
+                open={open}
+                onClose={onClose}
+                keepMounted
+                aria-labelledby="simple-dialog-title"
+                {...props}
+            >
+                <SwipeableViews
+                    index={this.state.activeStep}
+                    enableMouseEvents
                 >
-                    <SwipeableViews
-                        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-                        index={this.state.activeStep}
-                        enableMouseEvents
-                    >
-                        {work.imageUris ? (
-                            work.imageUris!.map(x =>
-                                <img
-                                    key={x}
-                                    src={x}
-                                />
-                            )
-                        ) : (
+                    {work.imageUris ? (
+                        work.imageUris!.map(x =>
                             <img
-                                src={"img/no-image.png"}
+                                key={x}
+                                src={x}
                             />
-                        )}
-                    </SwipeableViews>
-                    {work.imageUris && work.imageUris.length > 1 && (
-                        <MobileStepper
-                            steps={maxSteps}
-                            position="static"
-                            activeStep={this.state.activeStep}
-                            backButton={
-                                <Button
-                                    size="small"
-                                    onClick={this.handleBack}
-                                    disabled={this.state.activeStep === 0}
-                                >
-                                    {theme.direction === "rtl" ? (
-                                        <KeyboardArrowRight />
-                                    ) : (
-                                        <KeyboardArrowLeft />
-                                    )}
-                                    Back
-                                </Button>
-                            }
-                            nextButton={
-                                <Button
-                                    size="small"
-                                    onClick={this.handleNext}
-                                    disabled={this.state.activeStep === maxSteps - 1}
-                                >
-                                    Next
-                                    {theme.direction === "rtl" ? (
-                                        <KeyboardArrowLeft />
-                                    ) : (
-                                        <KeyboardArrowRight />
-                                    )}
-                                </Button>
-                            }
+                        )
+                    ) : (
+                        <img
+                            src={"/img/no-image.png"}
                         />
                     )}
-                    <DialogTitle id="simple-dialog-title">
-                        {work.title}
-                    </DialogTitle>
-                    <StyledDialogContent>
-                        <div>{work.description}</div>
-                        <div>
-                            {work.tags && work.tags.map(x =>
-                                <StyledChip
-                                    key={x}
-                                    clickable={false}
-                                    label={x}
-                                />
-                            )}
-                        </div>
-                    </StyledDialogContent>
-                </StyledDialog>
-            </MuiThemeProvider>
+                </SwipeableViews>
+                {work.imageUris && work.imageUris.length > 1 && (
+                    <MobileStepper
+                        steps={maxSteps}
+                        position="static"
+                        activeStep={this.state.activeStep}
+                        backButton={
+                            <Button
+                                size="small"
+                                onClick={this.handleBack}
+                                disabled={this.state.activeStep === 0}
+                            >
+                                <KeyboardArrowLeft />
+                                Back
+                            </Button>
+                        }
+                        nextButton={
+                            <Button
+                                size="small"
+                                onClick={this.handleNext}
+                                disabled={this.state.activeStep === maxSteps - 1}
+                            >
+                                Next
+                                <KeyboardArrowRight />
+                            </Button>
+                        }
+                    />
+                )}
+                <DialogTitle id="simple-dialog-title">
+                    {work.title}
+                </DialogTitle>
+                <StyledDialogContent>
+                    <div>{work.description}</div>
+                    <div>
+                        {work.tags && work.tags.map(x =>
+                            <StyledChip
+                                key={x}
+                                clickable={false}
+                                label={x}
+                            />
+                        )}
+                    </div>
+                </StyledDialogContent>
+            </Dialog>
         );
     }
 }
-
-const theme = createMuiTheme({
-    palette: {
-        primary: {
-            light: "#ffc246",
-            main: "#ff9100",
-            dark: "#c56200",
-            contrastText: "#fff",
-        },
-    },
-    overrides: {
-        MuiDialog: {
-            paperWidthSm: {
-                maxWidth: "800px",
-                width: "600px",
-            },
-        },
-    },
-});
-
-const StyledDialog = styled(Dialog)`
-    && {
-        maxWidth: 100sm;
-        paperWidthSm: 100sm;
-    }
-`;
 
 const StyledDialogContent = styled(DialogContent)`
     && {

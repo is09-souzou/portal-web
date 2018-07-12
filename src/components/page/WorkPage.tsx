@@ -120,7 +120,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 image={(
                                                     (x.imageUris && x.imageUris.length as number !== 0) ? x.imageUris[0]
                                                     // tslint:disable-next-line:max-line-length
-                                                :                                                         "img/no-image.png"
+                                                :                                                         "/img/no-image.png"
                                                 )}
                                             />
                                             <CardContent>
