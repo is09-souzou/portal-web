@@ -1,24 +1,29 @@
 import React, { Fragment } from "react";
 import {
-    Button,
     Card,
-    CardActions,
     CardMedia,
     CardContent,
-    Typography
+    Typography,
 } from "@material-ui/core";
 import { Add as AddIcon } from "@material-ui/icons";
 import gql                from "graphql-tag";
 import styled             from "styled-components";
 import { Query }          from "react-apollo";
-import { PageComponentProps } from "./../../App";
-import Fab                    from "../Fab";
-import Header                 from "../Header";
-import Page                   from "../Page";
+import { PageComponentProps }   from "./../../App";
+import Fab                      from "../Fab";
+import Header                   from "../Header";
+import Page                     from "../Page";
+import WorkDialog               from "../WorkDialog";
+import StreamSpinner            from "../StreamSpinner";
+import { Work, WorkConnection } from "../../graphQL/type";
 
 interface State {
     userMenuAnchorEl?: boolean;
     userMenuOpend: boolean;
+    workDialogVisible: boolean;
+    works: Work[];
+    selectedWork?: Work;
+    paginationKey?: string;
 }
 
 const QueryListWorks = gql(`
@@ -33,7 +38,7 @@ const QueryListWorks = gql(`
                 userId
                 title
                 tags
-                imageUri
+                imageUris
                 description
             }
             exclusiveStartKey
@@ -46,16 +51,30 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     componentWillMount() {
         this.setState({
             userMenuAnchorEl: undefined,
-            userMenuOpend: false
+            userMenuOpend: false,
+            workDialogVisible: false,
+            paginationKey: undefined,
+            works: [] as Work[]
         });
     }
+
+    handleClickOpen = (x: Work) => () => this.setState({
+        workDialogVisible: true,
+        selectedWork: x,
+    })
+
+    handleClose = () => this.setState({ workDialogVisible: false });
+
+    toNext = (key: string) => this.setState({
+        paginationKey: key
+    })
 
     render() {
 
         const {
             auth,
             history,
-            notificationListener
+            notificationListener,
         } = this.props;
 
         return (
@@ -68,14 +87,15 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                 <Query
                     query={QueryListWorks}
                     variables={{
-                        limit: 12,
-                        exclusiveStartKey: null,
+                        limit: 3,
+                        // limit: 12,
+                        exclusiveStartKey: this.state.paginationKey,
                         option: {
                         }
                     }}
+                    fetchPolicy="cache-and-network"
                 >
-                    {({ loading, error, data }) => {
-                        if (loading) return "loading..." ;
+                    {({ error, data }) => {
                         if (error) {
                             console.error(error);
                             return (
@@ -85,31 +105,46 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 </Fragment>
                             );
                         }
+
+                        const workConnection = data && data.listWorks as WorkConnection;
+                        const works = this.state.works.concat(workConnection ? workConnection.items : [] as Work[]);
+
                         return(
                             <Host>
-                                {data.listWorks.items.map((x: any) =>
-                                    <StyledCard key={x.id}>
-                                        <StyledCardMedia
-                                            id={x.id}
-                                            // tslint:disable-next-line:max-line-length
-                                            image={(x.imageUri && x.imageUri.length !== 0) ? x.imageUri[0] : "https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/system/broken-image.png"}
-                                            title={x.title}
-                                        />
-                                        <CardContent>
-                                            <Typography gutterBottom variant="headline" component="h2">
-                                                Lizard
-                                            </Typography>
-                                        </CardContent>
-                                        <CardActions>
-                                            <Button size="small" color="primary">
-                                            Share
-                                            </Button>
-                                            <Button size="small" color="primary">
-                                            Learn More
-                                            </Button>
-                                        </CardActions>
-                                    </StyledCard>
-                                )}
+                                <CardList>
+                                    {works.map(x =>
+                                        <WorkCard
+                                            key={x.id}
+                                            onClick={this.handleClickOpen(x)}
+                                        >
+                                            <WorkCardMedia
+                                                image={(
+                                                    (x.imageUris && x.imageUris.length as number !== 0) ? x.imageUris[0]
+                                                    // tslint:disable-next-line:max-line-length
+                                                :                                                         "https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/system/broken-image.png"
+                                                )}
+                                            />
+                                            <CardContent>
+                                                <Typography gutterBottom variant="headline" component="h2">
+                                                    {x.title}
+                                                </Typography>
+                                            </CardContent>
+                                        </WorkCard>
+                                    )}
+                                </CardList>
+                                <WorkDialog
+                                    open={this.state.workDialogVisible}
+                                    onClose={this.handleClose}
+                                    work={this.state.selectedWork}
+                                />
+                                <StreamSpinner
+                                    disable={workConnection && !workConnection.exclusiveStartKey ? true : false}
+                                    // tslint:disable-next-line:jsx-no-lambda
+                                    onVisible={() => this.setState({
+                                        works: this.state.works.concat(workConnection.items),
+                                        paginationKey: workConnection.exclusiveStartKey
+                                    })}
+                                />
                             </Host>
                         );
                     }}
@@ -126,20 +161,30 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 }
 
 const Host = styled.div`
-    margin: 3rem;
+    display: flex;
+    flex-direction: column;
+`;
+
+const CardList = styled.div`
+    margin: 0 3rem;
     display: flex;
     flex-wrap: wrap;
 `;
 
-const StyledCard = styled(Card)`
+const WorkCard = styled(Card)`
     && {
         margin: 1rem;
         min-width: 20rem;
         max-width: 30rem;
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        cursor: pointer;
+        :hover{
+            box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
+        }
     }
 `;
 
-const StyledCardMedia = styled(CardMedia)`
+const WorkCardMedia = styled(CardMedia)`
     && {
         height: 0;
         padding-top: 56.25%;
