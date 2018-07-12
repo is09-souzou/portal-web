@@ -33,6 +33,7 @@ export default class extends React.Component<Props, State> {
     }
 
     componentDidMount() {
+        this.state.onScroll();
         window.addEventListener("scroll", this.state.onScroll, false);
     }
 

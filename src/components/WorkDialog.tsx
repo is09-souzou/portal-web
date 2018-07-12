@@ -2,7 +2,6 @@ import React from "react";
 import {
     Button,
     Dialog,
-    DialogActions,
     DialogContent,
     DialogTitle,
     createMuiTheme,
@@ -24,31 +23,15 @@ interface Props {
     work?: Work;
 }
 
-interface Chip {
-    key  : string;
-    label: string;
-}
-
 interface State {
     activeStep: number;
-    chipsData: Chip[];
 }
 
 export default class extends React.Component<Props, State> {
 
     componentWillMount() {
         this.setState({
-            activeStep: 0,
-            chipsData: [
-                {
-                    key: "b",
-                    label: "a",
-                },
-                {
-                    key: "ba",
-                    label: "af",
-                },
-            ]
+            activeStep: 0
         });
     }
 
@@ -67,7 +50,7 @@ export default class extends React.Component<Props, State> {
         if (!work)
             return null;
 
-        const maxSteps = work.imageUris! ? work.imageUris!.length : 0;
+        const maxSteps = work.imageUris ? work.imageUris!.length : 0;
 
         return (
             <MuiThemeProvider theme={theme}>
@@ -83,69 +66,69 @@ export default class extends React.Component<Props, State> {
                         index={this.state.activeStep}
                         enableMouseEvents
                     >
-                        {work.imageUris && work.imageUris!.map(step =>
+                        {work.imageUris ? (
+                            work.imageUris!.map(x =>
+                                <img
+                                    key={x}
+                                    src={x}
+                                />
+                            )
+                        ) : (
                             <img
-                                key={step}
-                                src={step}
-                                alt={step}
+                                src={"img/no-image.png"}
                             />
                         )}
                     </SwipeableViews>
-                    <MobileStepper
-                        steps={maxSteps}
-                        position="static"
-                        activeStep={this.state.activeStep}
-                        nextButton={
-                            <Button
-                                size="small"
-                                onClick={this.handleNext}
-                                disabled={this.state.activeStep === maxSteps - 1}
-                            >
-                                Next
-                                {theme.direction === "rtl" ? (
-                                    <KeyboardArrowLeft />
-                                ) : (
-                                    <KeyboardArrowRight />
-                                )}
-                            </Button>
-                        }
-                        backButton={
-                            <Button
-                                size="small"
-                                onClick={this.handleBack}
-                                disabled={this.state.activeStep === 0}
-                            >
-                                {theme.direction === "rtl" ? (
-                                    <KeyboardArrowRight />
-                                ) : (
-                                    <KeyboardArrowLeft />
-                                )}
-                                Back
-                            </Button>
-                        }
-                    />
-
+                    {work.imageUris && work.imageUris.length > 1 && (
+                        <MobileStepper
+                            steps={maxSteps}
+                            position="static"
+                            activeStep={this.state.activeStep}
+                            backButton={
+                                <Button
+                                    size="small"
+                                    onClick={this.handleBack}
+                                    disabled={this.state.activeStep === 0}
+                                >
+                                    {theme.direction === "rtl" ? (
+                                        <KeyboardArrowRight />
+                                    ) : (
+                                        <KeyboardArrowLeft />
+                                    )}
+                                    Back
+                                </Button>
+                            }
+                            nextButton={
+                                <Button
+                                    size="small"
+                                    onClick={this.handleNext}
+                                    disabled={this.state.activeStep === maxSteps - 1}
+                                >
+                                    Next
+                                    {theme.direction === "rtl" ? (
+                                        <KeyboardArrowLeft />
+                                    ) : (
+                                        <KeyboardArrowRight />
+                                    )}
+                                </Button>
+                            }
+                        />
+                    )}
                     <DialogTitle id="simple-dialog-title">
                         {work.title}
                     </DialogTitle>
                     <StyledDialogContent>
-                        <div>説明てきなやつ？</div>
-                        <div>制作期間？</div>
+                        <div>{work.description}</div>
                         <div>
-                            {this.state.chipsData.map(data =>
+                            {work.tags && work.tags.map(x =>
                                 <StyledChip
-                                    key={data.key}
+                                    key={x}
                                     clickable={false}
-                                    label={data.label}
+                                    label={x}
                                 />
                             )}
                         </div>
                     </StyledDialogContent>
-                    <DialogActions>
-                        <Button color="primary">
-                            LEARN MORE
-                        </Button>
-                    </DialogActions>
                 </StyledDialog>
             </MuiThemeProvider>
         );

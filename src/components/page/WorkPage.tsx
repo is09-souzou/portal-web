@@ -87,8 +87,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                 <Query
                     query={QueryListWorks}
                     variables={{
-                        limit: 3,
-                        // limit: 12,
+                        limit: 12,
                         exclusiveStartKey: this.state.paginationKey,
                         option: {
                         }
@@ -121,7 +120,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 image={(
                                                     (x.imageUris && x.imageUris.length as number !== 0) ? x.imageUris[0]
                                                     // tslint:disable-next-line:max-line-length
-                                                :                                                         "https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/system/broken-image.png"
+                                                :                                                         "img/no-image.png"
                                                 )}
                                             />
                                             <CardContent>
