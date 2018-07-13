@@ -92,9 +92,9 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                         option: {
                         }
                     }}
-                    fetchPolicy="cache-and-network"
+                    fetchPolicy="network-only"
                 >
-                    {({ error, data }) => {
+                    {({ loading, error, data }) => {
                         if (error) {
                             console.error(error);
                             return (
@@ -139,10 +139,18 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 <StreamSpinner
                                     disable={workConnection && !workConnection.exclusiveStartKey ? true : false}
                                     // tslint:disable-next-line:jsx-no-lambda
-                                    onVisible={() => this.setState({
-                                        works: this.state.works.concat(workConnection.items),
-                                        paginationKey: workConnection.exclusiveStartKey
-                                    })}
+                                    onVisible={() => {
+                                        const f = () => {
+                                            if (!loading)
+                                                this.setState({
+                                                    works,
+                                                    paginationKey: workConnection.exclusiveStartKey
+                                                });
+                                            else
+                                                setTimeout(f, 1000);
+                                        };
+                                        f();
+                                    }}
                                 />
                             </Host>
                         );
