@@ -305,7 +305,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 onSubmit={async e => {
                                                     e.preventDefault();
                                                     // tslint:disable-next-line:max-line-length
-                                                    const image = (e.target as any).elements["avatar-image"].files[0];
+                                                    const image = (e.target as any).elements["newAvatarImage"].files[0];
 
                                                     try {
                                                         this.setState({ uploadingAvatarImage: true });
