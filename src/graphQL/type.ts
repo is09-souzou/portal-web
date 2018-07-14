@@ -9,6 +9,13 @@ export type Work = {
 };
 
 export type WorkConnection = {
-    items: [Work];
+    items: Work[];
     exclusiveStartKey: string;
 };
+
+export type PopularTag = {
+    name: string;
+    count: number;
+};
+
+export type PopularTags = PopularTag[];
