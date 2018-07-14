@@ -1,1 +1,1 @@
-export default (array: any[]) => array.filter((x, i, self) => self.indexOf(x) === i);
+export default <T>(array: T[]) => array.filter((x, i, self) => self.indexOf(x) === i);
