@@ -158,10 +158,13 @@ export default class extends React.Component<Props, State> {
                                             .filter((x, i, self) => self.indexOf(x) === i)
                                             .map(tag => (
                                                 <Link
-                                                    to={formatTagsOfURLQueryParam(
-                                                        tags.includes(tag) ? tags.filter(x => x !== tag)
-                                                      :                      tags.concat(tag)
-                                                    )}
+                                                    to={
+                                                        (location.pathname.indexOf("/works") === -1 ? "/works" : "")
+                                                      + formatTagsOfURLQueryParam(
+                                                            tags.includes(tag) ? tags.filter(x => x !== tag)
+                                                          :                      tags.concat(tag)
+                                                        )
+                                                    }
                                                     key={tag}
                                                 >
                                                     <NestedListItem button>
