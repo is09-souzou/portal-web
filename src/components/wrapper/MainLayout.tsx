@@ -1,8 +1,9 @@
-import React                   from "react";
-import { Drawer }              from "@material-ui/core";
-import { RouteComponentProps } from "react-router-dom";
-import styled                  from "styled-components";
-import Navigator               from "./../Navigator";
+import React                         from "react";
+import { Drawer }                    from "@material-ui/core";
+import { RouteComponentProps }       from "react-router-dom";
+import styled                        from "styled-components";
+import Navigator                     from "./../Navigator";
+import { NotificationListenerProps } from "./NotificationListener";
 
 interface State {
     drawerOpend: boolean;
@@ -11,7 +12,7 @@ interface State {
     fabIcon: React.ReactNode;
 }
 
-interface Props extends RouteComponentProps<{}> {
+interface Props extends RouteComponentProps<{}>, NotificationListenerProps {
     render: (mainLayoutEventProps: MainLayoutEventProps) => React.ReactNode;
 }
 
@@ -42,6 +43,7 @@ export default class extends React.Component<Props, State> {
 
         const {
             history,
+            notificationListener,
             render
         } = this.props;
 
@@ -57,6 +59,7 @@ export default class extends React.Component<Props, State> {
                     >
                         <Navigator
                             history={history}
+                            notificationListener={notificationListener}
                         />
                     </Drawer>
                 </div>
@@ -67,6 +70,7 @@ export default class extends React.Component<Props, State> {
                     >
                         <Navigator
                             history={history}
+                            notificationListener={notificationListener}
                         />
                     </Drawer>
                 </div>
@@ -117,5 +121,6 @@ const Content = styled.div`
 
 const Main = styled.main`
     min-height: calc(100vh - 7rem);
+    margin-top: 7rem;
     height: 100%;
 `;

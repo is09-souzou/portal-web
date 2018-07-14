@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
     Checkbox,
     Collapse,
@@ -19,47 +19,63 @@ import {
     NewReleases as NewReleasesIcon,
     Star        as StarIcon
 } from "@material-ui/icons";
-import * as H               from "history";
-import styled               from "styled-components";
-import toObjectFromURIQuery from "../api/toObjectFromURIQuery";
-import Link                 from "./Link";
+import gql                           from "graphql-tag";
+import * as H                        from "history";
+import { Query }                     from "react-apollo";
+import styled                        from "styled-components";
+import deduplicationFromArray        from "../util/deduplicationFromArray";
+import formatTagsOfURLQueryParam     from "../util/formatTagsOfURLQueryParam";
+import getTagsByURLQueryParam        from "../util/getTagsByURLQueryParam";
+import isSubset                      from "../util/isSubset";
+import { PopularTags }               from "../graphQL/type";
+import { NotificationListenerProps } from "./wrapper/NotificationListener";
+import GraphQLProgress               from "./GraphQLProgress";
+import Link                          from "./Link";
 
-interface Props {
+interface Props extends NotificationListenerProps {
     history: H.History;
 }
 
 interface State {
     tagListVisible: boolean;
+    tags: string[];
 }
+
+const QueryListPopularTags = gql(`
+    query {
+        listPopularTags {
+            name
+            count
+        }
+    }
+`);
 
 export default class extends React.Component<Props, State> {
 
-    componentWillMount() {
-        this.setState({
-            tagListVisible: false
-        });
-    }
+    state = {
+        tags:  getTagsByURLQueryParam(this.props.history),
+        tagListVisible:  getTagsByURLQueryParam(this.props.history).length !== 0
+    };
 
     componentDidMount() {
-        this.setState({
-            tagListVisible: this.getTags(this.props.history).length !== 0
-        });
-    }
-
-    getTags = (history: H.History) => {
-        const queryParam = toObjectFromURIQuery(history.location.search);
-        const tags = queryParam ? queryParam["tags"].split(",") : [];
-        return queryParam && !(tags.length === 1 && tags[0] === "") ? queryParam["tags"].split(",") : [];
     }
 
     toggleTagListVisible = () => this.setState({ tagListVisible: !this.state.tagListVisible });
 
+    getSnapshotBeforeUpdate() {
+        const tags = getTagsByURLQueryParam(this.props.history);
+        if (!isSubset(tags, this.state.tags))
+            this.setState({ tags: deduplicationFromArray(this.state.tags.concat(tags)) });
+        return null;
+    }
+
+    componentDidUpdate() {}
+
     render() {
         const {
-            history
+            history,
+            notificationListener
         } = this.props;
-
-        const tags = this.getTags(history);
 
         return (
             <Host>
@@ -117,41 +133,56 @@ export default class extends React.Component<Props, State> {
                         {this.state.tagListVisible ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                     </ListItem>
                     <Collapse in={this.state.tagListVisible} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            {tags.map(tag => (
-                                <Link
-                                    to={
-                                        tags.length === 1 ? "/works"
-                                                          : (
-                                        "/works?tags="
-                                      + tags.filter(x => tag !== x)
-                                            .reduce((prev, next) => `${prev},${next}`, "")
-                                            .slice(1, -1)
-                                        )
-                                    }
-                                    key={tag}
-                                >
-                                    <NestedListItem button>
-                                        <ListItemText
-                                            primary={
-                                                <StyledText
-                                                    selected={history.location.pathname === `/works?tags=${tag}`}
+                        <Query
+                            query={QueryListPopularTags}
+                            fetchPolicy="cache-and-network"
+                        >
+                            {({ loading, error, data }) => {
+                                if (loading) return <GraphQLProgress />;
+                                if (error) {
+                                    console.error(error);
+                                    return (
+                                        <Fragment>
+                                            <div>cry；；</div>
+                                            <notificationListener.ErrorComponent error={error}/>
+                                        </Fragment>
+                                    );
+                                }
+
+                                const tags = getTagsByURLQueryParam(this.props.history);
+                                const popularTags = (data.listPopularTags as PopularTags).map(x => x.name);
+
+                                return (
+                                    <List component="div" disablePadding>
+                                        {popularTags.concat(this.state.tags)
+                                            .filter((x, i, self) => self.indexOf(x) === i)
+                                            .map(tag => (
+                                                <Link
+                                                    to={formatTagsOfURLQueryParam(
+                                                        tags.includes(tag) ? tags.filter(x => x !== tag)
+                                                      :                      tags.concat(tag)
+                                                    )}
+                                                    key={tag}
                                                 >
-                                                    {tag}
-                                                </StyledText>
-                                            }
-                                        />
-                                        <ListItemSecondaryAction>
-                                            <Checkbox
-                                                checked={tag}
-                                                tabIndex={-1}
-                                                disableRipple
-                                            />
-                                        </ListItemSecondaryAction>
-                                    </NestedListItem>
-                                </Link>
-                            ))}
-                        </List>
+                                                    <NestedListItem button>
+                                                        <ListItemText
+                                                            primary={<span>{tag}</span>}
+                                                        />
+                                                        <ListItemSecondaryAction>
+                                                            <Checkbox
+                                                                checked={tags.includes(tag)}
+                                                                tabIndex={-1}
+                                                                disableRipple
+                                                            />
+                                                        </ListItemSecondaryAction>
+                                                    </NestedListItem>
+                                                </Link>
+                                            )
+                                        )}
+                                    </List>
+                                );
+                            }}
+                        </Query>
                     </Collapse>
                 </List>
                 <List

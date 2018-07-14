@@ -9,21 +9,25 @@ import { Add as AddIcon } from "@material-ui/icons";
 import gql                from "graphql-tag";
 import styled             from "styled-components";
 import { Query }          from "react-apollo";
+import arraysEqual              from "../../util/arraysEqual";
+import getTagsByURLQueryParam   from "../../util/getTagsByURLQueryParam";
 import { PageComponentProps }   from "./../../App";
 import Fab                      from "../Fab";
 import Header                   from "../Header";
+import NotFound                 from "../NotFound";
 import Page                     from "../Page";
 import WorkDialog               from "../WorkDialog";
 import StreamSpinner            from "../StreamSpinner";
 import { Work, WorkConnection } from "../../graphQL/type";
 
 interface State {
+    paginationKey?: string;
+    selectedWork?: Work;
+    tags: string[];
     userMenuAnchorEl?: boolean;
     userMenuOpend: boolean;
     workDialogVisible: boolean;
     works: Work[];
-    selectedWork?: Work;
-    paginationKey?: string;
 }
 
 const QueryListWorks = gql(`
@@ -48,15 +52,15 @@ const QueryListWorks = gql(`
 
 export default class extends React.Component<PageComponentProps<{}>, State> {
 
-    componentWillMount() {
-        this.setState({
-            userMenuAnchorEl: undefined,
-            userMenuOpend: false,
-            workDialogVisible: false,
-            paginationKey: undefined,
-            works: [] as Work[]
-        });
-    }
+    state = {
+        paginationKey: undefined,
+        selectedWork: undefined,
+        tags: [] as string[],
+        userMenuAnchorEl: undefined,
+        userMenuOpend: false,
+        workDialogVisible: false,
+        works: [] as Work[],
+    };
 
     handleClickOpen = (x: Work) => () => this.setState({
         workDialogVisible: true,
@@ -68,6 +72,21 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     toNext = (key: string) => this.setState({
         paginationKey: key
     })
+
+    componentDidMount() {
+        this.setState({
+            tags: getTagsByURLQueryParam(this.props.history)
+        });
+    }
+
+    getSnapshotBeforeUpdate(prevProps: Readonly<PageComponentProps<{}>>) {
+        const tags = getTagsByURLQueryParam(prevProps.history);
+        if (!arraysEqual(this.state.tags, tags))
+            this.setState({ tags, works: [] as Work[], paginationKey: undefined });
+        return null;
+    }
+
+    componentDidUpdate() {}
 
     render() {
 
@@ -90,22 +109,26 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                         limit: 12,
                         exclusiveStartKey: this.state.paginationKey,
                         option: {
+                            tags: this.state.tags
                         }
                     }}
                     fetchPolicy="network-only"
                 >
                     {({ loading, error, data }) => {
-                        if (error) {
+                        if (error || !data) {
                             console.error(error);
                             return (
                                 <Fragment>
                                     <div>error</div>
-                                    <notificationListener.ErrorComponent message={error.message} key="error"/>
+                                    <notificationListener.ErrorComponent message={error && error.message} key="error"/>
                                 </Fragment>
                             );
                         }
 
-                        const workConnection = data && data.listWorks as WorkConnection;
+                        if (!loading && data.listWorks.items.length === 0)
+                            return <NotFound />;
+
+                        const workConnection = data.listWorks as WorkConnection;
                         const works = this.state.works.concat(workConnection ? workConnection.items : [] as Work[]);
 
                         return(
@@ -132,6 +155,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     )}
                                 </CardList>
                                 <WorkDialog
+                                    history={history}
                                     open={this.state.workDialogVisible}
                                     onClose={this.handleClose}
                                     work={this.state.selectedWork}

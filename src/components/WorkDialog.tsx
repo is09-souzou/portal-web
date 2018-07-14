@@ -11,14 +11,19 @@ import {
     KeyboardArrowLeft,
     KeyboardArrowRight,
 } from "@material-ui/icons";
+import * as H         from "history";
 import styled         from "styled-components";
 import SwipeableViews from "react-swipeable-views";
-import { Work }       from "../graphQL/type";
+import formatTagsOfURLQueryParam from "../util/formatTagsOfURLQueryParam";
+import getTagsByURLQueryParam    from "../util/getTagsByURLQueryParam";
+import { Work }                  from "../graphQL/type";
+import Link                      from "./Link";
 
 interface Props {
     open: boolean;
     onClose: () => void;
     work?: Work;
+    history: H.History;
 }
 
 interface State {
@@ -39,6 +44,7 @@ export default class extends React.Component<Props, State> {
 
     render() {
         const {
+            history,
             open = false,
             onClose,
             work,
@@ -109,11 +115,19 @@ export default class extends React.Component<Props, State> {
                     <div>{work.description}</div>
                     <div>
                         {work.tags && work.tags.map(x =>
-                            <StyledChip
+                            <Link
+                                to={(() => {
+                                    const tags = getTagsByURLQueryParam(history);
+                                    return formatTagsOfURLQueryParam(tags.concat(x), tags);
+                                })()}
+                                onClick={onClose}
                                 key={x}
-                                clickable={false}
-                                label={x}
-                            />
+                            >
+                                <StyledChip
+                                    clickable={false}
+                                    label={x}
+                                />
+                            </Link>
                         )}
                     </div>
                 </StyledDialogContent>

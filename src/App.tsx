@@ -45,6 +45,7 @@ const Root = withRouter<RouteComponentProps<any> & { children: React.ReactElemen
                                     )
                                 }
                             )}
+                            {...notificationListener}
                             {...props}
                         />
                     </AppSyncClient>

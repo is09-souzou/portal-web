@@ -416,9 +416,9 @@
     "@babel/helper-module-transforms" "7.0.0-beta.53"
     "@babel/helper-plugin-utils" "7.0.0-beta.53"
 
-"@babel/plugin-transform-modules-commonjs@7.0.0-beta.53":
+"@babel/plugin-transform-modules-utiljs@7.0.0-beta.53":
   version "7.0.0-beta.53"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-modules-commonjs/-/plugin-transform-modules-commonjs-7.0.0-beta.53.tgz#ebc3fba1c5a6c8743b909403ecd3e7e3681cafa5"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-modules-utiljs/-/plugin-transform-modules-utiljs-7.0.0-beta.53.tgz#ebc3fba1c5a6c8743b909403ecd3e7e3681cafa5"
   dependencies:
     "@babel/helper-module-transforms" "7.0.0-beta.53"
     "@babel/helper-plugin-utils" "7.0.0-beta.53"
@@ -574,7 +574,7 @@
     "@babel/plugin-transform-function-name" "7.0.0-beta.53"
     "@babel/plugin-transform-literals" "7.0.0-beta.53"
     "@babel/plugin-transform-modules-amd" "7.0.0-beta.53"
-    "@babel/plugin-transform-modules-commonjs" "7.0.0-beta.53"
+    "@babel/plugin-transform-modules-utiljs" "7.0.0-beta.53"
     "@babel/plugin-transform-modules-systemjs" "7.0.0-beta.53"
     "@babel/plugin-transform-modules-umd" "7.0.0-beta.53"
     "@babel/plugin-transform-new-target" "7.0.0-beta.53"
@@ -1158,9 +1158,9 @@ apollo-link-dedup@^1.0.0:
   dependencies:
     apollo-link "^1.2.2"
 
-apollo-link-http-common@^0.2.4:
+apollo-link-http-util@^0.2.4:
   version "0.2.4"
-  resolved "https://registry.yarnpkg.com/apollo-link-http-common/-/apollo-link-http-common-0.2.4.tgz#877603f7904dc8f70242cac61808b1f8d034b2c3"
+  resolved "https://registry.yarnpkg.com/apollo-link-http-util/-/apollo-link-http-util-0.2.4.tgz#877603f7904dc8f70242cac61808b1f8d034b2c3"
   dependencies:
     apollo-link "^1.2.2"
 
@@ -1169,7 +1169,7 @@ apollo-link-http@^1.0.0:
   resolved "https://registry.yarnpkg.com/apollo-link-http/-/apollo-link-http-1.5.4.tgz#b80b7b4b342c655b6a5614624b076a36be368f43"
   dependencies:
     apollo-link "^1.2.2"
-    apollo-link-http-common "^0.2.4"
+    apollo-link-http-util "^0.2.4"
 
 apollo-link@^1.0.0, apollo-link@^1.2.2:
   version "1.2.2"
@@ -1718,9 +1718,9 @@ commander@~2.13.0:
   version "2.13.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.13.0.tgz#6964bca67685df7c1f1430c584f07d7597885b9c"
 
-commondir@^1.0.1:
+utildir@^1.0.1:
   version "1.0.1"
-  resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
+  resolved "https://registry.yarnpkg.com/utildir/-/utildir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
 
 component-emitter@^1.2.1:
   version "1.2.1"
@@ -2386,7 +2386,7 @@ find-cache-dir@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/find-cache-dir/-/find-cache-dir-1.0.0.tgz#9288e3e9e3cc3748717d39eade17cf71fc30ee6f"
   dependencies:
-    commondir "^1.0.1"
+    utildir "^1.0.1"
     make-dir "^1.0.0"
     pkg-dir "^2.0.0"
 
