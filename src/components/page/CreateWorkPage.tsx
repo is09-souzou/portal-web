@@ -45,7 +45,7 @@ const MutationUpdateWork = gql(`
     mutation updateWork(
         $work: WorkUpdate!
     ) {
-        createWork(
+        updateWork(
             work: $work
         ) {
             id
