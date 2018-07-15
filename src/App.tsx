@@ -12,7 +12,7 @@ import AppSyncClient                                        from "./components/w
 import MainLayout, { MainLayoutEventProps }                 from "./components/wrapper/MainLayout";
 import NotificationListener, { NotificationListenerProps }  from "./components/wrapper/NotificationListener";
 import CreateWorkPage                                       from "./components/page/CreateWorkPage";
-import WorkPage                                             from "./components/page/WorkPage";
+import WorkListPage                                         from "./components/page/WorkListPage";
 import ProfilePage                                          from "./components/page/Profile";
 import UserListPage                                         from "./components/page/UserListPage";
 import UserPage                                             from "./components/page/UserPage";
@@ -45,6 +45,7 @@ const Root = withRouter<RouteComponentProps<any> & { children: React.ReactElemen
                                     )
                                 }
                             )}
+                            {...notificationListener}
                             {...props}
                         />
                     </AppSyncClient>
@@ -61,7 +62,7 @@ export default () => (
                 <ComposingSwitch>
                     <ComposingRoute
                         path="/"
-                        component={WorkPage}
+                        component={WorkListPage}
                         exact={true}
                     />
                     <ComposingRoute
@@ -71,7 +72,7 @@ export default () => (
                     />
                     <ComposingRoute
                         path="/works"
-                        component={WorkPage}
+                        component={WorkListPage}
                     />
                     <ComposingRoute
                         path="/users"

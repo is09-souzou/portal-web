@@ -26,7 +26,7 @@ export default class extends React.Component<Props, State> {
                 region: config.appSync.region,
                 auth: {
                     type: AUTH_TYPE.AMAZON_COGNITO_USER_POOLS,
-                    jwtToken: () => this.props.auth.token!.jwtToken
+                    jwtToken: () => this.props.auth.token && this.props.auth.token.jwtToken
                 }
             })
         });

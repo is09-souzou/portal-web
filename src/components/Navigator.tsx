@@ -1,9 +1,11 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
+    Checkbox,
     Collapse,
     Divider,
     List,
     ListItem,
+    ListItemSecondaryAction,
     ListItemIcon,
     ListItemText,
     ListSubheader,
@@ -17,28 +19,64 @@ import {
     NewReleases as NewReleasesIcon,
     Star        as StarIcon
 } from "@material-ui/icons";
-import styled from "styled-components";
-import Link from "./Link";
+import gql                           from "graphql-tag";
+import * as H                        from "history";
+import { Query }                     from "react-apollo";
+import styled                        from "styled-components";
+import deduplicationFromArray        from "../util/deduplicationFromArray";
+import formatTagsOfURLQueryParam     from "../util/formatTagsOfURLQueryParam";
+import getTagsByURLQueryParam        from "../util/getTagsByURLQueryParam";
+import isSubset                      from "../util/isSubset";
+import { PopularTags }               from "../graphQL/type";
+import { NotificationListenerProps } from "./wrapper/NotificationListener";
+import GraphQLProgress               from "./GraphQLProgress";
+import Link                          from "./Link";
 
-interface Props {
-    histroy: any;
+interface Props extends NotificationListenerProps {
+    history: H.History;
 }
 
 interface State {
-    worksTypeListVisible: boolean;
+    tagListVisible: boolean;
+    tags: string[];
 }
+
+const QueryListPopularTags = gql(`
+    query {
+        listPopularTags {
+            name
+            count
+        }
+    }
+`);
 
 export default class extends React.Component<Props, State> {
 
-    componentWillMount() {
-        this.setState({
-            worksTypeListVisible: false
-        });
+    state = {
+        tags:  getTagsByURLQueryParam(this.props.history),
+        tagListVisible:  getTagsByURLQueryParam(this.props.history).length !== 0
+    };
+
+    componentDidMount() {
     }
 
-    toggleWorksTypeListVisible = () => this.setState({ worksTypeListVisible: !this.state.worksTypeListVisible });
+    toggleTagListVisible = () => this.setState({ tagListVisible: !this.state.tagListVisible });
+
+    getSnapshotBeforeUpdate() {
+        const tags = getTagsByURLQueryParam(this.props.history);
+        if (!isSubset(tags, this.state.tags))
+            this.setState({ tags: deduplicationFromArray(this.state.tags.concat(tags)) });
+        return null;
+    }
+
+    componentDidUpdate() {}
 
     render() {
+        const {
+            history,
+            notificationListener
+        } = this.props;
+
         return (
             <Host>
                 <Title variant="headline">
@@ -58,7 +96,7 @@ export default class extends React.Component<Props, State> {
                             <ListItemText
                                 primary={
                                     <StyledText
-                                        selected={this.props.histroy.location.pathname === "/works/popular"}
+                                        selected={history.location.pathname === "/works/popular"}
                                     >
                                         Popular
                                     </StyledText>
@@ -76,7 +114,7 @@ export default class extends React.Component<Props, State> {
                             <ListItemText
                                 primary={
                                     <StyledText
-                                        selected={this.props.histroy.location.pathname === "/works/new"}
+                                        selected={history.location.pathname === "/works/new"}
                                     >
                                         New
                                     </StyledText>
@@ -86,77 +124,68 @@ export default class extends React.Component<Props, State> {
                     </Link>
                     <ListItem
                         button
-                        onClick={this.toggleWorksTypeListVisible}
+                        onClick={this.toggleTagListVisible}
                     >
                         <ListItemIcon>
                             <ColorLensIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Designer" />
-                        {this.state.worksTypeListVisible ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                        <ListItemText primary="Tags" />
+                        {this.state.tagListVisible ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                     </ListItem>
-                    <Collapse in={this.state.worksTypeListVisible} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            <Link
-                                to="/works/type1"
-                            >
-                                <NestedListItem button>
-                                    <ListItemText
-                                        primary={
-                                            <StyledText
-                                                selected={this.props.histroy.location.pathname === "/works/type1"}
-                                            >
-                                                type1
-                                            </StyledText>
-                                        }
-                                    />
-                                </NestedListItem>
-                            </Link>
-                            <Link
-                                to="/works/type2"
-                            >
-                                <NestedListItem button>
-                                    <ListItemText
-                                        primary={
-                                            <StyledText
-                                                selected={this.props.histroy.location.pathname === "/works/type2"}
-                                            >
-                                                type2
-                                            </StyledText>
-                                        }
-                                    />
-                                </NestedListItem>
-                            </Link>
-                            <Link
-                                to="/works/type3"
-                            >
-                                <NestedListItem button>
-                                    <ListItemText
-                                        primary={
-                                            <StyledText
-                                                selected={this.props.histroy.location.pathname === "/works/type3"}
-                                            >
-                                                type3
-                                            </StyledText>
-                                        }
-                                    />
-                                </NestedListItem>
-                            </Link>
-                            <Link
-                                to="/works/type4"
-                            >
-                                <NestedListItem button>
-                                    <ListItemText
-                                        primary={
-                                            <StyledText
-                                                selected={this.props.histroy.location.pathname === "/works/type4"}
-                                            >
-                                                type4
-                                            </StyledText>
-                                        }
-                                    />
-                                </NestedListItem>
-                            </Link>
-                        </List>
+                    <Collapse in={this.state.tagListVisible} timeout="auto" unmountOnExit>
+                        <Query
+                            query={QueryListPopularTags}
+                            fetchPolicy="cache-and-network"
+                        >
+                            {({ loading, error, data }) => {
+                                if (loading) return <GraphQLProgress />;
+                                if (error) {
+                                    console.error(error);
+                                    return (
+                                        <Fragment>
+                                            <div>cry；；</div>
+                                            <notificationListener.ErrorComponent error={error}/>
+                                        </Fragment>
+                                    );
+                                }
+
+                                const tags = getTagsByURLQueryParam(this.props.history);
+                                const popularTags = (data.listPopularTags as PopularTags).map(x => x.name);
+
+                                return (
+                                    <List component="div" disablePadding>
+                                        {popularTags.concat(this.state.tags)
+                                            .filter((x, i, self) => self.indexOf(x) === i)
+                                            .map(tag => (
+                                                <Link
+                                                    to={
+                                                        (location.pathname.indexOf("/works") === -1 ? "/works" : "")
+                                                      + formatTagsOfURLQueryParam(
+                                                            tags.includes(tag) ? tags.filter(x => x !== tag)
+                                                          :                      tags.concat(tag)
+                                                        )
+                                                    }
+                                                    key={tag}
+                                                >
+                                                    <NestedListItem button>
+                                                        <ListItemText
+                                                            primary={<span>{tag}</span>}
+                                                        />
+                                                        <ListItemSecondaryAction>
+                                                            <Checkbox
+                                                                checked={tags.includes(tag)}
+                                                                tabIndex={-1}
+                                                                disableRipple
+                                                            />
+                                                        </ListItemSecondaryAction>
+                                                    </NestedListItem>
+                                                </Link>
+                                            )
+                                        )}
+                                    </List>
+                                );
+                            }}
+                        </Query>
                     </Collapse>
                 </List>
                 <List
@@ -193,7 +222,7 @@ const Title = styled(Typography)`
 
 const NestedListItem = styled(ListItem)`
     && {
-        padding-left: 3rem;
+        padding-left: 2rem;
     }
 `;
 
