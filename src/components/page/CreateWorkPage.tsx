@@ -117,7 +117,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
 
                                         const title = (e.target as any).elements["title"].value;
                                         const description = (e.target as any).elements["description"].value;
-                                        const image = (e.target as any).elements["mainImage"].files[0];
+                                        const imageFiles = (e.target as any).elements["mainImage"].files;
                                         const results = await Promise.all([
                                             createWork({
                                                 variables: {
@@ -127,7 +127,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                         userId: auth.token!.payload.sub,
                                                         tags: this.state.chipsData.map(x => x.label),
                                                         // tslint:disable-next-line:max-line-length
-                                                        imageUris: "https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/system/broken-image.png"
+                                                        imageUris: ["https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/system/broken-image.png"]
                                                     }
                                                 },
                                                 optimisticResponse: {
@@ -143,28 +143,29 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                     }
                                                 }
                                             }),
-                                            createSignedUrl({
-                                                jwt: auth.token!.jwtToken,
-                                                userId: auth.token!.payload.sub,
-                                                type: "work",
-                                                mimetype: image.type
-                                            })
+                                            // tslint:disable-next-line:max-line-length
+                                            Promise.all(imageFiles.map(async (image: any) => new Promise(async (resolve, reject) => {
+                                                try {
+                                                    const result = await createSignedUrl({
+                                                        jwt: auth.token!.jwtToken,
+                                                        userId: auth.token!.payload.sub,
+                                                        type: "work",
+                                                        mimetype: image.type
+                                                    });
+                                                    await fileUploadToS3({
+                                                        url: result.signedUrl,
+                                                        file: image
+                                                    });
+                                                    resolve(result.uploadedUrl);
+                                                } catch (e) {
+                                                    reject(e);
+                                                }
+                                            })))
                                         ]);
-
-                                        const {
-                                            signedUrl,
-                                            uploadedUrl
-                                        } = results[1];
-
-                                        await fileUploadToS3({
-                                            url: signedUrl,
-                                            file: image
-                                        });
-
                                         await updateWork({
                                             variables: {
                                                 work: {
-                                                    imageUris: uploadedUrl
+                                                    imageUris: results[1]
                                                 }
                                             },
                                             optimisticResponse: {
@@ -175,7 +176,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                     id: "new",
                                                     userId: auth.token!.payload.sub,
                                                     tags: this.state.chipsData.map(x => x.label),
-                                                    imageUris: uploadedUrl,
+                                                    imageUris: results[1],
                                                     createdAt: +new Date(),
                                                     __typename: "Work"
                                                 }
