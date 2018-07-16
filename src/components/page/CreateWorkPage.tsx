@@ -12,6 +12,7 @@ import createSignedUrl        from "../../api/createSignedUrl";
 import fileUploadToS3         from "../../api/fileUploadToS3";
 import { PageComponentProps } from "../../App";
 import Header                 from "../Header";
+import ImageInput             from "../ImageInput";
 import Page                   from "../Page";
 import { Work }               from "../../graphQL/type";
 
@@ -22,7 +23,9 @@ interface Chip {
 
 interface State {
     chipsData: Chip[];
+    title: string;
     description: string;
+    mainImageUrl: string;
 }
 
 const MutationCreateWork = gql(`
@@ -34,10 +37,10 @@ const MutationCreateWork = gql(`
         ) {
             id
             description
+            imageUrl
             userId
             title
             tags
-            imageUris
             createdAt
         }
     }
@@ -52,10 +55,10 @@ const MutationUpdateWork = gql(`
         ) {
             id
             description
+            imageUrl
             userId
             title
             tags
-            imageUris
             createdAt
         }
     }
@@ -65,6 +68,8 @@ export default class extends React.Component<PageComponentProps<void>, State> {
 
     state = {
         chipsData: [] as Chip[],
+        mainImageUrl: "",
+        title: "",
         description: ""
     };
 
@@ -115,83 +120,49 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                     // tslint:disable-next-line jsx-no-lambda
                                     onSubmit={async e => {
                                         e.preventDefault();
-
-                                        const title = (e.target as any).elements["title"].value;
-                                        const description = (e.target as any).elements["description"].value;
-                                        const imageFiles = (
-                                            [
-                                                (e.target as any).elements["create-work-main-image"].files[0],
-                                                (e.target as any).elements["create-work-sub-image-1"].files[0],
-                                                (e.target as any).elements["create-work-sub-image-2"].files[0],
-                                                (e.target as any).elements["create-work-sub-image-3"].files[0],
-                                            ].filter(x => x)
-                                        );
-                                        const results = await Promise.all([
-                                            new Promise<Work>(resolve => createWork({
-                                                variables: {
-                                                    work: {
-                                                        title,
-                                                        description,
-                                                        userId: auth.token!.payload.sub,
-                                                        tags: this.state.chipsData.map(x => x.label),
-                                                        // tslint:disable-next-line:max-line-length
-                                                        imageUris: ["https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/system/broken-image.png"]
-                                                    }
-                                                },
-                                                optimisticResponse: {
-                                                    __typename: "Mutation",
-                                                    createWork: {
-                                                        title,
-                                                        description,
-                                                        id: "new",
-                                                        userId: auth.token!.payload.sub,
-                                                        tags: this.state.chipsData.map(x => x.label),
-                                                        // tslint:disable-next-line:max-line-length
-                                                        imageUris: ["https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/system/broken-image.png"],
-                                                        createdAt: +new Date(),
-                                                        __typename: "Work"
-                                                    }
-                                                },
-                                                // tslint:disable-next-line:max-line-length
-                                                update: (_, { data: { createWork } }) => createWork.id !== "new" && resolve(createWork as Work)
-                                            })),
-                                            // tslint:disable-next-line:max-line-length
-                                            Promise.all(imageFiles.map(async (image: any) => new Promise(async (resolve, reject) => {
-                                                try {
-                                                    const result = await createSignedUrl({
-                                                        jwt: auth.token!.jwtToken,
-                                                        userId: auth.token!.payload.sub,
-                                                        type: "work",
-                                                        mimetype: image.type
-                                                    });
-                                                    await fileUploadToS3({
-                                                        url: result.signedUrl,
-                                                        file: image
-                                                    });
-                                                    resolve(result.uploadedUrl);
-                                                } catch (e) {
-                                                    reject(e);
+                                        const work = await new Promise<Work>(resolve => createWork({
+                                            variables: {
+                                                work: {
+                                                    title: this.state.title,
+                                                    description: this.state.description,
+                                                    userId: auth.token!.payload.sub,
+                                                    imageUrl: this.state.mainImageUrl,
+                                                    tags: this.state.chipsData.map(x => x.label),
                                                 }
-                                            })))
-                                        ]);
+                                            },
+                                            optimisticResponse: {
+                                                __typename: "Mutation",
+                                                createWork: {
+                                                    title: this.state.title,
+                                                    description: this.state.description,
+                                                    id: "new",
+                                                    userId: auth.token!.payload.sub,
+                                                    imageUrl: this.state.mainImageUrl,
+                                                    tags: this.state.chipsData.map(x => x.label),
+                                                    createdAt: +new Date(),
+                                                    __typename: "Work"
+                                                }
+                                            },
+                                            // tslint:disable-next-line:max-line-length
+                                            update: (_, { data: { createWork } }) => createWork.id !== "new" && resolve(createWork as Work)
+                                        }));
 
                                         await updateWork({
                                             variables: {
                                                 work: {
-                                                    id: results[0].id,
+                                                    id: work.id,
                                                     userId: auth.token!.payload.sub,
-                                                    imageUris: results[1]
                                                 }
                                             },
                                             optimisticResponse: {
                                                 __typename: "Mutation",
                                                 updateWork: {
-                                                    title,
-                                                    description,
-                                                    id: results[0].id,
+                                                    title: this.state.title,
+                                                    description: this.state.description,
+                                                    id: work.id,
+                                                    imageUrl: this.state.mainImageUrl,
                                                     userId: auth.token!.payload.sub,
                                                     tags: this.state.chipsData.map(x => x.label),
-                                                    imageUris: results[1],
                                                     createdAt: +new Date(),
                                                     __typename: "Work"
                                                 }
@@ -219,6 +190,11 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                     inputProps={{
                                                         maxLength: 10,
                                                     }}
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    onChange={(e: any) => this.setState({
+                                                        title: e.target.value
+                                                    })}
+                                                    value={this.state.title}
                                                 />
                                                 <ChipList>
                                                     {this.state.chipsData.map(data =>
@@ -233,18 +209,40 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                             </div>
                                         </Head>
                                         <WorkContentArea>
-                                            <TextField
-                                                id="description"
-                                                label="Description"
-                                                multiline
-                                                margin="normal"
-                                                required
-                                                placeholder={`Type Description!`}
-                                                rowsMax={40}
-                                                // tslint:disable-next-line:max-line-length jsx-no-lambda
-                                                onChange={(e: any) => this.setState({ description: e.target.value })}
-                                                value={this.state.description}
-                                            />
+                                            <div>
+                                                <MainImageInput
+                                                    labelText="create-work-main-image"
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    onChange={async e => {
+                                                        const image = e.target.files![0];
+                                                        const result = await createSignedUrl({
+                                                            jwt: auth.token!.jwtToken,
+                                                            userId: auth.token!.payload.sub,
+                                                            type: "work",
+                                                            mimetype: image.type
+                                                        });
+                                                        await fileUploadToS3({
+                                                            url: result.signedUrl,
+                                                            file: image
+                                                        });
+                                                        this.setState({
+                                                            mainImageUrl: result.uploadedUrl
+                                                        });
+                                                    }}
+                                                />
+                                                <TextField
+                                                    label="Description"
+                                                    multiline
+                                                    margin="normal"
+                                                    required
+                                                    placeholder={"Input Description!"}
+                                                    rowsMax={30}
+                                                    fullWidth
+                                                    // tslint:disable-next-line:max-line-length jsx-no-lambda
+                                                    onChange={(e: any) => this.setState({ description: e.target.value })}
+                                                    value={this.state.description}
+                                                />
+                                            </div>
                                             <ReactMarkdown
                                                 source={this.state.description}
                                                 rawSourcePos
@@ -301,10 +299,18 @@ const Head = styled.div`
 
 const ChipList = styled.div`
     margin-left: 1rem;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: .5rem;
     flex-grow: 1;
     > :nth-child(n + 1) {
         margin-left: .5rem;
     }
+`;
+
+const MainImageInput = styled(ImageInput)`
+    min-height: 8rem;
+    display: flex;
 `;
 
 const WorkContentArea = styled.div`
@@ -314,6 +320,10 @@ const WorkContentArea = styled.div`
     > * {
         overflow: auto;
         width: calc(50% - 1rem);
+    }
+    > :first-child {
+        display: flex;
+        flex-direction: column;
     }
     > :last-child {
         margin-left: 2rem;

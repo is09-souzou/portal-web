@@ -39,10 +39,10 @@ const QueryListWorks = gql(`
         ) {
             items {
                 id
+                imageUrl
                 userId
                 title
                 tags
-                imageUris
                 description
             }
             exclusiveStartKey
@@ -141,9 +141,8 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                         >
                                             <WorkCardMedia
                                                 image={(
-                                                    (x.imageUris && x.imageUris.length as number !== 0) ? x.imageUris[0]
-                                                    // tslint:disable-next-line:max-line-length
-                                                :                                                         "/img/no-image.png"
+                                                    x.imageUrl ? x.imageUrl
+                                                  :              "/img/no-image.png"
                                                 )}
                                             />
                                             <CardContent>

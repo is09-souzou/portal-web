@@ -3,9 +3,9 @@ export type Work = {
     userId: string;
     tags?: [string];
     createdAt: number;
-    title: string
-    imageUris?: [string]
-    description: string
+    title: string;
+    imageUrl: string;
+    description: string;
 };
 
 export type WorkConnection = {
