@@ -175,9 +175,6 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                             })))
                                         ]);
 
-                                        if (createWorkError)
-                                            notificationListener.errorNotification(createWorkError);
-
                                         await updateWork({
                                             variables: {
                                                 work: {
@@ -201,8 +198,8 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                             }
                                         });
 
-                                        if (updateWorkError)
-                                            notificationListener.errorNotification(updateWorkError);
+                                        notificationListener.notification("info", "Created Work!");
+                                        history.push("/");
                                     }}
                                 >
                                     <div>
