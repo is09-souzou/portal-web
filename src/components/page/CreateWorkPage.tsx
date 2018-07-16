@@ -13,6 +13,7 @@ import { PageComponentProps } from "../../App";
 import Header                 from "../Header";
 import ImageInput             from "../ImageInput";
 import Page                   from "../Page";
+import { Work }               from "../../graphQL/type";
 
 interface Chip {
     key  : string;
@@ -107,9 +108,9 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                     notificationListener={notificationListener}
                 />
                 <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
-                    {createWork => (
+                    {(createWork, { error: createWorkError }) => (
                         <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
-                            {updateWork => (
+                            {(updateWork, { error: updateWorkError }) => (
                                 <Host
                                     // tslint:disable-next-line jsx-no-lambda
                                     onSubmit={async e => {
@@ -117,9 +118,16 @@ export default class extends React.Component<PageComponentProps<void>, State> {
 
                                         const title = (e.target as any).elements["title"].value;
                                         const description = (e.target as any).elements["description"].value;
-                                        const imageFiles = (e.target as any).elements["mainImage"].files;
+                                        const imageFiles = (
+                                            [
+                                                (e.target as any).elements["create-work-main-image"].files[0],
+                                                (e.target as any).elements["create-work-sub-image-1"].files[0],
+                                                (e.target as any).elements["create-work-sub-image-2"].files[0],
+                                                (e.target as any).elements["create-work-sub-image-3"].files[0],
+                                            ].filter(x => x)
+                                        );
                                         const results = await Promise.all([
-                                            createWork({
+                                            new Promise<Work>(resolve => createWork({
                                                 variables: {
                                                     work: {
                                                         title,
@@ -138,11 +146,15 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                         id: "new",
                                                         userId: auth.token!.payload.sub,
                                                         tags: this.state.chipsData.map(x => x.label),
+                                                        // tslint:disable-next-line:max-line-length
+                                                        imageUris: ["https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/system/broken-image.png"],
                                                         createdAt: +new Date(),
                                                         __typename: "Work"
                                                     }
-                                                }
-                                            }),
+                                                },
+                                                // tslint:disable-next-line:max-line-length
+                                                update: (_, { data: { createWork } }) => createWork.id !== "new" && resolve(createWork as Work)
+                                            })),
                                             // tslint:disable-next-line:max-line-length
                                             Promise.all(imageFiles.map(async (image: any) => new Promise(async (resolve, reject) => {
                                                 try {
@@ -162,9 +174,12 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                 }
                                             })))
                                         ]);
+
                                         await updateWork({
                                             variables: {
                                                 work: {
+                                                    id: results[0].id,
+                                                    userId: auth.token!.payload.sub,
                                                     imageUris: results[1]
                                                 }
                                             },
@@ -173,7 +188,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                 updateWork: {
                                                     title,
                                                     description,
-                                                    id: "new",
+                                                    id: results[0].id,
                                                     userId: auth.token!.payload.sub,
                                                     tags: this.state.chipsData.map(x => x.label),
                                                     imageUris: results[1],
@@ -182,6 +197,9 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                 }
                                             }
                                         });
+
+                                        notificationListener.notification("info", "Created Work!");
+                                        history.push("/");
                                     }}
                                 >
                                     <div>
@@ -190,27 +208,28 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                             label="Title"
                                             margin="normal"
                                             fullWidth
+                                            required
                                         />
                                         <ImageSelectArea>
                                             <ImageInput
                                                 labelText="upload image"
-                                                name="mainImage"
+                                                name="create-work-main-image"
                                                 width="544"
                                                 height="368"
                                             />
                                             <div>
                                                 <ImageInput
-                                                    name="subImage1"
+                                                    name="create-work-sub-image-1"
                                                     width="176"
                                                     height="104"
                                                 />
                                                 <ImageInput
-                                                    name="subImage2"
+                                                    name="create-work-sub-image-2"
                                                     width="176"
                                                     height="104"
                                                 />
                                                 <ImageInput
-                                                    name="subImage3"
+                                                    name="create-work-sub-image-3"
                                                     width="176"
                                                     height="104"
                                                 />
@@ -223,6 +242,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                             rows="8"
                                             margin="normal"
                                             fullWidth
+                                            required
                                         />
                                         <div>
                                             <TextField
@@ -253,6 +273,9 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                             </Button>
                                         </ActionArea>
                                     </div>
+                                    {(updateWorkError || createWorkError)
+                                  && <notificationListener.ErrorComponent message={updateWorkError || createWorkError}/>
+                                    }
                                 </Host>
                             )}
                         </Mutation>
