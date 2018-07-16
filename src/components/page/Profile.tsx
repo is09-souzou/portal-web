@@ -156,7 +156,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             console.error(error);
                             return (
                                 <Fragment>
-                                    <div>cry；；</div>
+                                    <div>Error</div>
                                     <notificationListener.ErrorComponent error={error}/>
                                 </Fragment>
                             );
