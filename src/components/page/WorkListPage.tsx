@@ -125,7 +125,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             );
                         }
 
-                        if (!loading && data.listWorks.items.length === 0)
+                        if (!loading && this.state.works.length === 0 && data.listWorks.items.length === 0)
                             return <NotFound />;
 
                         const workConnection = data.listWorks as WorkConnection;
