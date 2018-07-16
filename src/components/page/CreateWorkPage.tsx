@@ -4,14 +4,14 @@ import {
     Chip,
     TextField
 } from "@material-ui/core";
-import gql          from "graphql-tag";
-import { Mutation } from "react-apollo";
-import styled       from "styled-components";
+import gql           from "graphql-tag";
+import { Mutation }  from "react-apollo";
+import ReactMarkdown from "react-markdown";
+import styled        from "styled-components";
 import createSignedUrl        from "../../api/createSignedUrl";
 import fileUploadToS3         from "../../api/fileUploadToS3";
 import { PageComponentProps } from "../../App";
 import Header                 from "../Header";
-import ImageInput             from "../ImageInput";
 import Page                   from "../Page";
 import { Work }               from "../../graphQL/type";
 
@@ -22,6 +22,7 @@ interface Chip {
 
 interface State {
     chipsData: Chip[];
+    description: string;
 }
 
 const MutationCreateWork = gql(`
@@ -62,11 +63,10 @@ const MutationUpdateWork = gql(`
 
 export default class extends React.Component<PageComponentProps<void>, State> {
 
-    componentWillMount() {
-        this.setState({
-            chipsData: []
-        });
-    }
+    state = {
+        chipsData: [] as Chip[],
+        description: ""
+    };
 
     deleteChip = (data: Chip) => () => this.setState({
         chipsData: this.state.chipsData.filter((x: Chip): boolean => data.key !== x.key)
@@ -203,64 +203,53 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                     }}
                                 >
                                     <div>
-                                        <TextField
-                                            id="title"
-                                            label="Title"
-                                            margin="normal"
-                                            fullWidth
-                                            required
-                                        />
-                                        <ImageSelectArea>
-                                            <ImageInput
-                                                labelText="upload image"
-                                                name="create-work-main-image"
-                                                width="544"
-                                                height="368"
+                                        <Head>
+                                            <TextField
+                                                id="title"
+                                                label="Title"
+                                                margin="normal"
+                                                fullWidth
+                                                required
                                             />
                                             <div>
-                                                <ImageInput
-                                                    name="create-work-sub-image-1"
-                                                    width="176"
-                                                    height="104"
+                                                <TextField
+                                                    placeholder="tags"
+                                                    onKeyDown={this.tagInputKeyDown}
+                                                    margin="normal"
+                                                    inputProps={{
+                                                        maxLength: 10,
+                                                    }}
                                                 />
-                                                <ImageInput
-                                                    name="create-work-sub-image-2"
-                                                    width="176"
-                                                    height="104"
-                                                />
-                                                <ImageInput
-                                                    name="create-work-sub-image-3"
-                                                    width="176"
-                                                    height="104"
-                                                />
+                                                <ChipList>
+                                                    {this.state.chipsData.map(data =>
+                                                        <Chip
+                                                            key={data.key}
+                                                            clickable={false}
+                                                            label={data.label}
+                                                            onDelete={this.deleteChip(data)}
+                                                        />
+                                                    )}
+                                                </ChipList>
                                             </div>
-                                        </ImageSelectArea>
-                                        <TextField
-                                            id="description"
-                                            label="Description"
-                                            multiline
-                                            rows="8"
-                                            margin="normal"
-                                            fullWidth
-                                            required
-                                        />
-                                        <div>
+                                        </Head>
+                                        <WorkContentArea>
                                             <TextField
-                                                placeholder="tags"
-                                                onKeyDown={this.tagInputKeyDown}
-                                                inputProps={{
-                                                    maxLength: 10,
-                                                }}
+                                                id="description"
+                                                label="Description"
+                                                multiline
+                                                margin="normal"
+                                                required
+                                                placeholder={`Type Description!`}
+                                                rowsMax={40}
+                                                // tslint:disable-next-line:max-line-length jsx-no-lambda
+                                                onChange={(e: any) => this.setState({ description: e.target.value })}
+                                                value={this.state.description}
                                             />
-                                            {this.state.chipsData.map(data =>
-                                                <Chip
-                                                    key={data.key}
-                                                    clickable={false}
-                                                    label={data.label}
-                                                    onDelete={this.deleteChip(data)}
-                                                />
-                                            )}
-                                        </div>
+                                            <ReactMarkdown
+                                                source={this.state.description}
+                                                rawSourcePos
+                                            />
+                                        </WorkContentArea>
                                         <ActionArea>
                                             <div/>
                                             <Button
@@ -287,29 +276,47 @@ export default class extends React.Component<PageComponentProps<void>, State> {
 }
 
 const Host = styled.form`
-    margin: 5rem;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    margin: 0 2rem;
+    width: calc(100% - 4rem);
+    > * {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
 `;
 
-const ImageSelectArea = styled.div`
-    display:flex;
-    flex-direction: row;
-    align-items: flex-end;
-    @media (max-width: 768px) {
-        flex-direction: column;
+const Head = styled.div`
+    display: flex;
+    flex-direction: column;
+    > :nth-child(1) {
+        margin-bottom: 1rem;
+    }
+    > :nth-child(2) {
+        display: flex;
+    }
+`;
+
+const ChipList = styled.div`
+    margin-left: 1rem;
+    flex-grow: 1;
+    > :nth-child(n + 1) {
+        margin-left: .5rem;
+    }
+`;
+
+const WorkContentArea = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    > * {
+        overflow: auto;
+        width: calc(50% - 1rem);
     }
     > :last-child {
-        display: flex;
-        flex-direction: column;
-        margin-left: 1rem;
-        @media (max-width: 768px) {
-            width: 100%;
-            margin-left: 0rem;
-            flex-direction: row;
-            justify-content: space-between;
-        }
+        margin-left: 2rem;
     }
 `;
 
