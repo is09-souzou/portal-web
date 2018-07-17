@@ -180,6 +180,11 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                 label="Title"
                                                 margin="normal"
                                                 fullWidth
+                                                // tslint:disable-next-line:jsx-no-lambda
+                                                onChange={(e: any) => this.setState({
+                                                    title: e.target.value
+                                                })}
+                                                value={this.state.title}
                                                 required
                                             />
                                             <div>
@@ -190,11 +195,6 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                     inputProps={{
                                                         maxLength: 10,
                                                     }}
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    onChange={(e: any) => this.setState({
-                                                        title: e.target.value
-                                                    })}
-                                                    value={this.state.title}
                                                 />
                                                 <ChipList>
                                                     {this.state.chipsData.map(data =>
