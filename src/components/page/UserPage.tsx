@@ -47,7 +47,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                         if (error) {
                             return (
                                 <Fragment>
-                                    <div>cry；；</div>
+                                    <div>Error</div>
                                     <notificationListener.ErrorComponent error={error} key="error"/>
                                 </Fragment>
                             );
