@@ -52,8 +52,8 @@ export default (
 
 const Host = styled.span`
     display         : inline-block;
-    width           : 1rem;
-    height          : 1rem;
+    width           : 100%;
+    height          : 100%;
     background-clip : padding-box;
     background-color: #eee;
     font-size       : 1.5rem;

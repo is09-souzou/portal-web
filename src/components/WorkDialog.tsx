@@ -1,19 +1,12 @@
 import React from "react";
 import {
-    Button,
     Dialog,
     DialogContent,
     DialogTitle,
-    MobileStepper,
     Chip,
 } from "@material-ui/core";
-import {
-    KeyboardArrowLeft,
-    KeyboardArrowRight,
-} from "@material-ui/icons";
 import * as H         from "history";
 import styled         from "styled-components";
-import SwipeableViews from "react-swipeable-views";
 import formatTagsOfURLQueryParam from "../util/formatTagsOfURLQueryParam";
 import getTagsByURLQueryParam    from "../util/getTagsByURLQueryParam";
 import { Work }                  from "../graphQL/type";
@@ -27,7 +20,6 @@ interface Props {
 }
 
 interface State {
-    activeStep: number;
 }
 
 export default class extends React.Component<Props, State> {
@@ -37,10 +29,6 @@ export default class extends React.Component<Props, State> {
             activeStep: 0
         });
     }
-
-    handleNext = () => this.setState(prevState => ({ activeStep: prevState.activeStep + 1 }));
-
-    handleBack = () => this.setState(prevState => ({ activeStep: prevState.activeStep - 1 }));
 
     render() {
         const {
@@ -54,8 +42,6 @@ export default class extends React.Component<Props, State> {
         if (!work)
             return null;
 
-        const maxSteps = work.imageUris ? work.imageUris!.length : 0;
-
         return (
             <Dialog
                 open={open}
@@ -64,50 +50,9 @@ export default class extends React.Component<Props, State> {
                 aria-labelledby="simple-dialog-title"
                 {...props}
             >
-                <SwipeableViews
-                    index={this.state.activeStep}
-                    enableMouseEvents
-                >
-                    {work.imageUris ? (
-                        work.imageUris!.map(x =>
-                            <img
-                                key={x}
-                                src={x}
-                            />
-                        )
-                    ) : (
-                        <img
-                            src={"/img/no-image.png"}
-                        />
-                    )}
-                </SwipeableViews>
-                {work.imageUris && work.imageUris.length > 1 && (
-                    <MobileStepper
-                        steps={maxSteps}
-                        position="static"
-                        activeStep={this.state.activeStep}
-                        backButton={
-                            <Button
-                                size="small"
-                                onClick={this.handleBack}
-                                disabled={this.state.activeStep === 0}
-                            >
-                                <KeyboardArrowLeft />
-                                Back
-                            </Button>
-                        }
-                        nextButton={
-                            <Button
-                                size="small"
-                                onClick={this.handleNext}
-                                disabled={this.state.activeStep === maxSteps - 1}
-                            >
-                                Next
-                                <KeyboardArrowRight />
-                            </Button>
-                        }
-                    />
-                )}
+                <img
+                    src={work.imageUrl}
+                />
                 <DialogTitle id="simple-dialog-title">
                     {work.title}
                 </DialogTitle>

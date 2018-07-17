@@ -1,6 +1,6 @@
-import React, { Fragment } from "react";
-import styled              from "styled-components";
-import Image               from "./Image";
+import React  from "react";
+import styled from "styled-components";
+import Image  from "./Image";
 
 interface PropsBase {
     defaultImageUrl?: string;
@@ -31,37 +31,35 @@ export default class extends React.Component<Props, State> {
             className,
             defaultImageUrl,
             disabled = false,
-            height = "128",
+            height = "",
             hintText = "",
             labelText,
-            name,
-            id = name,
+            name = String(Math.random()),
             onBlur = () => undefined,
             onChange = () => undefined,
             onFocus = () => undefined,
             onLoad,
-            width = "128",
+            width = "",
             ...props
         } = this.props;
+
+        const id = this.props.id ? this.props.id : name;
 
         return (
             <Host
                 className={className}
             >
-                <label
+                <StyledLabel
                     htmlFor={id}
                 >
                     {labelText &&
-                        <Fragment>
-                            <LabelText
-                                invalid={this.state.invalid}
-                                focused={this.state.focused}
-                                disabled={disabled}
-                            >
-                                {labelText}
-                            </LabelText>
-                            <br/>
-                        </Fragment>
+                        <LabelText
+                            invalid={this.state.invalid}
+                            focused={this.state.focused}
+                            disabled={disabled}
+                        >
+                            {labelText}
+                        </LabelText>
                     }
                     <StyledImage
                         alt={hintText}
@@ -70,7 +68,7 @@ export default class extends React.Component<Props, State> {
                         src={this.state.imageUrl || defaultImageUrl}
                         width={width}
                     />
-                </label>
+                </StyledLabel>
                 <StyledInput
                     accept="image/*"
                     disabled={disabled}
@@ -112,11 +110,21 @@ export default class extends React.Component<Props, State> {
 
 const Host = styled.div`
     margin: 16px 0 8px 0;
+    display: flex;
 `;
 
 const StyledImage = styled(Image)`
     border: 1px solid #DDD;
-    cursor: pointer;
+    height: calc(100% - 1.1rem);
+`;
+
+const StyledLabel = styled.label`
+    flex-grow     : 1;
+    flex-direction: column;
+    display       : flex;
+    height        : inherit;
+    width         : inherit;
+    cursor        : pointer;
 `;
 
 interface LabelTextProps {

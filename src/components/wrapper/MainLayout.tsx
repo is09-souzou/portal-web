@@ -122,5 +122,4 @@ const Content = styled.div`
 const Main = styled.main`
     min-height: calc(100vh - 7rem);
     margin-top: 7rem;
-    height: 100%;
 `;

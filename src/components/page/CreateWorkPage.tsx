@@ -4,9 +4,10 @@ import {
     Chip,
     TextField
 } from "@material-ui/core";
-import gql          from "graphql-tag";
-import { Mutation } from "react-apollo";
-import styled       from "styled-components";
+import gql           from "graphql-tag";
+import { Mutation }  from "react-apollo";
+import ReactMarkdown from "react-markdown";
+import styled        from "styled-components";
 import createSignedUrl        from "../../api/createSignedUrl";
 import fileUploadToS3         from "../../api/fileUploadToS3";
 import { PageComponentProps } from "../../App";
@@ -22,6 +23,9 @@ interface Chip {
 
 interface State {
     chipsData: Chip[];
+    title: string;
+    description: string;
+    mainImageUrl: string;
 }
 
 const MutationCreateWork = gql(`
@@ -33,10 +37,10 @@ const MutationCreateWork = gql(`
         ) {
             id
             description
+            imageUrl
             userId
             title
             tags
-            imageUris
             createdAt
         }
     }
@@ -51,10 +55,10 @@ const MutationUpdateWork = gql(`
         ) {
             id
             description
+            imageUrl
             userId
             title
             tags
-            imageUris
             createdAt
         }
     }
@@ -62,11 +66,12 @@ const MutationUpdateWork = gql(`
 
 export default class extends React.Component<PageComponentProps<void>, State> {
 
-    componentWillMount() {
-        this.setState({
-            chipsData: []
-        });
-    }
+    state = {
+        chipsData: [] as Chip[],
+        mainImageUrl: "",
+        title: "",
+        description: ""
+    };
 
     deleteChip = (data: Chip) => () => this.setState({
         chipsData: this.state.chipsData.filter((x: Chip): boolean => data.key !== x.key)
@@ -115,83 +120,49 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                     // tslint:disable-next-line jsx-no-lambda
                                     onSubmit={async e => {
                                         e.preventDefault();
-
-                                        const title = (e.target as any).elements["title"].value;
-                                        const description = (e.target as any).elements["description"].value;
-                                        const imageFiles = (
-                                            [
-                                                (e.target as any).elements["create-work-main-image"].files[0],
-                                                (e.target as any).elements["create-work-sub-image-1"].files[0],
-                                                (e.target as any).elements["create-work-sub-image-2"].files[0],
-                                                (e.target as any).elements["create-work-sub-image-3"].files[0],
-                                            ].filter(x => x)
-                                        );
-                                        const results = await Promise.all([
-                                            new Promise<Work>(resolve => createWork({
-                                                variables: {
-                                                    work: {
-                                                        title,
-                                                        description,
-                                                        userId: auth.token!.payload.sub,
-                                                        tags: this.state.chipsData.map(x => x.label),
-                                                        // tslint:disable-next-line:max-line-length
-                                                        imageUris: ["https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/system/broken-image.png"]
-                                                    }
-                                                },
-                                                optimisticResponse: {
-                                                    __typename: "Mutation",
-                                                    createWork: {
-                                                        title,
-                                                        description,
-                                                        id: "new",
-                                                        userId: auth.token!.payload.sub,
-                                                        tags: this.state.chipsData.map(x => x.label),
-                                                        // tslint:disable-next-line:max-line-length
-                                                        imageUris: ["https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/system/broken-image.png"],
-                                                        createdAt: +new Date(),
-                                                        __typename: "Work"
-                                                    }
-                                                },
-                                                // tslint:disable-next-line:max-line-length
-                                                update: (_, { data: { createWork } }) => createWork.id !== "new" && resolve(createWork as Work)
-                                            })),
-                                            // tslint:disable-next-line:max-line-length
-                                            Promise.all(imageFiles.map(async (image: any) => new Promise(async (resolve, reject) => {
-                                                try {
-                                                    const result = await createSignedUrl({
-                                                        jwt: auth.token!.jwtToken,
-                                                        userId: auth.token!.payload.sub,
-                                                        type: "work",
-                                                        mimetype: image.type
-                                                    });
-                                                    await fileUploadToS3({
-                                                        url: result.signedUrl,
-                                                        file: image
-                                                    });
-                                                    resolve(result.uploadedUrl);
-                                                } catch (e) {
-                                                    reject(e);
+                                        const work = await new Promise<Work>(resolve => createWork({
+                                            variables: {
+                                                work: {
+                                                    title: this.state.title,
+                                                    description: this.state.description,
+                                                    userId: auth.token!.payload.sub,
+                                                    imageUrl: this.state.mainImageUrl,
+                                                    tags: this.state.chipsData.map(x => x.label),
                                                 }
-                                            })))
-                                        ]);
+                                            },
+                                            optimisticResponse: {
+                                                __typename: "Mutation",
+                                                createWork: {
+                                                    title: this.state.title,
+                                                    description: this.state.description,
+                                                    id: "new",
+                                                    userId: auth.token!.payload.sub,
+                                                    imageUrl: this.state.mainImageUrl,
+                                                    tags: this.state.chipsData.map(x => x.label),
+                                                    createdAt: +new Date(),
+                                                    __typename: "Work"
+                                                }
+                                            },
+                                            // tslint:disable-next-line:max-line-length
+                                            update: (_, { data: { createWork } }) => createWork.id !== "new" && resolve(createWork as Work)
+                                        }));
 
                                         await updateWork({
                                             variables: {
                                                 work: {
-                                                    id: results[0].id,
+                                                    id: work.id,
                                                     userId: auth.token!.payload.sub,
-                                                    imageUris: results[1]
                                                 }
                                             },
                                             optimisticResponse: {
                                                 __typename: "Mutation",
                                                 updateWork: {
-                                                    title,
-                                                    description,
-                                                    id: results[0].id,
+                                                    title: this.state.title,
+                                                    description: this.state.description,
+                                                    id: work.id,
+                                                    imageUrl: this.state.mainImageUrl,
                                                     userId: auth.token!.payload.sub,
                                                     tags: this.state.chipsData.map(x => x.label),
-                                                    imageUris: results[1],
                                                     createdAt: +new Date(),
                                                     __typename: "Work"
                                                 }
@@ -203,64 +174,80 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                     }}
                                 >
                                     <div>
-                                        <TextField
-                                            id="title"
-                                            label="Title"
-                                            margin="normal"
-                                            fullWidth
-                                            required
-                                        />
-                                        <ImageSelectArea>
-                                            <ImageInput
-                                                labelText="upload image"
-                                                name="create-work-main-image"
-                                                width="544"
-                                                height="368"
+                                        <Head>
+                                            <TextField
+                                                id="title"
+                                                label="Title"
+                                                margin="normal"
+                                                fullWidth
+                                                required
                                             />
                                             <div>
-                                                <ImageInput
-                                                    name="create-work-sub-image-1"
-                                                    width="176"
-                                                    height="104"
+                                                <TextField
+                                                    placeholder="tags"
+                                                    onKeyDown={this.tagInputKeyDown}
+                                                    margin="normal"
+                                                    inputProps={{
+                                                        maxLength: 10,
+                                                    }}
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    onChange={(e: any) => this.setState({
+                                                        title: e.target.value
+                                                    })}
+                                                    value={this.state.title}
                                                 />
-                                                <ImageInput
-                                                    name="create-work-sub-image-2"
-                                                    width="176"
-                                                    height="104"
+                                                <ChipList>
+                                                    {this.state.chipsData.map(data =>
+                                                        <Chip
+                                                            key={data.key}
+                                                            clickable={false}
+                                                            label={data.label}
+                                                            onDelete={this.deleteChip(data)}
+                                                        />
+                                                    )}
+                                                </ChipList>
+                                            </div>
+                                        </Head>
+                                        <WorkContentArea>
+                                            <div>
+                                                <MainImageInput
+                                                    labelText="create-work-main-image"
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    onChange={async e => {
+                                                        const image = e.target.files![0];
+                                                        const result = await createSignedUrl({
+                                                            jwt: auth.token!.jwtToken,
+                                                            userId: auth.token!.payload.sub,
+                                                            type: "work",
+                                                            mimetype: image.type
+                                                        });
+                                                        await fileUploadToS3({
+                                                            url: result.signedUrl,
+                                                            file: image
+                                                        });
+                                                        this.setState({
+                                                            mainImageUrl: result.uploadedUrl
+                                                        });
+                                                    }}
                                                 />
-                                                <ImageInput
-                                                    name="create-work-sub-image-3"
-                                                    width="176"
-                                                    height="104"
+                                                <TextField
+                                                    label="Description"
+                                                    multiline
+                                                    margin="normal"
+                                                    required
+                                                    placeholder={"Input Description!"}
+                                                    rowsMax={30}
+                                                    fullWidth
+                                                    // tslint:disable-next-line:max-line-length jsx-no-lambda
+                                                    onChange={(e: any) => this.setState({ description: e.target.value })}
+                                                    value={this.state.description}
                                                 />
                                             </div>
-                                        </ImageSelectArea>
-                                        <TextField
-                                            id="description"
-                                            label="Description"
-                                            multiline
-                                            rows="8"
-                                            margin="normal"
-                                            fullWidth
-                                            required
-                                        />
-                                        <div>
-                                            <TextField
-                                                placeholder="tags"
-                                                onKeyDown={this.tagInputKeyDown}
-                                                inputProps={{
-                                                    maxLength: 10,
-                                                }}
+                                            <ReactMarkdown
+                                                source={this.state.description}
+                                                rawSourcePos
                                             />
-                                            {this.state.chipsData.map(data =>
-                                                <Chip
-                                                    key={data.key}
-                                                    clickable={false}
-                                                    label={data.label}
-                                                    onDelete={this.deleteChip(data)}
-                                                />
-                                            )}
-                                        </div>
+                                        </WorkContentArea>
                                         <ActionArea>
                                             <div/>
                                             <Button
@@ -287,29 +274,59 @@ export default class extends React.Component<PageComponentProps<void>, State> {
 }
 
 const Host = styled.form`
-    margin: 5rem;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    margin: 0 2rem;
+    width: calc(100% - 4rem);
+    > * {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
 `;
 
-const ImageSelectArea = styled.div`
-    display:flex;
-    flex-direction: row;
+const Head = styled.div`
+    display: flex;
+    flex-direction: column;
+    > :nth-child(1) {
+        margin-bottom: 1rem;
+    }
+    > :nth-child(2) {
+        display: flex;
+    }
+`;
+
+const ChipList = styled.div`
+    margin-left: 1rem;
+    display: flex;
     align-items: flex-end;
-    @media (max-width: 768px) {
+    padding-bottom: .5rem;
+    flex-grow: 1;
+    > :nth-child(n + 1) {
+        margin-left: .5rem;
+    }
+`;
+
+const MainImageInput = styled(ImageInput)`
+    min-height: 8rem;
+    display: flex;
+`;
+
+const WorkContentArea = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    > * {
+        overflow: auto;
+        width: calc(50% - 1rem);
+    }
+    > :first-child {
+        display: flex;
         flex-direction: column;
     }
     > :last-child {
-        display: flex;
-        flex-direction: column;
-        margin-left: 1rem;
-        @media (max-width: 768px) {
-            width: 100%;
-            margin-left: 0rem;
-            flex-direction: row;
-            justify-content: space-between;
-        }
+        margin-left: 2rem;
     }
 `;
 
