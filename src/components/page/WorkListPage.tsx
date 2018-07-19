@@ -7,6 +7,7 @@ import { Query }          from "react-apollo";
 import arraysEqual              from "../../util/arraysEqual";
 import getTagsByURLQueryParam   from "../../util/getTagsByURLQueryParam";
 import { PageComponentProps }   from "./../../App";
+import ErrorPage                from "../ErrorPage";
 import Fab                      from "../Fab";
 import Header                   from "../Header";
 import NotFound                 from "../NotFound";
@@ -58,7 +59,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
         userMenuOpend: false,
         workDialogVisible: false,
         works: [] as Work[],
-        workListRow: 3
+        workListRow: 4
     };
 
     handleClickOpen = (x: Work) => () => this.setState({
@@ -112,7 +113,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             console.error(error);
                             return (
                                 <Fragment>
-                                    <div>error</div>
+                                    <ErrorPage/>
                                     <notificationListener.ErrorComponent message={error && error.message} key="error"/>
                                 </Fragment>
                             );
@@ -132,7 +133,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                             key={x}
                                         >
                                             {works
-                                                .filter((_, i) => i % 3 === x)
+                                                .filter((_, i) => i % this.state.workListRow === x)
                                                 .map(x => (
                                                     <WorkItem
                                                         work={x}
@@ -151,6 +152,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     work={this.state.selectedWork}
                                 />
                                 <StreamSpinner
+                                    key={`spinner-${workConnection.exclusiveStartKey}`}
                                     disable={
                                         (workConnection && !workConnection.exclusiveStartKey)
                                      || (!loading && workConnection.exclusiveStartKey === this.state.paginationKey) ? true

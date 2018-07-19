@@ -7,6 +7,7 @@ import {
 import gql       from "graphql-tag";
 import { Query } from "react-apollo";
 import { PageComponentProps } from "../../App";
+import ErrorPage              from "../ErrorPage";
 import GraphQLProgress        from "../GraphQLProgress";
 import Header                 from "../Header";
 import NotFound               from "../NotFound";
@@ -46,7 +47,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                         if (error) {
                             return (
                                 <Fragment>
-                                    <div>Error</div>
+                                    <ErrorPage/>
                                     <notificationListener.ErrorComponent error={error} key="error"/>
                                 </Fragment>
                             );

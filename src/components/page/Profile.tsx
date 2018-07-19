@@ -14,13 +14,13 @@ import gql                 from "graphql-tag";
 import { Query, Mutation } from "react-apollo";
 import styled              from "styled-components";
 import * as H              from "history";
-
 import toObjectFromURIQuery          from "../../api/toObjectFromURIQuery";
 import createSignedUrl               from "../../api/createSignedUrl";
 import fileUploadToS3                from "../../api/fileUploadToS3";
 import { PageComponentProps }        from "../../App";
 import { AuthProps }                 from "../wrapper/Auth";
 import { NotificationListenerProps } from "../wrapper/NotificationListener";
+import ErrorPage                     from "../ErrorPage";
 import GraphQLProgress               from "../GraphQLProgress";
 import Header                        from "../Header";
 import ImageInput                    from "../ImageInput";
@@ -156,7 +156,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             console.error(error);
                             return (
                                 <Fragment>
-                                    <div>Error</div>
+                                    <ErrorPage/>
                                     <notificationListener.ErrorComponent error={error}/>
                                 </Fragment>
                             );
