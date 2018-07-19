@@ -171,8 +171,8 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             <Mutation
                                 mutation={MutationUpdateUser}
                             >
-                                {(updateUser) => (
-                                    <Content>
+                                {updateUser => (
+                                    <ProfileForm>
                                         <Typography gutterBottom variant="title">
                                             Profile
                                         </Typography>
@@ -380,32 +380,32 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 </DialogActions>
                                             </form>
                                         </Dialog>
-                                    </Content>
+                                    </ProfileForm>
                                 )}
                             </Mutation>
                         );
                     }}
                 </Query>
-                <div>
+                <form
+                    // tslint:disable-next-line:jsx-no-lambda
+                    onSubmit={async e => {
+                        e.preventDefault();
+
+                        const email = (e.target as any).elements["profile-credential-email"].value;
+
+                        try {
+                            await this.props.auth.updateEmail(email);
+                            notificationListener.notification("info", "Send Mail");
+                        } catch (e) {
+                            notificationListener.errorNotification(e);
+                            return;
+                        }
+                    }}
+                >
                     <Typography gutterBottom variant="title">
                         Credential
                     </Typography>
-                    <form
-                        // tslint:disable-next-line:jsx-no-lambda
-                        onSubmit={async e => {
-                            e.preventDefault();
-
-                            const email = (e.target as any).elements["profile-credential-email"].value;
-
-                            try {
-                                await this.props.auth.updateEmail(email);
-                                notificationListener.notification("info", "Send Mail");
-                            } catch (e) {
-                                notificationListener.errorNotification(e);
-                                return;
-                            }
-                        }}
-                    >
+                    <div>
                         <TextField
                             id="profile-credential-email"
                             label="Mail Address"
@@ -428,7 +428,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             // tslint:disable-next-line:jsx-no-lambda
                             inputRef={x => this.credentialEmailInput = x}
                         />
-                    </form>
+                    </div>
                     <Button
                         onClick={this.openUpdatePasswordDialog}
                         variant="contained"
@@ -436,7 +436,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     >
                         Update password
                     </Button>
-                </div>
+                </form>
                 <Dialog
                     open={this.state.updatePasswordDialogVisible}
                     onClose={this.closeUpdatePasswordDialog}
@@ -501,7 +501,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     }
 }
 
-const Content = styled.form`
+const ProfileForm = styled.form`
     display: flex;
     flex-direction: column;
     > :nth-child(2) {
@@ -519,10 +519,6 @@ const Content = styled.form`
         display: flex;
         flex-direction: column;
     }
-    @media (max-width: 768px) {
-        width: unset;
-        margin: 0 4rem;
-    }
 `;
 
 const UserAvatar = styled(Avatar)`
@@ -537,7 +533,7 @@ const UserAvatar = styled(Avatar)`
 
 const StyledDialogContent = styled(DialogContent)`
     && {
-        width: 20rem;
+        max-width: 20rem;
         display: flex;
         flex-direction: column;
     }
@@ -578,5 +574,9 @@ const PageHost = styled(Page)`
                 margin-top: 3rem;
             }
         }
+    }
+    @media (max-width: 768px) {
+        width: unset;
+        margin: 0 4rem;
     }
 `;
