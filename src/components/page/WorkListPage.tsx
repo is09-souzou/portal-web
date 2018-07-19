@@ -36,7 +36,9 @@ const QueryListWorks = gql(`
             items {
                 id
                 imageUrl
-                userId
+                user {
+                    displayName
+                }
                 title
                 tags
                 description
@@ -233,7 +235,10 @@ const WorkItem = ({
             )}
         />
         <div>
-            <Typography gutterBottom variant="headline" component="h2">
+            <Typography variant="caption">
+                {work.user.displayName}
+            </Typography>
+            <Typography gutterBottom variant="title" component="h2">
                 {work.title}
             </Typography>
         </div>
