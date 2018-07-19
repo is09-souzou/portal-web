@@ -240,7 +240,8 @@ const WorkItem = ({
 
 const WorkImage = styled.img`
     width: 100%;
-    transition: all 0.3s ease-in-out;
+    border-radius: 8px;
+    transition: all 0.15s ease-in-out;
     cursor: pointer;
     :hover {
         background-color: #fff;
