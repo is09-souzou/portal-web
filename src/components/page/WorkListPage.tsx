@@ -25,6 +25,7 @@ interface State {
     workDialogVisible: boolean;
     works: Work[];
     workListRow: number;
+    onResize: () => void;
 }
 
 const QueryListWorks = gql(`
@@ -59,7 +60,15 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
         userMenuOpend: false,
         workDialogVisible: false,
         works: [] as Work[],
-        workListRow: 4
+        workListRow: 4,
+        onResize: () => {
+            const row = window.innerWidth > 960 ? 4
+                      : window.innerWidth > 600 ? 3
+                      : window.innerWidth > 480 ? 2
+                      :                           1;
+            if (row !== this.state.workListRow)
+                this.setState({ workListRow: row });
+        }
     };
 
     handleClickOpen = (x: Work) => () => this.setState({
@@ -72,6 +81,14 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     toNext = (key: string) => this.setState({
         paginationKey: key
     })
+
+    componentDidMount() {
+        window.addEventListener("resize", this.state.onResize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.state.onResize);
+    }
 
     getSnapshotBeforeUpdate(prevProps: Readonly<PageComponentProps<{}>>) {
         const tags = getTagsByURLQueryParam(prevProps.history);
@@ -131,6 +148,9 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     {[...Array(this.state.workListRow).keys()].map(x => (
                                         <div
                                             key={x}
+                                            style={{
+                                                width: `calc(100% / ${this.state.workListRow})`
+                                            }}
                                         >
                                             {works
                                                 .filter((_, i) => i % this.state.workListRow === x)
@@ -193,7 +213,6 @@ const WorkList = styled.div`
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: calc(100% / 3);
         margin: 0 1rem;
     }
 `;
