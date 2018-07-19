@@ -304,7 +304,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 // tslint:disable-next-line:jsx-no-lambda
                                                 onSubmit={async e => {
                                                     e.preventDefault();
-                                                    // tslint:disable-next-line:max-line-length
                                                     const image = (e.target as any).elements["newAvatarImage"].files[0];
 
                                                     try {

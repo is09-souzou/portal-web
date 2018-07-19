@@ -31,7 +31,6 @@ const Root = withRouter<RouteComponentProps<any> & { children: React.ReactElemen
                         {...authProps}
                     >
                         <MainLayout
-                            // tslint:disable-next-line:max-line-length
                             render={(mainLayoutEventProps: MainLayoutEventProps) => React.cloneElement<PageComponentProps<any>>(
                                 props.children,
                                 {
@@ -115,7 +114,6 @@ const theme = createMuiTheme({
     },
 });
 
-// tslint:disable-next-line:max-line-length
 export interface PageComponentProps<T> extends RouteComponentProps<T>, AuthProps, NotificationListenerProps, MainLayoutEventProps {
     computedMatch?: match<T>;
 }

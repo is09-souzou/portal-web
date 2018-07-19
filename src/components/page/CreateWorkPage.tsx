@@ -143,7 +143,6 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                     __typename: "Work"
                                                 }
                                             },
-                                            // tslint:disable-next-line:max-line-length
                                             update: (_, { data: { createWork } }) => createWork.id !== "new" && resolve(createWork as Work)
                                         }));
 
@@ -238,7 +237,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                     placeholder={"Input Description!"}
                                                     rowsMax={30}
                                                     fullWidth
-                                                    // tslint:disable-next-line:max-line-length jsx-no-lambda
+                                                    // tslint:disable-next-line:jsx-no-lambda
                                                     onChange={(e: any) => this.setState({ description: e.target.value })}
                                                     value={this.state.description}
                                                 />

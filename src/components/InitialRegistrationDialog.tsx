@@ -107,7 +107,6 @@ export default class extends React.Component<Props, State> {
                                 const target = e.target as any;
 
                                 try {
-                                    // tslint:disable-next-line:max-line-length
                                     const image = target.elements["avatar-image"].files[0];
 
                                     this.setState({ isProcessing: true });
@@ -126,11 +125,8 @@ export default class extends React.Component<Props, State> {
                                         uploadedUrl = result.uploadedUrl;
                                     }
 
-                                    // tslint:disable-next-line:max-line-length
                                     const displayName = target.elements["initial-registration-dialog-display-name"].value;
-                                    // tslint:disable-next-line:max-line-length
                                     const email       = target.elements["initial-registration-dialog-email"].value;
-                                    // tslint:disable-next-line:max-line-length
                                     const career      = target.elements["initial-registration-dialog-career"].value;
 
                                     let variables = {};

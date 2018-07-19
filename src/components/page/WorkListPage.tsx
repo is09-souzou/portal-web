@@ -53,7 +53,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     state = {
         paginationKey: undefined,
         selectedWork: undefined,
-        tags: [] as string[],
+        tags: getTagsByURLQueryParam(this.props.history),
         userMenuAnchorEl: undefined,
         userMenuOpend: false,
         workDialogVisible: false,
@@ -71,12 +71,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     toNext = (key: string) => this.setState({
         paginationKey: key
     })
-
-    componentDidMount() {
-        this.setState({
-            tags: getTagsByURLQueryParam(this.props.history)
-        });
-    }
 
     getSnapshotBeforeUpdate(prevProps: Readonly<PageComponentProps<{}>>) {
         const tags = getTagsByURLQueryParam(prevProps.history);
@@ -157,19 +151,17 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     work={this.state.selectedWork}
                                 />
                                 <StreamSpinner
-                                    disable={workConnection && !workConnection.exclusiveStartKey ? true : false}
+                                    disable={
+                                        (workConnection && !workConnection.exclusiveStartKey)
+                                     || (!loading && workConnection.exclusiveStartKey === this.state.paginationKey) ? true
+                                      :                                                                               false
+                                    }
                                     // tslint:disable-next-line:jsx-no-lambda
                                     onVisible={() => {
-                                        const f = () => {
-                                            if (!loading)
-                                                this.setState({
-                                                    works,
-                                                    paginationKey: workConnection.exclusiveStartKey
-                                                });
-                                            else
-                                                setTimeout(f, 1000);
-                                        };
-                                        f();
+                                        this.setState({
+                                            works,
+                                            paginationKey: workConnection.exclusiveStartKey
+                                        });
                                     }}
                                 />
                             </Host>
@@ -245,7 +237,7 @@ const WorkImage = styled.img`
     cursor: pointer;
     :hover {
         background-color: #fff;
-        transform: scale(1.2);
+        transform: scale(1.1);
         box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
     }
 `;
