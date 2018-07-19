@@ -207,13 +207,6 @@ const WorkList = styled.div`
 const WorkItemBase = styled.div`
     margin-bottom: 2rem;
     width: 100%;
-    > :first-child {
-        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-        cursor: pointer;
-        :hover {
-            box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
-        }
-    }
 `;
 
 // extends React.HTMLAttributes<HTMLDivElement>
@@ -247,4 +240,11 @@ const WorkItem = ({
 
 const WorkImage = styled.img`
     width: 100%;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    :hover {
+        background-color: #fff;
+        transform: scale(1.2);
+        box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
+    }
 `;
