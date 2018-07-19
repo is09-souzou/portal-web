@@ -1,10 +1,5 @@
 import React, { Fragment } from "react";
-import {
-    Card,
-    CardMedia,
-    CardContent,
-    Typography,
-} from "@material-ui/core";
+import { Typography }     from "@material-ui/core";
 import { Add as AddIcon } from "@material-ui/icons";
 import gql                from "graphql-tag";
 import styled             from "styled-components";
@@ -28,6 +23,7 @@ interface State {
     userMenuOpend: boolean;
     workDialogVisible: boolean;
     works: Work[];
+    workListRow: number;
 }
 
 const QueryListWorks = gql(`
@@ -40,7 +36,9 @@ const QueryListWorks = gql(`
             items {
                 id
                 imageUrl
-                userId
+                user {
+                    displayName
+                }
                 title
                 tags
                 description
@@ -60,6 +58,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
         userMenuOpend: false,
         workDialogVisible: false,
         works: [] as Work[],
+        workListRow: 3
     };
 
     handleClickOpen = (x: Work) => () => this.setState({
@@ -133,26 +132,24 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 
                         return(
                             <Host>
-                                <CardList>
-                                    {works.map(x =>
-                                        <WorkCard
-                                            key={x.id}
-                                            onClick={this.handleClickOpen(x)}
+                                <WorkList>
+                                    {[...Array(this.state.workListRow).keys()].map(x => (
+                                        <div
+                                            key={x}
                                         >
-                                            <WorkCardMedia
-                                                image={(
-                                                    x.imageUrl ? x.imageUrl
-                                                  :              "/img/no-image.png"
-                                                )}
-                                            />
-                                            <CardContent>
-                                                <Typography gutterBottom variant="headline" component="h2">
-                                                    {x.title}
-                                                </Typography>
-                                            </CardContent>
-                                        </WorkCard>
-                                    )}
-                                </CardList>
+                                            {works
+                                                .filter((_, i) => i % 3 === x)
+                                                .map(x => (
+                                                    <WorkItem
+                                                        work={x}
+                                                        key={x.id}
+                                                        onClick={this.handleClickOpen(x)}
+                                                    />
+                                                )
+                                            )}
+                                        </div>
+                                    ))}
+                                </WorkList>
                                 <WorkDialog
                                     history={history}
                                     open={this.state.workDialogVisible}
@@ -195,28 +192,59 @@ const Host = styled.div`
     flex-direction: column;
 `;
 
-const CardList = styled.div`
+const WorkList = styled.div`
     margin: 0 3rem;
     display: flex;
-    flex-wrap: wrap;
-`;
-
-const WorkCard = styled(Card)`
-    && {
-        margin: 1rem;
-        min-width: 20rem;
-        max-width: 30rem;
-        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-        cursor: pointer;
-        :hover{
-            box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
-        }
+    > * {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: calc(100% / 3);
+        margin: 0 1rem;
     }
 `;
 
-const WorkCardMedia = styled(CardMedia)`
-    && {
-        height: 0;
-        padding-top: 56.25%;
+const WorkItemBase = styled.div`
+    margin-bottom: 2rem;
+    width: 100%;
+`;
+
+// extends React.HTMLAttributes<HTMLDivElement>
+interface WorkItemProps extends React.HTMLAttributes<HTMLDivElement> {
+    work: Work;
+}
+
+const WorkItem = ({
+    work,
+    ...props
+}: WorkItemProps) => (
+    <WorkItemBase
+        {...props}
+    >
+        <WorkImage
+            src={(
+                work.imageUrl ? work.imageUrl
+              :                 "/img/no-image.png"
+            )}
+        />
+        <div>
+            <Typography variant="caption">
+                {work.user.displayName}
+            </Typography>
+            <Typography gutterBottom variant="title" component="h2">
+                {work.title}
+            </Typography>
+        </div>
+    </WorkItemBase>
+);
+
+const WorkImage = styled.img`
+    width: 100%;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    :hover {
+        background-color: #fff;
+        transform: scale(1.2);
+        box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
     }
 `;

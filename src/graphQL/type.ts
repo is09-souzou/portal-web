@@ -1,3 +1,13 @@
+export type User = {
+    id: string;
+    email?: string;
+    displayName: string;
+    career?: string;
+    avatarUri?: string;
+    message?: string;
+    works: WorkConnection;
+};
+
 export type Work = {
     id: string;
     userId: string;
@@ -6,6 +16,7 @@ export type Work = {
     title: string;
     imageUrl: string;
     description: string;
+    user: User;
 };
 
 export type WorkConnection = {
