@@ -179,7 +179,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     work={this.state.selectedWork}
                                 />
                                 <StreamSpinner
-                                    key={`spinner-${workConnection.exclusiveStartKey}`}
+                                    key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
                                     disable={
                                         (workConnection && !workConnection.exclusiveStartKey)
                                      || (!loading && workConnection.exclusiveStartKey === this.state.paginationKey) ? true
@@ -187,10 +187,11 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     }
                                     // tslint:disable-next-line:jsx-no-lambda
                                     onVisible={() => {
-                                        this.setState({
-                                            works,
-                                            paginationKey: workConnection.exclusiveStartKey
-                                        });
+                                        if (workConnection)
+                                            this.setState({
+                                                works,
+                                                paginationKey: workConnection.exclusiveStartKey
+                                            });
                                     }}
                                 />
                             </Host>
