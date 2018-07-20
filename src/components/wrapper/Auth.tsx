@@ -15,7 +15,6 @@ export interface Token {
 }
 
 export type SingIn = (email: string, password: string) => Promise<Token>;
-// tslint:disable-next-line:max-line-length
 export type SingUp = (userName: string, password: string, attribute?: {[key: string]: string}) => Promise<string>;
 export type SingOut = () => Promise<void>;
 export type UpdateEmail = (email: string) => Promise<void>;

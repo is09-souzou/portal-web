@@ -1,14 +1,14 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
+    Avatar,
     Dialog,
-    DialogContent,
     DialogTitle,
     Typography,
     Chip,
 } from "@material-ui/core";
-import * as H         from "history";
+import * as H        from "history";
 import ReactMarkdown from "react-markdown";
-import styled         from "styled-components";
+import styled        from "styled-components";
 import formatTagsOfURLQueryParam from "../util/formatTagsOfURLQueryParam";
 import getTagsByURLQueryParam    from "../util/getTagsByURLQueryParam";
 import { Work }                  from "../graphQL/type";
@@ -50,33 +50,38 @@ export default class extends React.Component<Props, State> {
             return null;
 
         return (
-            <Dialog
-                open={open}
-                onClose={onClose}
-                keepMounted
-                aria-labelledby="simple-dialog-title"
-                fullWidth
-                maxWidth="md"
-                BackdropProps={{
-                    style: {
-                        backgroundColor: "transparent",
-                    }
-                }}
-                {...props}
-            >
-                <Host>
-                    <div>
-                        <StyledImage
-                            src={work.imageUrl}
-                            onClick={this.openWorkItemImageDialog}
-                            width="100%"
-                        />
-                        <DialogTitle id="simple-dialog-title">
-                            {work.title}
-                        </DialogTitle>
-                        <DialogContent>
-                            <Typography gutterBottom>制作者</Typography>
-                            <Typography gutterBottom>制作日</Typography>
+            <Fragment>
+                <Dialog
+                    open={open}
+                    onClose={onClose}
+                    keepMounted
+                    aria-labelledby="simple-dialog-title"
+                    fullWidth
+                    maxWidth="md"
+                    BackdropProps={{
+                        style: {
+                            backgroundColor: "transparent",
+                        }
+                    }}
+                    {...props}
+                >
+                    <WorkContent>
+                        <div>
+                            <StyledImage
+                                src={work.imageUrl}
+                                onClick={this.openWorkItemImageDialog}
+                                width="100%"
+                            />
+                            <UserInformation>
+                                <Avatar
+                                    alt={work.user.displayName}
+                                    src={work.user.avatarUri}
+                                />
+                                <div>
+                                    <Typography gutterBottom variant="caption">{work.user.message}</Typography>
+                                    <Typography gutterBottom>{work.user.displayName}</Typography>
+                                </div>
+                            </UserInformation>
                             <div>
                                 {work.tags && work.tags.map(x =>
                                     <Link
@@ -94,44 +99,49 @@ export default class extends React.Component<Props, State> {
                                     </Link>
                                 )}
                             </div>
-                        </DialogContent>
-                    </div>
-                    <ReactMarkdown
-                        source={work.description}
-                        rawSourcePos
-                    />
-                </Host>
+                        </div>
+                        <div>
+                            <DialogTitle id="simple-dialog-title">
+                                {work.title}
+                            </DialogTitle>
+                            <ReactMarkdown
+                                source={work.description}
+                                rawSourcePos
+                            />
+                        </div>
+                    </WorkContent>
+                </Dialog>
                 <Dialog
                     open={this.state.workItemImageDialogVisible}
                     onClose={this.closeWorkItemImageDialog}
-                    fullWidth
                 >
-                    <img
+                    <WorkDialogImage
                         src={work.imageUrl}
-                        width="100%"
                         onClick={this.openWorkItemImageDialog}
                     />
                 </Dialog>
-            </Dialog>
+            </Fragment>
         );
     }
 }
 
-const Host = styled.div`
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    > * {
-        overflow: auto;
-        width: calc(50% - 1rem);
-    }
-    > :first-child {
+const WorkContent = styled.div`
+    && {
         display: flex;
-        flex-direction: column;
-    }
-    > :last-child {
-        margin: 1rem;
-        color: black;
+        height: 80vh;
+        > :first-child {
+            border-right: 1px solid #ccc;
+            min-width: 38.2%;
+            max-width: 38.2%;
+            display: flex;
+            flex-direction: column;
+        }
+        > :last-child {
+            flex-grow: 1
+            margin: 1rem;
+            overflow: auto;
+            color: #333;
+        }
     }
 `;
 
@@ -145,4 +155,19 @@ const StyledChip = styled(Chip)`
 
 const StyledImage = styled.img`
     cursor: pointer;
+`;
+
+const WorkDialogImage = styled.img`
+    width: 100%;
+`;
+
+const UserInformation = styled.div`
+    display: flex;
+    flex-direction: row;
+    > :first-child {
+        width: 4rem;
+    }
+    > :last-child {
+        flex-grow: 1;
+    }
 `;

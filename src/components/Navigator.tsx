@@ -143,7 +143,7 @@ export default class extends React.Component<Props, State> {
                                     console.error(error);
                                     return (
                                         <Fragment>
-                                            <div>Error</div>
+                                            <div>?</div>
                                             <notificationListener.ErrorComponent error={error}/>
                                         </Fragment>
                                     );

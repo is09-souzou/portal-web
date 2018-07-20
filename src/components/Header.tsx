@@ -19,7 +19,6 @@ import styled       from "styled-components";
 import { Query }    from "react-apollo";
 import { Redirect } from "react-router";
 import * as H       from "history";
-
 import toObjectFromURIQuery      from "../api/toObjectFromURIQuery";
 import { AuthProps }             from "./wrapper/Auth";
 import { DrawerContext }         from "./wrapper/MainLayout";
@@ -146,7 +145,7 @@ export default class extends React.Component<Props, State> {
                                             console.error(error);
                                             return (
                                                 <Fragment>
-                                                    <div>Error</div>
+                                                    <div>?</div>
                                                     <notificationListener.ErrorComponent error={error} />
                                                 </Fragment>
                                             );

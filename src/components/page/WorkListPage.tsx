@@ -7,6 +7,7 @@ import { Query }          from "react-apollo";
 import arraysEqual              from "../../util/arraysEqual";
 import getTagsByURLQueryParam   from "../../util/getTagsByURLQueryParam";
 import { PageComponentProps }   from "./../../App";
+import ErrorPage                from "../ErrorPage";
 import Fab                      from "../Fab";
 import Header                   from "../Header";
 import NotFound                 from "../NotFound";
@@ -53,13 +54,28 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     state = {
         paginationKey: undefined,
         selectedWork: undefined,
-        tags: [] as string[],
+        tags: getTagsByURLQueryParam(this.props.history),
         userMenuAnchorEl: undefined,
         userMenuOpend: false,
         workDialogVisible: false,
         works: [] as Work[],
-        workListRow: 3
+        workListRow: 4,
     };
+
+    onResize = () => {
+        const row = (
+            window.innerWidth > 767 ?
+                window.innerWidth > 1020 ? 4
+              : window.innerWidth > 840  ? 3
+              :                            2
+          :
+                window.innerWidth > 600  ? 3
+              : window.innerWidth > 480  ? 2
+              :                            1
+        );
+        if (row !== this.state.workListRow)
+            this.setState({ workListRow: row });
+    }
 
     handleClickOpen = (x: Work) => () => this.setState({
         workDialogVisible: true,
@@ -73,9 +89,12 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     })
 
     componentDidMount() {
-        this.setState({
-            tags: getTagsByURLQueryParam(this.props.history)
-        });
+        this.onResize();
+        window.addEventListener("resize", this.onResize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.onResize);
     }
 
     getSnapshotBeforeUpdate(prevProps: Readonly<PageComponentProps<{}>>) {
@@ -118,7 +137,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             console.error(error);
                             return (
                                 <Fragment>
-                                    <div>error</div>
+                                    <ErrorPage/>
                                     <notificationListener.ErrorComponent message={error && error.message} key="error"/>
                                 </Fragment>
                             );
@@ -136,9 +155,12 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     {[...Array(this.state.workListRow).keys()].map(x => (
                                         <div
                                             key={x}
+                                            style={{
+                                                width: `calc(100% / ${this.state.workListRow})`
+                                            }}
                                         >
                                             {works
-                                                .filter((_, i) => i % 3 === x)
+                                                .filter((_, i) => i % this.state.workListRow === x)
                                                 .map(x => (
                                                     <WorkItem
                                                         work={x}
@@ -157,19 +179,18 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     work={this.state.selectedWork}
                                 />
                                 <StreamSpinner
-                                    disable={workConnection && !workConnection.exclusiveStartKey ? true : false}
+                                    key={`spinner-${workConnection.exclusiveStartKey}`}
+                                    disable={
+                                        (workConnection && !workConnection.exclusiveStartKey)
+                                     || (!loading && workConnection.exclusiveStartKey === this.state.paginationKey) ? true
+                                      :                                                                               false
+                                    }
                                     // tslint:disable-next-line:jsx-no-lambda
                                     onVisible={() => {
-                                        const f = () => {
-                                            if (!loading)
-                                                this.setState({
-                                                    works,
-                                                    paginationKey: workConnection.exclusiveStartKey
-                                                });
-                                            else
-                                                setTimeout(f, 1000);
-                                        };
-                                        f();
+                                        this.setState({
+                                            works,
+                                            paginationKey: workConnection.exclusiveStartKey
+                                        });
                                     }}
                                 />
                             </Host>
@@ -199,7 +220,6 @@ const WorkList = styled.div`
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: calc(100% / 3);
         margin: 0 1rem;
     }
 `;
@@ -240,11 +260,12 @@ const WorkItem = ({
 
 const WorkImage = styled.img`
     width: 100%;
-    transition: all 0.3s ease-in-out;
+    border-radius: 8px;
+    transition: all 0.15s ease-in-out;
     cursor: pointer;
     :hover {
         background-color: #fff;
-        transform: scale(1.2);
+        transform: scale(1.1);
         box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
     }
 `;
