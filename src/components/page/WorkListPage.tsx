@@ -25,7 +25,6 @@ interface State {
     workDialogVisible: boolean;
     works: Work[];
     workListRow: number;
-    onResize: () => void;
 }
 
 const QueryListWorks = gql(`
@@ -61,15 +60,22 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
         workDialogVisible: false,
         works: [] as Work[],
         workListRow: 4,
-        onResize: () => {
-            const row = window.innerWidth > 960 ? 4
-                      : window.innerWidth > 600 ? 3
-                      : window.innerWidth > 480 ? 2
-                      :                           1;
-            if (row !== this.state.workListRow)
-                this.setState({ workListRow: row });
-        }
     };
+
+    onResize = () => {
+        const row = (
+            window.innerWidth > 767 ?
+                window.innerWidth > 1020 ? 4
+              : window.innerWidth > 840  ? 3
+              :                            2
+          :
+                window.innerWidth > 600  ? 3
+              : window.innerWidth > 480  ? 2
+              :                            1
+        );
+        if (row !== this.state.workListRow)
+            this.setState({ workListRow: row });
+    }
 
     handleClickOpen = (x: Work) => () => this.setState({
         workDialogVisible: true,
@@ -83,11 +89,12 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     })
 
     componentDidMount() {
-        window.addEventListener("resize", this.state.onResize);
+        this.onResize();
+        window.addEventListener("resize", this.onResize);
     }
 
     componentWillUnmount() {
-        window.removeEventListener("resize", this.state.onResize);
+        window.removeEventListener("resize", this.onResize);
     }
 
     getSnapshotBeforeUpdate(prevProps: Readonly<PageComponentProps<{}>>) {
