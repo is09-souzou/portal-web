@@ -7,6 +7,7 @@ import GraphQLProgress        from "../GraphQLProgress";
 import Header                 from "../Header";
 import NotFound               from "../NotFound";
 import Page                   from "../Page";
+import { User }               from "../../graphQL/type";
 
 const QueryGetUser = gql(`
     query($id: ID!) {
@@ -57,9 +58,16 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                         if (!data.getUser)
                             return <NotFound />;
 
+                        const user = data.getUser as User;
+
                         return (
                             <div>
-                                {data.getUser}
+                                <div>{user.id}</div>
+                                <div>{user.avatarUri}</div>
+                                <div>{user.career}</div>
+                                <div>{user.displayName}</div>
+                                <div>{user.email}</div>
+                                <div>{user.message}</div>
                             </div>
                         );
                     }}
