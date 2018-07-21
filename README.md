@@ -33,3 +33,8 @@ $ yarn build
 # start webpack-dev-server and build
 $ yarn start
 ```
+
+#### Generate Documents
+```bash
+$ yarn docs
+```
