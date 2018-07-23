@@ -39,6 +39,8 @@ const QueryListWorks = gql(`
                 imageUrl
                 user {
                     displayName
+                    message
+                    avatarUri
                 }
                 title
                 tags
