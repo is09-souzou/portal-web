@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import {
-    Avatar
+    Avatar,
+    Typography
 } from "@material-ui/core";
 import gql                 from "graphql-tag";
 import styled              from "styled-components";
@@ -85,24 +86,35 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                 <UserContent>
                                     <div>
                                         <div>
-                                            Follow Follower
+                                            <Typography variant="caption">
+                                                Follow
+                                            </Typography>
+                                            <Typography variant="caption">
+                                                Follower
+                                            </Typography>
                                         </div>
                                         <div>
-                                            {user.message}
+                                            <Typography variant="body1">
+                                                {user.message}
+                                            </Typography>
                                         </div>
                                     </div>
                                     <div>
                                         <div>
-                                            description
-                                            事柄を説明し、正確に伝達することを目的とする文章。叙情文・叙事文・叙景文などに対する語。
-                                            1
-                                            2
-                                            3
-                                            4
-                                            5
+                                            <Typography variant="caption">
+                                                Description
+                                            </Typography>
+                                            <StyledUserTypography>
+                                                事柄を説明し、正確に伝達することを目的とする文章。叙情文・叙事文・叙景文などに対する語。
+                                            </StyledUserTypography>
                                         </div>
                                         <div>
-                                            {user.career}
+                                            <Typography variant="caption">
+                                                Career
+                                            </Typography>
+                                            <StyledUserTypography>
+                                                {user.career}
+                                            </StyledUserTypography>
                                         </div>
                                     </div>
                                 </UserContent>
@@ -153,13 +165,17 @@ const UserAvatar = styled(Avatar)`
 const UserContent = styled.div`
     display: flex;
     margin-top: 6rem;
-    > :nth-child(1){
-        width: 16rem;
-        display: inline-flex;
-        justify-content: center;
+    > :first-child{
         align-items: center;
-        :nth-child(n){
-            display: inline-grid;
+        width: 18rem;
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: start;
+        > :nth-child(n){
+            display: flex;
+            > :nth-child(n){
+                margin-left: 1rem;
+            }
         }
     }
     > :nth-child(2){
@@ -168,5 +184,11 @@ const UserContent = styled.div`
         :nth-child(n){
             display: inline-grid;
         }
+    }
+`;
+
+const StyledUserTypography = styled(Typography)`
+    && {
+        white-space: pre;
     }
 `;
