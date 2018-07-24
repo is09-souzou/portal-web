@@ -94,9 +94,12 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             </Typography>
                                         </div>
                                         <div>
-                                            <Typography variant="body1">
-                                                {user.message}
+                                            <Typography variant="caption">
+                                                message
                                             </Typography>
+                                            <StyledUserTypography variant="body1">
+                                                {user.message}
+                                            </StyledUserTypography>
                                         </div>
                                     </div>
                                     <div>
@@ -167,11 +170,11 @@ const UserContent = styled.div`
     margin-top: 6rem;
     > :first-child{
         align-items: center;
-        width: 18rem;
+        width: 17rem;
         display: inline-flex;
         flex-direction: column;
         justify-content: start;
-        > :nth-child(n){
+        > :nth-child(1){
             display: flex;
             > :nth-child(n){
                 margin-left: 1rem;
@@ -182,7 +185,11 @@ const UserContent = styled.div`
         flex-grow: 1;
         min-height: 100%;
         :nth-child(n){
+            bottom: -2rem;
             display: inline-grid;
+            > :nth-child(n){
+                margin: 0 0 1rem 0;
+            }
         }
     }
 `;
