@@ -45,6 +45,7 @@ const QueryListWorks = gql(`
                 title
                 tags
                 description
+                createdAt
             }
             exclusiveStartKey
         }
