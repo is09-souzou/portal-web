@@ -9,12 +9,12 @@ import styled              from "styled-components";
 import { Query }           from "react-apollo";
 import toObjectFromURIQuery   from "../../api/toObjectFromURIQuery";
 import { PageComponentProps } from "../../App";
+import { User }               from "../../graphQL/type";
 import ErrorPage              from "../ErrorPage";
 import GraphQLProgress        from "../GraphQLProgress";
 import Header                 from "../Header";
 import NotFound               from "../NotFound";
 import Page                   from "../Page";
-import { User }               from "../../graphQL/type";
 
 const QueryGetUser = gql(`
     query($id: ID!) {
@@ -77,43 +77,49 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
 
                         return (
                             <Host>
-                                <UserHost>
-                                    <UserHedaerImage
-                                        src={user.avatarUri}
-                                    />
+                                <UserHeader>
                                     <div>
-                                        <div>
-                                            <StyledUserTypography variant="body2">
-                                                {user.displayName}
-                                            </StyledUserTypography>
-                                            <StyledUserTypography variant="body2">
-                                                {user.email}
-                                            </StyledUserTypography>
-                                        </div>
-                                        <div>
-                                            { contentType === "user" ?
-                                                <UserButton
-                                                    variant="contained"
-                                                    color="primary"
-                                                    onClick={this.ContentTypeWork}
-                                                >
-                                                    Work List
-                                                </UserButton>
-                                            :
-                                                <UserButton
-                                                    variant="contained"
-                                                    color="primary"
-                                                    onClick={this.ContentTypeUser}
-                                                >
-                                                    Profile
-                                                </UserButton>
-                                            }
-                                        </div>
+                                        <UserHeederImage
+                                            src={user.avatarUri}
+                                        />
                                     </div>
-                                    <UserAvatar
-                                        src={user.avatarUri}
-                                    />
-                                </UserHost>
+                                    <div>
+                                        <UserHeaderContent>
+                                            <div>
+                                                <UserAvatar
+                                                    src={user.avatarUri}
+                                                />
+                                            </div>
+                                            <div>
+                                                <StyledUserTypography>
+                                                    {user.displayName}
+                                                </StyledUserTypography>
+                                                <StyledUserTypography>
+                                                    {user.email}
+                                                </StyledUserTypography>
+                                            </div>
+                                            <div>
+                                                { contentType === "user" ?
+                                                    <UserButton
+                                                        variant="contained"
+                                                        color="primary"
+                                                        onClick={this.ContentTypeWork}
+                                                    >
+                                                        Work List
+                                                    </UserButton>
+                                                :
+                                                    <UserButton
+                                                        variant="contained"
+                                                        color="primary"
+                                                        onClick={this.ContentTypeUser}
+                                                    >
+                                                        Profile
+                                                    </UserButton>
+                                                }
+                                            </div>
+                                        </UserHeaderContent>
+                                    </div>
+                                </UserHeader>
                                 { contentType === "user" ?
                                     <UserContent>
                                         <div>
@@ -181,46 +187,53 @@ const Host = styled.div`
     margin-top: -7rem;
 `;
 
-const UserHost = styled.div`
-    position: relative;
-    > :nth-child(2) {
+const UserHeader = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    > :first-child {
         display: flex;
-        margin-left: 17rem;
-        top: 20rem;
-        position: absolute;
-        z-index: 1;
-        > :nth-child(even) {
-            margin-left: 1rem;
-        }
+    }
+    > :last-child {
+        display: flex;
+        position: relative;
+        height: 6rem;
     }
 `;
 
-const UserHedaerImage = styled.img`
-    position: relative;
-    height: 19rem;
+const UserHeederImage = styled.img`
+    height: 35vh;
     width: 100%;
     object-fit: cover;
 `;
 
+const UserHeaderContent = styled.div`
+    display: flex;
+    position: absolute;
+    bottom: 0rem;
+    margin-left: 3rem;
+    > :not(:first-child) {
+        margin-top: auto;
+        margin-bottom: 2rem;
+    }
+`;
+
 const UserAvatar = styled(Avatar)`
     && {
-        position: absolute;
-        bottom: -5rem;
         border: 1px solid #ccc;
         width: 12rem;
         height: 12rem;
-        margin: 0 3rem;
     }
 `;
 
 const UserContent = styled.div`
     display: flex;
-    margin-top: 7rem;
+    margin-top: 1rem;
     > :first-child{
-        align-items: center;
-        width: 17rem;
         display: inline-flex;
         flex-direction: column;
+        align-items: center;
+        width: 17rem;
         justify-content: start;
         > :nth-child(-n + 2){
             display: flex;
