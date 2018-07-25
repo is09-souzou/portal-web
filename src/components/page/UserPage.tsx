@@ -1,7 +1,8 @@
 import React, { Fragment } from "react";
 import {
     Avatar,
-    Typography
+    Typography,
+    Button
 } from "@material-ui/core";
 import gql                 from "graphql-tag";
 import styled              from "styled-components";
@@ -73,10 +74,17 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                     />
                                     <div>
                                         <div>
-                                            {user.displayName}
+                                            <Typography variant="body2">
+                                                {user.displayName}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                {user.email}
+                                            </Typography>
                                         </div>
                                         <div>
-                                            {user.email}
+                                            <UserButton variant="contained" color="primary">
+                                                Work List
+                                            </UserButton>
                                         </div>
                                     </div>
                                     <UserAvatar
@@ -139,11 +147,17 @@ const Host = styled.div`
 const UserHost = styled.div`
     position: relative;
     > :nth-child(2) {
-        background-color: rgba( 220, 220, 220, 0.55 );
+        display: flex;
         margin-left: 16rem;
         bottom: 1rem;
         position: absolute;
         z-index: 1;
+        > :first-child {
+            background-color: rgb(220, 220, 220, 0.55);
+        }
+        > :nth-child(2) {
+            margin-left: 37rem;
+        }
     }
 `;
 
@@ -195,6 +209,14 @@ const UserContent = styled.div`
                 margin: 0 0 1rem 0;
             }
         }
+    }
+`;
+
+const UserButton = styled(Button)`
+    $$ {
+        bottom: 1rem;
+        position: absolute;
+        z-index: 1;
     }
 `;
 
