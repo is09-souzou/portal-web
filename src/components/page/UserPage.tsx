@@ -7,6 +7,7 @@ import {
 import gql                 from "graphql-tag";
 import styled              from "styled-components";
 import { Query }           from "react-apollo";
+import toObjectFromURIQuery   from "../../api/toObjectFromURIQuery";
 import { PageComponentProps } from "../../App";
 import ErrorPage              from "../ErrorPage";
 import GraphQLProgress        from "../GraphQLProgress";
@@ -30,6 +31,10 @@ const QueryGetUser = gql(`
 
 export default class UserListPage extends React.Component<PageComponentProps<{id: string}>> {
 
+    ContentTypeUser = () => this.props.history.push("?content=user");
+
+    ContentTypeWork = () => this.props.history.push("?content=work");
+
     render() {
 
         const {
@@ -37,6 +42,10 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
             history,
             notificationListener
         } = this.props;
+
+        const queryParam = toObjectFromURIQuery(history.location.search);
+        const contentType = queryParam ? queryParam["content"]
+                                       : "user";
 
         return (
             <Page>
@@ -82,61 +91,81 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             </StyledUserTypography>
                                         </div>
                                         <div>
-                                            <UserButton variant="contained" color="primary">
-                                                Work List
-                                            </UserButton>
+                                            { contentType === "user" ?
+                                                <UserButton
+                                                    variant="contained"
+                                                    color="primary"
+                                                    onClick={this.ContentTypeWork}
+                                                >
+                                                    Work List
+                                                </UserButton>
+                                            :
+                                                <UserButton
+                                                    variant="contained"
+                                                    color="primary"
+                                                    onClick={this.ContentTypeUser}
+                                                >
+                                                    Profile
+                                                </UserButton>
+                                            }
                                         </div>
                                     </div>
                                     <UserAvatar
                                         src={user.avatarUri}
                                     />
                                 </UserHost>
-                                <UserContent>
+                                { contentType === "user" ?
+                                    <UserContent>
+                                        <div>
+                                            <div>
+                                                <Typography variant="body2">
+                                                    Follow
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    Follower
+                                                </Typography>
+                                            </div>
+                                            <div>
+                                                <Typography variant="body2">
+                                                    1000
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    3500
+                                                </Typography>
+                                            </div>
+                                            <div>
+                                                <Typography variant="caption">
+                                                    message
+                                                </Typography>
+                                                <StyledUserTypography variant="body1" align="justify">
+                                                    {user.message}
+                                                </StyledUserTypography>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div>
+                                                <Typography variant="caption">
+                                                    Description
+                                                </Typography>
+                                                <StyledUserTypography>
+                                                    事柄を説明し、正確に伝達することを目的とする文章。叙情文・叙事文・叙景文などに対する語。
+                                                </StyledUserTypography>
+                                            </div>
+                                            <div>
+                                                <Typography variant="caption">
+                                                    Career
+                                                </Typography>
+                                                <StyledUserTypography>
+                                                    {user.career}
+                                                </StyledUserTypography>
+                                            </div>
+                                        </div>
+                                    </UserContent>
+                                :
                                     <div>
-                                        <div>
-                                            <Typography variant="body2">
-                                                Follow
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                Follower
-                                            </Typography>
-                                        </div>
-                                        <div>
-                                            <Typography variant="body2">
-                                                1000
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                3500
-                                            </Typography>
-                                        </div>
-                                        <div>
-                                            <Typography variant="caption">
-                                                message
-                                            </Typography>
-                                            <StyledUserTypography variant="body1" align="justify">
-                                                {user.message}
-                                            </StyledUserTypography>
-                                        </div>
+                                        a
                                     </div>
-                                    <div>
-                                        <div>
-                                            <Typography variant="caption">
-                                                Description
-                                            </Typography>
-                                            <StyledUserTypography>
-                                                事柄を説明し、正確に伝達することを目的とする文章。叙情文・叙事文・叙景文などに対する語。
-                                            </StyledUserTypography>
-                                        </div>
-                                        <div>
-                                            <Typography variant="caption">
-                                                Career
-                                            </Typography>
-                                            <StyledUserTypography>
-                                                {user.career}
-                                            </StyledUserTypography>
-                                        </div>
-                                    </div>
-                                </UserContent>
+                                }
                             </Host>
                         );
                     }}
@@ -162,9 +191,6 @@ const UserHost = styled.div`
         z-index: 1;
         > :nth-child(even) {
             margin-left: 1rem;
-        }
-        > :nth-child(2) {
-            margin-left: 40rem;
         }
     }
 `;
