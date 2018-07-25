@@ -74,12 +74,12 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                     />
                                     <div>
                                         <div>
-                                            <Typography variant="body2">
+                                            <StyledUserTypography variant="body2">
                                                 {user.displayName}
-                                            </Typography>
-                                            <Typography variant="body2">
+                                            </StyledUserTypography>
+                                            <StyledUserTypography variant="body2">
                                                 {user.email}
-                                            </Typography>
+                                            </StyledUserTypography>
                                         </div>
                                         <div>
                                             <UserButton variant="contained" color="primary">
@@ -94,18 +94,26 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                 <UserContent>
                                     <div>
                                         <div>
-                                            <Typography variant="caption">
+                                            <Typography variant="body2">
                                                 Follow
                                             </Typography>
-                                            <Typography variant="caption">
+                                            <Typography variant="body2">
                                                 Follower
+                                            </Typography>
+                                        </div>
+                                        <div>
+                                            <Typography variant="body2">
+                                                1000
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                3500
                                             </Typography>
                                         </div>
                                         <div>
                                             <Typography variant="caption">
                                                 message
                                             </Typography>
-                                            <StyledUserTypography variant="body1">
+                                            <StyledUserTypography variant="body1" align="justify">
                                                 {user.message}
                                             </StyledUserTypography>
                                         </div>
@@ -148,15 +156,15 @@ const UserHost = styled.div`
     position: relative;
     > :nth-child(2) {
         display: flex;
-        margin-left: 16rem;
-        bottom: 1rem;
+        margin-left: 17rem;
+        top: 20rem;
         position: absolute;
         z-index: 1;
-        > :first-child {
-            background-color: rgb(220, 220, 220, 0.55);
+        > :nth-child(even) {
+            margin-left: 1rem;
         }
         > :nth-child(2) {
-            margin-left: 37rem;
+            margin-left: 40rem;
         }
     }
 `;
@@ -181,22 +189,21 @@ const UserAvatar = styled(Avatar)`
 
 const UserContent = styled.div`
     display: flex;
-    margin-top: 6rem;
+    margin-top: 7rem;
     > :first-child{
         align-items: center;
         width: 17rem;
         display: inline-flex;
         flex-direction: column;
         justify-content: start;
-        > :nth-child(1){
+        > :nth-child(-n + 2){
             display: flex;
-            > :nth-child(n){
-                margin-left: 1rem;
+            > :nth-child(n) {
+                margin: 0 1rem 0 2rem;
             }
         }
-        > :nth-child(2){
-            margin-right: 8rem;
-            margin-top: 3rem
+        > :nth-child(3){
+            margin-left: 2rem;
         }
     }
     > :nth-child(2){
@@ -222,6 +229,8 @@ const UserButton = styled(Button)`
 
 const StyledUserTypography = styled(Typography)`
     && {
-        white-space: pre;
+        font-size: 1rem;
+        margin: 0 1rem 0 1rem;
+        white-space: pre-wrap;
     }
 `;
