@@ -210,8 +210,6 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                         <WorkContentArea>
                                             <div>
                                                 <MainImageInput
-                                                    // tslint:disable-next-line:max-line-length
-                                                    src="https://s3-ap-northeast-1.amazonaws.com/is09-portal-image/users/f00d1aba-3ab7-4080-934e-ba555a9a680b/profile/08b2ddd4-c809-451a-be54-9df8d00b4f83"
                                                     labelText="create-work-main-image"
                                                     // tslint:disable-next-line:jsx-no-lambda
                                                     onChange={async e => {
