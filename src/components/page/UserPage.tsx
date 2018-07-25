@@ -180,6 +180,10 @@ const UserContent = styled.div`
                 margin-left: 1rem;
             }
         }
+        > :nth-child(2){
+            margin-right: 8rem;
+            margin-top: 3rem
+        }
     }
     > :nth-child(2){
         flex-grow: 1;
