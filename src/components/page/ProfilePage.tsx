@@ -27,13 +27,12 @@ import ImageInput                    from "../ImageInput";
 import NotFound                      from "../NotFound";
 import Page                          from "../Page";
 
-type Item = "displayName" | "email" | "career" | "message" | "avatarUri" | "credentialEmail";
+type Item = "displayName" | "email" | "career" | "message" | "avatarUri";
 
 interface State {
     whileEditingItem: Item[];
     editableAvatarDialogIsVisible: boolean;
     uploadingAvatarImage: boolean;
-    updatePasswordDialogVisible: boolean;
 }
 
 const QueryGetUser = gql(`
@@ -74,7 +73,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
             whileEditingItem: [],
             editableAvatarDialogIsVisible: false,
             uploadingAvatarImage: false,
-            updatePasswordDialogVisible: false
         });
     }
 
@@ -111,10 +109,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     openEditableAvatarDialog = () => this.setState({ editableAvatarDialogIsVisible: true });
 
     closeEditableAvatarDialog = () => this.setState({ editableAvatarDialogIsVisible: false });
-
-    openUpdatePasswordDialog = () => this.setState({ updatePasswordDialogVisible: true });
-
-    closeUpdatePasswordDialog = () => this.setState({ updatePasswordDialogVisible: false });
 
     render() {
         const {
@@ -386,116 +380,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                         );
                     }}
                 </Query>
-                <form
-                    // tslint:disable-next-line:jsx-no-lambda
-                    onSubmit={async e => {
-                        e.preventDefault();
-
-                        const email = (e.target as any).elements["profile-credential-email"].value;
-
-                        try {
-                            await this.props.auth.updateEmail(email);
-                            notificationListener.notification("info", "Send Mail");
-                        } catch (e) {
-                            notificationListener.errorNotification(e);
-                            return;
-                        }
-                    }}
-                >
-                    <Typography gutterBottom variant="title">
-                        Credential
-                    </Typography>
-                    <div>
-                        <TextField
-                            id="profile-credential-email"
-                            label="Mail Address"
-                            margin="none"
-                            helperText="Update a Credential Email"
-                            InputProps={{
-                                endAdornment: (
-                                    this.state.whileEditingItem.includes("credentialEmail")
-                                    &&
-                                    <Button
-                                        type="submit"
-                                    >
-                                        Update
-                                    </Button>
-                                )
-                            }}
-                            type="email"
-                            onChange={this.addWhileEditingItem("credentialEmail")}
-                            fullWidth
-                            // tslint:disable-next-line:jsx-no-lambda
-                            inputRef={x => this.credentialEmailInput = x}
-                        />
-                    </div>
-                    <Button
-                        onClick={this.openUpdatePasswordDialog}
-                        variant="contained"
-                        color="primary"
-                    >
-                        Update password
-                    </Button>
-                </form>
-                <Dialog
-                    open={this.state.updatePasswordDialogVisible}
-                    onClose={this.closeUpdatePasswordDialog}
-                    aria-labelledby="profile-update-password"
-                >
-                    <form
-                        // tslint:disable-next-line:jsx-no-lambda
-                        onSubmit={async e => {
-                            e.preventDefault();
-
-                            const oldPassword = (e.target as any).elements["profile-old-password"].value;
-                            const newPassword = (e.target as any).elements["profile-new-password"].value;
-                            try {
-                                await this.props.auth.updatePassword(oldPassword, newPassword);
-                                this.closeUpdatePasswordDialog();
-                                notificationListener.notification("info", "Success update password");
-                            } catch (e) {
-                                console.error(e);
-                                notificationListener.errorNotification(e);
-                            }
-                        }}
-                    >
-                        <DialogTitle
-                            id="profile-update-password"
-                        >
-                            Update password
-                        </DialogTitle>
-                        <StyledDialogContent>
-                            <TextField
-                                id="profile-old-password"
-                                label="Old password"
-                                margin="normal"
-                                type="password"
-                                required
-                            />
-                            <TextField
-                                id="profile-new-password"
-                                label="New password"
-                                margin="normal"
-                                type="password"
-                                required
-                            />
-                        </StyledDialogContent>
-                        <DialogActions>
-                            <Button
-                                onClick={this.closeUpdatePasswordDialog}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                component="button"
-                                color="primary"
-                                type="submit"
-                            >
-                                Submit
-                            </Button>
-                        </DialogActions>
-                    </form>
-                </Dialog>
             </ProfilePageHost>
         );
     }
@@ -528,14 +412,6 @@ const UserAvatar = styled(Avatar)`
         width: 8rem;
         height: 8rem;
         margin: 1rem 4rem 0 1rem;
-    }
-`;
-
-const StyledDialogContent = styled(DialogContent)`
-    && {
-        max-width: 20rem;
-        display: flex;
-        flex-direction: column;
     }
 `;
 

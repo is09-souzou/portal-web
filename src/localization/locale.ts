@@ -36,7 +36,8 @@ export const locale = {
             name: "Name",
             mailAdress: "Mail Adress",
             profile: "Profile",
-            signOut: "sign-out"
+            signOut: "sign-out",
+            setting: "setting"
         },
         location: "us"
     },
@@ -75,7 +76,8 @@ export const locale = {
             name: "ユーザー名",
             mailAdress: "メールアドレス",
             profile: "プロフィール",
-            signOut: "サインアウト"
+            signOut: "サインアウト",
+            setting: "設定"
         },
         location: "jp"
     }

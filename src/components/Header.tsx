@@ -185,6 +185,14 @@ export default class extends React.Component<Props, State> {
                                                                         {locale.header.profile}
                                                                     </Button>
                                                                 </Link>
+                                                                <Link
+                                                                    to="/setting"
+                                                                    onClick={this.menuClose}
+                                                                >
+                                                                    <Button>
+                                                                        {locale.header.setting}
+                                                                    </Button>
+                                                                </Link>
                                                                 <Button
                                                                     onClick={auth.signOut}
                                                                 >
