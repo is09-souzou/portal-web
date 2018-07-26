@@ -7,14 +7,23 @@ import {
 import gql                 from "graphql-tag";
 import styled              from "styled-components";
 import { Query }           from "react-apollo";
-import toObjectFromURIQuery   from "../../api/toObjectFromURIQuery";
-import { PageComponentProps } from "../../App";
-import { User }               from "../../graphQL/type";
-import ErrorPage              from "../ErrorPage";
-import GraphQLProgress        from "../GraphQLProgress";
-import Header                 from "../Header";
-import NotFound               from "../NotFound";
-import Page                   from "../Page";
+import toObjectFromURIQuery            from "../../api/toObjectFromURIQuery";
+import { PageComponentProps }          from "../../App";
+import { User, Work, WorkConnection }  from "../../graphQL/type";
+import ErrorPage                       from "../ErrorPage";
+import GraphQLProgress                 from "../GraphQLProgress";
+import Header                          from "../Header";
+import NotFound                        from "../NotFound";
+import Page                            from "../Page";
+import WorkDialog                      from "../WorkDialog";
+import WorkList                        from "../WorkList";
+
+interface State {
+    selectedWork?: Work;
+    userWorks: Work[];
+    workDialogVisible: boolean;
+    workListRow: number;
+}
 
 const QueryGetUser = gql(`
     query($id: ID!) {
@@ -25,15 +34,68 @@ const QueryGetUser = gql(`
             career
             avatarUri
             message
+            works(limit: 12) {
+                items {
+                    id
+                    imageUrl
+                    title
+                    user {
+                        displayName
+                        message
+                        avatarUri
+                    }
+                    tags
+                    description
+                    createdAt
+                }
+            }
         }
     }
 `);
 
-export default class UserListPage extends React.Component<PageComponentProps<{id: string}>> {
+export default class UserListPage extends React.Component<PageComponentProps<{id: string}>, State> {
+
+    state = {
+        selectedWork: undefined,
+        workDialogVisible: false,
+        userWorks: [] as Work[],
+        workListRow: 4,
+    };
 
     ContentTypeUser = () => this.props.history.push("?content=user");
 
     ContentTypeWork = () => this.props.history.push("?content=work");
+
+    onResize = () => {
+        const row = (
+            window.innerWidth > 767 ?
+                window.innerWidth > 1020 ? 4
+              : window.innerWidth > 840  ? 3
+              :                            2
+          :
+                window.innerWidth > 600  ? 3
+              : window.innerWidth > 480  ? 2
+              :                            1
+        );
+        if (row !== this.state.workListRow)
+            this.setState({ workListRow: row });
+    }
+
+    handleClickOpen = (x: Work) => () => this.setState({
+        workDialogVisible: true,
+        selectedWork: x,
+    })
+
+    handleClose = () => this.setState({ workDialogVisible: false });
+
+    componentDidMount() {
+        this.onResize();
+        window.addEventListener("resize", this.onResize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.onResize);
+    }
 
     render() {
 
@@ -74,6 +136,8 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                             return <NotFound />;
 
                         const user = data.getUser as User;
+                        const workConnection = user.works as WorkConnection;
+                        const userWorks = this.state.userWorks.concat(workConnection ? workConnection.items : [] as Work[]);
 
                         return (
                             <Host>
@@ -169,7 +233,17 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                     </UserContent>
                                 :
                                     <div>
-                                        a
+                                        <WorkList
+                                            works={userWorks}
+                                            workListRow={this.state.workListRow}
+                                            onWorkItemClick={this.handleClickOpen}
+                                        />
+                                        <WorkDialog
+                                            history={history}
+                                            open={this.state.workDialogVisible}
+                                            onClose={this.handleClose}
+                                            work={this.state.selectedWork}
+                                        />
                                     </div>
                                 }
                             </Host>
@@ -211,7 +285,7 @@ const UserHeaderContent = styled.div`
     display: flex;
     position: absolute;
     bottom: 0rem;
-    margin-left: 3rem;
+    margin-left: 3vw;
     > :not(:first-child) {
         margin-top: auto;
         margin-bottom: 2rem;
