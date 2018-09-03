@@ -29,7 +29,7 @@ module.exports = {
         ]
     },
     plugins: [
-        new BundleAnalyzerPlugin(),
+        // new BundleAnalyzerPlugin(),
         new DefinePlugin(
             Object.entries(process.env)
                 .map(x => ({["process.env." + x[0]]: JSON.stringify(x[1])}))

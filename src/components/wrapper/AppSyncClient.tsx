@@ -1,10 +1,7 @@
-declare const require: any;
 import React, { ReactChild } from "react";
-// https://github.com/awslabs/aws-mobile-appsync-sdk-js/pull/155
-// https://github.com/awslabs/aws-mobile-appsync-sdk-js/issues/48
-const { Rehydrated }       = require("aws-appsync-react");
-const { AUTH_TYPE }        = require("aws-appsync/lib/link/auth-link");
-const { AWSAppSyncClient } = require("aws-appsync");
+import { Rehydrated }       from "aws-appsync-react";
+import { AUTH_TYPE }        from "aws-appsync/lib/link/auth-link";
+import { AWSAppSyncClient } from "aws-appsync";
 import { ApolloProvider }   from "react-apollo";
 import config               from "../../config";
 import { AuthProps }        from "./Auth";
@@ -26,7 +23,7 @@ export default class extends React.Component<Props, State> {
                 region: config.appSync.region,
                 auth: {
                     type: AUTH_TYPE.AMAZON_COGNITO_USER_POOLS,
-                    jwtToken: () => this.props.auth.token && this.props.auth.token.jwtToken
+                    jwtToken: () => this.props.auth.token ? this.props.auth.token.jwtToken : ""
                 }
             })
         });

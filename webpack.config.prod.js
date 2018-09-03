@@ -1,5 +1,6 @@
-const { DefinePlugin } = require ("webpack")
-const path             = require("path");
+const { DefinePlugin }     = require ("webpack")
+const path                 = require("path");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 module.exports = {
     entry: "./src/index.tsx",
@@ -26,6 +27,7 @@ module.exports = {
         ]
     },
     plugins: [
+        new BundleAnalyzerPlugin(),
         new DefinePlugin(
             Object.entries(process.env)
                 .map(x => ({["process.env." + x[0]]: JSON.stringify(x[1])}))

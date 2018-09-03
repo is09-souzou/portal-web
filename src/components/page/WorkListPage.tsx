@@ -1,8 +1,8 @@
 import React, { Fragment } from "react";
-import { Add as AddIcon } from "@material-ui/icons";
-import gql                from "graphql-tag";
-import styled             from "styled-components";
-import { Query }          from "react-apollo";
+import AddIcon             from "@material-ui/icons/Add";
+import gql                 from "graphql-tag";
+import styled              from "styled-components";
+import { Query }           from "react-apollo";
 import arraysEqual              from "../../util/arraysEqual";
 import getTagsByURLQueryParam   from "../../util/getTagsByURLQueryParam";
 import { Work, WorkConnection } from "../../graphQL/type";
