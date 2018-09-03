@@ -12,13 +12,11 @@ import {
     Typography,
     withTheme,
 } from "@material-ui/core";
-import {
-    ColorLens   as ColorLensIcon,
-    ExpandLess  as ExpandLessIcon,
-    ExpandMore  as ExpandMoreIcon,
-    NewReleases as NewReleasesIcon,
-    Star        as StarIcon
-} from "@material-ui/icons";
+import ColorLensIcon   from "@material-ui/icons/ColorLens";
+import ExpandLessIcon  from "@material-ui/icons/ExpandLess";
+import ExpandMoreIcon  from "@material-ui/icons/ExpandMore";
+import NewReleasesIcon from "@material-ui/icons/NewReleases";
+import StarIcon        from "@material-ui/icons/Star";
 import gql                           from "graphql-tag";
 import * as H                        from "history";
 import { Query }                     from "react-apollo";

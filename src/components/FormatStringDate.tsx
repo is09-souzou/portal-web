@@ -81,7 +81,7 @@ const dateToFormatString = (date: Date, fmt: string, locale: "ja-JP" | "en-US", 
     Object.keys(format).forEach((key) =>
         fmtstr.push(key)
     );
-    const re = new RegExp("%(" + fmtstr.join("|") + ")%", "g");
+    const re = new RegExp(`%(${fmtstr.join("|")})%`, "g");
 
     const replaceFn = (match: string, fmt: "YY" | "YYYY" | "YY" | "MMMM" | "MMM" | "MM" | "M" |
                                             "DD" | "D" | "HH" | "H" | "hh" | "h" | "mm" |

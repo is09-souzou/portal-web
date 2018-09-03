@@ -7,11 +7,9 @@ import {
     IconButton,
     Typography,
 } from "@material-ui/core";
-import {
-    Favorite,
-    FavoriteBorder,
-    Share
-} from "@material-ui/icons";
+import Favorite       from "@material-ui/icons/Favorite";
+import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
+import Share          from "@material-ui/icons/Share";
 import * as H        from "history";
 import ReactMarkdown from "react-markdown";
 import styled        from "styled-components";

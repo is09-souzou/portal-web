@@ -61,6 +61,10 @@ or
 $ yarn deploy --profile PROFILE_NAME
 ```
 
+#### file size analyze
+```bash
+$ yarn size-analyze
+```
 
 #### Generate Documents
 ```bash
