@@ -1,4 +1,7 @@
 # portal-web
+
+https://ds6w3k8cpkvqy.cloudfront.net/
+
 ## Getting Started
 ### Prerequisites
 
@@ -7,7 +10,7 @@ $ yarn -v
 1.7.0
 
 $ node -v
-v10.5.0
+v10.9.0
 ```
 
 ### Development
@@ -26,12 +29,24 @@ $ yarn start
 
 #### Commands
 ```bash
-# chack tslint
-$ yarn lint
-# build Project
-$ yarn build
-# start webpack-dev-server and build
+# open browser with webpack-dev-server in development mode
 $ yarn start
+# open browser with webpack-dev-server in production mode
+$ yarn start:prod
+# build Project in development mode
+$ yarn build
+# build Project in development mode
+$ yarn build:dev
+# build Project in production mode
+$ yarn build:prod
+# chack typescript lint with tslint
+$ yarn lint
+# show ubndle size of webpack
+$ yarn size-analyze
+# generate project documents
+$ yarn docs
+# deploy to AWS S3 Bucket
+$ yarn deploy
 ```
 
 ### Deploy
@@ -62,8 +77,24 @@ $ yarn deploy --profile PROFILE_NAME
 ```
 
 #### file size analyze
+##### cmd
 ```bash
 $ yarn size-analyze
+```
+
+##### web-view
+uncomment `// new BundleAnalyzerPlugin()` in `webpack.config.(dev|prod).js`
+```js
+...
+    plugins: [
+        new BundleAnalyzerPlugin(), // <- uncomment
+        new DefinePlugin(
+            Object.entries(process.env)
+                .map(x => ({["process.env." + x[0]]: JSON.stringify(x[1])}))
+                .reduce((x, y) => Object.assign(x, y), {}),
+        )
+    ],
+...
 ```
 
 #### Generate Documents

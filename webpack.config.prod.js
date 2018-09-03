@@ -1,13 +1,15 @@
 const { DefinePlugin }     = require ("webpack")
 const path                 = require("path");
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const Uglify               = require("uglifyjs-webpack-plugin");
 
 module.exports = {
     entry: "./src/index.tsx",
     mode: "production",
     output: {
         filename: "[name].js",
-        path: path.resolve(__dirname, "dist")
+        path: path.resolve(__dirname, "dist"),
+        publicPath: "/"
     },
     resolve: {
         modules: ["node_modules"],
@@ -27,7 +29,8 @@ module.exports = {
         ]
     },
     plugins: [
-        new BundleAnalyzerPlugin(),
+        // new Uglify(),
+        // new BundleAnalyzerPlugin(),
         new DefinePlugin(
             Object.entries(process.env)
                 .map(x => ({["process.env." + x[0]]: JSON.stringify(x[1])}))

@@ -11,10 +11,12 @@ import Auth, { AuthProps }                                  from "./components/w
 import AppSyncClient                                        from "./components/wrapper/AppSyncClient";
 import MainLayout, { MainLayoutEventProps }                 from "./components/wrapper/MainLayout";
 import NotificationListener, { NotificationListenerProps }  from "./components/wrapper/NotificationListener";
-import CreateWorkPage                                       from "./components/page/CreateWorkPage";
-import WorkListPage                                         from "./components/page/WorkListPage";
-import ProfilePage                                          from "./components/page/Profile";
-import UserListPage                                         from "./components/page/UserListPage";
+import {
+    CreateWorkPage,
+    WorkListPage,
+    ProfilePage,
+    UserListPage
+} from "./Routes";
 import UserPage                                             from "./components/page/UserPage";
 import ComposingRoute                                       from "./components/ComposingRoute";
 import ComposingSwitch                                      from "./components/ComposingSwitch";
