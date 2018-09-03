@@ -1,11 +1,17 @@
 import React, { Fragment } from "react";
 import {
     Avatar,
+    Checkbox,
     Dialog,
-    DialogTitle,
+    DialogContent,
+    IconButton,
     Typography,
-    Chip,
 } from "@material-ui/core";
+import {
+    Favorite,
+    FavoriteBorder,
+    Share
+} from "@material-ui/icons";
 import * as H        from "history";
 import ReactMarkdown from "react-markdown";
 import styled        from "styled-components";
@@ -13,6 +19,7 @@ import formatTagsOfURLQueryParam from "../util/formatTagsOfURLQueryParam";
 import getTagsByURLQueryParam    from "../util/getTagsByURLQueryParam";
 import { Work }                  from "../graphQL/type";
 import Link                      from "./Link";
+import FormatStringDate          from "./FormatStringDate";
 
 interface Props {
     open: boolean;
@@ -55,7 +62,6 @@ export default class extends React.Component<Props, State> {
                     open={open}
                     onClose={onClose}
                     keepMounted
-                    aria-labelledby="simple-dialog-title"
                     fullWidth
                     maxWidth="md"
                     BackdropProps={{
@@ -67,43 +73,67 @@ export default class extends React.Component<Props, State> {
                 >
                     <WorkContent>
                         <div>
-                            <StyledImage
-                                src={work.imageUrl}
-                                onClick={this.openWorkItemImageDialog}
-                                width="100%"
-                            />
-                            <UserInformation>
-                                <Avatar
-                                    alt={work.user.displayName}
-                                    src={work.user.avatarUri}
+                            <MainImageWrapper>
+                                <MainImage
+                                    src={work.imageUrl}
+                                    onClick={this.openWorkItemImageDialog}
+                                    width="100%"
                                 />
+                            </MainImageWrapper>
+                            <StyledDialogContent>
                                 <div>
-                                    <Typography gutterBottom variant="caption">{work.user.message}</Typography>
-                                    <Typography gutterBottom>{work.user.displayName}</Typography>
-                                </div>
-                            </UserInformation>
-                            <div>
-                                {work.tags && work.tags.map(x =>
-                                    <Link
-                                        to={(() => {
-                                            const tags = getTagsByURLQueryParam(history);
-                                            return formatTagsOfURLQueryParam(tags.concat(x), tags);
-                                        })()}
-                                        onClick={onClose}
-                                        key={x}
+                                    <WorkTitle
+                                        variant="subheading"
                                     >
-                                        <StyledChip
-                                            clickable={false}
-                                            label={x}
+                                        {work.title}
+                                    </WorkTitle>
+                                    <Typography>
+                                        <FormatStringDate
+                                            timestamp={work.createdAt}
+                                            format="%YYYY%年 %MM%月 %DD%日 %HH%時 %mm%分"
+                                            locale="ja-JP"
                                         />
-                                    </Link>
-                                )}
-                            </div>
+                                    </Typography>
+                                </div>
+                                <div>
+                                    <TagList>
+                                        {work.tags && work.tags.map(x =>
+                                            <Link
+                                                to={(() => {
+                                                    const tags = getTagsByURLQueryParam(history);
+                                                    return formatTagsOfURLQueryParam(tags.concat(x), tags);
+                                                })()}
+                                                onClick={onClose}
+                                                key={x}
+                                            >
+                                                <Tag>
+                                                    {x}
+                                                </Tag>
+                                            </Link>
+                                        )}
+                                    </TagList>
+                                    <div>
+                                        <UserInformation>
+                                            <Avatar
+                                                alt={work.user.displayName}
+                                                src={work.user.avatarUri}
+                                            />
+                                            <div>
+                                                <Typography gutterBottom variant="caption">{work.user.message}</Typography>
+                                                <Typography gutterBottom>{work.user.displayName}</Typography>
+                                            </div>
+                                        </UserInformation>
+                                        <IconButton>
+                                            <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />
+                                        </IconButton>
+                                        <IconButton>
+                                            <Share/>
+                                        </IconButton>
+                                    </div>
+                                </div>
+                            </StyledDialogContent>
                         </div>
                         <div>
-                            <DialogTitle id="simple-dialog-title">
-                                {work.title}
-                            </DialogTitle>
                             <ReactMarkdown
                                 source={work.description}
                                 rawSourcePos
@@ -128,33 +158,78 @@ export default class extends React.Component<Props, State> {
 const WorkContent = styled.div`
     && {
         display: flex;
-        height: 80vh;
+        height: 90vh;
         > :first-child {
-            border-right: 1px solid #ccc;
             min-width: 38.2%;
             max-width: 38.2%;
             display: flex;
             flex-direction: column;
+            background-color: #f6f7f9;
         }
         > :last-child {
             flex-grow: 1
             margin: 1rem;
-            overflow: auto;
+            overflow-x: hidden;
+            overflow-y: auto;
             color: #333;
         }
     }
 `;
 
-const StyledChip = styled(Chip)`
+const StyledDialogContent = styled(DialogContent)`
     && {
-        > :not(:last-child) {
-            margin-right: 1rem;
+        display: flex;
+        flex-direction: column;
+        > :first-child {
+            display: flex;
+            flex-direction: column;
+        }
+        > :nth-child(2) {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+            margin-top: 1rem;
         }
     }
 `;
 
-const StyledImage = styled.img`
+const MainImageWrapper = styled.div`
+    overflow: hidden;
+`;
+
+const MainImage = styled.img`
+    display: flex;
     cursor: pointer;
+    transition: all .3s ease-out;
+    :hover {
+        transform: scale(1.2) rotate(-8deg);
+    }
+`;
+
+const TagList = styled.div`
+    > :not(:first-child) {
+        margin-left: 0.5rem;
+    }
+`;
+
+const Tag = styled.div`
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    min-width: 4rem;
+    cursor: pointer;
+    color: #444;
+    padding: .1rem 1rem;
+    transition: all .3s ease-out;
+    border-radius: 32px;
+    box-sizing: border-box;
+    box-shadow: 0px 1px 1px 0px rgba(0,0,0,.3);
+    :hover {
+        box-shadow: 0px 2px 6px 0px rgba(0,0,0,.3);
+        background-color: rgba(255, 255, 255, .3);
+    }
 `;
 
 const WorkDialogImage = styled.img`
@@ -164,10 +239,18 @@ const WorkDialogImage = styled.img`
 const UserInformation = styled.div`
     display: flex;
     flex-direction: row;
-    > :first-child {
-        width: 4rem;
-    }
+    margin: 0.5rem;
     > :last-child {
+        margin-left: 1rem;
         flex-grow: 1;
+    }
+`;
+
+const WorkTitle = styled(Typography)`
+    && {
+        margin-top: 1.5rem;
+        font-size: 1.8rem;
+        line-height: 1.8rem;
+        letter-spacing: .1rem;
     }
 `;

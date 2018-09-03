@@ -39,10 +39,13 @@ const QueryListWorks = gql(`
                 imageUrl
                 user {
                     displayName
+                    message
+                    avatarUri
                 }
                 title
                 tags
                 description
+                createdAt
             }
             exclusiveStartKey
         }
