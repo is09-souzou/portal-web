@@ -29,7 +29,22 @@ module.exports = {
         ]
     },
     plugins: [
-        // new Uglify(),
+        new Uglify({
+            uglifyOptions: {
+                ecma: 8,
+                mangle: {
+                    properties: {
+                        builtins: false,
+                        debug: false,
+                        keep_quoted: false
+                    }
+                },
+                output: {
+                    comments: false,
+                    beautify: false
+                },
+            }
+        }),
         // new BundleAnalyzerPlugin(),
         new DefinePlugin(
             Object.entries(process.env)
