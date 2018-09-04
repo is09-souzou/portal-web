@@ -319,7 +319,6 @@ const WorkContentArea = styled.div`
     justify-content: space-between;
     width: 100%;
     > * {
-        overflow: auto;
         width: calc(50% - 1rem);
     }
     > :first-child {
@@ -327,6 +326,7 @@ const WorkContentArea = styled.div`
         flex-direction: column;
     }
     > :last-child {
+        overflow: auto;
         margin-left: 2rem;
     }
 `;

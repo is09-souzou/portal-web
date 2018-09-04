@@ -141,7 +141,11 @@ export default class extends React.Component<Props, State> {
                                     console.error(error);
                                     return (
                                         <Fragment>
-                                            <div>?</div>
+                                            <NestedListItem>
+                                                <ListItemText
+                                                    primary={<span style={{ color: "red" }}>Error</span>}
+                                                />
+                                            </NestedListItem>
                                             <notificationListener.ErrorComponent error={error}/>
                                         </Fragment>
                                     );
