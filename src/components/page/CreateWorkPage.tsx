@@ -177,6 +177,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                             <TextField
                                                 id="title"
                                                 label="Title"
+                                                placeholder={"Input Title!"}
                                                 margin="normal"
                                                 fullWidth
                                                 // tslint:disable-next-line:jsx-no-lambda
@@ -188,7 +189,8 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                             />
                                             <div>
                                                 <TextField
-                                                    placeholder="tags"
+                                                    label="Tags"
+                                                    placeholder={"Input Tags!"}
                                                     onKeyDown={this.tagInputKeyDown}
                                                     margin="normal"
                                                     inputProps={{
