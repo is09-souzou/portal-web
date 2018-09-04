@@ -34,7 +34,6 @@ interface State {
     editableAvatarDialogIsVisible: boolean;
     uploadingAvatarImage: boolean;
     updatePasswordDialogVisible: boolean;
-    isBlank: boolean;
 }
 
 const QueryGetUser = gql(`
@@ -75,8 +74,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
             whileEditingItem: [],
             editableAvatarDialogIsVisible: false,
             uploadingAvatarImage: false,
-            updatePasswordDialogVisible: false,
-            isBlank: false
+            updatePasswordDialogVisible: false
         });
     }
 
@@ -89,11 +87,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 
     callUpdateUser = async (updateUser: Function, item: Item, value: any) => {
         try {
-            if (item === "displayName" && value === "") {
-                this.setState({ isBlank: true });
-                return;
-            }
-            this.setState({ isBlank: false });
             await updateUser({
                 variables: {
                     user: {
@@ -195,18 +188,19 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                     InputProps={{
                                                         endAdornment: (
                                                             this.state.whileEditingItem.includes("displayName")
-                                                            && <Button
-                                                                // tslint:disable-next-line:jsx-no-lambda
-                                                                onClick={() =>
-                                                                    this.callUpdateUser(
-                                                                        updateUser,
-                                                                        "displayName",
-                                                                        this.displayNameInput.value
-                                                                    )
-                                                                }
-                                                            >
-                                                                Save
-                                                            </Button>
+                                                         && <Button
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onClick={() =>
+                                                                /[a-zA-Z1-9]{4,}/.test(this.displayNameInput.value)
+                                                             && this.callUpdateUser(
+                                                                    updateUser,
+                                                                    "displayName",
+                                                                    this.displayNameInput.value
+                                                                )
+                                                            }
+                                                         >
+                                                            Save
+                                                         </Button>
                                                         )
                                                     }}
                                                     onChange={this.addWhileEditingItem("displayName")}
@@ -215,7 +209,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                     required
                                                     // tslint:disable-next-line:jsx-no-lambda
                                                     inputRef={x => this.displayNameInput = x}
-                                                    error={this.state.isBlank}
                                                 />
                                                 <TextField
                                                     id="profile-email"
