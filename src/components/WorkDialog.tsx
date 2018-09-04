@@ -165,11 +165,14 @@ const WorkContent = styled.div`
             background-color: #f6f7f9;
         }
         > :last-child {
-            flex-grow: 1
-            margin: 1rem;
+            flex-grow: 1;
+            padding: 1rem 1.5rem;
             overflow-x: hidden;
             overflow-y: auto;
             color: #333;
+            img {
+                max-width: 100%;
+            }
         }
     }
 `;
