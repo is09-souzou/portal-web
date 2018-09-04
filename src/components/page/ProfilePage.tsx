@@ -34,6 +34,7 @@ interface State {
     editableAvatarDialogIsVisible: boolean;
     uploadingAvatarImage: boolean;
     updatePasswordDialogVisible: boolean;
+    isBlank: boolean;
 }
 
 const QueryGetUser = gql(`
@@ -74,7 +75,8 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
             whileEditingItem: [],
             editableAvatarDialogIsVisible: false,
             uploadingAvatarImage: false,
-            updatePasswordDialogVisible: false
+            updatePasswordDialogVisible: false,
+            isBlank: false
         });
     }
 
@@ -87,6 +89,11 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 
     callUpdateUser = async (updateUser: Function, item: Item, value: any) => {
         try {
+            if (item === "displayName" && value === "") {
+                this.setState({ isBlank: true });
+                return;
+            }
+            this.setState({ isBlank: false });
             await updateUser({
                 variables: {
                     user: {
@@ -208,6 +215,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                     required
                                                     // tslint:disable-next-line:jsx-no-lambda
                                                     inputRef={x => this.displayNameInput = x}
+                                                    error={this.state.isBlank}
                                                 />
                                                 <TextField
                                                     id="profile-email"
