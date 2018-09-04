@@ -17,21 +17,25 @@ export default (
 ) => (
     <Host
         style={{
+            // tslint:disable-next-line:prefer-template
             backgroundImage: (src ? `url(${src}),` : "")
                         + "linear-gradient(45deg, #fcfcfc 25%, transparent 25%, transparent 75%, #fcfcfc 75%, #fcfcfc),"
                         + "linear-gradient(45deg, #fcfcfc 25%, transparent 25%, transparent 75%, #fcfcfc 75%, #fcfcfc)",
+            // tslint:disable-next-line:prefer-template
             backgroundSize: (src ? "contain," : "")
                           + "12.5px 12.5px,"
                           + "12.5px 12.5px",
+            // tslint:disable-next-line:prefer-template
             backgroundPosition: (src ? "center," : "")
                               + "0 0,"
                               + "6.25px 6.25px",
+            // tslint:disable-next-line:prefer-template
             backgroundRepeat: (src ? "no-repeat," : "")
                             + "repeat,"
                             + "repeat",
-            width: width !== undefined ? width + "px"
+            width: width !== undefined ? `${width}px`
                  :                       undefined,
-            height: height !== undefined ? height + "px"
+            height: height !== undefined ? `${height}px`
                   :                        undefined,
             ...style
         }}

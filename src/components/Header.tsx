@@ -9,11 +9,9 @@ import {
     Toolbar,
     Typography
 } from "@material-ui/core";
-import {
-    AccountCircle as AccountCircleIcon,
-    Menu as MenuIcon,
-    Search as SearchIcon,
-} from "@material-ui/icons";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import MenuIcon          from "@material-ui/icons/Menu";
+import SearchIcon        from "@material-ui/icons/Search";
 import gql          from "graphql-tag";
 import styled       from "styled-components";
 import { Query }    from "react-apollo";
@@ -65,7 +63,7 @@ export default class extends React.Component<Props, State> {
     handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
         const value = (e.target as any).value;
         if (e.keyCode && e.keyCode === 13) {
-            console.log("if:" + value);
+            console.log(`if: ${value}`);
         }
     }
 

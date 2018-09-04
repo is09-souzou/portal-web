@@ -6,8 +6,8 @@ import {
     IconButton,
     withTheme
 } from "@material-ui/core";
-import { Close as CloseIcon }               from "@material-ui/icons";
-import { SnackbarClassKey, SnackBarOrigin } from "@material-ui/core/Snackbar";
+import CloseIcon                            from "@material-ui/icons/Close";
+import { SnackbarClassKey, SnackbarOrigin } from "@material-ui/core/Snackbar";
 import { SnackbarContentProps }             from "@material-ui/core/SnackbarContent";
 import { TransitionHandlerProps }           from "@material-ui/core/transitions/transition";
 import { TransitionProps }                  from "react-transition-group/Transition";
@@ -18,7 +18,7 @@ interface Props extends StandardProps<
   SnackbarClassKey
 > {
     action?: React.ReactElement<any> | React.ReactElement<any>[];
-    anchorOrigin?: SnackBarOrigin;
+    anchorOrigin?: SnackbarOrigin;
     autoHideDuration?: number;
     ContentProps?: Partial<SnackbarContentProps>;
     disableWindowBlurListener?: boolean;
