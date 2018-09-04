@@ -20,7 +20,15 @@ const config = {
     "@babel/plugin-proposal-class-properties",
     "@babel/plugin-proposal-json-strings",
     "@babel/plugin-syntax-dynamic-import",
-    "@babel/plugin-syntax-import-meta"
+    "@babel/plugin-syntax-import-meta",
+    [
+        "babel-plugin-styled-components",
+        {
+            "preprocess": true,
+            "minify": true,
+            "transpileTemplateLiterals": false
+        }
+    ]
   ]
 };
 
