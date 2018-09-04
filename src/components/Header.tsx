@@ -82,6 +82,7 @@ export default class extends React.Component<Props, State> {
     signIn = async (email: string, password: string) => {
         await this.props.auth.signIn(email, password);
         this.signInDialogClose();
+        this.menuClose();
     }
 
     render () {
