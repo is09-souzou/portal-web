@@ -1,6 +1,5 @@
 import React, { Fragment } from "react";
 import AddIcon             from "@material-ui/icons/Add";
-import CircularProgress    from "@material-ui/core/CircularProgress";
 import gql                 from "graphql-tag";
 import styled              from "styled-components";
 import { Query }           from "react-apollo";
