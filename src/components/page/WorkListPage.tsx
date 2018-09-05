@@ -128,7 +128,15 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 </Fragment>
                             );
                         else if (loading)
-                            return <CircularProgress/>;
+                            return (
+                                <Host>
+                                    <StreamSpinner
+                                        disable={false}
+                                        // tslint:disable-next-line:jsx-no-lambda
+                                        onVisible={() => undefined}
+                                    />
+                                </Host>
+                            );
                         else if (data.listWorks.items.length === 0 || !data.listWorks)
                             return <NotFound />;
 
