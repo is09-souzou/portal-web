@@ -3,7 +3,6 @@ import AddIcon             from "@material-ui/icons/Add";
 import gql                 from "graphql-tag";
 import styled              from "styled-components";
 import { Query }           from "react-apollo";
-import arraysEqual              from "../../util/arraysEqual";
 import getTagsByURLQueryParam   from "../../util/getTagsByURLQueryParam";
 import { Work, WorkConnection } from "../../graphQL/type";
 import { PageComponentProps }   from "./../../App";
@@ -17,13 +16,10 @@ import StreamSpinner            from "../StreamSpinner";
 import WorkList                 from "../WorkList";
 
 interface State {
-    paginationKey?: string;
     selectedWork?: Work;
-    tags: string[];
     userMenuAnchorEl?: boolean;
     userMenuOpend: boolean;
     workDialogVisible: boolean;
-    works: Work[];
     workListRow: number;
 }
 
@@ -55,13 +51,10 @@ const QueryListWorks = gql(`
 export default class extends React.Component<PageComponentProps<{}>, State> {
 
     state = {
-        paginationKey: undefined,
         selectedWork: undefined,
-        tags: getTagsByURLQueryParam(this.props.history),
         userMenuAnchorEl: undefined,
         userMenuOpend: false,
         workDialogVisible: false,
-        works: [] as Work[],
         workListRow: 4,
     };
 
@@ -87,10 +80,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 
     handleClose = () => this.setState({ workDialogVisible: false });
 
-    toNext = (key: string) => this.setState({
-        paginationKey: key
-    })
-
     componentDidMount() {
         this.onResize();
         window.addEventListener("resize", this.onResize);
@@ -98,13 +87,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 
     componentWillUnmount() {
         window.removeEventListener("resize", this.onResize);
-    }
-
-    getSnapshotBeforeUpdate(prevProps: Readonly<PageComponentProps<{}>>) {
-        const tags = getTagsByURLQueryParam(prevProps.history);
-        if (!arraysEqual(this.state.tags, tags))
-            this.setState({ tags, works: [] as Work[], paginationKey: undefined });
-        return null;
     }
 
     componentDidUpdate() {}
@@ -127,35 +109,42 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                 <Query
                     query={QueryListWorks}
                     variables={{
-                        limit: 12,
-                        exclusiveStartKey: this.state.paginationKey,
+                        limit: 6,
+                        exclusiveStartKey: null,
                         option: {
-                            tags: this.state.tags
+                            tags: getTagsByURLQueryParam(history)
                         }
                     }}
                     fetchPolicy="network-only"
                 >
-                    {({ loading, error, data }) => {
-                        if (error || !data) {
-                            console.error(error);
+                    {({ data, loading, fetchMore, error }) => {
+                        console.log(getTagsByURLQueryParam(history));
+                        if (error)
                             return (
                                 <Fragment>
                                     <ErrorPage/>
                                     <notificationListener.ErrorComponent message={error && error.message} key="error"/>
                                 </Fragment>
                             );
-                        }
-
-                        if (!loading && this.state.works.length === 0 && data.listWorks.items.length === 0)
+                        else if (loading)
+                            return (
+                                <Host>
+                                    <StreamSpinner
+                                        disable={false}
+                                        // tslint:disable-next-line:jsx-no-lambda
+                                        onVisible={() => undefined}
+                                    />
+                                </Host>
+                            );
+                        else if (data.listWorks.items.length === 0 || !data.listWorks)
                             return <NotFound />;
 
                         const workConnection = data.listWorks as WorkConnection;
-                        const works = this.state.works.concat(workConnection ? workConnection.items : [] as Work[]);
 
                         return(
                             <Host>
                                 <WorkList
-                                    works={works}
+                                    works={workConnection.items}
                                     workListRow={this.state.workListRow}
                                     onWorkItemClick={this.handleClickOpen}
                                 />
@@ -166,18 +155,30 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     work={this.state.selectedWork}
                                 />
                                 <StreamSpinner
-                                    key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
-                                    disable={
-                                        (workConnection && !workConnection.exclusiveStartKey)
-                                     || (!loading && workConnection.exclusiveStartKey === this.state.paginationKey) ? true
-                                      :                                                                               false
-                                    }
+                                    key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${getTagsByURLQueryParam(history).join("_")}`}
+                                    disable={!workConnection.exclusiveStartKey ? true : false}
                                     // tslint:disable-next-line:jsx-no-lambda
                                     onVisible={() => {
-                                        if (workConnection)
-                                            this.setState({
-                                                works,
-                                                paginationKey: workConnection.exclusiveStartKey
+                                        if (workConnection && workConnection.exclusiveStartKey)
+                                            fetchMore<any>({
+                                                variables: {
+                                                    exclusiveStartKey: workConnection.exclusiveStartKey
+                                                },
+                                                updateQuery: (previousResult, { fetchMoreResult }) =>
+                                                    previousResult.listWorks.items.length ? ({
+                                                        listWorks: {
+                                                            __typename: previousResult.listWorks.__typename,
+                                                            items: (
+                                                                [
+                                                                    ...previousResult.listWorks.items,
+                                                                    ...fetchMoreResult.listWorks.items
+                                                                ].filter((x, i, self) => (
+                                                                    self.findIndex(y => y.id === x.id) === i
+                                                                ))
+                                                            ),
+                                                            exclusiveStartKey: fetchMoreResult.listWorks.exclusiveStartKey
+                                                        }
+                                                    })               : previousResult
                                             });
                                     }}
                                 />

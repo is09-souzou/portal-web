@@ -87,6 +87,7 @@ export default class extends React.Component<Props, State> {
                                     </WorkTitle>
                                     <Typography>
                                         <FormatStringDate
+                                            isMillisec={false}
                                             timestamp={work.createdAt}
                                             format="%YYYY%年 %MM%月 %DD%日 %HH%時 %mm%分"
                                             locale="ja-JP"

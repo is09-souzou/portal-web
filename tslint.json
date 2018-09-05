@@ -1,17 +1,18 @@
 {
     "extends": ["tslint-config-airbnb", "tslint-react"],
     "rules": {
-        "curly"              : false,
-        "import-name"        : false,
-        "variable-name"      : false,
-        "quotemark"          : [true, "double"],
-        "ter-indent"         : [true, 4],
-        "max-line-length"    : [true, 160],
-        "trailing-comma"     : false,
-        "jsx-boolean-value"  : false,
-        "jsx-no-multiline-js": false,
-        "ter-arrow-parens"   : false,
-        "jsx-curly-spacing"  : false
+        "curly"               : false,
+        "import-name"         : false,
+        "variable-name"       : false,
+        "quotemark"           : [true, "double"],
+        "ter-indent"          : [true, 4],
+        "max-line-length"     : [true, 160],
+        "trailing-comma"      : false,
+        "jsx-boolean-value"   : false,
+        "jsx-no-multiline-js" : false,
+        "ter-arrow-parens"    : false,
+        "jsx-curly-spacing"   : false,
+        "no-else-after-return": false
     },
     "tslint": [
         "disable-next-line"
