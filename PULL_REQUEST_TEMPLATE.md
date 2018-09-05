@@ -1,4 +1,3 @@
-This closes #
 ## Overview
 <!-- Purpose of change or related Issue number -->
 
@@ -12,3 +11,5 @@ This closes #
 <!-- Information such as required environment variables and dependency update -->
 
 ## Supplement
+
+This closes #
