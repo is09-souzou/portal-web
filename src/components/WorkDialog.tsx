@@ -207,7 +207,6 @@ const MainImage = styled.img`
 
 const TagList = styled.div`
     > :not(:first-child) {
-        margin-left: 0.5rem;
     }
 `;
 
@@ -228,6 +227,7 @@ const Tag = styled.div`
         box-shadow: 0px 2px 6px 0px rgba(0,0,0,.3);
         background-color: rgba(255, 255, 255, .3);
     }
+    margin: 0.5rem 0.5rem 0 0;
 `;
 
 const WorkDialogImage = styled.img`
