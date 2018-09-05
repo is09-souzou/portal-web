@@ -102,6 +102,7 @@ const dateToFormatString = (date: Date, fmt: string, locale: "ja-JP" | "en-US", 
 interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> {
     timestamp: number;
     format: string;
+    isMillisec?: boolean;
     locale: "ja-JP" | "en-US";
     pad?: string;
 }
@@ -110,6 +111,7 @@ export default (
     {
         timestamp,
         format,
+        isMillisec = true,
         locale,
         pad,
         ...props
@@ -118,6 +120,6 @@ export default (
     <span
         {... props}
     >
-        {dateToFormatString(new Date(timestamp), format, locale, pad)}
+        {dateToFormatString(new Date(isMillisec ? timestamp : timestamp * 1000), format, locale, pad)}
     </span>
 );
