@@ -188,18 +188,19 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                     InputProps={{
                                                         endAdornment: (
                                                             this.state.whileEditingItem.includes("displayName")
-                                                            && <Button
-                                                                // tslint:disable-next-line:jsx-no-lambda
-                                                                onClick={() =>
-                                                                    this.callUpdateUser(
-                                                                        updateUser,
-                                                                        "displayName",
-                                                                        this.displayNameInput.value
-                                                                    )
-                                                                }
-                                                            >
-                                                                Save
-                                                            </Button>
+                                                         && <Button
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onClick={() =>
+                                                                /[a-zA-Z1-9]{4,}/.test(this.displayNameInput.value)
+                                                             && this.callUpdateUser(
+                                                                    updateUser,
+                                                                    "displayName",
+                                                                    this.displayNameInput.value
+                                                                )
+                                                            }
+                                                         >
+                                                            Save
+                                                         </Button>
                                                         )
                                                     }}
                                                     onChange={this.addWhileEditingItem("displayName")}
