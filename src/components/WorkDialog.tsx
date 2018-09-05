@@ -166,11 +166,14 @@ const WorkContent = styled.div`
             background-color: #f6f7f9;
         }
         > :last-child {
-            flex-grow: 1
-            margin: 1rem;
+            flex-grow: 1;
+            padding: 1rem 1.5rem;
             overflow-x: hidden;
             overflow-y: auto;
             color: #333;
+            img {
+                max-width: 100%;
+            }
         }
     }
 `;
@@ -208,7 +211,6 @@ const MainImage = styled.img`
 
 const TagList = styled.div`
     > :not(:first-child) {
-        margin-left: 0.5rem;
     }
 `;
 
@@ -229,6 +231,7 @@ const Tag = styled.div`
         box-shadow: 0px 2px 6px 0px rgba(0,0,0,.3);
         background-color: rgba(255, 255, 255, .3);
     }
+    margin: 0.5rem 0.5rem 0 0;
 `;
 
 const WorkDialogImage = styled.img`
