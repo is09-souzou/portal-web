@@ -19,7 +19,6 @@ interface State {
 export default class extends React.Component<Props, State> {
 
     componentWillMount() {
-        console.log("componentWillmount on AppSyncClient");
         this.setState({
             client: new AWSAppSyncClient({
                 url: config.appSync.graphqlEndpoint,
