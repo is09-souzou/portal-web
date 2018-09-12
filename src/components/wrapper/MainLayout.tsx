@@ -35,6 +35,7 @@ export default class extends React.Component<Props, State> {
             fabIsVisible: true,
             fabClickSubscribers: []
         });
+        console.log("componentWillmount on MainLayout");
     }
 
     toggleDrawer = () => this.setState({ drawerOpend: !this.state.drawerOpend });

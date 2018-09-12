@@ -1,12 +1,11 @@
-const { DefinePlugin }        = require ("webpack")
-const path                    = require("path");
-const convert                 = require('koa-connect');
-const history                 = require('connect-history-api-fallback');
-const BundleAnalyzerPlugin    = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const HtmlWebpackPlugin       = require('html-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
-
-const Uglify                  = require("uglifyjs-webpack-plugin");
+const { DefinePlugin }         = require ("webpack")
+const path                     = require("path");
+const convert                  = require('koa-connect');
+const history                  = require('connect-history-api-fallback');
+const BundleAnalyzerPlugin     = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const HtmlWebpackPlugin        = require('html-webpack-plugin');
+const HardSourceWebpackPlugin  = require('hard-source-webpack-plugin');
+const Uglify                   = require("uglifyjs-webpack-plugin");
 
 module.exports = {
     entry: "./src/index.tsx",
@@ -33,53 +32,54 @@ module.exports = {
             }
         ]
     },
-    optimization: (
-        process.env.NODE_ENV === "production" ? {
+    optimization: {
+        ...(process.env.NODE_ENV === "production" ? {
+            minimizer: [
+                new Uglify({
+                    test: /\.js($|\?)/i,
+                    exclude: [
+                        // /app/
+                    ],
+                    sourceMap: false,
+                    uglifyOptions: {
+                        ecma: 8,
+                        parallel: true,
+                        mangle: {},
+                        output: {
+                            comments: /^\**!\|@preserve\|@license\|@cc_on/,
+                            beautify: false
+                        },
+                    },
+                    extractComments: true
+                }),
+            ],
             splitChunks: {
                 cacheGroups: {
-                react: {
-                    test: /node_modules\/react/,
-                    name: "react.vendor",
-                    chunks: "initial",
-                    enforce: true
-                },
-                awsSdk: {
-                    test: /node_modules\/aws-sdk/,
-                    name: "aws-sdk.vendor",
-                    chunks: "initial",
-                    enforce: true
-                },
-                awsAppsync: {
-                    test: /node_modules\/aws-appsync/,
-                    name: "aws-appsync.vendor",
-                    chunks: "initial",
-                    enforce: true
-                },
-                materialUi: {
-                    test: /node_modules\/@material-ui/,
-                    name: "material-ui.vendor",
-                    chunks: "initial",
-                    enforce: true
-                }
+                    appRoot: {
+                        test: /src\/Root.tsx/ig,
+                        name: "app-root",
+                        chunks: "initial",
+                        enforce: true
+                    },
+                    react: {
+                        test: /node_modules\/react/,
+                        name: "react.vendor",
+                        chunks: "initial",
+                        enforce: true
+                    },
+                    aws: {
+                        test: /node_modules\/aws.*/,
+                        name: "aws-sdk.vendor",
+                        chunks: "initial",
+                        enforce: true
+                    },
                 }
             }
         }
-      :                                         {}
-    ),
+      :                                            {}
+        )
+    },
     plugins: [
-        // new Uglify({
-            // sourceMap: false,
-            // uglifyOptions: {
-            //     ecma: 8,
-            //     mangle: {
-            //         properties: false
-            //     },
-            //     output: {
-            //         // comments: "@license",
-            //         beautify: false
-            //     },
-            // }
-        // }),
         // new BundleAnalyzerPlugin(),
         // ...(process.env.NODE_ENV === "development" ? [new HardSourceWebpackPlugin()] : []),
         new DefinePlugin(
@@ -89,7 +89,7 @@ module.exports = {
         ),
         new HtmlWebpackPlugin({
             hash: true,
-            title: "Portal",
+            title: "Portal" + process.env.NODE_ENV === "development" ? " - dev" : "",
             minify: (
                 process.env.NODE_ENV === "production" ? {
                     caseSensitive: true,

@@ -45,6 +45,7 @@ interface State {
 export default class extends React.Component<Props, State> {
 
     componentWillMount() {
+        console.log("componentWillmount on Auth");
 
         const cognitoUserPool = new CognitoUserPool(config.cognito);
 

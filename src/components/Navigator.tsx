@@ -78,7 +78,11 @@ export default class extends React.Component<Props, State> {
         return (
             <Host>
                 <Title variant="headline">
-                    PORTAL
+                    <Link
+                        to="/"
+                    >
+                        PORTAL
+                    </Link>
                 </Title>
                 <Divider />
                 <List

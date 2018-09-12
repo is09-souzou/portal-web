@@ -32,6 +32,7 @@ export default class extends React.Component<Props, State> {
     })
 
     componentWillMount() {
+        console.log("componentWillmount on NotificationListener");
         this.setState({
             notifications: []
         });

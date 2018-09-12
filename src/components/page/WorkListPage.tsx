@@ -81,11 +81,11 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     handleClose = () => this.setState({ workDialogVisible: false });
 
     componentWillMount() {
-        console.log("componentWillMount");
+        console.log("componentWillMount on WorkListPage");
     }
 
     componentDidMount() {
-        console.log("componentDidMount");
+        console.log("componentDidMount on WorkListPage");
         console.log(this.props);
         this.onResize();
         window.addEventListener("resize", this.onResize);
