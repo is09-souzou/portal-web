@@ -81,7 +81,7 @@ module.exports = {
     },
     plugins: [
         // new BundleAnalyzerPlugin(),
-        // ...(process.env.NODE_ENV === "development" ? [new HardSourceWebpackPlugin()] : []),
+        ...(process.env.NODE_ENV === "development" ? [new HardSourceWebpackPlugin()] : []),
         new DefinePlugin(
             Object.entries(process.env)
                 .map(x => ({["process.env." + x[0]]: JSON.stringify(x[1])}))
