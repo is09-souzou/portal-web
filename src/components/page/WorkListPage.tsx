@@ -80,7 +80,13 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 
     handleClose = () => this.setState({ workDialogVisible: false });
 
+    componentWillMount() {
+        console.log("componentWillMount");
+    }
+
     componentDidMount() {
+        console.log("componentDidMount");
+        console.log(this.props);
         this.onResize();
         window.addEventListener("resize", this.onResize);
     }
@@ -118,7 +124,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     fetchPolicy="network-only"
                 >
                     {({ data, loading, fetchMore, error }) => {
-                        console.log(getTagsByURLQueryParam(history));
                         if (error)
                             return (
                                 <Fragment>
@@ -126,7 +131,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     <notificationListener.ErrorComponent message={error && error.message} key="error"/>
                                 </Fragment>
                             );
-                        else if (loading)
+                        else if (loading || !data.listWorks)
                             return (
                                 <Host>
                                     <StreamSpinner

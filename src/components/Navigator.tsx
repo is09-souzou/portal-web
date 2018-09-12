@@ -51,8 +51,8 @@ const QueryListPopularTags = gql(`
 export default class extends React.Component<Props, State> {
 
     state = {
-        tags:  getTagsByURLQueryParam(this.props.history),
-        tagListVisible:  getTagsByURLQueryParam(this.props.history).length !== 0
+        tags: getTagsByURLQueryParam(this.props.history),
+        tagListVisible: getTagsByURLQueryParam(this.props.history).length !== 0
     };
 
     componentDidMount() {

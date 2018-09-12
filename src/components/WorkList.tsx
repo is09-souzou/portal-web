@@ -1,7 +1,7 @@
 import React from "react";
 import { Typography }     from "@material-ui/core";
 import styled             from "styled-components";
-import { Work } from "../graphQL/type";
+import { Work }           from "../graphQL/type";
 
 interface Props {
     works: Work[];
@@ -51,6 +51,7 @@ const WorkItem = (
 ) => (
     <WorkItemBase
         {...props}
+        unselectable={undefined}
     >
         <WorkImage
             src={(

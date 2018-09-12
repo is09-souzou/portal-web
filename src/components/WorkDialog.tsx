@@ -1,15 +1,18 @@
 import React, { Fragment } from "react";
 import {
     Avatar,
+    AppBar,
     Checkbox,
     Dialog,
     DialogContent,
     IconButton,
+    Toolbar,
     Typography,
 } from "@material-ui/core";
-import Favorite       from "@material-ui/icons/Favorite";
-import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
-import Share          from "@material-ui/icons/Share";
+import CloseIcon          from "@material-ui/icons/Close";
+import FavoriteIcon       from "@material-ui/icons/Favorite";
+import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
+import ShareIcon          from "@material-ui/icons/Share";
 import * as H        from "history";
 import ReactMarkdown from "react-markdown";
 import styled        from "styled-components";
@@ -58,6 +61,7 @@ export default class extends React.Component<Props, State> {
             <Fragment>
                 <Dialog
                     open={open}
+                    fullScreen={window.innerWidth < 767}
                     onClose={onClose}
                     keepMounted
                     fullWidth
@@ -71,11 +75,24 @@ export default class extends React.Component<Props, State> {
                 >
                     <WorkContent>
                         <div>
+                            {window.innerWidth < 767 && (
+                                <WorkAppBar>
+                                    <Toolbar>
+                                        <Typography variant="title" color="inherit">
+                                            {`${work.title} - ${work.user && work.user.displayName}`}
+                                        </Typography>
+                                        <IconButton color="inherit" onClick={onClose} aria-label="Close">
+                                            <CloseIcon />
+                                        </IconButton>
+                                    </Toolbar>
+                                </WorkAppBar>
+                            )}
                             <MainImageWrapper>
                                 <MainImage
                                     src={work.imageUrl}
                                     onClick={this.openWorkItemImageDialog}
                                     width="100%"
+                                    rotate={(Math.random() > 0.5 ? "-" : "") + Math.floor(Math.random() * (8 - 4 + 1) + 4)}
                                 />
                             </MainImageWrapper>
                             <StyledDialogContent>
@@ -105,28 +122,26 @@ export default class extends React.Component<Props, State> {
                                                 onClick={onClose}
                                                 key={x}
                                             >
-                                                <Tag>
-                                                    {x}
-                                                </Tag>
+                                                <Tag>{x}</Tag>
                                             </Link>
                                         )}
                                     </TagList>
                                     <div>
                                         <UserInformation>
                                             <Avatar
-                                                alt={work.user.displayName}
-                                                src={work.user.avatarUri}
+                                                alt={work.user && work.user.displayName}
+                                                src={work.user && work.user.avatarUri}
                                             />
                                             <div>
-                                                <Typography gutterBottom variant="caption">{work.user.message}</Typography>
-                                                <Typography gutterBottom>{work.user.displayName}</Typography>
+                                                <Typography gutterBottom variant="caption">{work.user && work.user.message}</Typography>
+                                                <Typography gutterBottom>{work.user && work.user.displayName}</Typography>
                                             </div>
                                         </UserInformation>
                                         <IconButton>
-                                            <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />
+                                            <Checkbox icon={<FavoriteBorderIcon />} checkedIcon={<FavoriteIcon />} />
                                         </IconButton>
                                         <IconButton>
-                                            <Share/>
+                                            <ShareIcon />
                                         </IconButton>
                                     </div>
                                 </div>
@@ -154,6 +169,26 @@ export default class extends React.Component<Props, State> {
     }
 }
 
+const WorkAppBar = styled(AppBar)`
+    && {
+        width: calc(100% - 6rem);
+        margin: 1rem 3rem 0 2rem;
+        background-color: white;
+        color: #333;
+        display: flex;
+        border-radius: 8px;
+        > :first-child {
+            display: flex;
+            > :first-child {
+                flex-grow: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+    }
+`;
+
 const WorkContent = styled.div`
     && {
         display: flex;
@@ -175,6 +210,20 @@ const WorkContent = styled.div`
                 max-width: 100%;
             }
         }
+        @media (max-width: 767px) {
+            height: 100vh;
+            flex-direction: column;
+            margin-top: 7rem;
+            > :first-child {
+                min-width: 100%;
+                max-width: 100%;
+                height: 80rem;
+                min-height: min-content;
+            }
+            > :last-child {
+                min-height: max-content;
+            }
+        }
     }
 `;
 
@@ -193,6 +242,20 @@ const StyledDialogContent = styled(DialogContent)`
             flex-grow: 1;
             margin-top: 1rem;
         }
+        @media (max-width: 767px) {
+            max-height: min-content;
+            > :nth-child(2) {
+                justify-content: flex-start;
+                flex-grow: initial;
+                > :nth-child(2) {
+                    margin-top: 1rem;
+                    display: flex;
+                    > :first-child {
+                        flex-grow: 1;
+                    }
+                }
+            }
+        }
     }
 `;
 
@@ -200,12 +263,12 @@ const MainImageWrapper = styled.div`
     overflow: hidden;
 `;
 
-const MainImage = styled.img`
+const MainImage = styled<{ rotate: string}, any>("img")`
     display: flex;
     cursor: pointer;
     transition: all .3s ease-out;
     :hover {
-        transform: scale(1.2) rotate(-8deg);
+        transform: scale(1.2) rotate(${props => props.rotate}deg);
     }
 `;
 
@@ -235,7 +298,9 @@ const Tag = styled.div`
 `;
 
 const WorkDialogImage = styled.img`
+    min-height: 0;
     width: 100%;
+    object-fit: cover;
 `;
 
 const UserInformation = styled.div`

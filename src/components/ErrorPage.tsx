@@ -17,14 +17,17 @@ export default class extends React.Component<React.HTMLAttributes<HTMLDivElement
 
     render() {
         return (
-            <Host {...this.props}>
+            <Host
+                {...this.props}
+                unselectable={undefined}
+            >
                 <Typography
-                    variant="display4"
+                    variant="display3"
                 >
                     {this.state.emoji}
                 </Typography>
                 <Typography
-                    variant="display3"
+                    variant="display1"
                 >
                     Oops! Something is wrong...
                 </Typography>
@@ -41,4 +44,7 @@ const Host = styled.div`
     width: 100%;
     height: 100%;
     min-height: inherit;
+    > :nth-child(2) {
+        margin-top: 1rem;
+    }
 `;

@@ -39,6 +39,8 @@ $ yarn build
 $ yarn build:dev
 # build Project in production mode
 $ yarn build:prod
+# remove cache of hard-source-webpack-plugin
+$ yarn cache-clean
 # chack typescript lint with tslint
 $ yarn lint
 # show ubndle size of webpack

@@ -5,14 +5,13 @@ import {
     BrowserRouter,
     withRouter,
     RouteComponentProps,
-    match
 } from "react-router-dom";
 import Auth, { AuthProps }                                  from "./components/wrapper/Auth";
 import AppSyncClient                                        from "./components/wrapper/AppSyncClient";
 import MainLayout, { MainLayoutEventProps }                 from "./components/wrapper/MainLayout";
 import NotificationListener, { NotificationListenerProps }  from "./components/wrapper/NotificationListener";
 import {
-    CreateWorkPage,
+    WorkPostPage,
     WorkListPage,
     ProfilePage,
     UserListPage
@@ -22,7 +21,7 @@ import ComposingRoute                                       from "./components/C
 import ComposingSwitch                                      from "./components/ComposingSwitch";
 
 // tslint:disable-next-line:max-line-length
-const Root = withRouter<RouteComponentProps<any> & { children: React.ReactElement<PageComponentProps<any>> }>((props: RouteComponentProps<any> & { children: React.ReactElement<PageComponentProps<any>> }) => (
+const Root = withRouter<RouteComponentProps<any> & { children: React.ReactElement<any> }>((props: RouteComponentProps<any> & { children: React.ReactElement<PageComponentProps<any>> }) => (
     <NotificationListener
         // tslint:disable-next-line:jsx-no-lambda
         render={(notificationListener: NotificationListenerProps) =>
@@ -56,6 +55,20 @@ const Root = withRouter<RouteComponentProps<any> & { children: React.ReactElemen
     />
 ));
 
+// class DebugRouter extends BrowserRouter {
+//     history: any;
+//     constructor(props: any) {
+//         super(props);
+//         console.log("initial history is: ", JSON.stringify(this.history, null, 2));
+//         this.history.listen((location: any, action: any) => {
+//             console.log(
+//                 `The current URL is ${location.pathname}${location.search}${location.hash}`
+//             );
+//             console.log(`The last navigation action was ${action}`, JSON.stringify(this.history, null, 2));
+//         });
+//     }
+// }
+
 export default () => (
     <MuiThemeProvider theme={theme}>
         <BrowserRouter>
@@ -68,12 +81,13 @@ export default () => (
                     />
                     <ComposingRoute
                         path="/works/create-work"
-                        component={CreateWorkPage}
+                        component={WorkPostPage}
                         exact={true}
                     />
                     <ComposingRoute
                         path="/works"
                         component={WorkListPage}
+                        exact={true}
                     />
                     <ComposingRoute
                         path="/users"
@@ -117,5 +131,5 @@ const theme = createMuiTheme({
 });
 
 export interface PageComponentProps<T> extends RouteComponentProps<T>, AuthProps, NotificationListenerProps, MainLayoutEventProps {
-    computedMatch?: match<T>;
+    // computedMatch?: match<T>;
 }
