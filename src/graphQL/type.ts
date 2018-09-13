@@ -5,18 +5,18 @@ export type User = {
     career?: string;
     avatarUri?: string;
     message?: string;
-    works: WorkConnection;
+    works?: WorkConnection;
 };
 
 export type Work = {
     id: string;
     userId: string;
-    tags?: [string];
+    tags?: string[];
     createdAt: number;
     title: string;
     imageUrl: string;
     description: string;
-    user: User;
+    user?: User;
 };
 
 export type WorkConnection = {

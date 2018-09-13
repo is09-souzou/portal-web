@@ -1,10 +1,12 @@
 import React, { ReactChild } from "react";
-import { Rehydrated }       from "aws-appsync-react";
 import { AUTH_TYPE }        from "aws-appsync/lib/link/auth-link";
-import { AWSAppSyncClient } from "aws-appsync";
 import { ApolloProvider }   from "react-apollo";
 import config               from "../../config";
 import { AuthProps }        from "./Auth";
+
+declare function require(x: string): any;
+const { Rehydrated }       = require("aws-appsync-react");
+const { AWSAppSyncClient } = require("aws-appsync");
 
 interface Props extends AuthProps {
     children: ReactChild;

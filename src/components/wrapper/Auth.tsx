@@ -45,7 +45,6 @@ interface State {
 export default class extends React.Component<Props, State> {
 
     componentWillMount() {
-
         const cognitoUserPool = new CognitoUserPool(config.cognito);
 
         const cognitoUser = cognitoUserPool.getCurrentUser();

@@ -102,6 +102,7 @@ export default class extends React.Component<Props, State> {
                     }}
                     type="file"
                     {...props}
+                    unselectable={undefined}
                 />
             </Host>
         );

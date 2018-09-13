@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>State | portal-web</title>
+	<title>Props | portal-web</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,13 +54,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_components_page_profile_.html">&quot;components/page/Profile&quot;</a>
+					<a href="../modules/_components_worklist_.html">&quot;components/WorkList&quot;</a>
 				</li>
 				<li>
-					<a href="_components_page_profile_.state.html">State</a>
+					<a href="_components_worklist_.props.html">Props</a>
 				</li>
 			</ul>
-			<h1>Interface State</h1>
+			<h1>Interface Props</h1>
 		</div>
 	</div>
 </header>
@@ -71,7 +71,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">State</span>
+						<span class="target">Props</span>
 					</li>
 				</ul>
 			</section>
@@ -82,10 +82,9 @@
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_components_page_profile_.state.html#editableavatardialogisvisible" class="tsd-kind-icon">editable<wbr>Avatar<wbr>Dialog<wbr>IsVisible</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_components_page_profile_.state.html#updatepassworddialogvisible" class="tsd-kind-icon">update<wbr>Password<wbr>Dialog<wbr>Visible</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_components_page_profile_.state.html#uploadingavatarimage" class="tsd-kind-icon">uploading<wbr>Avatar<wbr>Image</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_components_page_profile_.state.html#whileeditingitem" class="tsd-kind-icon">while<wbr>Editing<wbr>Item</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_components_worklist_.props.html#onworkitemclick" class="tsd-kind-icon">on<wbr>Work<wbr>Item<wbr>Click</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_components_worklist_.props.html#worklistrow" class="tsd-kind-icon">work<wbr>List<wbr>Row</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_components_worklist_.props.html#works" class="tsd-kind-icon">works</a></li>
 							</ul>
 						</section>
 					</div>
@@ -94,42 +93,65 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="editableavatardialogisvisible" class="tsd-anchor"></a>
-					<h3>editable<wbr>Avatar<wbr>Dialog<wbr>IsVisible</h3>
-					<div class="tsd-signature tsd-kind-icon">editable<wbr>Avatar<wbr>Dialog<wbr>IsVisible<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="onworkitemclick" class="tsd-anchor"></a>
+					<h3>on<wbr>Work<wbr>Item<wbr>Click</h3>
+					<div class="tsd-signature tsd-kind-icon">on<wbr>Work<wbr>Item<wbr>Click<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/is09-souzou/portal/blob/b116bf6/src/components/page/Profile.tsx#L34">components/page/Profile.tsx:34</a></li>
+							<li>Defined in <a href="https://github.com/is09-souzou/portal/blob/94dea98/src/components/WorkList.tsx#L9">components/WorkList.tsx:9</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-siganture">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property tsd-is-not-exported">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="../modules/_graphql_type_.html#work" class="tsd-signature-type">Work</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>x: <a href="../modules/_graphql_type_.html#work" class="tsd-signature-type">Work</a></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">function</span></h4>
+										<ul class="tsd-parameters">
+											<li class="tsd-parameter-siganture">
+												<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+													<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+												</ul>
+												<ul class="tsd-descriptions">
+													<li class="tsd-description">
+														<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+													</li>
+												</ul>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="worklistrow" class="tsd-anchor"></a>
+					<h3>work<wbr>List<wbr>Row</h3>
+					<div class="tsd-signature tsd-kind-icon">work<wbr>List<wbr>Row<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/is09-souzou/portal/blob/94dea98/src/components/WorkList.tsx#L8">components/WorkList.tsx:8</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="updatepassworddialogvisible" class="tsd-anchor"></a>
-					<h3>update<wbr>Password<wbr>Dialog<wbr>Visible</h3>
-					<div class="tsd-signature tsd-kind-icon">update<wbr>Password<wbr>Dialog<wbr>Visible<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="works" class="tsd-anchor"></a>
+					<h3>works</h3>
+					<div class="tsd-signature tsd-kind-icon">works<span class="tsd-signature-symbol">:</span> <a href="../modules/_graphql_type_.html#work" class="tsd-signature-type">Work</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/is09-souzou/portal/blob/b116bf6/src/components/page/Profile.tsx#L36">components/page/Profile.tsx:36</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="uploadingavatarimage" class="tsd-anchor"></a>
-					<h3>uploading<wbr>Avatar<wbr>Image</h3>
-					<div class="tsd-signature tsd-kind-icon">uploading<wbr>Avatar<wbr>Image<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/is09-souzou/portal/blob/b116bf6/src/components/page/Profile.tsx#L35">components/page/Profile.tsx:35</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="whileeditingitem" class="tsd-anchor"></a>
-					<h3>while<wbr>Editing<wbr>Item</h3>
-					<div class="tsd-signature tsd-kind-icon">while<wbr>Editing<wbr>Item<span class="tsd-signature-symbol">:</span> <a href="../modules/_components_page_profile_.html#item" class="tsd-signature-type">Item</a><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/is09-souzou/portal/blob/b116bf6/src/components/page/Profile.tsx#L33">components/page/Profile.tsx:33</a></li>
+							<li>Defined in <a href="https://github.com/is09-souzou/portal/blob/94dea98/src/components/WorkList.tsx#L7">components/WorkList.tsx:7</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -142,59 +164,44 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_components_page_profile_.html">"components/page/<wbr>Profile"</a>
+						<a href="../modules/_components_worklist_.html">"components/<wbr>Work<wbr>List"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="../classes/_components_page_profile_.default.html" class="tsd-kind-icon">default</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_components_page_profile_.state.html" class="tsd-kind-icon">State</a>
+						<a href="_components_worklist_.props.html" class="tsd-kind-icon">Props</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_components_page_profile_.state.html#editableavatardialogisvisible" class="tsd-kind-icon">editable<wbr>Avatar<wbr>Dialog<wbr>IsVisible</a>
+								<a href="_components_worklist_.props.html#onworkitemclick" class="tsd-kind-icon">on<wbr>Work<wbr>Item<wbr>Click</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_components_page_profile_.state.html#updatepassworddialogvisible" class="tsd-kind-icon">update<wbr>Password<wbr>Dialog<wbr>Visible</a>
+								<a href="_components_worklist_.props.html#worklistrow" class="tsd-kind-icon">work<wbr>List<wbr>Row</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_components_page_profile_.state.html#uploadingavatarimage" class="tsd-kind-icon">uploading<wbr>Avatar<wbr>Image</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_components_page_profile_.state.html#whileeditingitem" class="tsd-kind-icon">while<wbr>Editing<wbr>Item</a>
+								<a href="_components_worklist_.props.html#works" class="tsd-kind-icon">works</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_components_page_profile_.html#item" class="tsd-kind-icon">Item</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_components_worklist_.workitemprops.html" class="tsd-kind-icon">Work<wbr>Item<wbr>Props</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_components_page_profile_.html#mutationupdateuser" class="tsd-kind-icon">Mutation<wbr>Update<wbr>User</a>
+						<a href="../modules/_components_worklist_.html#workimage" class="tsd-kind-icon">Work<wbr>Image</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_components_page_profile_.html#pagehost" class="tsd-kind-icon">Page<wbr>Host</a>
+						<a href="../modules/_components_worklist_.html#workitembase" class="tsd-kind-icon">Work<wbr>Item<wbr>Base</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_components_page_profile_.html#profileform" class="tsd-kind-icon">Profile<wbr>Form</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_components_page_profile_.html#querygetuser" class="tsd-kind-icon">Query<wbr>Get<wbr>User</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_components_page_profile_.html#styleddialogcontent" class="tsd-kind-icon">Styled<wbr>Dialog<wbr>Content</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_components_page_profile_.html#useravatar" class="tsd-kind-icon">User<wbr>Avatar</a>
+						<a href="../modules/_components_worklist_.html#worklist" class="tsd-kind-icon">Work<wbr>List</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_components_page_profile_.html#profilepagehost" class="tsd-kind-icon">Profile<wbr>Page<wbr>Host</a>
+						<a href="../modules/_components_worklist_.html#workitem" class="tsd-kind-icon">Work<wbr>Item</a>
 					</li>
 				</ul>
 			</nav>

@@ -118,7 +118,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     fetchPolicy="network-only"
                 >
                     {({ data, loading, fetchMore, error }) => {
-                        console.log(getTagsByURLQueryParam(history));
                         if (error)
                             return (
                                 <Fragment>
@@ -126,7 +125,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     <notificationListener.ErrorComponent message={error && error.message} key="error"/>
                                 </Fragment>
                             );
-                        else if (loading)
+                        else if (loading || !data.listWorks)
                             return (
                                 <Host>
                                     <StreamSpinner

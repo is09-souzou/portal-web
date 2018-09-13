@@ -14,6 +14,7 @@ import { PageComponentProps } from "../../App";
 import Header                 from "../Header";
 import ImageInput             from "../ImageInput";
 import Page                   from "../Page";
+import WorkDialog             from "../WorkDialog";
 import { Work }               from "../../graphQL/type";
 
 interface Chip {
@@ -23,9 +24,11 @@ interface Chip {
 
 interface State {
     chipsData: Chip[];
-    title: string;
     description: string;
     mainImageUrl: string;
+    previewWork?: Work;
+    title: string;
+    workDialogVisible: boolean;
 }
 
 const MutationCreateWork = gql(`
@@ -68,9 +71,11 @@ export default class extends React.Component<PageComponentProps<void>, State> {
 
     state = {
         chipsData: [] as Chip[],
+        description: "",
         mainImageUrl: "",
+        previewWork: undefined,
         title: "",
-        description: ""
+        workDialogVisible: false
     };
 
     deleteChip = (data: Chip) => () => this.setState({
@@ -82,7 +87,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
             return e.preventDefault();
 
         const inputValue = (e.target as any).value;
-        if (e.which === 13 || e.keyCode === 13) {
+        if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
             e.preventDefault();
             if (inputValue.length > 1) {
                 if (!this.state.chipsData.some(x => x.label === inputValue))
@@ -97,6 +102,31 @@ export default class extends React.Component<PageComponentProps<void>, State> {
             }
         }
     }
+
+    onOpenPreview = () => {
+        this.setState({
+            previewWork: ({
+                id: "preview",
+                title: this.state.title,
+                description: this.state.description,
+                userId: this.props.auth.token!.payload.sub,
+                imageUrl: this.state.mainImageUrl,
+                tags: this.state.chipsData.map(x => x.label) as string[],
+                createdAt: +new Date() / 1000,
+                user: {
+                    id: "preview",
+                    email: "preview",
+                    displayName: "display name",
+                    career: "career",
+                    avatarUri: "/img/no-image.png",
+                    message: "message"
+                }
+            }),
+            workDialogVisible: true
+        });
+    }
+
+    onClosePreview = () => this.setState({ previewWork: undefined, workDialogVisible: false });
 
     render() {
         const {
@@ -252,6 +282,13 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                         <ActionArea>
                                             <div/>
                                             <Button
+                                                variant="outlined"
+                                                color="primary"
+                                                onClick={this.onOpenPreview}
+                                            >
+                                                preview
+                                            </Button>
+                                            <Button
                                                 type="submit"
                                                 component="button"
                                                 variant="raised"
@@ -261,14 +298,20 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                             </Button>
                                         </ActionArea>
                                     </div>
-                                    {(updateWorkError || createWorkError)
-                                  && <notificationListener.ErrorComponent message={updateWorkError || createWorkError}/>
+                                    {(updateWorkError || createWorkError) &&
+                                        <notificationListener.ErrorComponent message={updateWorkError || createWorkError}/>
                                     }
                                 </Host>
                             )}
                         </Mutation>
                     )}
                 </Mutation>
+                <WorkDialog
+                    history={history}
+                    open={this.state.workDialogVisible}
+                    onClose={this.onClosePreview}
+                    work={this.state.previewWork}
+                />
             </Page>
         );
     }
@@ -335,5 +378,8 @@ const ActionArea = styled.div`
     display: flex;
     > :first-child {
         flex-grow: 1
+    }
+    > * {
+        margin-left: .5rem !important;
     }
 `;

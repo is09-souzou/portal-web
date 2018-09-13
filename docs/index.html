@@ -63,34 +63,77 @@
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
 				<h1 id="portal-web">portal-web</h1>
+				<p><a href="https://ds6w3k8cpkvqy.cloudfront.net/">https://ds6w3k8cpkvqy.cloudfront.net/</a></p>
 				<h2 id="getting-started">Getting Started</h2>
 				<h3 id="prerequisites">Prerequisites</h3>
-				<pre><code class="lang-bash">$ yarn -v
+				<pre><code class="language-bash">$ yarn -v
 1.7.0
 
 $ node -v
-v10.5.0
-</code></pre>
+v10.9.0</code></pre>
 				<h3 id="development">Development</h3>
 				<h4 id="setup">Setup</h4>
-				<pre><code class="lang-bash">$ yarn
-</code></pre>
+				<pre><code class="language-bash">$ yarn</code></pre>
 				<h4 id="debug">Debug</h4>
-				<pre><code class="lang-bash">$ yarn
+				<pre><code class="language-bash">$ yarn
 
-$ yarn start
-</code></pre>
+$ yarn start</code></pre>
 				<h4 id="commands">Commands</h4>
-				<pre><code class="lang-bash"><span class="hljs-comment"># chack tslint</span>
-$ yarn lint
-<span class="hljs-comment"># build Project</span>
-$ yarn build
-<span class="hljs-comment"># start webpack-dev-server and build</span>
+				<pre><code class="language-bash"><span class="hljs-comment"># open browser with webpack-dev-server in development mode</span>
 $ yarn start
-</code></pre>
+<span class="hljs-comment"># open browser with webpack-dev-server in production mode</span>
+$ yarn start:prod
+<span class="hljs-comment"># build Project in development mode</span>
+$ yarn build
+<span class="hljs-comment"># build Project in development mode</span>
+$ yarn build:dev
+<span class="hljs-comment"># build Project in production mode</span>
+$ yarn build:prod
+<span class="hljs-comment"># remove cache of hard-source-webpack-plugin</span>
+$ yarn cache-clean
+<span class="hljs-comment"># chack typescript lint with tslint</span>
+$ yarn lint
+<span class="hljs-comment"># show ubndle size of webpack</span>
+$ yarn size-analyze
+<span class="hljs-comment"># generate project documents</span>
+$ yarn docs
+<span class="hljs-comment"># deploy to AWS S3 Bucket</span>
+$ yarn deploy</code></pre>
+				<h3 id="deploy">Deploy</h3>
+				<h4 id="aws-cli">AWS CLI</h4>
+				<h5 id="install-aws-cli">Install AWS CLI</h5>
+				<pre><code class="language-bash">$ brew install awscli
+or
+$ pip install awscli
+or
+$ easy_install pip</code></pre>
+				<h5 id="setup">SetUp</h5>
+				<pre><code class="language-bash">$ aws configure --profile=PROFILE_NAME
+AWS Access Key ID [None]: 
+AWS Secret Access Key [None]: 
+Default region name [None]: 
+Default output format [None]: </code></pre>
+				<h5 id="deploy">Deploy</h5>
+				<pre><code class="language-bash">$ yarn deploy
+or
+$ yarn deploy --profile PROFILE_NAME</code></pre>
+				<h4 id="file-size-analyze">file size analyze</h4>
+				<h5 id="cmd">cmd</h5>
+				<pre><code class="language-bash">$ yarn size-analyze</code></pre>
+				<h5 id="web-view">web-view</h5>
+				<p>uncomment <code>// new BundleAnalyzerPlugin()</code> in <code>webpack.config.(dev|prod).js</code></p>
+				<pre><code class="language-js">...
+    plugins: [
+        <span class="hljs-keyword">new</span> BundleAnalyzerPlugin(), <span class="hljs-comment">// &lt;- uncomment</span>
+        <span class="hljs-keyword">new</span> DefinePlugin(
+            <span class="hljs-built_in">Object</span>.entries(process.env)
+                .map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> ({[<span class="hljs-string">"process.env."</span> + x[<span class="hljs-number">0</span>]]: <span class="hljs-built_in">JSON</span>.stringify(x[<span class="hljs-number">1</span>])}))
+                .reduce(<span class="hljs-function">(<span class="hljs-params">x, y</span>) =&gt;</span> <span class="hljs-built_in">Object</span>.assign(x, y), {}),
+        )
+    ],
+...</code></pre>
 				<h4 id="generate-documents">Generate Documents</h4>
-				<pre><code class="lang-bash">$ yarn docs
-</code></pre>
+				<pre><code class="language-bash">$ yarn docs</code></pre>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -101,6 +144,12 @@ $ yarn start
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_app_.html">"<wbr>App"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_root_.html">"<wbr>Root"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_routes_.html">"<wbr>Routes"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_api_createsignedurl_.html">"api/create<wbr>Signed<wbr>Url"</a>
@@ -125,6 +174,9 @@ $ yarn start
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_components_fab_.html">"components/<wbr>Fab"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_components_formatstringdate_.html">"components/<wbr>Format<wbr>String<wbr>Date"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_components_graphqlprogress_.html">"components/<wbr>GraphQLProgress"</a>
@@ -169,10 +221,10 @@ $ yarn start
 						<a href="modules/_components_workdialog_.html">"components/<wbr>Work<wbr>Dialog"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_components_page_createworkpage_.html">"components/page/<wbr>Create<wbr>Work<wbr>Page"</a>
+						<a href="modules/_components_worklist_.html">"components/<wbr>Work<wbr>List"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_components_page_profile_.html">"components/page/<wbr>Profile"</a>
+						<a href="modules/_components_page_profilepage_.html">"components/page/<wbr>Profile<wbr>Page"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_components_page_userlistpage_.html">"components/page/<wbr>User<wbr>List<wbr>Page"</a>
@@ -182,6 +234,9 @@ $ yarn start
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_components_page_worklistpage_.html">"components/page/<wbr>Work<wbr>List<wbr>Page"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_components_page_workpostpage_.html">"components/page/<wbr>Work<wbr>Post<wbr>Page"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_components_wrapper_appsyncclient_.html">"components/wrapper/<wbr>App<wbr>Sync<wbr>Client"</a>

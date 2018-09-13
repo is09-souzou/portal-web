@@ -2,64 +2,30 @@ import React from "react";
 import { createMuiTheme }   from "@material-ui/core/styles";
 import { MuiThemeProvider } from "@material-ui/core";
 import {
-    BrowserRouter,
-    withRouter,
+    BrowserRouter as Router,
     RouteComponentProps,
     match
 } from "react-router-dom";
-import Auth, { AuthProps }                                  from "./components/wrapper/Auth";
-import AppSyncClient                                        from "./components/wrapper/AppSyncClient";
-import MainLayout, { MainLayoutEventProps }                 from "./components/wrapper/MainLayout";
-import NotificationListener, { NotificationListenerProps }  from "./components/wrapper/NotificationListener";
+import ComposingRoute                from "./components/ComposingRoute";
+import ComposingSwitch               from "./components/ComposingSwitch";
+import { AuthProps }                 from "./components/wrapper/Auth";
+import { MainLayoutEventProps }      from "./components/wrapper/MainLayout";
+import { NotificationListenerProps } from "./components/wrapper/NotificationListener";
 import {
-    CreateWorkPage,
+    WorkPostPage,
     WorkListPage,
     ProfilePage,
+    UserPage,
     UserListPage
 } from "./Routes";
-import UserPage                                             from "./components/page/UserPage";
-import ComposingRoute                                       from "./components/ComposingRoute";
-import ComposingSwitch                                      from "./components/ComposingSwitch";
-
-// tslint:disable-next-line:max-line-length
-const Root = withRouter<RouteComponentProps<any> & { children: React.ReactElement<PageComponentProps<any>> }>((props: RouteComponentProps<any> & { children: React.ReactElement<PageComponentProps<any>> }) => (
-    <NotificationListener
-        // tslint:disable-next-line:jsx-no-lambda
-        render={(notificationListener: NotificationListenerProps) =>
-            <Auth
-                // tslint:disable-next-line:jsx-no-lambda
-                render={(authProps: AuthProps) => (
-                    <AppSyncClient
-                        {...authProps}
-                    >
-                        <MainLayout
-                            render={(mainLayoutEventProps: MainLayoutEventProps) => React.cloneElement<PageComponentProps<any>>(
-                                props.children,
-                                {
-                                    ...authProps,
-                                    ...mainLayoutEventProps,
-                                    ...notificationListener,
-                                    ...(
-                                        Object.entries(props)
-                                            .filter(x => x[0] !== "children")
-                                            .reduce((prev, next) => Object.assign(prev, { [next[0]]: next[1] }), {})
-                                    )
-                                }
-                            )}
-                            {...notificationListener}
-                            {...props}
-                        />
-                    </AppSyncClient>
-                )}
-            />
-        }
-    />
-));
+import Root from "./Root";
 
 export default () => (
     <MuiThemeProvider theme={theme}>
-        <BrowserRouter>
-            <Root>
+        <Router>
+            <Root
+                key="root"
+            >
                 <ComposingSwitch>
                     <ComposingRoute
                         path="/"
@@ -68,7 +34,7 @@ export default () => (
                     />
                     <ComposingRoute
                         path="/works/create-work"
-                        component={CreateWorkPage}
+                        component={WorkPostPage}
                         exact={true}
                     />
                     <ComposingRoute
@@ -92,7 +58,7 @@ export default () => (
                     />
                 </ComposingSwitch>
             </Root>
-        </BrowserRouter>
+        </Router>
     </MuiThemeProvider>
 );
 

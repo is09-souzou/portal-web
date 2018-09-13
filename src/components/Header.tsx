@@ -3,15 +3,12 @@ import {
     AppBar,
     Button,
     IconButton,
-    InputAdornment,
-    Input,
     Popover,
     Toolbar,
     Typography
 } from "@material-ui/core";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import MenuIcon          from "@material-ui/icons/Menu";
-import SearchIcon        from "@material-ui/icons/Search";
 import gql          from "graphql-tag";
 import styled       from "styled-components";
 import { Query }    from "react-apollo";
@@ -75,7 +72,7 @@ export default class extends React.Component<Props, State> {
 
     signInDialogClose = () => this.props.history.push("?sign-in=false");
 
-    signUpDialogClose = () =>  this.props.history.push("?sign-up=false");
+    signUpDialogClose = () => this.props.history.push("?sign-up=false");
 
     initialRegistrationDialogClose = () => this.props.history.push("?initial-registration=false");
 
@@ -118,15 +115,6 @@ export default class extends React.Component<Props, State> {
                     <Typography variant="title" color="inherit">
                         Work List
                     </Typography>
-                    <Input
-                        type="text"
-                        startAdornment={
-                            <InputAdornment position="start">
-                                <SearchIcon />
-                            </InputAdornment>
-                        }
-                        onKeyDown={this.handleSearch}
-                    />
                     <div>
                         {!auth.token ?
                             <Button onClick={this.signInDialogOpen} >

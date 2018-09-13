@@ -119,6 +119,7 @@ export default (
 ) => (
     <span
         {... props}
+        unselectable={undefined}
     >
         {dateToFormatString(new Date(isMillisec ? timestamp : timestamp * 1000), format, locale, pad)}
     </span>

@@ -50,6 +50,7 @@ export default (
             srcSet={srcSet}
             width={width}
             {...props}
+            unselectable={undefined}
         />
     </Host>
 );
@@ -61,11 +62,11 @@ const Host = styled.span`
     background-clip : padding-box;
     background-color: #eee;
     font-size       : 1.5rem;
-
     > img {
         width         : 100%;
         height        : 100%;
         vertical-align: bottom;
         opacity       : 0;
+        object-fit    : cover;
     }
 `;
