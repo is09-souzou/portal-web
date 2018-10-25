@@ -32,6 +32,7 @@ const QueryListWorks = gql(`
         ) {
             items {
                 id
+                userId
                 imageUrl
                 user {
                     displayName

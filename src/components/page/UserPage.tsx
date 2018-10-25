@@ -38,6 +38,7 @@ const QueryGetUser = gql(`
             works(limit: 12) {
                 items {
                     id
+                    userId
                     imageUrl
                     title
                     user {

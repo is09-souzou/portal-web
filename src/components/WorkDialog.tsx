@@ -134,7 +134,13 @@ export default class extends React.Component<Props, State> {
                                             />
                                             <div>
                                                 <Typography gutterBottom variant="caption">{work.user && work.user.message}</Typography>
-                                                <Typography gutterBottom>{work.user && work.user.displayName}</Typography>
+                                                <Link
+                                                    to={
+                                                        ("/users/") + work.userId
+                                                    }
+                                                >
+                                                    <Typography gutterBottom>{work.user && work.user.displayName}</Typography>
+                                                </Link>
                                             </div>
                                         </UserInformation>
                                         <IconButton>
