@@ -126,7 +126,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                 />
                 <Query
                     query={QueryGetUser}
-                    variables={{ id: this.props.match!.params.id }}
+                    variables={{ id: this.props.computedMatch!.params.id }}
                     fetchPolicy="cache-and-network"
                 >
                     {({ loading, error, data }) => {
