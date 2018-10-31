@@ -138,6 +138,7 @@ export default class extends React.Component<Props, State> {
                                                     to={
                                                         ("/users/") + work.userId
                                                     }
+                                                    onClick={onClose}
                                                 >
                                                     <Typography gutterBottom>{work.user && work.user.displayName}</Typography>
                                                 </Link>

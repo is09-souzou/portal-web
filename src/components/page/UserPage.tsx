@@ -2,7 +2,9 @@ import React, { Fragment } from "react";
 import {
     Avatar,
     Typography,
-    Button
+    Divider,
+    Tab,
+    Tabs,
 } from "@material-ui/core";
 import gql                 from "graphql-tag";
 import styled              from "styled-components";
@@ -23,11 +25,10 @@ interface State {
     userWorks: Work[];
     workDialogVisible: boolean;
     workListRow: number;
-    height: number;
 }
 
 const QueryGetUser = gql(`
-    query($id: ID!) {
+    query($id: ID!, $limit: Int, $exclusiveStartKey: ID) {
         getUser(id: $id) {
             id
             email
@@ -35,7 +36,8 @@ const QueryGetUser = gql(`
             career
             avatarUri
             message
-            works(limit: 12) {
+            skill
+            works(limit: $limit, exclusiveStartKey: $exclusiveStartKey) {
                 items {
                     id
                     userId
@@ -62,16 +64,13 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
         workDialogVisible: false,
         userWorks: [] as Work[],
         workListRow: 4,
-        height: 6,
     };
 
     handleContentType = (content: string) => () => {
-        if (content === "work") {
+        if (content === "user") {
             this.props.history.push("?content=user");
-            this.setState({ height: 6 });
         } else {
             this.props.history.push("?content=work");
-            this.setState({ height: 0 });
         }
     }
 
@@ -127,7 +126,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                 />
                 <Query
                     query={QueryGetUser}
-                    variables={{ id: this.props.computedMatch!.params.id }}
+                    variables={{ id: this.props.computedMatch!.params.id, limit: 100, exclusiveStartKey: null }}
                     fetchPolicy="cache-and-network"
                 >
                     {({ loading, error, data }) => {
@@ -154,88 +153,77 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                     <UserPageHeaderImage
                                         src={user.avatarUri}
                                     />
-                                    <div
+                                    <UserPageHeaderContent>
+                                        <UserAvatar
+                                            src={user.avatarUri}
+                                        />
+                                        <div>
+                                            <StyledTypography>
+                                                {user.displayName}
+                                            </StyledTypography>
+                                            <StyledTypography>
+                                                {user.email}
+                                            </StyledTypography>
+                                        </div>
+                                        <div>
+                                            <Tabs
+                                                value={contentType}
+                                                indicatorColor="primary"
+                                                textColor="primary"
+                                            >
+                                                <StyledTab
+                                                    disableRipple
+                                                    label="Profile"
+                                                    value="user"
+                                                    onClick={this.handleContentType("user")}
+                                                />
+                                                <StyledTab
+                                                    disableRipple
+                                                    label="WorkList"
+                                                    value="work"
+                                                    onClick={this.handleContentType("work")}
+                                                />
+                                            </Tabs>
+                                        </div>
+                                    </UserPageHeaderContent>
+                                </UserPageHeader>
+                                <Divider />
+                                <Content>
+                                    <UserContent
                                         style={{
-                                            height: `${this.state.height}rem`
+                                            transform: `translateX(${ contentType === "user" ? "0" : "-120" }%)`
                                         }}
                                     >
-                                        <UserPageHeaderContent>
-                                            <UserAvatar
-                                                src={user.avatarUri}
-                                            />
-                                            <div>
-                                                <StyledTypography>
-                                                    {user.displayName}
-                                                </StyledTypography>
-                                                <StyledTypography>
-                                                    {user.email}
-                                                </StyledTypography>
-                                            </div>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={this.handleContentType(contentType)}
-                                            >
-                                            { contentType === "user" ?
-                                                "WorkList"
-                                            :
-                                                "Profile"
-                                            }
-                                            </Button>
-                                        </UserPageHeaderContent>
-                                    </div>
-                                </UserPageHeader>
-                                { contentType === "user" ?
-                                    <UserContent>
                                         <div>
-                                            <FollowInfomation>
-                                                <div>
-                                                    <Typography variant="body2">
-                                                        Follow
-                                                    </Typography>
-                                                    <Typography variant="body2">
-                                                        1000
-                                                    </Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography variant="body2">
-                                                        Follower
-                                                    </Typography>
-                                                    <Typography variant="body2">
-                                                        3500
-                                                    </Typography>
-                                                </div>
-                                            </FollowInfomation>
-                                            <div>
-                                                <Typography variant="caption">
-                                                    message
-                                                </Typography>
-                                                <StyledTypography variant="body1" align="justify">
-                                                    {user.message}
-                                                </StyledTypography>
-                                            </div>
+                                            <Typography variant="caption">
+                                                Message
+                                            </Typography>
+                                            <StyledTypography variant="body1" align="justify">
+                                                {user.message}
+                                            </StyledTypography>
                                         </div>
                                         <div>
-                                            <div>
-                                                <Typography variant="caption">
-                                                    Description
-                                                </Typography>
-                                                <StyledTypography>
-                                                    事柄を説明し、正確に伝達することを目的とする文章。叙情文・叙事文・叙景文などに対する語。
-                                                </StyledTypography>
-                                            </div>
-                                            <div>
-                                                <Typography variant="caption">
-                                                    Career
-                                                </Typography>
-                                                <StyledTypography>
-                                                    {user.career}
-                                                </StyledTypography>
-                                            </div>
+                                            <Typography variant="caption">
+                                                Career
+                                            </Typography>
+                                            <StyledTypography>
+                                                {user.career}
+                                            </StyledTypography>
+                                        </div>
+                                        <div>
+                                            <Typography variant="caption">
+                                                Skill
+                                            </Typography>
+                                            <StyledTypography>
+                                                {user.skill}
+                                            </StyledTypography>
                                         </div>
                                     </UserContent>
-                                :
-                                    <WorkContent>
+                                    <WorkContent
+                                        style={{
+                                            transform: `translateX(${ contentType === "user" ? "0" : "-120" }%)`
+                                        }}
+                                    >
                                         <WorkList
                                             works={userWorks}
                                             workListRow={this.state.workListRow}
@@ -248,7 +236,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             work={this.state.selectedWork}
                                         />
                                     </WorkContent>
-                                }
+                                </Content>
                             </Host>
                         );
                     }}
@@ -258,18 +246,23 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
     }
 }
 
-const FollowInfomation = styled.div`
-    display: flex;
-    text-align: center;
-    > :last-child {
-        margin-left: 3vw;
-    }
-`;
-
 const Host = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: -7rem;
+    transition: all .3s ease-out;
+`;
+
+const Content = styled.div`
+    display: flex;
+    overflow: hidden;
+    > * {
+        position: relative;
+        overflow: auto;
+        max-width: 100%;
+        min-width: 100%;
+        transition: all .3s ease-out;
+    }
 `;
 
 const UserAvatar = styled(Avatar)`
@@ -282,70 +275,62 @@ const UserAvatar = styled(Avatar)`
 
 const UserContent = styled.div`
     display: flex;
-    margin-top: 2rem;
-    > :first-child {
-        display: flex;
-        flex-direction: column;
-        margin-left: 5vw;
-        width: 15vw;
-        > :last-child {
-            margin-top: 2rem;
-        }
+    flex-direction: column;
+    margin-left: 15vw;
+    margin-top: 1rem;
+    > :not(first-child) {
+        margin-top: 1rem;
     }
-    > :last-child {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        > :not(:first-child) {
-            margin-top: 2rem;
-        }
 `;
 
 const UserPageHeader = styled.div`
     display: flex;
     flex-direction: column;
-    width: 100%;
-    > :first-child {
-        display: flex;
-    }
     > :last-child {
         display: flex;
-        position: relative;
-        height: 6rem;
+        height: 5rem;
     }
 `;
 
 const UserPageHeaderImage = styled.img`
-    height: 35vh;
-    width: 100%;
+    height: 27vh;
     object-fit: cover;
 `;
 
 const UserPageHeaderContent = styled.div`
     display: flex;
-    position: absolute;
-    bottom: 0rem;
-    margin-left: 3vw;
-    > :not(:first-child) {
-        margin-top: auto;
-        margin-bottom: 2rem;
+    position: relative;
+    align-items: center;
+    margin-left: 5vw;
+    > :first-child {
+        margin-bottom: 5rem;
     }
-    > :nth-child(2) {
-        background-color: #fafbfd;
+    > :last-child {
+        position: absolute;
+        right: 1rem;
+        bottom: 0;
     }
-    > :nth-child(3) {
-        margin-left: 5rem;
+`;
+
+const StyledTab = styled(Tab)`
+    && {
+        max-width: 7rem;
+        min-width: 7rem;
+        > :hover {
+            color: #ff9100;
+        }
+    }
+`;
+
+const StyledTypography = styled(Typography)`
+    && {
+        font-size: 1.2rem;
+        margin: 0.3rem 1.5rem 0;
+        white-space: pre-wrap;
+        letter-spacing: .1rem;
     }
 `;
 
 const WorkContent = styled.div`
     margin-top: 2rem;
-`;
-
-const StyledTypography = styled(Typography)`
-    && {
-        font-size: 1rem;
-        margin: 0 1rem 0 1rem;
-        white-space: pre-wrap;
-    }
 `;
