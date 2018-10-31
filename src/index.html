@@ -6,24 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
     <meta name="msapplication-TileColor" content="#ff9100">
     <meta name="theme-color" content="#ff9100">
-    <!-- Google Tag Manager -->
-    <script>
-        (function (w, d, s, l, i) {
-          w[l] = w[l] || [];
-          w[l].push({
-            'gtm.start': new Date().getTime(),
-            event: 'gtm.js'
-          });
-          var f = d.getElementsByTagName(s)[0],
-            j = d.createElement(s),
-            dl = l != 'dataLayer' ? '&l=' + l : '';
-          j.async = true;
-          j.src =
-            'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-          f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-NLZ8SFQ');
-    </script>
-    <!-- End Google Tag Manager -->
     <link rel="icon" href="/img/favicon/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
@@ -31,14 +13,20 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
     <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="/css/global.css">
+	<!-- Google Tag Manager -->
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-NLZ8SFQ');</script>
+	<!-- End Google Tag Manager -->
     <title><%= htmlWebpackPlugin.options.title %></title>
 </head>
 <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLZ8SFQ" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-    </noscript>
-    <!-- End Google Tag Manager (noscript) -->
+	<!-- Google Tag Manager (noscript) -->
+	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLZ8SFQ"
+	height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+	<!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
     <script>
         console.log("\n%c\n　 (＼_(＼ \t ╔═╗┌─┐┬─┐┌┬┐┌─┐┬\n　  （ =･ω･）  \t ╠═╝│ │├┬┘ │ ├─┤│\n　.c(,_ｕｕﾉ\t ╩  └─┘┴└─ ┴ ┴ ┴┴─┘\n%c%c\ncreated by: https://github.com/is09-souzou\nportal-web: https://github.com/is09-souzou/portal-web\n","background:#222;color:#ff9100;font-size:24px;line-height:24px;","","color:#bbb;");
