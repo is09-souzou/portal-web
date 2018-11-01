@@ -158,12 +158,12 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             src={user.avatarUri}
                                         />
                                         <div>
-                                            <StyledTypography>
+                                            <Typography gutterBottom variant="subheading">
                                                 {user.displayName}
-                                            </StyledTypography>
-                                            <StyledTypography>
+                                            </Typography>
+                                            <Typography variant="subheading">
                                                 {user.email}
-                                            </StyledTypography>
+                                            </Typography>
                                         </div>
                                         <div>
                                             <Tabs
@@ -195,26 +195,26 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                         }}
                                     >
                                         <div>
-                                            <Typography variant="caption">
+                                            <Typography gutterBottom variant="caption">
                                                 Message
                                             </Typography>
-                                            <StyledTypography variant="body1" align="justify">
+                                            <StyledTypography gutterBottom variant="body1" align="justify">
                                                 {user.message}
                                             </StyledTypography>
                                         </div>
                                         <div>
-                                            <Typography variant="caption">
+                                            <Typography gutterBottom variant="caption">
                                                 Career
                                             </Typography>
-                                            <StyledTypography>
+                                            <StyledTypography gutterBottom>
                                                 {user.career}
                                             </StyledTypography>
                                         </div>
                                         <div>
-                                            <Typography variant="caption">
+                                            <Typography gutterBottom variant="caption">
                                                 Skill
                                             </Typography>
-                                            <StyledTypography>
+                                            <StyledTypography gutterBottom>
                                                 {user.skill}
                                             </StyledTypography>
                                         </div>
@@ -258,7 +258,7 @@ const Content = styled.div`
     overflow: hidden;
     > * {
         position: relative;
-        overflow: auto;
+        overflow: scroll;
         max-width: 100%;
         min-width: 100%;
         transition: all .3s ease-out;
@@ -288,7 +288,7 @@ const UserPageHeader = styled.div`
     flex-direction: column;
     > :last-child {
         display: flex;
-        height: 5rem;
+        max-height: 5rem;
     }
 `;
 
@@ -300,22 +300,22 @@ const UserPageHeaderImage = styled.img`
 const UserPageHeaderContent = styled.div`
     display: flex;
     position: relative;
-    align-items: center;
     margin-left: 5vw;
+    align-items: center;
     > :first-child {
         margin-bottom: 5rem;
     }
+    > :nth-child(2) {
+        margin-left: 2rem;
+    }
     > :last-child {
-        position: absolute;
-        right: 1rem;
-        bottom: 0;
+        margin-left: auto;
+        margin-top: auto;
     }
 `;
 
 const StyledTab = styled(Tab)`
     && {
-        max-width: 7rem;
-        min-width: 7rem;
         > :hover {
             color: #ff9100;
         }
@@ -325,7 +325,7 @@ const StyledTab = styled(Tab)`
 const StyledTypography = styled(Typography)`
     && {
         font-size: 1.2rem;
-        margin: 0.3rem 1.5rem 0;
+        margin-left: 1.5rem;
         white-space: pre-wrap;
         letter-spacing: .1rem;
     }
