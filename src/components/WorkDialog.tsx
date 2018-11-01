@@ -127,23 +127,23 @@ export default class extends React.Component<Props, State> {
                                         )}
                                     </TagList>
                                     <div>
-                                        <UserInformation>
-                                            <Avatar
-                                                alt={work.user && work.user.displayName}
-                                                src={work.user && work.user.avatarUri}
-                                            />
-                                            <div>
-                                                <Typography gutterBottom variant="caption">{work.user && work.user.message}</Typography>
-                                                <Link
-                                                    to={
-                                                        ("/users/") + work.userId
-                                                    }
-                                                    onClick={onClose}
-                                                >
+                                        <Link
+                                            to={
+                                                ("/users/") + work.userId
+                                            }
+                                            onClick={onClose}
+                                        >
+                                            <UserInformation>
+                                                <Avatar
+                                                    alt={work.user && work.user.displayName}
+                                                    src={work.user && work.user.avatarUri}
+                                                />
+                                                <div>
+                                                    <Typography gutterBottom variant="caption">{work.user && work.user.message}</Typography>
                                                     <Typography gutterBottom>{work.user && work.user.displayName}</Typography>
-                                                </Link>
-                                            </div>
-                                        </UserInformation>
+                                                </div>
+                                            </UserInformation>
+                                        </Link>
                                         <IconButton>
                                             <Checkbox icon={<FavoriteBorderIcon />} checkedIcon={<FavoriteIcon />} />
                                         </IconButton>
