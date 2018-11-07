@@ -36,7 +36,7 @@ const QueryGetUser = gql(`
             career
             avatarUri
             message
-            skill
+            skillList
             works(limit: $limit, exclusiveStartKey: $exclusiveStartKey) {
                 items {
                     id
@@ -154,51 +154,51 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                         src={user.avatarUri}
                                     />
                                     <UserPageHeaderContent>
-                                        <UserAvatar
-                                            src={user.avatarUri}
-                                        />
                                         <div>
-                                            <Typography gutterBottom variant="subheading">
-                                                {user.displayName}
-                                            </Typography>
-                                            <Typography variant="subheading">
-                                                {user.email}
-                                            </Typography>
+                                            <UserAvatar
+                                                src={user.avatarUri}
+                                            />
+                                            <div>
+                                                <StyledTypography gutterBottom>
+                                                    {user.displayName}
+                                                </StyledTypography>
+                                                <StyledTypography>
+                                                    {user.email}
+                                                </StyledTypography>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <Tabs
-                                                value={contentType}
-                                                indicatorColor="primary"
-                                                textColor="primary"
-                                            >
-                                                <StyledTab
-                                                    disableRipple
-                                                    label="Profile"
-                                                    value="user"
-                                                    onClick={this.handleContentType("user")}
-                                                />
-                                                <StyledTab
-                                                    disableRipple
-                                                    label="WorkList"
-                                                    value="work"
-                                                    onClick={this.handleContentType("work")}
-                                                />
-                                            </Tabs>
-                                        </div>
+                                        <Tabs
+                                            value={contentType}
+                                            indicatorColor="primary"
+                                            textColor="primary"
+                                        >
+                                            <StyledTab
+                                                disableRipple
+                                                label="Profile"
+                                                value="user"
+                                                onClick={this.handleContentType("user")}
+                                            />
+                                            <StyledTab
+                                                disableRipple
+                                                label="WorkList"
+                                                value="work"
+                                                onClick={this.handleContentType("work")}
+                                            />
+                                        </Tabs>
                                     </UserPageHeaderContent>
                                 </UserPageHeader>
                                 <Divider />
                                 <Content>
                                     <UserContent
                                         style={{
-                                            transform: `translateX(${ contentType === "user" ? "0" : "-120" }%)`
+                                            transform: `translateX(${ contentType === "user" ? "0" : "-100" }%)`
                                         }}
                                     >
                                         <div>
                                             <Typography gutterBottom variant="caption">
                                                 Message
                                             </Typography>
-                                            <StyledTypography gutterBottom variant="body1" align="justify">
+                                            <StyledTypography gutterBottom>
                                                 {user.message}
                                             </StyledTypography>
                                         </div>
@@ -214,14 +214,14 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             <Typography gutterBottom variant="caption">
                                                 Skill
                                             </Typography>
-                                            <StyledTypography gutterBottom>
-                                                {user.skill}
+                                            <StyledTypography>
+                                                skill
                                             </StyledTypography>
                                         </div>
                                     </UserContent>
                                     <WorkContent
                                         style={{
-                                            transform: `translateX(${ contentType === "user" ? "0" : "-120" }%)`
+                                            transform: `translateX(${ contentType === "user" ? "0" : "-100" }%)`
                                         }}
                                     >
                                         <WorkList
@@ -258,7 +258,7 @@ const Content = styled.div`
     overflow: hidden;
     > * {
         position: relative;
-        overflow: scroll;
+        overflow: auto;
         max-width: 100%;
         min-width: 100%;
         transition: all .3s ease-out;
@@ -268,18 +268,27 @@ const Content = styled.div`
 const UserAvatar = styled(Avatar)`
     && {
         border: 1px solid #ccc;
-        width: 12rem;
-        height: 12rem;
+        width: 10rem;
+        height: 10rem;
+        @media (max-width: 768px) {
+            width: 6rem;
+            height: 6rem;
+        }
     }
 `;
 
 const UserContent = styled.div`
     display: flex;
     flex-direction: column;
-    margin-left: 15vw;
-    margin-top: 1rem;
-    > :not(first-child) {
+    margin-top: 2rem;
+    > * {
         margin-top: 1rem;
+        margin-left: 6rem;
+    }
+    @media (max-width: 768px) {
+        > * {
+            margin-left: 1rem;
+        }
     }
 `;
 
@@ -288,29 +297,43 @@ const UserPageHeader = styled.div`
     flex-direction: column;
     > :last-child {
         display: flex;
-        max-height: 5rem;
+        height: 6rem;
+    }
+    @media (max-width: 768px) {
+        > :last-child {
+            height: 8rem;
+        }
     }
 `;
 
 const UserPageHeaderImage = styled.img`
-    height: 27vh;
+    height: 10rem;
     object-fit: cover;
 `;
 
 const UserPageHeaderContent = styled.div`
     display: flex;
-    position: relative;
-    margin-left: 5vw;
-    align-items: center;
+    margin-left: 5rem;
     > :first-child {
-        margin-bottom: 5rem;
-    }
-    > :nth-child(2) {
-        margin-left: 2rem;
+        display: flex;
+        align-items: center;
     }
     > :last-child {
-        margin-left: auto;
         margin-top: auto;
+        margin-left: auto;
+    }
+    @media (max-width: 768px) {
+        display: flex;
+        flex-direction: column;
+        margin-left: 1rem;
+        > :first-child {
+            > :first-child {
+                margin-bottom: 5rem;
+            }
+        }
+        > :last-child {
+            width: 100%;
+        }
     }
 `;
 
@@ -319,12 +342,15 @@ const StyledTab = styled(Tab)`
         > :hover {
             color: #ff9100;
         }
+        @media (max-width: 768px) {
+            width: 50%;
+        }
     }
 `;
 
 const StyledTypography = styled(Typography)`
     && {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         margin-left: 1.5rem;
         white-space: pre-wrap;
         letter-spacing: .1rem;
@@ -332,5 +358,5 @@ const StyledTypography = styled(Typography)`
 `;
 
 const WorkContent = styled.div`
-    margin-top: 2rem;
+    margin-top: 3rem;
 `;
