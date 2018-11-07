@@ -212,9 +212,11 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             <Typography gutterBottom variant="caption">
                                                 Skill
                                             </Typography>
-                                            <StyledTypography>
-                                                skill
-                                            </StyledTypography>
+                                            <div>
+                                                {user.skillList && user.skillList.map(x =>
+                                                    <SkillTag key={x}>{x}</SkillTag>
+                                                )}
+                                            </div>
                                         </div>
                                     </UserContent>
                                     <WorkContent
@@ -369,6 +371,26 @@ const StyledTypography = styled(Typography)`
         white-space: pre-wrap;
         letter-spacing: .1rem;
     }
+`;
+
+const SkillTag = styled.div`
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    min-width: 4rem;
+    cursor: pointer;
+    color: #444;
+    padding: .1rem 1rem;
+    transition: all .3s ease-out;
+    border-radius: 32px;
+    box-sizing: border-box;
+    box-shadow: 0px 1px 1px 0px rgba(0,0,0,.3);
+    :hover {
+        box-shadow: 0px 2px 6px 0px rgba(0,0,0,.3);
+        background-color: rgba(255, 255, 255, .3);
+    }
+    margin: 0.5rem 0.5rem 0 0;
 `;
 
 const WorkContent = styled.div`
