@@ -150,22 +150,20 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                         return (
                             <Host>
                                 <UserPageHeader>
-                                    <UserPageHeaderImage
+                                    <img
                                         src={user.avatarUri}
                                     />
-                                    <UserPageHeaderContent>
+                                    <div>
+                                        <UserAvatar
+                                            src={user.avatarUri}
+                                        />
                                         <div>
-                                            <UserAvatar
-                                                src={user.avatarUri}
-                                            />
-                                            <div>
-                                                <StyledTypography gutterBottom>
-                                                    {user.displayName}
-                                                </StyledTypography>
-                                                <StyledTypography>
-                                                    {user.email}
-                                                </StyledTypography>
-                                            </div>
+                                            <StyledTypography gutterBottom>
+                                                {user.displayName}
+                                            </StyledTypography>
+                                            <StyledTypography>
+                                                {user.email}
+                                            </StyledTypography>
                                         </div>
                                         <Tabs
                                             value={contentType}
@@ -185,7 +183,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                                 onClick={this.handleContentType("work")}
                                             />
                                         </Tabs>
-                                    </UserPageHeaderContent>
+                                    </div>
                                 </UserPageHeader>
                                 <Divider />
                                 <Content>
@@ -237,6 +235,26 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                         />
                                     </WorkContent>
                                 </Content>
+                                <Footer>
+                                    <Tabs
+                                        value={contentType}
+                                        indicatorColor="primary"
+                                        textColor="primary"
+                                    >
+                                        <StyledTab
+                                            disableRipple
+                                            label="Profile"
+                                            value="user"
+                                            onClick={this.handleContentType("user")}
+                                        />
+                                        <StyledTab
+                                            disableRipple
+                                            label="WorkList"
+                                            value="work"
+                                            onClick={this.handleContentType("work")}
+                                        />
+                                    </Tabs>
+                                </Footer>
                             </Host>
                         );
                     }}
@@ -262,6 +280,20 @@ const Content = styled.div`
         max-width: 100%;
         min-width: 100%;
         transition: all .3s ease-out;
+    }
+`;
+
+const Footer = styled.div`
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: white;
+    visibility: hidden;
+    > :first-child {
+        width: 100%;
+    }
+    @media (max-width: 768px) {
+        visibility: visible;
     }
 `;
 
@@ -295,55 +327,37 @@ const UserContent = styled.div`
 const UserPageHeader = styled.div`
     display: flex;
     flex-direction: column;
-    > :last-child {
-        display: flex;
-        height: 6rem;
-    }
-    @media (max-width: 768px) {
-        > :last-child {
-            height: 8rem;
-        }
-    }
-`;
-
-const UserPageHeaderImage = styled.img`
-    height: 10rem;
-    object-fit: cover;
-`;
-
-const UserPageHeaderContent = styled.div`
-    display: flex;
-    margin-left: 5rem;
     > :first-child {
-        display: flex;
-        align-items: center;
+        height: 10rem;
+        object-fit: cover;
     }
     > :last-child {
-        margin-top: auto;
-        margin-left: auto;
-    }
-    @media (max-width: 768px) {
         display: flex;
-        flex-direction: column;
-        margin-left: 1rem;
-        > :first-child {
+        height: 5rem;
+        align-items: center;
+        margin-left: 5rem;
+        > :last-child {
+            margin-top: auto;
+            margin-left: auto;
+            visibility: visible;
+        }
+        @media (max-width: 768px) {
+            margin-left: 1rem;
             > :first-child {
                 margin-bottom: 5rem;
             }
-        }
-        > :last-child {
-            width: 100%;
+            > :last-child {
+                visibility: hidden;
+            }
         }
     }
 `;
 
 const StyledTab = styled(Tab)`
     && {
+        width: 50%;
         > :hover {
             color: #ff9100;
-        }
-        @media (max-width: 768px) {
-            width: 50%;
         }
     }
 `;
