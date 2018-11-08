@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 import {
     Avatar,
     AppBar,
-    Checkbox,
     Dialog,
     DialogContent,
     IconButton,
@@ -10,9 +9,6 @@ import {
     Typography,
 } from "@material-ui/core";
 import CloseIcon          from "@material-ui/icons/Close";
-import FavoriteIcon       from "@material-ui/icons/Favorite";
-import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
-import ShareIcon          from "@material-ui/icons/Share";
 import * as H        from "history";
 import ReactMarkdown from "react-markdown";
 import styled        from "styled-components";
@@ -144,12 +140,6 @@ export default class extends React.Component<Props, State> {
                                                 </div>
                                             </UserInformation>
                                         </Link>
-                                        <IconButton>
-                                            <Checkbox icon={<FavoriteBorderIcon />} checkedIcon={<FavoriteIcon />} />
-                                        </IconButton>
-                                        <IconButton>
-                                            <ShareIcon />
-                                        </IconButton>
                                     </div>
                                 </div>
                             </StyledDialogContent>
