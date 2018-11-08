@@ -212,11 +212,9 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             <Typography gutterBottom variant="caption">
                                                 Skill
                                             </Typography>
-                                            <div>
-                                                {user.skillList && user.skillList.map(x =>
-                                                    <SkillTag key={x}>{x}</SkillTag>
-                                                )}
-                                            </div>
+                                            {user.skillList && user.skillList.map(x =>
+                                                <SkillTag key={x}>{x}</SkillTag>
+                                            )}
                                         </div>
                                     </UserContent>
                                     <WorkContent
@@ -291,9 +289,6 @@ const Footer = styled.div`
     width: 100%;
     background-color: white;
     visibility: hidden;
-    > :first-child {
-        width: 100%;
-    }
     @media (max-width: 768px) {
         visibility: visible;
     }
@@ -316,8 +311,7 @@ const UserContent = styled.div`
     flex-direction: column;
     margin-top: 2rem;
     > * {
-        margin-top: 1rem;
-        margin-left: 6rem;
+        margin: 1rem 0 1rem 6rem;
     }
     @media (max-width: 768px) {
         > * {
@@ -394,5 +388,5 @@ const SkillTag = styled.div`
 `;
 
 const WorkContent = styled.div`
-    margin-top: 3rem;
+    margin: 3rem 0 1.5rem;
 `;
