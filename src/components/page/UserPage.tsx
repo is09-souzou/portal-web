@@ -388,5 +388,5 @@ const SkillTag = styled.div`
 `;
 
 const WorkContent = styled.div`
-    margin: 3rem 0 1.5rem;
+    padding: 3rem 0 1.5rem;
 `;
