@@ -17,7 +17,6 @@ import GraphQLProgress                 from "../GraphQLProgress";
 import Header                          from "../Header";
 import NotFound                        from "../NotFound";
 import Page                            from "../Page";
-import StreamSpinner                   from "../StreamSpinner";
 import WorkDialog                      from "../WorkDialog";
 import WorkList                        from "../WorkList";
 
@@ -130,7 +129,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                     variables={{ id: this.props.computedMatch!.params.id, limit: 100, exclusiveStartKey: null }}
                     fetchPolicy="cache-and-network"
                 >
-                    {({ loading, error, data, fetchMore }) => {
+                    {({ loading, error, data }) => {
                         if (loading) return <GraphQLProgress />;
                         if (error) {
                             return (
@@ -233,34 +232,6 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             open={this.state.workDialogVisible}
                                             onClose={this.handleClose}
                                             work={this.state.selectedWork}
-                                        />
-                                        <StreamSpinner
-                                            key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
-                                            disable={!workConnection.exclusiveStartKey ? true : false}
-                                            // tslint:disable-next-line:jsx-no-lambda
-                                            onVisible={() => {
-                                                if (workConnection && workConnection.exclusiveStartKey)
-                                                    fetchMore<any>({
-                                                        variables: {
-                                                            exclusiveStartKey: workConnection.exclusiveStartKey
-                                                        },
-                                                        updateQuery: (previousResult, { fetchMoreResult }) =>
-                                                            previousResult.listWorks.items.length ? ({
-                                                                listWorks: {
-                                                                    __typename: previousResult.listWorks.__typename,
-                                                                    items: (
-                                                                        [
-                                                                            ...previousResult.listWorks.items,
-                                                                            ...fetchMoreResult.listWorks.items
-                                                                        ].filter((x, i, self) => (
-                                                                            self.findIndex(y => y.id === x.id) === i
-                                                                        ))
-                                                                    ),
-                                                                    exclusiveStartKey: fetchMoreResult.listWorks.exclusiveStartKey
-                                                                }
-                                                            })               : previousResult
-                                                    });
-                                            }}
                                         />
                                     </WorkContent>
                                 </Content>
