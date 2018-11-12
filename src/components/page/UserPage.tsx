@@ -17,6 +17,7 @@ import GraphQLProgress                 from "../GraphQLProgress";
 import Header                          from "../Header";
 import NotFound                        from "../NotFound";
 import Page                            from "../Page";
+import StreamSpinner                   from "../StreamSpinner";
 import WorkDialog                      from "../WorkDialog";
 import WorkList                        from "../WorkList";
 
@@ -52,6 +53,7 @@ const QueryGetUser = gql(`
                     description
                     createdAt
                 }
+                exclusiveStartKey
             }
         }
     }
@@ -126,10 +128,10 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                 />
                 <Query
                     query={QueryGetUser}
-                    variables={{ id: this.props.computedMatch!.params.id, limit: 100, exclusiveStartKey: null }}
-                    fetchPolicy="cache-and-network"
+                    variables={{ id: this.props.computedMatch!.params.id, limit: 6, exclusiveStartKey: null }}
+                    fetchPolicy="network-only"
                 >
-                    {({ loading, error, data }) => {
+                    {({ loading, error, data, fetchMore }) => {
                         if (loading) return <GraphQLProgress />;
                         if (error) {
                             return (
@@ -232,6 +234,37 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             open={this.state.workDialogVisible}
                                             onClose={this.handleClose}
                                             work={this.state.selectedWork}
+                                        />
+                                        <StreamSpinner
+                                            key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
+                                            disable={!workConnection.exclusiveStartKey ? true : false}
+                                            // tslint:disable-next-line:jsx-no-lambda
+                                            onVisible={() => {
+                                                if (workConnection && workConnection.exclusiveStartKey)
+                                                    fetchMore<any>({
+                                                        variables: {
+                                                            exclusiveStartKey: workConnection.exclusiveStartKey
+                                                        },
+                                                        updateQuery: (previousResult, { fetchMoreResult }) =>
+                                                            previousResult.getUser.works.items ? ({
+                                                                getUser: {
+                                                                    ...previousResult.getUser,
+                                                                    works: {
+                                                                        ...previousResult.getUser.works,
+                                                                        items: (
+                                                                            [
+                                                                                ...previousResult.getUser.works.items,
+                                                                                ...fetchMoreResult.getUser.works.items
+                                                                            ].filter((x, i, self) => (
+                                                                                self.findIndex(y => y.id === x.id) === i
+                                                                            ))
+                                                                        ),
+                                                                        exclusiveStartKey: fetchMoreResult.getUser.works.exclusiveStartKey
+                                                                    }
+                                                                }
+                                                            })               : previousResult
+                                                    });
+                                            }}
                                         />
                                     </WorkContent>
                                 </Content>
