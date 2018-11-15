@@ -18,6 +18,7 @@ import Header                          from "../Header";
 import NotFound                        from "../NotFound";
 import Page                            from "../Page";
 import StreamSpinner                   from "../StreamSpinner";
+import ViewPager                       from "../ViewPager";
 import WorkDialog                      from "../WorkDialog";
 import WorkList                        from "../WorkList";
 
@@ -26,6 +27,7 @@ interface State {
     userWorks: Work[];
     workDialogVisible: boolean;
     workListRow: number;
+    selectedIndex: number;
 }
 
 const QueryGetUser = gql(`
@@ -66,13 +68,16 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
         workDialogVisible: false,
         userWorks: [] as Work[],
         workListRow: 4,
+        selectedIndex: 0,
     };
 
     handleContentType = (content: string) => () => {
         if (content === "user") {
             this.props.history.push("?content=user");
+            this.setState({ selectedIndex: 0 });
         } else {
             this.props.history.push("?content=work");
+            this.setState({ selectedIndex: 1 });
         }
     }
 
@@ -188,12 +193,10 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                     </div>
                                 </UserPageHeader>
                                 <Divider />
-                                <Content>
-                                    <UserContent
-                                        style={{
-                                            transform: `translateX(${ contentType === "user" ? "0" : "-100" }%)`
-                                        }}
-                                    >
+                                <ViewPager
+                                    selectedIndex={this.state.selectedIndex}
+                                >
+                                    <UserContent>
                                         <div>
                                             <Typography gutterBottom variant="caption">
                                                 Message
@@ -219,11 +222,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             )}
                                         </div>
                                     </UserContent>
-                                    <WorkContent
-                                        style={{
-                                            transform: `translateX(${ contentType === "user" ? "0" : "-100" }%)`
-                                        }}
-                                    >
+                                    <WorkContent>
                                         <WorkList
                                             works={userWorks}
                                             workListRow={this.state.workListRow}
@@ -267,7 +266,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             }}
                                         />
                                     </WorkContent>
-                                </Content>
+                                </ViewPager>
                                 <Footer>
                                     <Tabs
                                         value={contentType}
@@ -302,18 +301,6 @@ const Host = styled.div`
     flex-direction: column;
     margin-top: -7rem;
     transition: all .3s ease-out;
-`;
-
-const Content = styled.div`
-    display: flex;
-    overflow: hidden;
-    > * {
-        position: relative;
-        overflow: auto;
-        max-width: 100%;
-        min-width: 100%;
-        transition: all .3s ease-out;
-    }
 `;
 
 const Footer = styled.div`
@@ -365,6 +352,9 @@ const UserPageHeader = styled.div`
         height: 5rem;
         align-items: center;
         margin-left: 5rem;
+        > :first-child {
+            margin-bottom: 5rem;
+        }
         > :last-child {
             margin-top: auto;
             margin-left: auto;
@@ -372,9 +362,6 @@ const UserPageHeader = styled.div`
         }
         @media (max-width: 768px) {
             margin-left: 1rem;
-            > :first-child {
-                margin-bottom: 5rem;
-            }
             > :last-child {
                 visibility: hidden;
             }
