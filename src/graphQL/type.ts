@@ -5,6 +5,7 @@ export type User = {
     career?: string;
     avatarUri?: string;
     message?: string;
+    skillList?: string[];
     works?: WorkConnection;
 };
 

@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 import {
     Avatar,
     AppBar,
-    Checkbox,
     Dialog,
     DialogContent,
     IconButton,
@@ -10,9 +9,6 @@ import {
     Typography,
 } from "@material-ui/core";
 import CloseIcon          from "@material-ui/icons/Close";
-import FavoriteIcon       from "@material-ui/icons/Favorite";
-import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
-import ShareIcon          from "@material-ui/icons/Share";
 import * as H        from "history";
 import ReactMarkdown from "react-markdown";
 import styled        from "styled-components";
@@ -127,22 +123,23 @@ export default class extends React.Component<Props, State> {
                                         )}
                                     </TagList>
                                     <div>
-                                        <UserInformation>
-                                            <Avatar
-                                                alt={work.user && work.user.displayName}
-                                                src={work.user && work.user.avatarUri}
-                                            />
-                                            <div>
-                                                <Typography gutterBottom variant="caption">{work.user && work.user.message}</Typography>
-                                                <Typography gutterBottom>{work.user && work.user.displayName}</Typography>
-                                            </div>
-                                        </UserInformation>
-                                        <IconButton>
-                                            <Checkbox icon={<FavoriteBorderIcon />} checkedIcon={<FavoriteIcon />} />
-                                        </IconButton>
-                                        <IconButton>
-                                            <ShareIcon />
-                                        </IconButton>
+                                        <Link
+                                            to={
+                                                ("/users/") + work.userId
+                                            }
+                                            onClick={onClose}
+                                        >
+                                            <UserInformation>
+                                                <Avatar
+                                                    alt={work.user && work.user.displayName}
+                                                    src={work.user && work.user.avatarUri}
+                                                />
+                                                <div>
+                                                    <Typography gutterBottom variant="caption">{work.user && work.user.message}</Typography>
+                                                    <Typography gutterBottom>{work.user && work.user.displayName}</Typography>
+                                                </div>
+                                            </UserInformation>
+                                        </Link>
                                     </div>
                                 </div>
                             </StyledDialogContent>
