@@ -3,7 +3,8 @@ import {
     AuthenticationDetails,
     CognitoUser,
     CognitoUserAttribute,
-    CognitoUserPool
+    CognitoUserPool,
+    CognitoIdToken
 } from "amazon-cognito-identity-js";
 import config from "./../../config";
 
@@ -28,6 +29,8 @@ export type AuthProps = {
         updateEmail: UpdateEmail;
         updatePassword: UpdatePassword;
         token: Token | null;
+        idToken?: CognitoIdToken;
+        cognitoUser?: CognitoUser | null;
         cognitoUserPool?: CognitoUserPool | null;
     };
 };
@@ -157,6 +160,13 @@ export default class extends React.Component<Props, State> {
                     )
                 ),
                 token: this.state.token,
+                idToken: (() => {
+                    const userSession = this.state.cognitoUser && this.state.cognitoUser.getSignInUserSession();
+                    if (!userSession)
+                        return undefined;
+                    return userSession.getIdToken();
+                })(),
+                cognitoUser: this.state.cognitoUser,
                 cognitoUserPool: this.state.cognitoUserPool
             }
         });
