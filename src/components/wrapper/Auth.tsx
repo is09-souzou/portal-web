@@ -28,6 +28,11 @@ export type AuthProps = {
         updateEmail: UpdateEmail;
         updatePassword: UpdatePassword;
         token: Token | null;
+        idToken?: Token;
+        clientPayload? : {
+            [key: string]: string
+        }
+        cognitoUser?: CognitoUser | null;
         cognitoUserPool?: CognitoUserPool | null;
     };
 };
@@ -157,6 +162,14 @@ export default class extends React.Component<Props, State> {
                     )
                 ),
                 token: this.state.token,
+                idToken: this.state.cognitoUser && (this.state.cognitoUser as any).signInUserSession.idToken,
+                clientPayload: (
+                    this.state.cognitoUser && (this.state.cognitoUser as any).signInUserSession.idToken.jwtToken &&
+                    JSON.parse(
+                        window.atob((this.state.cognitoUser as any).signInUserSession.idToken.jwtToken.split(".")[1])
+                    )
+                ),
+                cognitoUser: this.state.cognitoUser,
                 cognitoUserPool: this.state.cognitoUserPool
             }
         });
