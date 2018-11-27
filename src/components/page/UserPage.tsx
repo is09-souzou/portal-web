@@ -12,6 +12,7 @@ import { Query }           from "react-apollo";
 import toObjectFromURIQuery            from "../../api/toObjectFromURIQuery";
 import { PageComponentProps }          from "../../App";
 import { User, Work, WorkConnection }  from "../../graphQL/type";
+import { LocaleContext }               from "../wrapper/MainLayout";
 import ErrorPage                       from "../ErrorPage";
 import GraphQLProgress                 from "../GraphQLProgress";
 import Header                          from "../Header";
@@ -155,23 +156,121 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                         const userWorks = this.state.userWorks.concat(workConnection ? workConnection.items : [] as Work[]);
 
                         return (
-                            <Host>
-                                <UserPageHeader>
-                                    <img
-                                        src={user.avatarUri}
-                                    />
-                                    <div>
-                                        <UserAvatar
+                            <LocaleContext.Consumer>
+                                {({ locale }) => (
+                                <Host>
+                                    <UserPageHeader>
+                                        <img
                                             src={user.avatarUri}
                                         />
                                         <div>
-                                            <StyledTypography gutterBottom>
-                                                {user.displayName}
-                                            </StyledTypography>
-                                            <StyledTypography>
-                                                {user.email}
-                                            </StyledTypography>
+                                            <UserAvatar
+                                                src={user.avatarUri}
+                                            />
+                                            <div>
+                                                <StyledTypography gutterBottom>
+                                                    {user.displayName}
+                                                </StyledTypography>
+                                                <StyledTypography>
+                                                    {user.email}
+                                                </StyledTypography>
+                                            </div>
+                                            <Tabs
+                                                value={contentType}
+                                                indicatorColor="primary"
+                                                textColor="primary"
+                                            >
+                                                <StyledTab
+                                                    disableRipple
+                                                    label={locale.tab.profile}
+                                                    value="user"
+                                                    onClick={this.handleContentType("user")}
+                                                />
+                                                <StyledTab
+                                                    disableRipple
+                                                    label={locale.tab.workList + ("(") + userWorks.length + (")")}
+                                                    value="work"
+                                                    onClick={this.handleContentType("work")}
+                                                />
+                                            </Tabs>
                                         </div>
+                                    </UserPageHeader>
+                                    <Divider />
+                                    <ViewPager
+                                        selectedIndex={this.state.selectedIndex}
+                                    >
+                                        <UserContent>
+                                            <div>
+                                                <Typography gutterBottom variant="caption">
+                                                    {locale.profile.message}
+                                                </Typography>
+                                                <StyledTypography gutterBottom>
+                                                    {user.message}
+                                                </StyledTypography>
+                                            </div>
+                                            <div>
+                                                <Typography gutterBottom variant="caption">
+                                                    {locale.profile.carrer}
+                                                </Typography>
+                                                <StyledTypography gutterBottom>
+                                                    {user.career}
+                                                </StyledTypography>
+                                            </div>
+                                            <div>
+                                                <Typography gutterBottom variant="caption">
+                                                    {locale.profile.skill}
+                                                </Typography>
+                                                {user.skillList && user.skillList.map(x =>
+                                                    <SkillTag key={x}>{x}</SkillTag>
+                                                )}
+                                            </div>
+                                        </UserContent>
+                                        <WorkContent>
+                                            <WorkList
+                                                works={userWorks}
+                                                workListRow={this.state.workListRow}
+                                                onWorkItemClick={this.handleClickOpen}
+                                            />
+                                            <WorkDialog
+                                                history={history}
+                                                open={this.state.workDialogVisible}
+                                                onClose={this.handleClose}
+                                                work={this.state.selectedWork}
+                                            />
+                                            <StreamSpinner
+                                                key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
+                                                disable={!workConnection.exclusiveStartKey ? true : false}
+                                                // tslint:disable-next-line:jsx-no-lambda
+                                                onVisible={() => {
+                                                    if (workConnection && workConnection.exclusiveStartKey)
+                                                        fetchMore<any>({
+                                                            variables: {
+                                                                exclusiveStartKey: workConnection.exclusiveStartKey
+                                                            },
+                                                            updateQuery: (previousResult, { fetchMoreResult }) =>
+                                                                previousResult.getUser.works.items ? ({
+                                                                    getUser: {
+                                                                        ...previousResult.getUser,
+                                                                        works: {
+                                                                            ...previousResult.getUser.works,
+                                                                            items: (
+                                                                                [
+                                                                                    ...previousResult.getUser.works.items,
+                                                                                    ...fetchMoreResult.getUser.works.items
+                                                                                ].filter((x, i, self) => (
+                                                                                    self.findIndex(y => y.id === x.id) === i
+                                                                                ))
+                                                                            ),
+                                                                            exclusiveStartKey: fetchMoreResult.getUser.works.exclusiveStartKey
+                                                                        }
+                                                                    }
+                                                                })               : previousResult
+                                                        });
+                                                }}
+                                            />
+                                        </WorkContent>
+                                    </ViewPager>
+                                    <Footer>
                                         <Tabs
                                             value={contentType}
                                             indicatorColor="primary"
@@ -179,115 +278,21 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                         >
                                             <StyledTab
                                                 disableRipple
-                                                label="Profile"
+                                                label={locale.tab.profile}
                                                 value="user"
                                                 onClick={this.handleContentType("user")}
                                             />
                                             <StyledTab
                                                 disableRipple
-                                                label={("WorkList(") + userWorks.length + (")")}
+                                                label={locale.tab.workList + ("(") + userWorks.length + (")")}
                                                 value="work"
                                                 onClick={this.handleContentType("work")}
                                             />
                                         </Tabs>
-                                    </div>
-                                </UserPageHeader>
-                                <Divider />
-                                <ViewPager
-                                    selectedIndex={this.state.selectedIndex}
-                                >
-                                    <UserContent>
-                                        <div>
-                                            <Typography gutterBottom variant="caption">
-                                                Message
-                                            </Typography>
-                                            <StyledTypography gutterBottom>
-                                                {user.message}
-                                            </StyledTypography>
-                                        </div>
-                                        <div>
-                                            <Typography gutterBottom variant="caption">
-                                                Career
-                                            </Typography>
-                                            <StyledTypography gutterBottom>
-                                                {user.career}
-                                            </StyledTypography>
-                                        </div>
-                                        <div>
-                                            <Typography gutterBottom variant="caption">
-                                                Skill
-                                            </Typography>
-                                            {user.skillList && user.skillList.map(x =>
-                                                <SkillTag key={x}>{x}</SkillTag>
-                                            )}
-                                        </div>
-                                    </UserContent>
-                                    <WorkContent>
-                                        <WorkList
-                                            works={userWorks}
-                                            workListRow={this.state.workListRow}
-                                            onWorkItemClick={this.handleClickOpen}
-                                        />
-                                        <WorkDialog
-                                            history={history}
-                                            open={this.state.workDialogVisible}
-                                            onClose={this.handleClose}
-                                            work={this.state.selectedWork}
-                                        />
-                                        <StreamSpinner
-                                            key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
-                                            disable={!workConnection.exclusiveStartKey ? true : false}
-                                            // tslint:disable-next-line:jsx-no-lambda
-                                            onVisible={() => {
-                                                if (workConnection && workConnection.exclusiveStartKey)
-                                                    fetchMore<any>({
-                                                        variables: {
-                                                            exclusiveStartKey: workConnection.exclusiveStartKey
-                                                        },
-                                                        updateQuery: (previousResult, { fetchMoreResult }) =>
-                                                            previousResult.getUser.works.items ? ({
-                                                                getUser: {
-                                                                    ...previousResult.getUser,
-                                                                    works: {
-                                                                        ...previousResult.getUser.works,
-                                                                        items: (
-                                                                            [
-                                                                                ...previousResult.getUser.works.items,
-                                                                                ...fetchMoreResult.getUser.works.items
-                                                                            ].filter((x, i, self) => (
-                                                                                self.findIndex(y => y.id === x.id) === i
-                                                                            ))
-                                                                        ),
-                                                                        exclusiveStartKey: fetchMoreResult.getUser.works.exclusiveStartKey
-                                                                    }
-                                                                }
-                                                            })               : previousResult
-                                                    });
-                                            }}
-                                        />
-                                    </WorkContent>
-                                </ViewPager>
-                                <Footer>
-                                    <Tabs
-                                        value={contentType}
-                                        indicatorColor="primary"
-                                        textColor="primary"
-                                    >
-                                        <StyledTab
-                                            disableRipple
-                                            label="Profile"
-                                            value="user"
-                                            onClick={this.handleContentType("user")}
-                                        />
-                                        <StyledTab
-                                            disableRipple
-                                            label={("WorkList(") + userWorks.length + (")")}
-                                            value="work"
-                                            onClick={this.handleContentType("work")}
-                                        />
-                                    </Tabs>
-                                </Footer>
-                            </Host>
+                                    </Footer>
+                                </Host>
+                                )}
+                            </LocaleContext.Consumer>
                         );
                     }}
                 </Query>
