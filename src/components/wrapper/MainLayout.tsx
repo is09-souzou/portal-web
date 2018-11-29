@@ -2,7 +2,7 @@ import React                         from "react";
 import { Drawer }                    from "@material-ui/core";
 import { RouteComponentProps }       from "react-router-dom";
 import styled                        from "styled-components";
-import Locale, { location }          from "../../api/locale";
+import Locale, { location }          from "../../localization/locale";
 import Navigator                     from "./../Navigator";
 import { NotificationListenerProps } from "./NotificationListener";
 
@@ -30,7 +30,7 @@ export const DrawerContext = React.createContext<DrawerContextModel>({
 });
 
 export const LocaleContext = React.createContext({
-    locale: Locale.en,
+    locale: Locale.us,
     handleLocale: () => {}
 });
 
@@ -40,13 +40,23 @@ export default class extends React.Component<Props, State> {
         this.setState({
             drawerOpend: false,
             fabIsVisible: true,
-            fabClickSubscribers: [],
-            locale: "jp"
+            fabClickSubscribers: []
         });
+        this.setLocale();
+    }
+
+    setLocale = () => {
+        const language = (window.navigator.languages && window.navigator.languages[0]) ||
+            window.navigator.language;
+        if (language === "ja") {
+            this.setState({ locale: "jp" });
+        } else {
+            this.setState({ locale: "us" });
+        }
     }
 
     toggleDrawer = () => this.setState({ drawerOpend: !this.state.drawerOpend });
-    handleLocale = () => this.setState({ locale: this.state.locale === "en" ? "jp" : "en" });
+    handleLocale = () => this.setState({ locale: this.state.locale === "us" ? "jp" : "us" });
 
     render() {
 

@@ -14,15 +14,15 @@ import styled       from "styled-components";
 import { Query }    from "react-apollo";
 import { Redirect } from "react-router";
 import * as H       from "history";
-import toObjectFromURIQuery      from "../api/toObjectFromURIQuery";
-import { AuthProps }             from "./wrapper/Auth";
-import { DrawerContext, LocaleContext }         from "./wrapper/MainLayout";
-import { NotificationListener }  from "./wrapper/NotificationListener";
-import InitialRegistrationDialog from "./InitialRegistrationDialog";
-import Link                      from "./Link";
-import SignInDialog              from "./SignInDialog";
-import SignUpDialog              from "./SignUpDialog";
-import GraphQLProgress           from "./GraphQLProgress";
+import toObjectFromURIQuery                 from "../api/toObjectFromURIQuery";
+import { AuthProps }                        from "./wrapper/Auth";
+import { DrawerContext, LocaleContext }     from "./wrapper/MainLayout";
+import { NotificationListener }             from "./wrapper/NotificationListener";
+import InitialRegistrationDialog            from "./InitialRegistrationDialog";
+import Link                                 from "./Link";
+import SignInDialog                         from "./SignInDialog";
+import SignUpDialog                         from "./SignUpDialog";
+import GraphQLProgress                      from "./GraphQLProgress";
 
 interface Props extends AuthProps {
     history: H.History;

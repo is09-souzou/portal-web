@@ -1,7 +1,7 @@
-export type location = "en" | "jp";
+export type location = "us" | "jp";
 
 export const locale = {
-    en: {
+    us: {
         profile: {
             displayName: "DisplayName",
             mailAdress: "Mail Adress",
