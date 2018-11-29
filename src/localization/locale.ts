@@ -7,7 +7,7 @@ export const locale = {
             mailAdress: "Mail Adress",
             carrer: "Carrer",
             message: "Message",
-            skill: "Skill",
+            skill: "Skill"
         },
         works: {
             title: "Title",
@@ -15,11 +15,11 @@ export const locale = {
             description: "Description",
             image: "Image",
             preview: "Preview",
-            create: "Create",
+            create: "Create"
         },
         tab: {
             profile: "Profile",
-            workList: "WorkList",
+            workList: "WorkList"
         },
         navigater: {
             works: "Works",
@@ -27,13 +27,15 @@ export const locale = {
             popular: "Popular",
             new: "New",
             tags: "Tags",
+            languages: "Language",
+            language: "English"
         },
         header: {
             name: "Name",
             mailAdress: "Mail Adress",
             profile: "Profile",
             signOut: "sign-out"
-        }
+        },
     },
     jp: {
         profile: {
@@ -41,7 +43,7 @@ export const locale = {
             mailAdress: "メールアドレス",
             carrer: "経歴",
             message: "一言",
-            skill: "スキル",
+            skill: "スキル"
         },
         works: {
             title: "タイトル",
@@ -49,11 +51,11 @@ export const locale = {
             description: "説明",
             image: "イメージ",
             preview: "プレビュー",
-            create: "作成",
+            create: "作成"
         },
         tab: {
             profile: "プロフィール",
-            workList: "作品一覧",
+            workList: "作品一覧"
         },
         navigater: {
             works: "作品",
@@ -61,6 +63,8 @@ export const locale = {
             popular: "人気",
             new: "新規",
             tags: "タグ",
+            languages: "言語",
+            language: "日本語"
         },
         header: {
             name: "ユーザー名",

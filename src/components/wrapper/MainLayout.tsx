@@ -48,11 +48,11 @@ export default class extends React.Component<Props, State> {
     setLocale = () => {
         const language = (window.navigator.languages && window.navigator.languages[0]) ||
             window.navigator.language;
-        if (language === "ja") {
-            this.setState({ locale: "jp" });
-        } else {
-            this.setState({ locale: "us" });
-        }
+        language === "ja" ?
+            this.setState({ locale: "jp" })
+        :
+            this.setState({ locale: "us" })
+        ;
     }
 
     toggleDrawer = () => this.setState({ drawerOpend: !this.state.drawerOpend });

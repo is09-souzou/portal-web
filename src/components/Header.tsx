@@ -101,7 +101,7 @@ export default class extends React.Component<Props, State> {
         return (
             <StyledAppBar position="fixed">
                 <LocaleContext.Consumer>
-                    {({ locale, handleLocale }) => (
+                    {({ locale }) => (
                     <StyledToolbar>
                         <DrawerContext.Consumer>
                             {({ toggleDrawer }) =>
@@ -189,11 +189,6 @@ export default class extends React.Component<Props, State> {
                                                                     onClick={auth.signOut}
                                                                 >
                                                                     {locale.header.signOut}
-                                                                </Button>
-                                                                <Button
-                                                                    onClick={handleLocale}
-                                                                >
-                                                                    Locale
                                                                 </Button>
                                                             </div>
                                                         </PopoverContent>

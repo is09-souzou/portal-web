@@ -15,6 +15,7 @@ import {
 import ColorLensIcon   from "@material-ui/icons/ColorLens";
 import ExpandLessIcon  from "@material-ui/icons/ExpandLess";
 import ExpandMoreIcon  from "@material-ui/icons/ExpandMore";
+import LanguageIcon    from "@material-ui/icons/Language";
 import NewReleasesIcon from "@material-ui/icons/NewReleases";
 import StarIcon        from "@material-ui/icons/Star";
 import gql                           from "graphql-tag";
@@ -78,7 +79,7 @@ export default class extends React.Component<Props, State> {
 
         return (
             <LocaleContext.Consumer>
-                {({ locale }) => (
+                {({ locale, handleLocale }) => (
                 <Host>
                     <Title variant="headline">
                         <Link
@@ -213,6 +214,21 @@ export default class extends React.Component<Props, State> {
                             <ListItemText primary={locale.navigater.new} />
                         </ListItem>
                     </List>
+                    <List
+                        subheader={<ListSubheader component="div">{locale.navigater.languages}</ListSubheader>}
+                    >
+                        <ListItem
+                            button
+                            onClick={handleLocale}
+                        >
+                            <ListItemIcon>
+                                <LanguageIcon />
+                            </ListItemIcon>
+                            <ListItemText>
+                                {locale.navigater.language}
+                            </ListItemText>
+                        </ListItem>
+                    </List>
                 </Host>
                 )}
             </LocaleContext.Consumer>
@@ -222,6 +238,11 @@ export default class extends React.Component<Props, State> {
 
 const Host = styled.div`
     width: 15rem;
+    > :last-child {
+        width: 15rem;
+        position: absolute;
+        bottom: 1rem;
+    }
 `;
 
 const Title = styled(Typography)`
