@@ -11,8 +11,10 @@ export const locale = {
         },
         works: {
             title: "Title",
+            inputTitle: "Input Title!",
             tags: "Tags",
             description: "Description",
+            inputDiscription: "Input Discription!",
             image: "Image",
             preview: "Preview",
             create: "Create"
@@ -47,9 +49,11 @@ export const locale = {
         },
         works: {
             title: "タイトル",
+            inputTitle: "タイトルを入力してください",
             tags: "タグ",
+            image: "画像",
             description: "説明",
-            image: "イメージ",
+            inputDiscription: "説明文を入力してください",
             preview: "プレビュー",
             create: "作成"
         },
