@@ -48,7 +48,7 @@ export default class extends React.Component<Props, State> {
     setLocale = () => {
         const language = (window.navigator.languages && window.navigator.languages[0]) ||
             window.navigator.language;
-        language === "ja" ?
+        language === "ja" || "ja-JP" ?
             this.setState({ locale: "jp" })
         :
             this.setState({ locale: "us" })

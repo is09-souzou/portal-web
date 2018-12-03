@@ -29,7 +29,7 @@ export const locale = {
             popular: "Popular",
             new: "New",
             tags: "Tags",
-            languages: "Language",
+            languages: "Languages",
             language: "English"
         },
         header: {
