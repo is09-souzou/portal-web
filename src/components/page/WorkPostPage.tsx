@@ -4,6 +4,7 @@ import {
     Chip,
     TextField
 } from "@material-ui/core";
+import ListIcon      from "@material-ui/icons/FormatListNumberedRounded";
 import gql           from "graphql-tag";
 import { Mutation }  from "react-apollo";
 import ReactMarkdown from "react-markdown";
@@ -14,6 +15,8 @@ import { PageComponentProps } from "../../App";
 import Header                 from "../Header";
 import ImageInput             from "../ImageInput";
 import Page                   from "../Page";
+import ToolItem               from "../ToolItem";
+import ToolList               from "../ToolList";
 import WorkDialog             from "../WorkDialog";
 import { Work }               from "../../graphQL/type";
 
@@ -68,6 +71,8 @@ const MutationUpdateWork = gql(`
 `);
 
 export default class extends React.Component<PageComponentProps<void>, State> {
+
+    descriptionInput?: any;
 
     state = {
         chipsData: [] as Chip[],
@@ -261,18 +266,36 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                         });
                                                     }}
                                                 />
-                                                <TextField
-                                                    label="Description"
-                                                    multiline
-                                                    margin="normal"
-                                                    required
-                                                    placeholder={"Input Description!"}
-                                                    rowsMax={30}
-                                                    fullWidth
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    onChange={(e: any) => this.setState({ description: e.target.value })}
-                                                    value={this.state.description}
-                                                />
+                                                <div>
+                                                    <TextField
+                                                        label="Description"
+                                                        multiline
+                                                        margin="normal"
+                                                        required
+                                                        placeholder={"Input Description!"}
+                                                        rowsMax={30}
+                                                        fullWidth
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        onChange={(e: any) => this.setState({ description: e.target.value })}
+                                                        value={this.state.description}
+                                                        inputRef={x => this.descriptionInput = x}
+                                                    />
+                                                    <ToolList>
+                                                        <ToolItem
+                                                            onClick={_ => {
+                                                                if (!this.descriptionInput) return
+                                                                console.log(this.descriptionInput.selectionStart)
+                                                                console.log(this.descriptionInput.selectionEnd)
+                                                            }}
+                                                        >
+                                                            H
+                                                        </ToolItem>
+                                                        <ToolItem
+                                                        >
+                                                            <ListIcon></ListIcon>
+                                                        </ToolItem>
+                                                    </ToolList>
+                                                </div>
                                             </div>
                                             <ReactMarkdown
                                                 source={this.state.description}
@@ -324,9 +347,9 @@ const Host = styled.form`
     margin: 0 2rem;
     width: calc(100% - 4rem);
     > * {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
     }
 `;
 
