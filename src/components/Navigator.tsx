@@ -214,21 +214,24 @@ export default class extends React.Component<Props, State> {
                             <ListItemText primary={locale.navigater.new} />
                         </ListItem>
                     </List>
-                    <List
-                        subheader={<ListSubheader component="div">{locale.navigater.languages}</ListSubheader>}
-                    >
-                        <ListItem
-                            button
-                            onClick={handleLocale}
+                    <div>
+                        <Divider />
+                        <List
+                            subheader={<ListSubheader component="div">{locale.navigater.languages}</ListSubheader>}
                         >
-                            <ListItemIcon>
-                                <LanguageIcon />
-                            </ListItemIcon>
-                            <ListItemText>
-                                {locale.navigater.language}
-                            </ListItemText>
-                        </ListItem>
-                    </List>
+                            <ListItem
+                                button
+                                onClick={handleLocale}
+                            >
+                                <ListItemIcon>
+                                    <LanguageIcon />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    {locale.navigater.language}
+                                </ListItemText>
+                            </ListItem>
+                        </List>
+                    </div>
                 </Host>
                 )}
             </LocaleContext.Consumer>
@@ -238,11 +241,7 @@ export default class extends React.Component<Props, State> {
 
 const Host = styled.div`
     width: 15rem;
-    > :last-child {
-        width: 15rem;
-        position: absolute;
-        bottom: 1rem;
-    }
+    height: auto;
 `;
 
 const Title = styled(Typography)`

@@ -137,18 +137,18 @@ export default class extends React.Component<PageComponentProps<void>, State> {
         } = this.props;
 
         return (
-            <Page>
-                <Header
-                    auth={auth}
-                    history={history}
-                    notificationListener={notificationListener}
-                />
-                <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
-                    {(createWork, { error: createWorkError }) => (
-                        <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
-                            {(updateWork, { error: updateWorkError }) => (
-                                <LocaleContext.Consumer>
-                                    {({ locale }) => (
+            <LocaleContext.Consumer>
+                {({ locale }) => (
+                <Page>
+                    <Header
+                        auth={auth}
+                        history={history}
+                        notificationListener={notificationListener}
+                    />
+                    <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
+                        {(createWork, { error: createWorkError }) => (
+                            <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
+                                {(updateWork, { error: updateWorkError }) => (
                                     <Host
                                         // tslint:disable-next-line jsx-no-lambda
                                         onSubmit={async e => {
@@ -305,19 +305,20 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                             <notificationListener.ErrorComponent message={updateWorkError || createWorkError}/>
                                         }
                                     </Host>
-                                    )}
-                                </LocaleContext.Consumer>
-                            )}
-                        </Mutation>
-                    )}
-                </Mutation>
-                <WorkDialog
-                    history={history}
-                    open={this.state.workDialogVisible}
-                    onClose={this.onClosePreview}
-                    work={this.state.previewWork}
-                />
-            </Page>
+                                )}
+                            </Mutation>
+                        )}
+                    </Mutation>
+                    <WorkDialog
+                        history={history}
+                        open={this.state.workDialogVisible}
+                        onClose={this.onClosePreview}
+                        work={this.state.previewWork}
+                        locale={locale.location}
+                    />
+                </Page>
+                )}
+            </LocaleContext.Consumer>
         );
     }
 }

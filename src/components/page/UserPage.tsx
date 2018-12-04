@@ -236,6 +236,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                                 open={this.state.workDialogVisible}
                                                 onClose={this.handleClose}
                                                 work={this.state.selectedWork}
+                                                locale={locale.location}
                                             />
                                             <StreamSpinner
                                                 key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}

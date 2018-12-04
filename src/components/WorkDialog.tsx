@@ -23,6 +23,7 @@ interface Props {
     onClose: () => void;
     work?: Work;
     history: H.History;
+    locale: string;
 }
 
 interface State {
@@ -47,6 +48,7 @@ export default class extends React.Component<Props, State> {
             open = false,
             onClose,
             work,
+            locale,
             ...props
         } = this.props;
 
@@ -102,8 +104,12 @@ export default class extends React.Component<Props, State> {
                                         <FormatStringDate
                                             isMillisec={false}
                                             timestamp={work.createdAt}
-                                            format="%YYYY%年 %MM%月 %DD%日 %HH%時 %mm%分"
-                                            locale="ja-JP"
+                                            format={
+                                                locale === "jp"
+                                                ? "%YYYY%年 %MM%月 %DD%日 %HH%時 %mm%分"
+                                                : "%MMMM% %DD%, %YYYY% at %hh%:%mm% %A%"
+                                            }
+                                            locale={locale === "jp" ? "ja-JP" : "en-US"}
                                         />
                                     </Typography>
                                 </div>

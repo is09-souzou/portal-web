@@ -38,6 +38,7 @@ export const locale = {
             profile: "Profile",
             signOut: "sign-out"
         },
+        location: "us"
     },
     jp: {
         profile: {
@@ -75,7 +76,8 @@ export const locale = {
             mailAdress: "メールアドレス",
             profile: "プロフィール",
             signOut: "サインアウト"
-        }
+        },
+        location: "jp"
     }
 };
 
