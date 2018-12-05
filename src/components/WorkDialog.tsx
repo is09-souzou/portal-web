@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import {
     Avatar,
     AppBar,
+    Button,
     Dialog,
     DialogContent,
     IconButton,
@@ -23,6 +24,7 @@ interface Props {
     onClose: () => void;
     work?: Work;
     history: H.History;
+    userId: string;
 }
 
 interface State {
@@ -47,6 +49,7 @@ export default class extends React.Component<Props, State> {
             open = false,
             onClose,
             work,
+            userId,
             ...props
         } = this.props;
 
@@ -124,10 +127,10 @@ export default class extends React.Component<Props, State> {
                                     </TagList>
                                     <div>
                                         <Link
-                                            to={
-                                                ("/users/") + work.userId
-                                            }
-                                            onClick={onClose}
+                                                to={
+                                                    ("/users/") + work.userId
+                                                }
+                                                onClick={onClose}
                                         >
                                             <UserInformation>
                                                 <Avatar
@@ -139,6 +142,20 @@ export default class extends React.Component<Props, State> {
                                                     <Typography gutterBottom>{work.user && work.user.displayName}</Typography>
                                                 </div>
                                             </UserInformation>
+                                        </Link>
+                                        <Link
+                                            to={
+                                                ("/works/update-work/") + work.id
+                                            }
+                                            onClick={onClose}
+                                        >
+                                            <Button
+                                                style={{ display: work.userId === userId ? "" : "none" }}
+                                                variant="outlined"
+                                                color="primary"
+                                            >
+                                                edit
+                                            </Button>
                                         </Link>
                                     </div>
                                 </div>
