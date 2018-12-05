@@ -15,6 +15,7 @@ import {
 import ColorLensIcon   from "@material-ui/icons/ColorLens";
 import ExpandLessIcon  from "@material-ui/icons/ExpandLess";
 import ExpandMoreIcon  from "@material-ui/icons/ExpandMore";
+import LanguageIcon    from "@material-ui/icons/Language";
 import NewReleasesIcon from "@material-ui/icons/NewReleases";
 import StarIcon        from "@material-ui/icons/Star";
 import gql                           from "graphql-tag";
@@ -26,6 +27,7 @@ import formatTagsOfURLQueryParam     from "../util/formatTagsOfURLQueryParam";
 import getTagsByURLQueryParam        from "../util/getTagsByURLQueryParam";
 import isSubset                      from "../util/isSubset";
 import { PopularTags }               from "../graphQL/type";
+import { LocaleContext }             from "./wrapper/MainLayout";
 import { NotificationListenerProps } from "./wrapper/NotificationListener";
 import GraphQLProgress               from "./GraphQLProgress";
 import Link                          from "./Link";
@@ -76,147 +78,182 @@ export default class extends React.Component<Props, State> {
         } = this.props;
 
         return (
-            <Host>
-                <Title variant="headline">
-                    <Link
-                        to="/"
+            <LocaleContext.Consumer>
+                {({ locale, handleLocale }) => (
+                <Host>
+                    <Title variant="headline">
+                        <Link
+                            to="/"
+                        >
+                            PORTAL
+                        </Link>
+                    </Title>
+                    <Divider />
+                    <List
+                        subheader={<ListSubheader component="div">{locale.navigater.works}</ListSubheader>}
                     >
-                        PORTAL
-                    </Link>
-                </Title>
-                <Divider />
-                <List
-                    subheader={<ListSubheader component="div">Works</ListSubheader>}
-                >
-                    <Link
-                        to="/works/popular"
+                        <Link
+                            to="/works/popular"
+                        >
+                            <ListItem button>
+                                <ListItemIcon>
+                                    <StarIcon />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={
+                                        <StyledText
+                                            selected={history.location.pathname === "/works/popular"}
+                                        >
+                                            {locale.navigater.popular}
+                                        </StyledText>
+                                    }
+                                />
+                            </ListItem>
+                        </Link>
+                        <Link
+                            to="/works/new"
+                        >
+                            <ListItem button>
+                                <ListItemIcon>
+                                    <NewReleasesIcon />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={
+                                        <StyledText
+                                            selected={history.location.pathname === "/works/new"}
+                                        >
+                                            {locale.navigater.new}
+                                        </StyledText>
+                                    }
+                                />
+                            </ListItem>
+                        </Link>
+                        <ListItem
+                            button
+                            onClick={this.toggleTagListVisible}
+                        >
+                            <ListItemIcon>
+                                <ColorLensIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={locale.navigater.tags} />
+                            {this.state.tagListVisible ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                        </ListItem>
+                        <Collapse in={this.state.tagListVisible} timeout="auto" unmountOnExit>
+                            <Query
+                                query={QueryListPopularTags}
+                                fetchPolicy="cache-and-network"
+                            >
+                                {({ loading, error, data }) => {
+                                    if (loading) return <GraphQLProgress />;
+                                    if (error) {
+                                        console.error(error);
+                                        return (
+                                            <Fragment>
+                                                <NestedListItem>
+                                                    <ListItemText
+                                                        primary={<span style={{ color: "red" }}>Error</span>}
+                                                    />
+                                                </NestedListItem>
+                                                <notificationListener.ErrorComponent error={error}/>
+                                            </Fragment>
+                                        );
+                                    }
+
+                                    const tags = getTagsByURLQueryParam(this.props.history);
+                                    const popularTags = (data.listPopularTags as PopularTags).map(x => x.name);
+
+                                    return (
+                                        <List component="div" disablePadding>
+                                            {popularTags.concat(this.state.tags)
+                                                .filter((x, i, self) => self.indexOf(x) === i)
+                                                .map(tag => (
+                                                    <Link
+                                                        to={
+                                                            (location.pathname.indexOf("/works") === -1 ? "/works" : "")
+                                                          + formatTagsOfURLQueryParam(
+                                                                tags.includes(tag) ? tags.filter(x => x !== tag)
+                                                            :
+                                                                tags.concat(tag)
+                                                            )
+                                                        }
+                                                        key={tag}
+                                                    >
+                                                        <NestedListItem button>
+                                                            <ListItemText
+                                                                primary={<span>{tag}</span>}
+                                                            />
+                                                            <ListItemSecondaryAction>
+                                                                <Checkbox
+                                                                    checked={tags.includes(tag)}
+                                                                    tabIndex={-1}
+                                                                    disableRipple
+                                                                />
+                                                            </ListItemSecondaryAction>
+                                                        </NestedListItem>
+                                                    </Link>
+                                                )
+                                            )}
+                                        </List>
+                                    );
+                                }}
+                            </Query>
+                        </Collapse>
+                    </List>
+                    <List
+                        subheader={<ListSubheader component="div">{locale.navigater.designer}</ListSubheader>}
                     >
                         <ListItem button>
                             <ListItemIcon>
                                 <StarIcon />
                             </ListItemIcon>
-                            <ListItemText
-                                primary={
-                                    <StyledText
-                                        selected={history.location.pathname === "/works/popular"}
-                                    >
-                                        Popular
-                                    </StyledText>
-                                }
-                            />
+                            <ListItemText primary={locale.navigater.popular} />
                         </ListItem>
-                    </Link>
-                    <Link
-                        to="/works/new"
-                    >
                         <ListItem button>
                             <ListItemIcon>
                                 <NewReleasesIcon />
                             </ListItemIcon>
-                            <ListItemText
-                                primary={
-                                    <StyledText
-                                        selected={history.location.pathname === "/works/new"}
-                                    >
-                                        New
-                                    </StyledText>
-                                }
-                            />
+                            <ListItemText primary={locale.navigater.new} />
                         </ListItem>
-                    </Link>
-                    <ListItem
-                        button
-                        onClick={this.toggleTagListVisible}
-                    >
-                        <ListItemIcon>
-                            <ColorLensIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Tags" />
-                        {this.state.tagListVisible ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                    </ListItem>
-                    <Collapse in={this.state.tagListVisible} timeout="auto" unmountOnExit>
-                        <Query
-                            query={QueryListPopularTags}
-                            fetchPolicy="cache-and-network"
+                    </List>
+                    <div>
+                        <Divider />
+                        <List
+                            subheader={<ListSubheader component="div">{locale.navigater.languages}</ListSubheader>}
                         >
-                            {({ loading, error, data }) => {
-                                if (loading) return <GraphQLProgress />;
-                                if (error) {
-                                    console.error(error);
-                                    return (
-                                        <Fragment>
-                                            <NestedListItem>
-                                                <ListItemText
-                                                    primary={<span style={{ color: "red" }}>Error</span>}
-                                                />
-                                            </NestedListItem>
-                                            <notificationListener.ErrorComponent error={error}/>
-                                        </Fragment>
-                                    );
-                                }
-
-                                const tags = getTagsByURLQueryParam(this.props.history);
-                                const popularTags = (data.listPopularTags as PopularTags).map(x => x.name);
-
-                                return (
-                                    <List component="div" disablePadding>
-                                        {popularTags.concat(this.state.tags)
-                                            .filter((x, i, self) => self.indexOf(x) === i)
-                                            .map(tag => (
-                                                <Link
-                                                    to={
-                                                        (location.pathname.indexOf("/works") === -1 ? "/works" : "")
-                                                      + formatTagsOfURLQueryParam(
-                                                            tags.includes(tag) ? tags.filter(x => x !== tag)
-                                                          :                      tags.concat(tag)
-                                                        )
-                                                    }
-                                                    key={tag}
-                                                >
-                                                    <NestedListItem button>
-                                                        <ListItemText
-                                                            primary={<span>{tag}</span>}
-                                                        />
-                                                        <ListItemSecondaryAction>
-                                                            <Checkbox
-                                                                checked={tags.includes(tag)}
-                                                                tabIndex={-1}
-                                                                disableRipple
-                                                            />
-                                                        </ListItemSecondaryAction>
-                                                    </NestedListItem>
-                                                </Link>
-                                            )
-                                        )}
-                                    </List>
-                                );
-                            }}
-                        </Query>
-                    </Collapse>
-                </List>
-                <List
-                    subheader={<ListSubheader component="div">Designer</ListSubheader>}
-                >
-                    <ListItem button>
-                        <ListItemIcon>
-                            <StarIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Popular" />
-                    </ListItem>
-                    <ListItem button>
-                        <ListItemIcon>
-                            <NewReleasesIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="New" />
-                    </ListItem>
-                </List>
-            </Host>
+                            <ListItem
+                                button
+                                onClick={handleLocale}
+                            >
+                                <ListItemIcon>
+                                    <LanguageIcon />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    {locale.navigater.language}
+                                </ListItemText>
+                            </ListItem>
+                        </List>
+                    </div>
+                </Host>
+                )}
+            </LocaleContext.Consumer>
         );
     }
 }
 
 const Host = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: max-content;
+    min-height: 100%;
     width: 15rem;
+    overflow: auto;
+    > :last-child {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        justify-content: flex-end;
+        min-height: max-content;
+    }
 `;
 
 const Title = styled(Typography)`

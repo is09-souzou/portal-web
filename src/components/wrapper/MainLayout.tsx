@@ -2,6 +2,7 @@ import React                         from "react";
 import { Drawer }                    from "@material-ui/core";
 import { RouteComponentProps }       from "react-router-dom";
 import styled                        from "styled-components";
+import Locale, { location }          from "../../localization/locale";
 import Navigator                     from "./../Navigator";
 import { NotificationListenerProps } from "./NotificationListener";
 
@@ -10,6 +11,7 @@ interface State {
     fabIsVisible: boolean;
     fabClickSubscribers: { key: number; fn: (e: any) => void; }[];
     fabIcon: React.ReactNode;
+    locale: location;
 }
 
 interface Props extends RouteComponentProps<{}>, NotificationListenerProps {
@@ -27,6 +29,11 @@ export const DrawerContext = React.createContext<DrawerContextModel>({
     toggleDrawer: () => undefined
 });
 
+export const LocaleContext = React.createContext({
+    locale: Locale.us,
+    handleLocale: () => {}
+});
+
 export default class extends React.Component<Props, State> {
 
     componentWillMount() {
@@ -35,9 +42,21 @@ export default class extends React.Component<Props, State> {
             fabIsVisible: true,
             fabClickSubscribers: []
         });
+        this.setLocale();
+    }
+
+    setLocale = () => {
+        const language = (window.navigator.languages && window.navigator.languages[0]) ||
+            window.navigator.language;
+        language === "ja" || "ja-JP" ?
+            this.setState({ locale: "jp" })
+        :
+            this.setState({ locale: "us" })
+        ;
     }
 
     toggleDrawer = () => this.setState({ drawerOpend: !this.state.drawerOpend });
+    handleLocale = () => this.setState({ locale: this.state.locale === "us" ? "jp" : "us" });
 
     render() {
 
@@ -49,42 +68,49 @@ export default class extends React.Component<Props, State> {
 
         return (
             <Host>
-                <div>
-                    <Drawer
-                        variant="temporary"
-                        anchor={"left"}
-                        open={this.state.drawerOpend}
-                        onClose={this.toggleDrawer}
-                        ModalProps={{ keepMounted: true }}
-                    >
-                        <Navigator
-                            history={history}
-                            notificationListener={notificationListener}
-                        />
-                    </Drawer>
-                </div>
-                <div>
-                    <Drawer
-                        variant="permanent"
-                        open
-                    >
-                        <Navigator
-                            history={history}
-                            notificationListener={notificationListener}
-                        />
-                    </Drawer>
-                </div>
-                <Content>
-                    <DrawerContext.Provider
-                        value={{
-                            toggleDrawer: this.toggleDrawer
-                        }}
-                    >
-                        <Main>
-                            {render({})}
-                        </Main>
-                    </DrawerContext.Provider>
-                </Content>
+                <LocaleContext.Provider
+                    value={{
+                        locale: Locale[this.state.locale],
+                        handleLocale: this.handleLocale
+                    }}
+                >
+                    <div>
+                        <Drawer
+                            variant="temporary"
+                            anchor={"left"}
+                            open={this.state.drawerOpend}
+                            onClose={this.toggleDrawer}
+                            ModalProps={{ keepMounted: true }}
+                        >
+                            <Navigator
+                                history={history}
+                                notificationListener={notificationListener}
+                            />
+                        </Drawer>
+                    </div>
+                    <div>
+                        <Drawer
+                            variant="permanent"
+                            open
+                        >
+                            <Navigator
+                                history={history}
+                                notificationListener={notificationListener}
+                            />
+                        </Drawer>
+                    </div>
+                    <Content>
+                        <DrawerContext.Provider
+                            value={{
+                                toggleDrawer: this.toggleDrawer
+                            }}
+                        >
+                            <Main>
+                                {render({})}
+                            </Main>
+                        </DrawerContext.Provider>
+                    </Content>
+                </LocaleContext.Provider>
             </Host>
         );
     }
