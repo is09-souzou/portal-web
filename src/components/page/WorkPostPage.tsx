@@ -133,6 +133,9 @@ export default class extends React.Component<PageComponentProps<void>, State> {
 
     onClosePreview = () => this.setState({ previewWork: undefined, workDialogVisible: false });
 
+    getLine = (text: string, lineNumber: number) => text.split("\n")[lineNumber - 1];
+    getLineNumber = (text: string, position: number) => text.substr(0, position).split("\n").length;
+
     render() {
         const {
             auth,
@@ -283,9 +286,27 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                     <ToolList>
                                                         <ToolItem
                                                             onClick={_ => {
-                                                                if (!this.descriptionInput) return
-                                                                console.log(this.descriptionInput.selectionStart)
-                                                                console.log(this.descriptionInput.selectionEnd)
+                                                                if (!this.descriptionInput) return;
+                                                                const lines = [
+                                                                    this.getLineNumber(this.descriptionInput.value, this.descriptionInput.selectionStart),
+                                                                    this.getLineNumber(this.descriptionInput.value, this.descriptionInput.selectionEnd)
+                                                                ];
+
+                                                                this.setState({
+                                                                    description: (
+                                                                        this.descriptionInput.value.split("\n")
+                                                                            .map((x: string, i: number) => {
+                                                                                if (i + 1 >= lines[0] && i + 1 <= lines[1]) {
+                                                                                    if (/^#/.test(x)) {
+                                                                                        return x.replace(/^/g, "#");
+                                                                                    }
+                                                                                    return x.replace(/^/g, "# ");
+                                                                                }
+                                                                                return x;
+                                                                            })
+                                                                            .join("\n")
+                                                                    )
+                                                                });
                                                             }}
                                                         >
                                                             H
