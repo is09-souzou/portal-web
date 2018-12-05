@@ -215,24 +215,22 @@ export default class extends React.Component<Props, State> {
                             <ListItemText primary={locale.navigater.new} />
                         </ListItem>
                     </List>
-                    <div>
-                        <Divider />
-                        <List
-                            subheader={<ListSubheader component="div">{locale.navigater.languages}</ListSubheader>}
+                    <Divider />
+                    <List
+                        subheader={<ListSubheader component="div">{locale.navigater.languages}</ListSubheader>}
+                    >
+                        <ListItem
+                            button
+                            onClick={handleLocale}
                         >
-                            <ListItem
-                                button
-                                onClick={handleLocale}
-                            >
-                                <ListItemIcon>
-                                    <LanguageIcon />
-                                </ListItemIcon>
-                                <ListItemText>
-                                    {locale.navigater.language}
-                                </ListItemText>
-                            </ListItem>
-                        </List>
-                    </div>
+                            <ListItemIcon>
+                                <LanguageIcon />
+                            </ListItemIcon>
+                            <ListItemText>
+                                {locale.navigater.language}
+                            </ListItemText>
+                        </ListItem>
+                    </List>
                 </Host>
                 )}
             </LocaleContext.Consumer>
@@ -242,7 +240,7 @@ export default class extends React.Component<Props, State> {
 
 const Host = styled.div`
     width: 15rem;
-    height: auto;
+    overflow: auto;
 `;
 
 const Title = styled(Typography)`
