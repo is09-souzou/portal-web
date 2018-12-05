@@ -215,22 +215,24 @@ export default class extends React.Component<Props, State> {
                             <ListItemText primary={locale.navigater.new} />
                         </ListItem>
                     </List>
-                    <Divider />
-                    <List
-                        subheader={<ListSubheader component="div">{locale.navigater.languages}</ListSubheader>}
-                    >
-                        <ListItem
-                            button
-                            onClick={handleLocale}
+                    <div>
+                        <Divider />
+                        <List
+                            subheader={<ListSubheader component="div">{locale.navigater.languages}</ListSubheader>}
                         >
-                            <ListItemIcon>
-                                <LanguageIcon />
-                            </ListItemIcon>
-                            <ListItemText>
-                                {locale.navigater.language}
-                            </ListItemText>
-                        </ListItem>
-                    </List>
+                            <ListItem
+                                button
+                                onClick={handleLocale}
+                            >
+                                <ListItemIcon>
+                                    <LanguageIcon />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    {locale.navigater.language}
+                                </ListItemText>
+                            </ListItem>
+                        </List>
+                    </div>
                 </Host>
                 )}
             </LocaleContext.Consumer>
@@ -239,8 +241,19 @@ export default class extends React.Component<Props, State> {
 }
 
 const Host = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: max-content;
+    min-height: 100%;
     width: 15rem;
     overflow: auto;
+    > :last-child {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        justify-content: flex-end;
+        min-height: max-content;
+    }
 `;
 
 const Title = styled(Typography)`
