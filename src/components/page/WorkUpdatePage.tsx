@@ -29,13 +29,13 @@ interface Chip {
 }
 
 interface State {
-    chipsData               : Chip[];
-    description             : string;
-    imageInputDialogVisible : boolean;
-    mainImageUrl            : string;
-    previewWork?            : Work;
-    title                   : string;
-    workDialogVisible       : boolean;
+    chipsData?               : Chip[];
+    description?             : string;
+    imageInputDialogVisible? : boolean;
+    mainImageUrl?            : string;
+    previewWork?             : Work;
+    title?                   : string;
+    workDialogVisible?       : boolean;
 }
 
 const QueryGetWorkById = gql(`
@@ -73,17 +73,17 @@ const MutationUpdateWork = gql(`
 export default class extends React.Component<PageComponentProps<{id: string}>, State> {
 
     state = {
-        chipsData: [] as Chip[],
-        description: "",
-        mainImageUrl: "",
+        chipsData: undefined,
+        description: undefined,
+        mainImageUrl: undefined,
         previewWork: undefined,
-        title: "",
+        title: undefined,
         workDialogVisible: false,
         imageInputDialogVisible: false,
     };
 
     deleteChip = (data: Chip) => () => this.setState({
-        chipsData: this.state.chipsData.filter((x: Chip): boolean => data.key !== x.key)
+        chipsData: this.state.chipsData !== undefined ? this.state.chipsData.filter((x: Chip): boolean => data.key !== x.key) : []
     })
 
     tagInputKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -168,7 +168,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
 
                         if (!data.getWork) return <NotFound />;
 
-                        const getWork = data.getWork as Work;
+                        const currentWork = data.getWork as Work;
 
                         return (
                             <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
@@ -181,11 +181,11 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                 variables: {
                                                     work: {
                                                         id: this.props.computedMatch!.params.id,
-                                                        title: this.state.title === "" ? getWork.title : this.state.title,
-                                                        description: this.state.description === "" ? getWork.description : this.state.description,
+                                                        title: this.state.title ? currentWork.title : this.state.title,
+                                                        description: this.state.description ? currentWork.description : this.state.description,
                                                         userId: auth.token!.payload.sub,
-                                                        imageUrl: this.state.mainImageUrl === "" ? getWork.imageUrl : this.state.mainImageUrl,
-                                                        tags: this.state.chipsData.map(x => x.label),
+                                                        imageUrl: this.state.mainImageUrl ? currentWork.imageUrl : this.state.mainImageUrl,
+                                                        tags: this.state.chipsData ? (( this.state.chipsData || [] as Chip[] ).map(x => x.label)) : currentWork.tags,
                                                     }
                                                 },
                                                 optimisticResponse: {
@@ -219,7 +219,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                 onChange={(e: any) => this.setState({
                                                     title: e.target.value
                                                 })}
-                                                defaultValue={getWork.title}
+                                                defaultValue={currentWork.title}
                                                 required
                                             />
                                             <div>
@@ -233,14 +233,16 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                     }}
                                                 />
                                                 <ChipList>
-                                                    {this.state.chipsData.map(data =>
-                                                        <Chip
-                                                            key={data.key}
-                                                            clickable={false}
-                                                            label={data.label}
-                                                            onDelete={this.deleteChip(data)}
-                                                        />
-                                                    )}
+                                                    {(this.state.chipsData || currentWork.tags.map(x => ({key: x, label: x})))
+                                                        .map(data =>
+                                                            <Chip
+                                                                key={data.key}
+                                                                clickable={false}
+                                                                label={data.label}
+                                                                onDelete={this.deleteChip(data)}
+                                                            />
+                                                        )
+                                                    }
                                                 </ChipList>
                                             </div>
                                         </Head>
@@ -248,7 +250,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                             <div>
                                                 <WorkImage
                                                     src={(
-                                                        this.state.mainImageUrl === "" ? getWork.imageUrl : this.state.mainImageUrl
+                                                        this.state.mainImageUrl === "" ? currentWork.imageUrl : this.state.mainImageUrl
                                                     )}
                                                     onClick={this.onOpenImageInputDialog}
                                                 />
@@ -266,7 +268,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                 />
                                             </div>
                                             <ReactMarkdown
-                                                source={this.state.description === "" ? data.getWork.description : this.state.description}
+                                                source={this.state.description ? data.getWork.description : this.state.description}
                                                 rawSourcePos
                                             />
                                         </WorkContentArea>

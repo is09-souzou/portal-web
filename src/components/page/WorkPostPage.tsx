@@ -231,7 +231,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                         defaultValue={this.state.description}
                                     />
                                 </div>
-                                <ReactMarkdown
+                                <StyledReactMarkdown
                                     source={this.state.description}
                                     rawSourcePos
                                 />
@@ -281,9 +281,9 @@ const Host = styled.form`
     margin: 0 2rem;
     width: calc(100% - 4rem);
     > * {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
     }
 `;
 
@@ -340,3 +340,9 @@ const ActionArea = styled.div`
         margin-left: .5rem !important;
     }
 `;
+
+const StyledReactMarkdown = styled(ReactMarkdown)`
+    & h1{
+        border-bottom: 2px;
+    }
+`
