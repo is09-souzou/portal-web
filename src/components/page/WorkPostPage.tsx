@@ -58,6 +58,24 @@ const MutationCreateWork = gql(`
     }
 `);
 
+const MutationUpdateWork = gql(`
+    mutation updateWork(
+        $work: WorkUpdate!
+    ) {
+        updateWork(
+            work: $work
+        ) {
+            id
+            description
+            imageUrl
+            userId
+            title
+            tags
+            createdAt
+        }
+    }
+`)
+
 export default class extends React.Component<PageComponentProps<{id: string}>, State> {
 
     descriptionInput?: any;
@@ -372,80 +390,38 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                     </ToolList>
                                                 </div>
                                             </div>
-                                            <ReactMarkdown
+                                            <PortalMarkdown
                                                 source={this.state.description}
                                                 rawSourcePos
                                             />
-                                        )}
-                                    </ChipList>
-                                </div>
-                            </Head>
-                            <WorkContentArea>
-                                <div>
-                                    <MainImageInput
-                                        labelText="create-work-main-image"
-                                        // tslint:disable-next-line:jsx-no-lambda
-                                        onChange={async e => {
-                                            const image = e.target.files![0];
-                                            const result = await createSignedUrl({
-                                                jwt: auth.token!.jwtToken,
-                                                userId: auth.token!.payload.sub,
-                                                type: "work",
-                                                mimetype: image.type
-                                            });
-                                            await fileUploadToS3({
-                                                url: result.signedUrl,
-                                                file: image
-                                            });
-                                            this.setState({
-                                                mainImageUrl: result.uploadedUrl
-                                            });
-                                        }}
-                                    />
-                                    <TextField
-                                        label="Description"
-                                        multiline
-                                        margin="normal"
-                                        required
-                                        placeholder={"Input Description!"}
-                                        rowsMax={30}
-                                        fullWidth
-                                        // tslint:disable-next-line:jsx-no-lambda
-                                        onChange={(e: any) => this.setState({ description: e.target.value })}
-                                        defaultValue={this.state.description}
-                                    />
-                                </div>
-                                <PortalMarkdown
-                                    source={this.state.description}
-                                    rawSourcePos
-                                />
-                            </WorkContentArea>
-                            <ActionArea>
-                                <div/>
-                                <Button
-                                    variant="outlined"
-                                    color="primary"
-                                    onClick={this.onOpenPreview}
-                                >
-                                    preview
-                                </Button>
-                                <Button
-                                    type="submit"
-                                    component="button"
-                                    variant="raised"
-                                    color="primary"
-                                >
-                                    create
-                                </Button>
-                            </ActionArea>
-                        </div>
-                        {(createWorkError) &&
-                            <notificationListener.ErrorComponent message={createWorkError}/>
-                        }
-                        </Host>
+                                        </WorkContentArea>
+                                        <ActionArea>
+                                            <div/>
+                                            <Button
+                                                variant="outlined"
+                                                color="primary"
+                                                onClick={this.onOpenPreview}
+                                            >
+                                                preview
+                                            </Button>
+                                            <Button
+                                                type="submit"
+                                                component="button"
+                                                variant="raised"
+                                                color="primary"
+                                            >
+                                                create
+                                            </Button>
+                                        </ActionArea>
+                                    </div>
+                                    {(createWorkError) &&
+                                        <notificationListener.ErrorComponent message={createWorkError}/>
+                                    }
+                                </Host>
+                            )}
+                        </Mutation>
                     )}
                 </Mutation>
-
                 <WorkDialog
                     history={history}
                     open={this.state.workDialogVisible}
