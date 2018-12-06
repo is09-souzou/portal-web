@@ -6,7 +6,6 @@ import {
 } from "@material-ui/core";
 import gql           from "graphql-tag";
 import { Mutation }  from "react-apollo";
-import ReactMarkdown from "react-markdown";
 import styled        from "styled-components";
 import createSignedUrl        from "../../api/createSignedUrl";
 import fileUploadToS3         from "../../api/fileUploadToS3";
@@ -14,6 +13,7 @@ import { PageComponentProps } from "../../App";
 import Header                 from "../Header";
 import ImageInput             from "../ImageInput";
 import Page                   from "../Page";
+import PortalMarkdown         from "../PortalMarkdown";
 import WorkDialog             from "../WorkDialog";
 import { Work }               from "../../graphQL/type";
 
@@ -231,12 +231,10 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                         defaultValue={this.state.description}
                                     />
                                 </div>
-                                <MarkdownStyles>
-                                    <ReactMarkdown
-                                        source={this.state.description}
-                                        rawSourcePos
-                                    />
-                                </MarkdownStyles>
+                                <PortalMarkdown
+                                    source={this.state.description}
+                                    rawSourcePos
+                                />
                             </WorkContentArea>
                             <ActionArea>
                                 <div/>
@@ -340,13 +338,5 @@ const ActionArea = styled.div`
     }
     > * {
         margin-left: .5rem !important;
-    }
-`;
-
-const MarkdownStyles = styled.div`
-    & {
-        h1 {
-            border-bottom: 2px solid red;
-        }
     }
 `;

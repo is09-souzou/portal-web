@@ -9,7 +9,6 @@ import {
     Mutation,
     Query
 }  from "react-apollo";
-import ReactMarkdown from "react-markdown";
 import styled        from "styled-components";
 import createSignedUrl        from "../../api/createSignedUrl";
 import fileUploadToS3         from "../../api/fileUploadToS3";
@@ -20,6 +19,7 @@ import Header                 from "../Header";
 import ImageInputDialog       from "../ImageInputDialog";
 import NotFound               from "../NotFound";
 import Page                   from "../Page";
+import PortalMarkdown         from "../PortalMarkdown";
 import WorkDialog             from "../WorkDialog";
 import { Work }               from "../../graphQL/type";
 
@@ -282,11 +282,11 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                     fullWidth
                                                     // tslint:disable-next-line:jsx-no-lambda
                                                     onChange={(e: any) => this.setState({ description: e.target.value })}
-                                                    defaultValue={data.getWork.description}
+                                                    defaultValue={currentWork.description}
                                                 />
                                             </div>
-                                            <ReactMarkdown
-                                                source={this.state.description ? data.getWork.description : this.state.description}
+                                            <PortalMarkdown
+                                                source={this.state.description ? currentWork.description : this.state.description}
                                                 rawSourcePos
                                             />
                                         </WorkContentArea>
