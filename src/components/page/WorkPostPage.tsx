@@ -300,7 +300,6 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                                     this.descriptionInput.selectionStart,
                                                                     this.descriptionInput.selectionEnd
                                                                 ];
-                                                                console.log("first debug point:", selectionNumber);
                                                                 const lines = [
                                                                     this.getLineNumber(this.descriptionInput.value, selectionNumber[0]),
                                                                     this.getLineNumber(this.descriptionInput.value, selectionNumber[1])
@@ -325,11 +324,8 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                                         )
                                                                     },
                                                                     () => {
-                                                                        console.log("after set state:", selectionNumber);
                                                                         this.descriptionInput.selectionStart = selectionNumber[0];
                                                                         this.descriptionInput.selectionEnd = selectionNumber[1];
-                                                                        // tslint:disable-next-line:max-line-length
-                                                                        console.log("after update textarea:", this.descriptionInput.selectionStart, this.descriptionInput.selectionEnd);
                                                                     }
                                                                 );
                                                             }}
@@ -340,26 +336,36 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                             // tslint:disable-next-line:jsx-no-lambda
                                                             onClick={_ => {
                                                                 if (!this.descriptionInput) return;
+                                                                const selectionNumber = [
+                                                                    this.descriptionInput.selectionStart,
+                                                                    this.descriptionInput.selectionEnd
+                                                                ];
                                                                 const lines = [
                                                                     this.getLineNumber(this.descriptionInput.value, this.descriptionInput.selectionStart),
                                                                     this.getLineNumber(this.descriptionInput.value, this.descriptionInput.selectionEnd)
                                                                 ];
 
-                                                                this.setState({
-                                                                    description: (
-                                                                        this.descriptionInput.value.split("\n")
-                                                                        .map((x: string, i: number) => {
-                                                                            if (i + 1 >= lines[0] && i + 1 <= lines[1]) {
-                                                                                if (/^[*]/.test(x) || /^[-]/.test(x)) {
-                                                                                    return x.replace(/^../g, "");
+                                                                this.setState(
+                                                                    {
+                                                                        description: (
+                                                                            this.descriptionInput.value.split("\n")
+                                                                            .map((x: string, i: number) => {
+                                                                                if (i + 1 >= lines[0] && i + 1 <= lines[1]) {
+                                                                                    if (/^[*]/.test(x) || /^[-]/.test(x)) {
+                                                                                        return x.replace(/^../g, "");
+                                                                                    }
+                                                                                    return x.replace(/^/g, "* ");
                                                                                 }
-                                                                                return x.replace(/^/g, "* ");
-                                                                            }
-                                                                            return x;
-                                                                        })
-                                                                        .join("\n")
-                                                                    )
-                                                                });
+                                                                                return x;
+                                                                            })
+                                                                            .join("\n")
+                                                                        )
+                                                                    },
+                                                                    () => {
+                                                                        this.descriptionInput.selectionStart = selectionNumber[0];
+                                                                        this.descriptionInput.selectionEnd = selectionNumber[1];
+                                                                    }
+                                                                );
                                                             }}
                                                         >
                                                             <ListIcon />
@@ -397,8 +403,8 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                             />
                                         </WorkContentArea>
                                         <div>
-                                            <Switch
-                                            >
+                                            <Switch>
+                                                Range setting
                                             </Switch>
                                         </div>
                                         <ActionArea>
