@@ -333,6 +333,10 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                             <span>H</span>
                                                         </ToolItem>
                                                         <ToolItem
+                                                        >
+                                                            <ListIcon />
+                                                        </ToolItem>
+                                                        <ToolItem
                                                             // tslint:disable-next-line:jsx-no-lambda
                                                             onClick={_ => {
                                                                 if (!this.descriptionInput) return;
@@ -367,10 +371,6 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                                     }
                                                                 );
                                                             }}
-                                                        >
-                                                            <ListIcon />
-                                                        </ToolItem>
-                                                        <ToolItem
                                                         >
                                                             ・
                                                         </ToolItem>
