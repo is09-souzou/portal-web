@@ -74,7 +74,7 @@ const MutationUpdateWork = gql(`
             createdAt
         }
     }
-`)
+`);
 
 export default class extends React.Component<PageComponentProps<{id: string}>, State> {
 
