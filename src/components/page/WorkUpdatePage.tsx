@@ -82,21 +82,29 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         imageInputDialogVisible: false,
     };
 
-    deleteChip = (data: Chip) => () => this.setState({
-        chipsData: this.state.chipsData !== undefined ? this.state.chipsData.filter((x: Chip): boolean => data.key !== x.key) : []
-    })
+    deleteChip = (data: Chip) => () => {
+        if (this.state.chipsData === undefined)
+            return;
+
+        this.setState({
+            chipsData: (this.state.chipsData || [] as Chip[]).filter((x: Chip): boolean => data.key !== x.key)
+        });
+    }
 
     tagInputKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (this.state.chipsData.length >= 5)
+        if (this.state.chipsData === undefined)
+            return;
+
+        if ((this.state.chipsData || [] as Chip[]).length >= 5)
             return e.preventDefault();
 
         const inputValue = (e.target as any).value;
         if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
             e.preventDefault();
             if (inputValue.length > 1) {
-                if (!this.state.chipsData.some(x => x.label === inputValue))
+                if (!(this.state.chipsData || [] as Chip[]).some(x => x.label === inputValue))
                     this.setState({
-                        chipsData: this.state.chipsData.concat({
+                        chipsData: (this.state.chipsData || [] as Chip[]).concat({
                             key: (e.target as any).value,
                             label: (e.target as any).value
                         })
@@ -111,11 +119,11 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         this.setState({
             previewWork: ({
                 id: "preview",
-                title: this.state.title,
-                description: this.state.description,
+                title: this.state.title || "",
+                description: this.state.description || "",
                 userId: this.props.auth.token!.payload.sub,
-                imageUrl: this.state.mainImageUrl,
-                tags: this.state.chipsData.map(x => x.label) as string[],
+                imageUrl: this.state.mainImageUrl || "",
+                tags: (this.state.chipsData || [] as Chip[]).map(x => x.label) as string[],
                 createdAt: +new Date() / 1000,
                 user: {
                     id: "preview",
@@ -170,6 +178,11 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
 
                         const currentWork = data.getWork as Work;
 
+                        if (this.state.chipsData === undefined)
+                            this.setState({
+                                chipsData: currentWork.tags.map(x => ({ key: x, label: x }))
+                            });
+
                         return (
                             <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
                                 {(updateWork, { error: updateWorkError }) => (
@@ -185,7 +198,10 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                         description: this.state.description ? currentWork.description : this.state.description,
                                                         userId: auth.token!.payload.sub,
                                                         imageUrl: this.state.mainImageUrl ? currentWork.imageUrl : this.state.mainImageUrl,
-                                                        tags: this.state.chipsData ? (( this.state.chipsData || [] as Chip[] ).map(x => x.label)) : currentWork.tags,
+                                                        tags: (
+                                                            this.state.chipsData ? ((this.state.chipsData || [] as Chip[]).map(x => x.label))
+                                                          :                        currentWork.tags
+                                                        )
                                                     }
                                                 },
                                                 optimisticResponse: {
@@ -196,8 +212,10 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                         description: this.state.description,
                                                         userId: auth.token!.payload.sub,
                                                         imageUrl: this.state.mainImageUrl,
-                                                        tags: this.state.chipsData.map(x => x.label),
-                                                        createdAt: +new Date(),
+                                                        tags: (
+                                                            this.state.chipsData ? ((this.state.chipsData || [] as Chip[]).map(x => x.label))
+                                                          :                        currentWork.tags
+                                                        ),
                                                         __typename: "Work"
                                                     }
                                                 },
@@ -233,7 +251,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                     }}
                                                 />
                                                 <ChipList>
-                                                    {(this.state.chipsData || currentWork.tags.map(x => ({key: x, label: x})))
+                                                    {(this.state.chipsData || currentWork.tags.map(x => ({ key: x, label: x })))
                                                         .map(data =>
                                                             <Chip
                                                                 key={data.key}

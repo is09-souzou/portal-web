@@ -231,10 +231,12 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                         defaultValue={this.state.description}
                                     />
                                 </div>
-                                <StyledReactMarkdown
-                                    source={this.state.description}
-                                    rawSourcePos
-                                />
+                                <MarkdownStyles>
+                                    <ReactMarkdown
+                                        source={this.state.description}
+                                        rawSourcePos
+                                    />
+                                </MarkdownStyles>
                             </WorkContentArea>
                             <ActionArea>
                                 <div/>
@@ -341,8 +343,10 @@ const ActionArea = styled.div`
     }
 `;
 
-const StyledReactMarkdown = styled(ReactMarkdown)`
-    & h1{
-        border-bottom: 2px;
+const MarkdownStyles = styled.div`
+    & {
+        h1 {
+            border-bottom: 2px solid red;
+        }
     }
-`
+`;

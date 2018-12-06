@@ -7,6 +7,8 @@ const HtmlWebpackPlugin        = require('html-webpack-plugin');
 const HardSourceWebpackPlugin  = require('hard-source-webpack-plugin');
 const Uglify                   = require("uglifyjs-webpack-plugin");
 
+const NODE_ENV = process.env.NODE_ENV;
+
 module.exports = {
     entry: "./src/index.tsx",
     mode: process.env.NODE_ENV || "production",
