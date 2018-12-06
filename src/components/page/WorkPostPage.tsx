@@ -2,6 +2,7 @@ import React from "react";
 import {
     Button,
     Chip,
+    Switch,
     TextField
 } from "@material-ui/core";
 import {
@@ -395,6 +396,11 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                 rawSourcePos
                                             />
                                         </WorkContentArea>
+                                        <div>
+                                            <Switch
+                                            >
+                                            </Switch>
+                                        </div>
                                         <ActionArea>
                                             <div/>
                                             <Button
