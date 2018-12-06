@@ -13,7 +13,6 @@ import {
 } from "@material-ui/icons";
 import gql           from "graphql-tag";
 import { Mutation }  from "react-apollo";
-import ReactMarkdown from "react-markdown";
 import styled        from "styled-components";
 import createSignedUrl        from "../../api/createSignedUrl";
 import fileUploadToS3         from "../../api/fileUploadToS3";
@@ -21,6 +20,7 @@ import { PageComponentProps } from "../../App";
 import Header                 from "../Header";
 import ImageInput             from "../ImageInput";
 import Page                   from "../Page";
+import PortalMarkdown         from "../PortalMarkdown";
 import ToolItem               from "../ToolItem";
 import ToolList               from "../ToolList";
 import WorkDialog             from "../WorkDialog";
@@ -76,7 +76,7 @@ const MutationUpdateWork = gql(`
     }
 `);
 
-export default class extends React.Component<PageComponentProps<void>, State> {
+export default class extends React.Component<PageComponentProps<{id: string}>, State> {
 
     descriptionInput?: any;
 
@@ -390,7 +390,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                     </ToolList>
                                                 </div>
                                             </div>
-                                            <ReactMarkdown
+                                            <PortalMarkdown
                                                 source={this.state.description}
                                                 rawSourcePos
                                             />
@@ -414,8 +414,8 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                             </Button>
                                         </ActionArea>
                                     </div>
-                                    {(updateWorkError || createWorkError) &&
-                                        <notificationListener.ErrorComponent message={updateWorkError || createWorkError}/>
+                                    {(createWorkError || updateWorkError) &&
+                                        <notificationListener.ErrorComponent message={createWorkError || updateWorkError}/>
                                     }
                                 </Host>
                             )}
@@ -427,6 +427,7 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                     open={this.state.workDialogVisible}
                     onClose={this.onClosePreview}
                     work={this.state.previewWork}
+                    userId={auth.token!.payload.sub}
                 />
             </Page>
         );

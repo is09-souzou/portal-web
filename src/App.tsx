@@ -13,6 +13,7 @@ import { MainLayoutEventProps }      from "./components/wrapper/MainLayout";
 import { NotificationListenerProps } from "./components/wrapper/NotificationListener";
 import {
     WorkPostPage,
+    WorkUpdatePage,
     WorkListPage,
     ProfilePage,
     UserPage,
@@ -33,8 +34,13 @@ export default () => (
                         exact={true}
                     />
                     <ComposingRoute
-                        path="/works/create-work"
+                        path="/works/create-work/"
                         component={WorkPostPage}
+                        exact={true}
+                    />
+                    <ComposingRoute
+                        path="/works/update-work/:id"
+                        component={WorkUpdatePage}
                         exact={true}
                     />
                     <ComposingRoute

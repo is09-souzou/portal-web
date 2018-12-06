@@ -9,6 +9,7 @@
   "scripts": {
     "start": "env NODE_ENV=development webpack-serve webpack.config.js",
     "start:prod": "env NODE_ENV=production webpack-serve webpack.config.js",
+    "usapi": "webpack-serve webpack.config.js",
     "build": "yarn build:dev",
     "build:dev": "env NODE_ENV=development webpack --mode=development --config webpack.config.js",
     "build:prod": "env NODE_ENV=production webpack --mode=production --config webpack.config.js",

@@ -15,9 +15,9 @@ interface State {
     invalid: boolean;
 }
 
-type Props = React.InputHTMLAttributes<HTMLInputElement> & PropsBase;
+export type ImageInputProps = React.InputHTMLAttributes<HTMLInputElement> & PropsBase;
 
-export default class extends React.Component<Props, State> {
+export default class extends React.Component<ImageInputProps, State> {
     componentWillMount() {
         this.setState({
             focused : false,
@@ -38,6 +38,7 @@ export default class extends React.Component<Props, State> {
             onBlur = () => undefined,
             onChange = () => undefined,
             onFocus = () => undefined,
+            onSubmit = () => undefined,
             onLoad,
             width = "",
             ...props

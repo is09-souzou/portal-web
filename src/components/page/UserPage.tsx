@@ -233,6 +233,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             open={this.state.workDialogVisible}
                                             onClose={this.handleClose}
                                             work={this.state.selectedWork}
+                                            userId={auth.token!.payload.sub}
                                         />
                                         <StreamSpinner
                                             key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
