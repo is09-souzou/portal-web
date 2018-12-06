@@ -4,7 +4,13 @@ import {
     Chip,
     TextField
 } from "@material-ui/core";
-import ListIcon      from "@material-ui/icons/FormatListNumberedRounded";
+import {
+    FormatBoldRounded as BoldIcon,
+    FormatListNumberedRounded as ListIcon,
+    FormatItalicRounded as ItalicIcon,
+    LinkRounded as LinkIcon,
+    StrikethroughSRounded as StrikeIcon
+} from "@material-ui/icons";
 import gql           from "graphql-tag";
 import { Mutation }  from "react-apollo";
 import ReactMarkdown from "react-markdown";
@@ -314,6 +320,30 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                         <ToolItem
                                                         >
                                                             <ListIcon></ListIcon>
+                                                        </ToolItem>
+                                                        <ToolItem
+                                                        >
+                                                            ・
+                                                        </ToolItem>
+                                                        <ToolItem
+                                                        >
+                                                            ─
+                                                        </ToolItem>
+                                                        <ToolItem
+                                                        >
+                                                            <LinkIcon></LinkIcon>
+                                                        </ToolItem>
+                                                        <ToolItem
+                                                        >
+                                                            <StrikeIcon></StrikeIcon>
+                                                        </ToolItem>
+                                                        <ToolItem
+                                                        >
+                                                            <BoldIcon></BoldIcon>
+                                                        </ToolItem>
+                                                        <ToolItem
+                                                        >
+                                                            <ItalicIcon></ItalicIcon>
                                                         </ToolItem>
                                                     </ToolList>
                                                 </div>
