@@ -287,10 +287,56 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                         // tslint:disable-next-line:jsx-no-lambda
                                                         onChange={(e: any) => this.setState({ description: e.target.value })}
                                                         value={this.state.description}
+                                                        // tslint:disable-next-line:jsx-no-lambda
                                                         inputRef={x => this.descriptionInput = x}
                                                     />
                                                     <ToolList>
                                                         <ToolItem
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onClick={_ => {
+                                                                if (!this.descriptionInput) return;
+                                                                const selectionNumber = [
+                                                                    this.descriptionInput.selectionStart,
+                                                                    this.descriptionInput.selectionEnd
+                                                                ];
+                                                                console.log("first debug point:", selectionNumber);
+                                                                const lines = [
+                                                                    this.getLineNumber(this.descriptionInput.value, selectionNumber[0]),
+                                                                    this.getLineNumber(this.descriptionInput.value, selectionNumber[1])
+                                                                ];
+
+                                                                this.setState(
+                                                                    {
+                                                                        description: (
+                                                                            this.descriptionInput.value.split("\n")
+                                                                                .map((x: string, i: number) => {
+                                                                                    if (i + 1 >= lines[0] && i + 1 <= lines[1]) {
+                                                                                        if (/^#{6}/.test(x)) {
+                                                                                            return x.replace(/^#{6} /g, "");
+                                                                                        } else if (/^#/.test(x)) {
+                                                                                            return x.replace(/^/g, "#");
+                                                                                        }
+                                                                                        return x.replace(/^/g, "# ");
+                                                                                    }
+                                                                                    return x;
+                                                                                })
+                                                                                .join("\n")
+                                                                        )
+                                                                    },
+                                                                    () => {
+                                                                        console.log("after set state:", selectionNumber);
+                                                                        this.descriptionInput.selectionStart = selectionNumber[0];
+                                                                        this.descriptionInput.selectionEnd = selectionNumber[1];
+                                                                        // tslint:disable-next-line:max-line-length
+                                                                        console.log("after update textarea:", this.descriptionInput.selectionStart, this.descriptionInput.selectionEnd);
+                                                                    }
+                                                                );
+                                                            }}
+                                                        >
+                                                            <span>H</span>
+                                                        </ToolItem>
+                                                        <ToolItem
+                                                            // tslint:disable-next-line:jsx-no-lambda
                                                             onClick={_ => {
                                                                 if (!this.descriptionInput) return;
                                                                 const lines = [
@@ -301,25 +347,21 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                                 this.setState({
                                                                     description: (
                                                                         this.descriptionInput.value.split("\n")
-                                                                            .map((x: string, i: number) => {
-                                                                                if (i + 1 >= lines[0] && i + 1 <= lines[1]) {
-                                                                                    if (/^#/.test(x)) {
-                                                                                        return x.replace(/^/g, "#");
-                                                                                    }
-                                                                                    return x.replace(/^/g, "# ");
+                                                                        .map((x: string, i: number) => {
+                                                                            if (i + 1 >= lines[0] && i + 1 <= lines[1]) {
+                                                                                if (/^[*]/.test(x) || /^[-]/.test(x)) {
+                                                                                    return x.replace(/^../g, "");
                                                                                 }
-                                                                                return x;
-                                                                            })
-                                                                            .join("\n")
+                                                                                return x.replace(/^/g, "* ");
+                                                                            }
+                                                                            return x;
+                                                                        })
+                                                                        .join("\n")
                                                                     )
                                                                 });
                                                             }}
                                                         >
-                                                            H
-                                                        </ToolItem>
-                                                        <ToolItem
-                                                        >
-                                                            <ListIcon></ListIcon>
+                                                            <ListIcon />
                                                         </ToolItem>
                                                         <ToolItem
                                                         >
@@ -331,19 +373,19 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                                                         </ToolItem>
                                                         <ToolItem
                                                         >
-                                                            <LinkIcon></LinkIcon>
+                                                            <LinkIcon />
                                                         </ToolItem>
                                                         <ToolItem
                                                         >
-                                                            <StrikeIcon></StrikeIcon>
+                                                            <StrikeIcon />
                                                         </ToolItem>
                                                         <ToolItem
                                                         >
-                                                            <BoldIcon></BoldIcon>
+                                                            <BoldIcon/ >
                                                         </ToolItem>
                                                         <ToolItem
                                                         >
-                                                            <ItalicIcon></ItalicIcon>
+                                                            <ItalicIcon />
                                                         </ToolItem>
                                                     </ToolList>
                                                 </div>
