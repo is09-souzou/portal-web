@@ -414,8 +414,8 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                             </Button>
                                         </ActionArea>
                                     </div>
-                                    {(createWorkError) &&
-                                        <notificationListener.ErrorComponent message={createWorkError}/>
+                                    {(createWorkError || updateWorkError) &&
+                                        <notificationListener.ErrorComponent message={createWorkError || updateWorkError}/>
                                     }
                                 </Host>
                             )}
