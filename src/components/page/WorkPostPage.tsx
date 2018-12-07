@@ -333,6 +333,39 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                             <span>H</span>
                                                         </ToolItem>
                                                         <ToolItem
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onClick={_ => {
+                                                                if (!this.descriptionInput) return;
+                                                                const selectionNumber = [
+                                                                    this.descriptionInput.selectionStart,
+                                                                    this.descriptionInput.selectionEnd
+                                                                ];
+                                                                const lines = [
+                                                                    this.getLineNumber(this.descriptionInput.value, this.descriptionInput.selectionStart),
+                                                                    this.getLineNumber(this.descriptionInput.value, this.descriptionInput.selectionEnd)
+                                                                ];
+                                                                this.setState(
+                                                                    {
+                                                                        description: (
+                                                                            this.descriptionInput.value.split("\n")
+                                                                            .map((x: string, i: number) => {
+                                                                                if (i + 1 >= lines[0] && i + 1 <= lines[1]) {
+                                                                                    if (/^1. /.test(x)) {
+                                                                                        return x.replace(/^.../g, "");
+                                                                                    }
+                                                                                    return x.replace(/^/g, "1. ");
+                                                                                }
+                                                                                return x;
+                                                                            })
+                                                                            .join("\n")
+                                                                        )
+                                                                    },
+                                                                    () => {
+                                                                        this.descriptionInput.selectionStart = selectionNumber[0];
+                                                                        this.descriptionInput.selectionEnd = selectionNumber[1];
+                                                                    }
+                                                                );
+                                                            }}
                                                         >
                                                             <ListIcon />
                                                         </ToolItem>
@@ -375,14 +408,107 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                             ・
                                                         </ToolItem>
                                                         <ToolItem
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onClick={_ => {
+                                                                if (!this.descriptionInput) return;
+                                                                const selectionNumber = [
+                                                                    this.descriptionInput.selectionStart,
+                                                                    this.descriptionInput.selectionEnd
+                                                                ];
+                                                                const lines = [
+                                                                    this.getLineNumber(this.descriptionInput.value, this.descriptionInput.selectionStart),
+                                                                    this.getLineNumber(this.descriptionInput.value, this.descriptionInput.selectionEnd)
+                                                                ];
+                                                                this.setState(
+                                                                    {
+                                                                        description: (
+                                                                            this.descriptionInput.value.split("\n")
+                                                                            .map((x: string, i: number) => {
+                                                                                if (i + 1 >= lines[0] && i + 1 <= lines[1]) {
+                                                                                    if (/^[-]{3}/.test(x)) {
+                                                                                        return x.replace(/^[-]{3}/g, "");
+                                                                                    }
+                                                                                    return x.replace(/^/g, "---");
+                                                                                }
+                                                                                return x;
+                                                                            })
+                                                                            .join("\n")
+                                                                        )
+                                                                    },
+                                                                    () => {
+                                                                        this.descriptionInput.selectionStart = selectionNumber[0];
+                                                                        this.descriptionInput.selectionEnd = selectionNumber[1];
+                                                                    }
+                                                                );
+                                                            }}
                                                         >
                                                             ─
                                                         </ToolItem>
                                                         <ToolItem
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onClick={_ => {
+                                                                if (!this.descriptionInput) return;
+                                                                const selectionNumber = [
+                                                                    this.descriptionInput.selectionStart,
+                                                                    this.descriptionInput.selectionEnd
+                                                                ];
+                                                                const lines = [
+                                                                    this.getLineNumber(this.descriptionInput.value, this.descriptionInput.selectionStart),
+                                                                    this.getLineNumber(this.descriptionInput.value, this.descriptionInput.selectionEnd)
+                                                                ];
+                                                                this.setState(
+                                                                    {
+                                                                        description: (
+                                                                            this.descriptionInput.value.split("\n")
+                                                                            .map((x: string, i: number) => {
+                                                                                if (i + 1 >= lines[0] && i + 1 <= lines[1]) {
+                                                                                    return x.replace(/^/g, "[](https://)");
+                                                                                }
+                                                                                return x;
+                                                                            })
+                                                                            .join("\n")
+                                                                        )
+                                                                    },
+                                                                    () => {
+                                                                        this.descriptionInput.selectionStart = selectionNumber[0];
+                                                                        this.descriptionInput.selectionEnd = selectionNumber[1];
+                                                                    }
+                                                                );
+                                                            }}
                                                         >
                                                             <LinkIcon />
                                                         </ToolItem>
                                                         <ToolItem
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onClick={_ => {
+                                                                if (!this.descriptionInput) return;
+                                                                const selectionNumber = [
+                                                                    this.descriptionInput.selectionStart,
+                                                                    this.descriptionInput.selectionEnd
+                                                                ];
+                                                                const lines = [
+                                                                    this.getLineNumber(this.descriptionInput.value, this.descriptionInput.selectionStart),
+                                                                    this.getLineNumber(this.descriptionInput.value, this.descriptionInput.selectionEnd)
+                                                                ];
+                                                                this.setState(
+                                                                    {
+                                                                        description: (
+                                                                            this.descriptionInput.value.split("\n")
+                                                                            .map((x: string, i: number) => {
+                                                                                if (i + 1 >= lines[0] && i + 1 <= lines[1]) {
+                                                                                    return x.replace(/^/g, "[](https://)");
+                                                                                }
+                                                                                return x;
+                                                                            })
+                                                                            .join("\n")
+                                                                        )
+                                                                    },
+                                                                    () => {
+                                                                        this.descriptionInput.selectionStart = selectionNumber[0];
+                                                                        this.descriptionInput.selectionEnd = selectionNumber[1];
+                                                                    }
+                                                                );
+                                                            }}
                                                         >
                                                             <StrikeIcon />
                                                         </ToolItem>
