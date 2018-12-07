@@ -6,8 +6,8 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    Divider,
     TextField,
-    Typography,
     LinearProgress
 } from "@material-ui/core";
 import gql                 from "graphql-tag";
@@ -44,6 +44,7 @@ const QueryGetUser = gql(`
             career
             avatarUri
             message
+            skill
         }
     }
 `);
@@ -142,7 +143,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                 <Query
                     query={QueryGetUser}
                     variables={{ id: auth.token!.payload.sub }}
-                    fetchPolicy="cache-and-network"
+                    fetchPolicy="network-only"
                 >
                     {({ loading, error, data, refetch }) => {
                         if (loading) return <GraphQLProgress />;
@@ -167,74 +168,74 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                             >
                                 {updateUser => (
                                     <ProfileForm>
-                                        <Typography gutterBottom variant="title">
-                                            Profile
-                                        </Typography>
-                                        <div>
-                                            <UserAvatar
+                                        <ProfilePageHeader>
+                                            <img
                                                 src={currentUser.avatarUri}
-                                                onClick={this.openEditableAvatarDialog}
                                             />
                                             <div>
-                                                <TextField
-                                                    label="DisplayName"
-                                                    margin="normal"
-                                                    InputProps={{
-                                                        endAdornment: (
-                                                            this.state.whileEditingItem.includes("displayName")
-                                                         && <Button
-                                                            // tslint:disable-next-line:jsx-no-lambda
-                                                            onClick={() =>
-                                                                /[a-zA-Z1-9]{4,}/.test(this.displayNameInput.value)
-                                                             && this.callUpdateUser(
-                                                                    updateUser,
-                                                                    "displayName",
-                                                                    this.displayNameInput.value
-                                                                )
-                                                            }
-                                                         >
-                                                            Save
-                                                         </Button>
-                                                        )
-                                                    }}
-                                                    onChange={this.addWhileEditingItem("displayName")}
-                                                    defaultValue={currentUser.displayName}
-                                                    fullWidth
-                                                    required
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    inputRef={x => this.displayNameInput = x}
+                                                <UserAvatar
+                                                    src={currentUser.avatarUri}
+                                                    onClick={this.openEditableAvatarDialog}
                                                 />
-                                                <TextField
-                                                    id="profile-email"
-                                                    label="Mail Address"
-                                                    margin="normal"
-                                                    InputProps={{
-                                                        endAdornment: (
-                                                            this.state.whileEditingItem.includes("email")
+                                                <div>
+                                                    <TextField
+                                                        id="profile-name"
+                                                        margin="normal"
+                                                        InputProps={{
+                                                            endAdornment: (
+                                                                this.state.whileEditingItem.includes("displayName")
                                                             && <Button
                                                                 // tslint:disable-next-line:jsx-no-lambda
                                                                 onClick={() =>
-                                                                    this.callUpdateUser(
+                                                                    /[a-zA-Z1-9]{3,}/.test(this.displayNameInput.value)
+                                                                && this.callUpdateUser(
                                                                         updateUser,
-                                                                        "email",
-                                                                        this.emailInput.value
+                                                                        "displayName",
+                                                                        this.displayNameInput.value
                                                                     )
                                                                 }
                                                             >
                                                                 Save
                                                             </Button>
-                                                        )
-                                                    }}
-                                                    type="email"
-                                                    onChange={this.addWhileEditingItem("email")}
-                                                    defaultValue={currentUser.email}
-                                                    fullWidth
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    inputRef={x => this.emailInput = x}
-                                                />
+                                                            )
+                                                        }}
+                                                        onChange={this.addWhileEditingItem("displayName")}
+                                                        defaultValue={currentUser.displayName}
+                                                        required
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        inputRef={x => this.displayNameInput = x}
+                                                    />
+                                                    <TextField
+                                                        id="profile-email"
+                                                        margin="normal"
+                                                        InputProps={{
+                                                            endAdornment: (
+                                                                this.state.whileEditingItem.includes("email")
+                                                                && <Button
+                                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                                    onClick={() =>
+                                                                        this.callUpdateUser(
+                                                                            updateUser,
+                                                                            "email",
+                                                                            this.emailInput.value
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Save
+                                                                </Button>
+                                                            )
+                                                        }}
+                                                        type="email"
+                                                        onChange={this.addWhileEditingItem("email")}
+                                                        defaultValue={currentUser.email}
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        inputRef={x => this.emailInput = x}
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div>
+                                        </ProfilePageHeader>
+                                        <Divider />
+                                        <ProfileContent>
                                             <TextField
                                                 id="profile-career"
                                                 label="Career"
@@ -289,7 +290,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 // tslint:disable-next-line:jsx-no-lambda
                                                 inputRef={x => this.messageInput = x}
                                             />
-                                        </div>
+                                        </ProfileContent>
                                         <Dialog
                                             open={this.state.editableAvatarDialogIsVisible}
                                             onClose={this.closeEditableAvatarDialog}
@@ -385,20 +386,14 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     }
 }
 
-const ProfileForm = styled.form`
+const PageHost = styled(Page)`
     display: flex;
     flex-direction: column;
-    > :nth-child(2) {
-        display: flex;
-        justify-content: space-evenly;
-        margin-bottom: 1rem;
-        @media (max-width: 768px) {
-            flex-direction: column;
-        }
-        > :nth-child(2) {
-            flex-grow: 1;
-        }
-    }
+    margin-top: -7rem;
+    transition: all .3s ease-out;
+`;
+
+const ProfileForm = styled.form`
     > :nth-child(3) {
         display: flex;
         flex-direction: column;
@@ -407,11 +402,13 @@ const ProfileForm = styled.form`
 
 const UserAvatar = styled(Avatar)`
     && {
-        cursor: pointer;
         border: 1px solid #ccc;
-        width: 8rem;
-        height: 8rem;
-        margin: 1rem 4rem 0 1rem;
+        width: 10rem;
+        height: 10rem;
+        @media (max-width: 768px) {
+            width: 6rem;
+            height: 6rem;
+        }
     }
 `;
 
@@ -436,23 +433,44 @@ const ProfilePageHost = (
     </PageHost>
 );
 
-const PageHost = styled(Page)`
-    max-width: 40rem;
-    margin-left: auto;
-    margin-right: auto;
-    > :nth-child(2) {
-        > :nth-child(n + 1) {
-            margin-top: 4rem;
+const ProfilePageHeader = styled.div`
+    display: flex;
+    flex-direction: column;
+    > :first-child {
+        height: 10rem;
+        object-fit: cover;
+    }
+    > :last-child {
+        display: flex;
+        height: 7rem;
+        align-items: center;
+        margin-left: 5rem;
+        > :first-child {
+            margin-bottom: 3rem;
         }
-        > :nth-child(2) {
-            width: 28rem;
-            > :nth-child(3){
-                margin-top: 3rem;
+        > :last-child {
+            display: flex;
+            flex-direction: column;
+            margin-left: 2rem;
+        }
+        @media (max-width: 768px) {
+            margin-left: 1rem;
+            > :last-child {
+                visibility: hidden;
             }
         }
     }
+`;
+
+const ProfileContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-top: 2rem;
+    width: max-content;
+    margin: 1rem 0 1rem 6rem;
     @media (max-width: 768px) {
-        width: unset;
-        margin: 0 4rem;
+        > * {
+            margin-left: 1rem;
+        }
     }
 `;
