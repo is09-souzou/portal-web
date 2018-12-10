@@ -37,6 +37,7 @@ interface State {
     description: string;
     mainImageUrl: string;
     previewWork?: Work;
+    publicEnable: boolean;
     title: string;
     workDialogVisible: boolean;
 }
@@ -86,6 +87,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         description: "",
         mainImageUrl: "",
         previewWork: undefined,
+        publicEnable: true,
         title: "",
         workDialogVisible: false
     };
@@ -597,6 +599,25 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                         </div>
                                         <ActionArea>
                                             <div/>
+                                            <div>
+                                                <Switch
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    onChange={() => {
+                                                        if (this.state.publicEnable) {
+                                                            this.state.publicEnable = false;
+                                                        } else if (!this.state.publicEnable) {
+                                                            this.state.publicEnable = true;
+                                                        }
+                                                        this.setState({
+                                                            publicEnable: this.state.publicEnable
+                                                        });
+                                                    }}
+                                                    color="primary"
+                                                    value="true"
+                                                >
+                                                    Range setting
+                                                </Switch>
+                                            </div>
                                             <Button
                                                 variant="outlined"
                                                 color="primary"
