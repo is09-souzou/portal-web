@@ -3,7 +3,8 @@ import {
     Button,
     Chip,
     Switch,
-    TextField
+    TextField,
+    Typography
 } from "@material-ui/core";
 import {
     FormatBoldRounded as BoldIcon,
@@ -38,6 +39,7 @@ interface State {
     mainImageUrl: string;
     previewWork?: Work;
     publicEnable: boolean;
+    switchCaption: string;
     title: string;
     workDialogVisible: boolean;
 }
@@ -88,6 +90,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         mainImageUrl: "",
         previewWork: undefined,
         publicEnable: true,
+        switchCaption: "Public",
         title: "",
         workDialogVisible: false
     };
@@ -599,14 +602,21 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                         </div>
                                         <ActionArea>
                                             <div/>
+                                            <Typography
+                                                color="primary"
+                                            >
+                                                {this.state.switchCaption}
+                                            </Typography>
                                             <div>
                                                 <Switch
                                                     // tslint:disable-next-line:jsx-no-lambda
                                                     onChange={() => {
                                                         if (this.state.publicEnable) {
                                                             this.state.publicEnable = false;
+                                                            this.state.switchCaption = "Private";
                                                         } else if (!this.state.publicEnable) {
                                                             this.state.publicEnable = true;
+                                                            this.state.switchCaption = "Public";
                                                         }
                                                         this.setState({
                                                             publicEnable: this.state.publicEnable
