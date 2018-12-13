@@ -210,7 +210,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             </div>
                                             <div>
                                                 <Typography gutterBottom variant="caption">
-                                                    {locale.profile.carrer}
+                                                    {locale.profile.career}
                                                 </Typography>
                                                 <StyledTypography gutterBottom>
                                                     {user.career}

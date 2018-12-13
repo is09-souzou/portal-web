@@ -228,7 +228,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 />
                                                 <TextField
                                                     id="profile-career"
-                                                    label={locale.profile.carrer}
+                                                    label={locale.profile.career}
                                                     margin="normal"
                                                     // tslint:disable-next-line:jsx-no-lambda
                                                     onChange={(e: any) => this.careerInput.value = (e.target.value)}

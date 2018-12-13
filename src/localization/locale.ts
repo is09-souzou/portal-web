@@ -5,7 +5,7 @@ export const locale = {
         profile: {
             displayName: "DisplayName",
             mailAdress: "Mail Adress",
-            carrer: "Carrer",
+            career: "Career",
             message: "Message",
             skill: "Skill"
         },
@@ -45,7 +45,7 @@ export const locale = {
         profile: {
             displayName: "ユーザー名",
             mailAdress: "メールアドレス",
-            carrer: "経歴",
+            career: "経歴",
             message: "一言",
             skill: "スキル"
         },
