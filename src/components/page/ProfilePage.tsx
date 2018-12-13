@@ -27,10 +27,7 @@ import ImageInput                    from "../ImageInput";
 import NotFound                      from "../NotFound";
 import Page                          from "../Page";
 
-type Item = "displayName" | "email" | "career" | "message" | "avatarUri";
-
 interface State {
-    whileEditingItem: Item[];
     editableAvatarDialogIsVisible: boolean;
     uploadingAvatarImage: boolean;
 }
@@ -44,7 +41,6 @@ const QueryGetUser = gql(`
             career
             avatarUri
             message
-            skill
         }
     }
 `);
@@ -67,6 +63,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     emailInput?      : any;
     careerInput?     : any;
     messageInput?    : any;
+<<<<<<< HEAD
     credentialEmailInput?: any;
 
     componentWillMount() {
@@ -76,36 +73,13 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
             uploadingAvatarImage: false,
         });
     }
+=======
+>>>>>>> fix(ProfilePage.tsx): change to bluk update
 
-    addWhileEditingItem = (item: Item) => (
-        () => (
-            !this.state.whileEditingItem.includes(item)
-         && this.setState({ whileEditingItem: this.state.whileEditingItem.concat(item) })
-        )
-    )
-
-    callUpdateUser = async (updateUser: Function, item: Item, value: any) => {
-        try {
-            await updateUser({
-                variables: {
-                    user: {
-                        [item]: value,
-                        id: this.props.auth.token!.payload.sub,
-                    }
-                },
-                optimisticResponse: {
-                    __typename: "Mutation",
-                    updateUser: {
-                        id: this.props.auth.token!.payload.sub,
-                        __typename: "User"
-                    }
-                },
-            });
-            this.setState({ whileEditingItem: this.state.whileEditingItem.filter(x => x !== item) });
-        } catch (err) {
-            this.props.notificationListener.errorNotification(err);
-        }
-    }
+    state = {
+        editableAvatarDialogIsVisible: false,
+        uploadingAvatarImage: false
+    };
 
     openEditableAvatarDialog = () => this.setState({ editableAvatarDialogIsVisible: true });
 
@@ -165,9 +139,37 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                         return (
                             <Mutation
                                 mutation={MutationUpdateUser}
+                                refetchQueries={[]}
                             >
                                 {updateUser => (
-                                    <ProfileForm>
+                                    <form
+                                        // tslint:disable-next-line jsx-no-lambda
+                                        onSubmit={async e => {
+                                            e.preventDefault();
+                                            await updateUser({
+                                                variables: {
+                                                    user: {
+                                                        id: this.props.auth.token!.payload.sub,
+                                                        displayName: this.displayNameInput.value,
+                                                        email: this.emailInput.value,
+                                                        message: this.messageInput.value,
+                                                        career: this.careerInput.value,
+                                                    }
+                                                },
+                                                optimisticResponse: {
+                                                    __typename: "Mutation",
+                                                    updateUser: {
+                                                        id: this.props.auth.token!.payload.sub,
+                                                        displayName: this.displayNameInput.value,
+                                                        email: this.emailInput.value,
+                                                        message: this.messageInput.value,
+                                                        career: this.careerInput.value,
+                                                        __typename: "User"
+                                                    }
+                                                },
+                                            });
+                                        }}
+                                    >
                                         <ProfilePageHeader>
                                             <img
                                                 src={currentUser.avatarUri}
@@ -181,25 +183,8 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                     <TextField
                                                         id="profile-name"
                                                         margin="normal"
-                                                        InputProps={{
-                                                            endAdornment: (
-                                                                this.state.whileEditingItem.includes("displayName")
-                                                            && <Button
-                                                                // tslint:disable-next-line:jsx-no-lambda
-                                                                onClick={() =>
-                                                                    /[a-zA-Z1-9]{3,}/.test(this.displayNameInput.value)
-                                                                && this.callUpdateUser(
-                                                                        updateUser,
-                                                                        "displayName",
-                                                                        this.displayNameInput.value
-                                                                    )
-                                                                }
-                                                            >
-                                                                Save
-                                                            </Button>
-                                                            )
-                                                        }}
-                                                        onChange={this.addWhileEditingItem("displayName")}
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        onChange={(e: any) => this.displayNameInput.value = (e.target.value)}
                                                         defaultValue={currentUser.displayName}
                                                         required
                                                         // tslint:disable-next-line:jsx-no-lambda
@@ -208,87 +193,47 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                     <TextField
                                                         id="profile-email"
                                                         margin="normal"
-                                                        InputProps={{
-                                                            endAdornment: (
-                                                                this.state.whileEditingItem.includes("email")
-                                                                && <Button
-                                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                                    onClick={() =>
-                                                                        this.callUpdateUser(
-                                                                            updateUser,
-                                                                            "email",
-                                                                            this.emailInput.value
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    Save
-                                                                </Button>
-                                                            )
-                                                        }}
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        onChange={(e: any) => this.emailInput.value = (e.target.value)}
                                                         type="email"
-                                                        onChange={this.addWhileEditingItem("email")}
                                                         defaultValue={currentUser.email}
                                                         // tslint:disable-next-line:jsx-no-lambda
                                                         inputRef={x => this.emailInput = x}
                                                     />
                                                 </div>
+                                                <Button
+                                                    type="submit"
+                                                    component="button"
+                                                    variant="raised"
+                                                    color="primary"
+                                                >
+                                                    save
+                                                </Button>
                                             </div>
                                         </ProfilePageHeader>
                                         <Divider />
                                         <ProfileContent>
                                             <TextField
+                                                id="profile-message"
+                                                label="Message"
+                                                margin="normal"
+                                                // tslint:disable-next-line:jsx-no-lambda
+                                                onChange={(e: any) => this.messageInput.value = (e.target.value)}
+                                                defaultValue={currentUser.message}
+                                                // tslint:disable-next-line:jsx-no-lambda
+                                                inputRef={x => this.messageInput = x}
+                                            />
+                                            <TextField
                                                 id="profile-career"
                                                 label="Career"
                                                 margin="normal"
-                                                InputProps={{
-                                                    endAdornment: (
-                                                        this.state.whileEditingItem.includes("career")
-                                                        && <Button
-                                                            // tslint:disable-next-line:jsx-no-lambda
-                                                            onClick={() =>
-                                                                this.callUpdateUser(
-                                                                    updateUser,
-                                                                    "career",
-                                                                    this.careerInput.value
-                                                                )
-                                                            }
-                                                        >
-                                                            Save
-                                                        </Button>
-                                                    )
-                                                }}
-                                                onChange={this.addWhileEditingItem("career")}
+                                                // tslint:disable-next-line:jsx-no-lambda
+                                                onChange={(e: any) => this.careerInput.value = (e.target.value)}
                                                 defaultValue={currentUser.career}
                                                 multiline
                                                 rows={4}
                                                 // tslint:disable-next-line:jsx-no-lambda
                                                 inputRef={x => this.careerInput = x}
-                                            />
-                                            <TextField
-                                                id="profile-message"
-                                                label="Message"
-                                                margin="normal"
-                                                InputProps={{
-                                                    endAdornment: (
-                                                        this.state.whileEditingItem.includes("message")
-                                                        && <Button
-                                                            // tslint:disable-next-line:jsx-no-lambda
-                                                            onClick={() =>
-                                                                this.callUpdateUser(
-                                                                    updateUser,
-                                                                    "message",
-                                                                    this.messageInput.value
-                                                                )
-                                                            }
-                                                        >
-                                                            Save
-                                                        </Button>
-                                                    )
-                                                }}
-                                                onChange={this.addWhileEditingItem("message")}
-                                                defaultValue={currentUser.message}
-                                                // tslint:disable-next-line:jsx-no-lambda
-                                                inputRef={x => this.messageInput = x}
                                             />
                                         </ProfileContent>
                                         <Dialog
@@ -375,7 +320,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 </DialogActions>
                                             </form>
                                         </Dialog>
-                                    </ProfileForm>
+                                    </form>
                                 )}
                             </Mutation>
                         );
@@ -391,13 +336,6 @@ const PageHost = styled(Page)`
     flex-direction: column;
     margin-top: -7rem;
     transition: all .3s ease-out;
-`;
-
-const ProfileForm = styled.form`
-    > :nth-child(3) {
-        display: flex;
-        flex-direction: column;
-    }
 `;
 
 const UserAvatar = styled(Avatar)`
@@ -448,16 +386,14 @@ const ProfilePageHeader = styled.div`
         > :first-child {
             margin-bottom: 3rem;
         }
-        > :last-child {
+        > :nth-child(2) {
             display: flex;
             flex-direction: column;
             margin-left: 2rem;
         }
-        @media (max-width: 768px) {
-            margin-left: 1rem;
-            > :last-child {
-                visibility: hidden;
-            }
+        > :last-child {
+            display; flex;
+            max-width: max-content;
         }
     }
 `;
@@ -466,8 +402,7 @@ const ProfileContent = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: 2rem;
-    width: max-content;
-    margin: 1rem 0 1rem 6rem;
+    margin: 1rem 6rem 1rem 6rem;
     @media (max-width: 768px) {
         > * {
             margin-left: 1rem;
