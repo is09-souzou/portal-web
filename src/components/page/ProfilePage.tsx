@@ -19,6 +19,7 @@ import createSignedUrl               from "../../api/createSignedUrl";
 import fileUploadToS3                from "../../api/fileUploadToS3";
 import { PageComponentProps }        from "../../App";
 import { AuthProps }                 from "../wrapper/Auth";
+import { LocaleContext }             from "../wrapper/MainLayout";
 import { NotificationListenerProps } from "../wrapper/NotificationListener";
 import ErrorPage                     from "../ErrorPage";
 import GraphQLProgress               from "../GraphQLProgress";
@@ -137,192 +138,196 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                         const currentUser = data.getUser;
 
                         return (
-                            <Mutation
-                                mutation={MutationUpdateUser}
-                                refetchQueries={[]}
-                            >
-                                {updateUser => (
-                                    <form
-                                        // tslint:disable-next-line jsx-no-lambda
-                                        onSubmit={async e => {
-                                            e.preventDefault();
-                                            await updateUser({
-                                                variables: {
-                                                    user: {
-                                                        id: this.props.auth.token!.payload.sub,
-                                                        displayName: this.displayNameInput.value,
-                                                        email: this.emailInput.value,
-                                                        message: this.messageInput.value,
-                                                        career: this.careerInput.value,
-                                                    }
-                                                },
-                                                optimisticResponse: {
-                                                    __typename: "Mutation",
-                                                    updateUser: {
-                                                        id: this.props.auth.token!.payload.sub,
-                                                        displayName: this.displayNameInput.value,
-                                                        email: this.emailInput.value,
-                                                        message: this.messageInput.value,
-                                                        career: this.careerInput.value,
-                                                        __typename: "User"
-                                                    }
-                                                },
-                                            });
-                                        }}
-                                    >
-                                        <ProfilePageHeader>
-                                            <img
-                                                src={currentUser.avatarUri}
-                                            />
-                                            <div>
-                                                <UserAvatar
+                            <LocaleContext.Consumer>
+                                {({ locale }) => (
+                                <Mutation
+                                    mutation={MutationUpdateUser}
+                                    refetchQueries={[]}
+                                >
+                                    {updateUser => (
+                                        <form
+                                            // tslint:disable-next-line jsx-no-lambda
+                                            onSubmit={async e => {
+                                                e.preventDefault();
+                                                await updateUser({
+                                                    variables: {
+                                                        user: {
+                                                            id: this.props.auth.token!.payload.sub,
+                                                            displayName: this.displayNameInput.value,
+                                                            email: this.emailInput.value,
+                                                            message: this.messageInput.value,
+                                                            career: this.careerInput.value,
+                                                        }
+                                                    },
+                                                    optimisticResponse: {
+                                                        __typename: "Mutation",
+                                                        updateUser: {
+                                                            id: this.props.auth.token!.payload.sub,
+                                                            displayName: this.displayNameInput.value,
+                                                            email: this.emailInput.value,
+                                                            message: this.messageInput.value,
+                                                            career: this.careerInput.value,
+                                                            __typename: "User"
+                                                        }
+                                                    },
+                                                });
+                                            }}
+                                        >
+                                            <ProfilePageHeader>
+                                                <img
                                                     src={currentUser.avatarUri}
-                                                    onClick={this.openEditableAvatarDialog}
                                                 />
                                                 <div>
-                                                    <TextField
-                                                        id="profile-name"
-                                                        margin="normal"
-                                                        // tslint:disable-next-line:jsx-no-lambda
-                                                        onChange={(e: any) => this.displayNameInput.value = (e.target.value)}
-                                                        defaultValue={currentUser.displayName}
-                                                        required
-                                                        // tslint:disable-next-line:jsx-no-lambda
-                                                        inputRef={x => this.displayNameInput = x}
+                                                    <UserAvatar
+                                                        src={currentUser.avatarUri}
+                                                        onClick={this.openEditableAvatarDialog}
                                                     />
-                                                    <TextField
-                                                        id="profile-email"
-                                                        margin="normal"
-                                                        // tslint:disable-next-line:jsx-no-lambda
-                                                        onChange={(e: any) => this.emailInput.value = (e.target.value)}
-                                                        type="email"
-                                                        defaultValue={currentUser.email}
-                                                        // tslint:disable-next-line:jsx-no-lambda
-                                                        inputRef={x => this.emailInput = x}
-                                                    />
-                                                </div>
-                                                <Button
-                                                    type="submit"
-                                                    component="button"
-                                                    variant="raised"
-                                                    color="primary"
-                                                >
-                                                    save
-                                                </Button>
-                                            </div>
-                                        </ProfilePageHeader>
-                                        <Divider />
-                                        <ProfileContent>
-                                            <TextField
-                                                id="profile-message"
-                                                label="Message"
-                                                margin="normal"
-                                                // tslint:disable-next-line:jsx-no-lambda
-                                                onChange={(e: any) => this.messageInput.value = (e.target.value)}
-                                                defaultValue={currentUser.message}
-                                                // tslint:disable-next-line:jsx-no-lambda
-                                                inputRef={x => this.messageInput = x}
-                                            />
-                                            <TextField
-                                                id="profile-career"
-                                                label="Career"
-                                                margin="normal"
-                                                // tslint:disable-next-line:jsx-no-lambda
-                                                onChange={(e: any) => this.careerInput.value = (e.target.value)}
-                                                defaultValue={currentUser.career}
-                                                multiline
-                                                rows={4}
-                                                // tslint:disable-next-line:jsx-no-lambda
-                                                inputRef={x => this.careerInput = x}
-                                            />
-                                        </ProfileContent>
-                                        <Dialog
-                                            open={this.state.editableAvatarDialogIsVisible}
-                                            onClose={this.closeEditableAvatarDialog}
-                                            aria-labelledby="editable-avatar-dialog-title"
-                                        >
-                                            <form
-                                                // tslint:disable-next-line:jsx-no-lambda
-                                                onSubmit={async e => {
-                                                    e.preventDefault();
-                                                    const image = (e.target as any).elements["newAvatarImage"].files[0];
-
-                                                    try {
-                                                        this.setState({ uploadingAvatarImage: true });
-                                                        const {
-                                                            signedUrl,
-                                                            uploadedUrl
-                                                        } = await createSignedUrl({
-                                                            jwt: auth.token!.jwtToken,
-                                                            userId: auth.token!.payload.sub,
-                                                            type: "profile",
-                                                            mimetype: image.type
-                                                        });
-
-                                                        await Promise.all([
-                                                            fileUploadToS3({
-                                                                url: signedUrl,
-                                                                file: image
-                                                            }),
-                                                            updateUser({
-                                                                variables: {
-                                                                    user: {
-                                                                        avatarUri: uploadedUrl,
-                                                                        id: this.props.auth.token!.payload.sub,
-                                                                    }
-                                                                },
-                                                                optimisticResponse: {
-                                                                    __typename: "Mutation",
-                                                                    updateUser: {
-                                                                        id: this.props.auth.token!.payload.sub,
-                                                                        __typename: "User"
-                                                                    }
-                                                                },
-                                                            })
-                                                        ]);
-
-                                                        refetch();
-                                                        this.setState({ uploadingAvatarImage: false });
-
-                                                        this.closeEditableAvatarDialog();
-                                                    } catch (e) {
-                                                        this.setState({ uploadingAvatarImage: false });
-                                                        notificationListener.errorNotification(e);
-                                                    }
-                                                }}
-                                            >
-                                                <DialogTitle
-                                                    id="editable-avatar-dialog-title"
-                                                >
-                                                    Upload Avatar
-                                                </DialogTitle>
-                                                <DialogContent>
-                                                    <ImageInput
-                                                        name="newAvatarImage"
-                                                        width="256"
-                                                        height="256"
-                                                    />
-                                                </DialogContent>
-                                                {this.state.uploadingAvatarImage && <LinearProgress/>}
-                                                <DialogActions>
+                                                    <div>
+                                                        <TextField
+                                                            id="profile-name"
+                                                            margin="normal"
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onChange={(e: any) => this.displayNameInput.value = (e.target.value)}
+                                                            defaultValue={currentUser.displayName}
+                                                            required
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            inputRef={x => this.displayNameInput = x}
+                                                        />
+                                                        <TextField
+                                                            id="profile-email"
+                                                            margin="normal"
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onChange={(e: any) => this.emailInput.value = (e.target.value)}
+                                                            type="email"
+                                                            defaultValue={currentUser.email}
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            inputRef={x => this.emailInput = x}
+                                                        />
+                                                    </div>
                                                     <Button
-                                                        onClick={this.closeEditableAvatarDialog}
-                                                    >
-                                                        Cancel
-                                                    </Button>
-                                                    <Button
-                                                        component="button"
-                                                        color="primary"
                                                         type="submit"
+                                                        component="button"
+                                                        variant="raised"
+                                                        color="primary"
                                                     >
-                                                        Submit
+                                                        save
                                                     </Button>
-                                                </DialogActions>
-                                            </form>
-                                        </Dialog>
-                                    </form>
+                                                </div>
+                                            </ProfilePageHeader>
+                                            <Divider />
+                                            <ProfileContent>
+                                                <TextField
+                                                    id="profile-message"
+                                                    label={locale.profile.message}
+                                                    margin="normal"
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    onChange={(e: any) => this.messageInput.value = (e.target.value)}
+                                                    defaultValue={currentUser.message}
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    inputRef={x => this.messageInput = x}
+                                                />
+                                                <TextField
+                                                    id="profile-career"
+                                                    label={locale.profile.carrer}
+                                                    margin="normal"
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    onChange={(e: any) => this.careerInput.value = (e.target.value)}
+                                                    defaultValue={currentUser.career}
+                                                    multiline
+                                                    rows={4}
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    inputRef={x => this.careerInput = x}
+                                                />
+                                            </ProfileContent>
+                                            <Dialog
+                                                open={this.state.editableAvatarDialogIsVisible}
+                                                onClose={this.closeEditableAvatarDialog}
+                                                aria-labelledby="editable-avatar-dialog-title"
+                                            >
+                                                <form
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    onSubmit={async e => {
+                                                        e.preventDefault();
+                                                        const image = (e.target as any).elements["newAvatarImage"].files[0];
+
+                                                        try {
+                                                            this.setState({ uploadingAvatarImage: true });
+                                                            const {
+                                                                signedUrl,
+                                                                uploadedUrl
+                                                            } = await createSignedUrl({
+                                                                jwt: auth.token!.jwtToken,
+                                                                userId: auth.token!.payload.sub,
+                                                                type: "profile",
+                                                                mimetype: image.type
+                                                            });
+
+                                                            await Promise.all([
+                                                                fileUploadToS3({
+                                                                    url: signedUrl,
+                                                                    file: image
+                                                                }),
+                                                                updateUser({
+                                                                    variables: {
+                                                                        user: {
+                                                                            avatarUri: uploadedUrl,
+                                                                            id: this.props.auth.token!.payload.sub,
+                                                                        }
+                                                                    },
+                                                                    optimisticResponse: {
+                                                                        __typename: "Mutation",
+                                                                        updateUser: {
+                                                                            id: this.props.auth.token!.payload.sub,
+                                                                            __typename: "User"
+                                                                        }
+                                                                    },
+                                                                })
+                                                            ]);
+
+                                                            refetch();
+                                                            this.setState({ uploadingAvatarImage: false });
+
+                                                            this.closeEditableAvatarDialog();
+                                                        } catch (e) {
+                                                            this.setState({ uploadingAvatarImage: false });
+                                                            notificationListener.errorNotification(e);
+                                                        }
+                                                    }}
+                                                >
+                                                    <DialogTitle
+                                                        id="editable-avatar-dialog-title"
+                                                    >
+                                                        Upload Avatar
+                                                    </DialogTitle>
+                                                    <DialogContent>
+                                                        <ImageInput
+                                                            name="newAvatarImage"
+                                                            width="256"
+                                                            height="256"
+                                                        />
+                                                    </DialogContent>
+                                                    {this.state.uploadingAvatarImage && <LinearProgress/>}
+                                                    <DialogActions>
+                                                        <Button
+                                                            onClick={this.closeEditableAvatarDialog}
+                                                        >
+                                                            Cancel
+                                                        </Button>
+                                                        <Button
+                                                            component="button"
+                                                            color="primary"
+                                                            type="submit"
+                                                        >
+                                                            Submit
+                                                        </Button>
+                                                    </DialogActions>
+                                                </form>
+                                            </Dialog>
+                                        </form>
+                                    )}
+                                </Mutation>
                                 )}
-                            </Mutation>
+                            </LocaleContext.Consumer>
                         );
                     }}
                 </Query>
