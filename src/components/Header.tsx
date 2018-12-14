@@ -178,7 +178,7 @@ export default class extends React.Component<Props, State> {
                                                             </div>
                                                             <div>
                                                                 <Link
-                                                                    to="/profile"
+                                                                    to={("/users/") + auth.token!.payload.sub}
                                                                     onClick={this.menuClose}
                                                                 >
                                                                     <Button>

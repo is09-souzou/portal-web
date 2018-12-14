@@ -6,6 +6,7 @@ import {
     Tab,
     Tabs,
 } from "@material-ui/core";
+import EditIcon            from "@material-ui/icons/Edit";
 import gql                 from "graphql-tag";
 import styled              from "styled-components";
 import { Query }           from "react-apollo";
@@ -14,6 +15,7 @@ import { PageComponentProps }          from "../../App";
 import { User, Work, WorkConnection }  from "../../graphQL/type";
 import { LocaleContext }               from "../wrapper/MainLayout";
 import ErrorPage                       from "../ErrorPage";
+import Fab                             from "../Fab";
 import GraphQLProgress                 from "../GraphQLProgress";
 import Header                          from "../Header";
 import NotFound                        from "../NotFound";
@@ -291,6 +293,13 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             />
                                         </Tabs>
                                     </Footer>
+                                    <Fab
+                                        style={{ visibility: user.id === auth.token!.payload.sub && contentType === "user" ? "visible" : "hidden" }}
+                                        // tslint:disable-next-line:jsx-no-lambda
+                                        onClick={() => history.push("/profile")}
+                                    >
+                                        <EditIcon />
+                                    </Fab>
                                 </Host>
                                 )}
                             </LocaleContext.Consumer>

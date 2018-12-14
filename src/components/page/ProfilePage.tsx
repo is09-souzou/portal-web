@@ -171,6 +171,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                         }
                                                     },
                                                 });
+                                                history.push(("/users/") + currentUser.id);
                                             }}
                                         >
                                             <ProfilePageHeader>
