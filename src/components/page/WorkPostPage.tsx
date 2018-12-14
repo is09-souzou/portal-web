@@ -2,9 +2,10 @@ import React from "react";
 import {
     Button,
     Chip,
+    FormGroup,
+    FormControlLabel,
     Switch,
-    TextField,
-    Typography
+    TextField
 } from "@material-ui/core";
 import {
     FormatBoldRounded as BoldIcon,
@@ -602,32 +603,34 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                         </div>
                                         <ActionArea>
                                             <div/>
-                                            <Typography
-                                                color="primary"
-                                            >
-                                                {this.state.switchCaption}
-                                            </Typography>
-                                            <div>
-                                                <Switch
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    onChange={() => {
-                                                        if (this.state.publicEnable) {
-                                                            this.state.publicEnable = false;
-                                                            this.state.switchCaption = "Private";
-                                                        } else if (!this.state.publicEnable) {
-                                                            this.state.publicEnable = true;
-                                                            this.state.switchCaption = "Public";
-                                                        }
-                                                        this.setState({
-                                                            publicEnable: this.state.publicEnable
-                                                        });
-                                                    }}
-                                                    color="primary"
-                                                    value="true"
-                                                >
-                                                    Range setting
-                                                </Switch>
-                                            </div>
+                                            <FormGroup>
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onChange={() => {
+                                                                console.log(this.state.publicEnable);
+                                                                if (this.state.publicEnable) {
+                                                                    this.state.publicEnable = false;
+                                                                    this.state.switchCaption = "Private";
+                                                                } else if (!this.state.publicEnable) {
+                                                                    this.state.publicEnable = true;
+                                                                    this.state.switchCaption = "Public";
+                                                                }
+                                                                this.setState({
+                                                                    publicEnable: this.state.publicEnable
+                                                                });
+                                                            }}
+                                                            color="primary"
+                                                            value="true"
+                                                        >
+                                                            Range setting
+                                                        </Switch>
+                                                    }
+                                                    label={this.state.switchCaption}
+                                                    labelPlacement="start"
+                                                />
+                                            </FormGroup>
                                             <Button
                                                 variant="outlined"
                                                 color="primary"
