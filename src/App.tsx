@@ -15,6 +15,7 @@ import {
     WorkPostPage,
     WorkListPage,
     ProfilePage,
+    SettingsPage,
     UserPage,
     UserListPage
 } from "./Routes";
@@ -49,6 +50,11 @@ export default () => (
                     <ComposingRoute
                         path="/users/:id"
                         component={UserPage}
+                        exact={true}
+                    />
+                    <ComposingRoute
+                        path="/settings"
+                        component={SettingsPage}
                         exact={true}
                     />
                     <ComposingRoute
