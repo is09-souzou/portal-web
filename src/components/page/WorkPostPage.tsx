@@ -127,7 +127,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                 id: "preview",
                 title: this.state.title,
                 description: this.state.description,
-                userId: ( this.props.auth.token || { payload: { sub: "xxx" }} ).payload.sub,
+                userId: (this.props.auth.token || { payload: { sub: "xxx" } }).payload.sub,
                 imageUrl: this.state.mainImageUrl,
                 tags: this.state.chipsData.map(x => x.label) as string[],
                 createdAt: +new Date() / 1000,
