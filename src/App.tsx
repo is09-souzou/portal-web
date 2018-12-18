@@ -15,7 +15,7 @@ import {
     WorkPostPage,
     WorkListPage,
     ProfilePage,
-    SettingPage,
+    SettingsPage,
     UserPage,
     UserListPage
 } from "./Routes";
@@ -53,8 +53,8 @@ export default () => (
                         exact={true}
                     />
                     <ComposingRoute
-                        path="/setting"
-                        component={SettingPage}
+                        path="/settings"
+                        component={SettingsPage}
                         exact={true}
                     />
                     <ComposingRoute

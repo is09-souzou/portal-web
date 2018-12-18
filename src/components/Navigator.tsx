@@ -17,6 +17,7 @@ import ExpandLessIcon  from "@material-ui/icons/ExpandLess";
 import ExpandMoreIcon  from "@material-ui/icons/ExpandMore";
 import LanguageIcon    from "@material-ui/icons/Language";
 import NewReleasesIcon from "@material-ui/icons/NewReleases";
+import SettingsIcon    from "@material-ui/icons/Settings";
 import StarIcon        from "@material-ui/icons/Star";
 import gql                           from "graphql-tag";
 import * as H                        from "history";
@@ -217,9 +218,7 @@ export default class extends React.Component<Props, State> {
                     </List>
                     <div>
                         <Divider />
-                        <List
-                            subheader={<ListSubheader component="div">{locale.navigater.languages}</ListSubheader>}
-                        >
+                        <List>
                             <ListItem
                                 button
                                 onClick={handleLocale}
@@ -231,6 +230,26 @@ export default class extends React.Component<Props, State> {
                                     {locale.navigater.language}
                                 </ListItemText>
                             </ListItem>
+                            <Link
+                                to="/settings"
+                            >
+                                <ListItem
+                                    button
+                                >
+                                    <ListItemIcon>
+                                        <SettingsIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={
+                                            <StyledText
+                                                selected={history.location.pathname === "/settings"}
+                                            >
+                                                {locale.navigater.settings}
+                                            </StyledText>
+                                        }
+                                    />
+                                </ListItem>
+                            </Link>
                         </List>
                     </div>
                 </Host>

@@ -30,14 +30,14 @@ export const locale = {
             new: "New",
             tags: "Tags",
             languages: "Languages",
-            language: "English"
+            language: "English",
+            settings: "settings"
         },
         header: {
             name: "Name",
             mailAdress: "Mail Adress",
             profile: "Profile",
-            signOut: "sign-out",
-            setting: "setting"
+            signOut: "sign-out"
         },
         location: "us"
     },
@@ -70,14 +70,14 @@ export const locale = {
             new: "新規",
             tags: "タグ",
             languages: "言語",
-            language: "日本語"
+            language: "日本語",
+            settings: "設定"
         },
         header: {
             name: "ユーザー名",
             mailAdress: "メールアドレス",
             profile: "プロフィール",
-            signOut: "サインアウト",
-            setting: "設定"
+            signOut: "サインアウト"
         },
         location: "jp"
     }

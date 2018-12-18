@@ -1,9 +1,8 @@
 import React from "react";
 import {
     Button,
-    Card,
-    CardContent,
-    Collapse,
+    Dialog,
+    DialogContent,
     DialogActions,
     DialogTitle,
     TextField,
@@ -61,18 +60,18 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                 history.push("?sign-in=true");
 
             return (
-                <SettingPageHost
+                <SettingsPageHost
                     auth={auth}
                     history={history}
                     notificationListener={notificationListener}
                 >
                     <NotFound/>
-                </SettingPageHost>
+                </SettingsPageHost>
             );
         }
 
         return (
-            <SettingPageHost
+            <SettingsPageHost
                 auth={auth}
                 history={history}
                 notificationListener={notificationListener}
@@ -120,83 +119,78 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                             inputRef={x => this.credentialEmailInput = x}
                         />
                     </div>
-                    <Collapse in={!this.state.updatePasswordDialogVisible} timeout="auto">
-                        <Button
-                            onMouseOver={this.openUpdatePasswordDialog}
-                            variant="contained"
-                            color="primary"
+                    <Button
+                        onClick={this.openUpdatePasswordDialog}
+                        variant="contained"
+                        color="primary"
+                    >
+                        Update password
+                    </Button>
+                </form>
+                <Dialog
+                    onClose={this.closeUpdatePasswordDialog}
+                    open={this.state.updatePasswordDialogVisible}
+                >
+                    <form
+                        // tslint:disable-next-line:jsx-no-lambda
+                        onSubmit={async e => {
+                            e.preventDefault();
+
+                            const oldPassword = (e.target as any).elements["profile-old-password"].value;
+                            const newPassword = (e.target as any).elements["profile-new-password"].value;
+                            try {
+                                await this.props.auth.updatePassword(oldPassword, newPassword);
+                                this.closeUpdatePasswordDialog();
+                                notificationListener.notification("info", "Success update password");
+                            } catch (e) {
+                                console.error(e);
+                                notificationListener.errorNotification(e);
+                            }
+                        }}
+                    >
+                        <DialogTitle
+                            id="profile-update-password"
                         >
                             Update password
-                        </Button>
-                    </Collapse>
-                </form>
-                <Collapse in={this.state.updatePasswordDialogVisible} timeout="auto">
-                    <Card
-                        onMouseLeave={this.closeUpdatePasswordDialog}
-                        raised={this.state.updatePasswordDialogVisible}
-                        aria-labelledby="profile-update-password"
-                    >
-                        <form
-                            // tslint:disable-next-line:jsx-no-lambda
-                            onSubmit={async e => {
-                                e.preventDefault();
-
-                                const oldPassword = (e.target as any).elements["profile-old-password"].value;
-                                const newPassword = (e.target as any).elements["profile-new-password"].value;
-                                try {
-                                    await this.props.auth.updatePassword(oldPassword, newPassword);
-                                    this.closeUpdatePasswordDialog();
-                                    notificationListener.notification("info", "Success update password");
-                                } catch (e) {
-                                    console.error(e);
-                                    notificationListener.errorNotification(e);
-                                }
-                            }}
-                        >
-                            <DialogTitle
-                                id="profile-update-password"
+                        </DialogTitle>
+                        <StyledDialogContent>
+                            <TextField
+                                id="profile-old-password"
+                                label="Old password"
+                                margin="normal"
+                                type="password"
+                                required
+                            />
+                            <TextField
+                                id="profile-new-password"
+                                label="New password"
+                                margin="normal"
+                                type="password"
+                                required
+                            />
+                        </StyledDialogContent>
+                        <DialogActions>
+                            <Button
+                                onClick={this.closeUpdatePasswordDialog}
                             >
-                                Update password
-                            </DialogTitle>
-                            <StyledCardContent>
-                                <TextField
-                                    id="profile-old-password"
-                                    label="Old password"
-                                    margin="normal"
-                                    type="password"
-                                    required
-                                />
-                                <TextField
-                                    id="profile-new-password"
-                                    label="New password"
-                                    margin="normal"
-                                    type="password"
-                                    required
-                                />
-                            </StyledCardContent>
-                            <DialogActions>
-                                <Button
-                                    onClick={this.closeUpdatePasswordDialog}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    component="button"
-                                    color="primary"
-                                    type="submit"
-                                >
-                                    Submit
-                                </Button>
-                            </DialogActions>
-                        </form>
-                    </Card>
-                </Collapse>
-            </SettingPageHost>
+                                Cancel
+                            </Button>
+                            <Button
+                                component="button"
+                                color="primary"
+                                type="submit"
+                            >
+                                Submit
+                            </Button>
+                        </DialogActions>
+                    </form>
+                </Dialog>
+            </SettingsPageHost>
         );
     }
 }
 
-const StyledCardContent = styled(CardContent)`
+const StyledDialogContent = styled(DialogContent)`
     && {
         width: 20rem;
         max-width: 20rem;
@@ -205,7 +199,7 @@ const StyledCardContent = styled(CardContent)`
     }
 `;
 
-const SettingPageHost = (
+const SettingsPageHost = (
     {
         auth,
         history,
