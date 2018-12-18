@@ -2,6 +2,8 @@ import React from "react";
 import {
     Button,
     Chip,
+    FormGroup,
+    FormControlLabel,
     Switch,
     TextField
 } from "@material-ui/core";
@@ -37,6 +39,7 @@ interface State {
     description: string;
     mainImageUrl: string;
     previewWork?: Work;
+    isPublic: boolean;
     title: string;
     workDialogVisible: boolean;
 }
@@ -54,6 +57,7 @@ const MutationCreateWork = gql(`
             userId
             title
             tags
+            isPublic
             createdAt
         }
     }
@@ -72,6 +76,7 @@ const MutationUpdateWork = gql(`
             userId
             title
             tags
+            isPublic
             createdAt
         }
     }
@@ -86,6 +91,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         description: "",
         mainImageUrl: "",
         previewWork: undefined,
+        isPublic: true,
         title: "",
         workDialogVisible: false
     };
@@ -121,10 +127,11 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                 id: "preview",
                 title: this.state.title,
                 description: this.state.description,
-                userId: this.props.auth.token!.payload.sub,
+                userId: (this.props.auth.token || { payload: { sub: "xxx" } }).payload.sub,
                 imageUrl: this.state.mainImageUrl,
                 tags: this.state.chipsData.map(x => x.label) as string[],
                 createdAt: +new Date() / 1000,
+                isPublic: this.state.isPublic,
                 user: {
                     id: "preview",
                     email: "preview",
@@ -165,6 +172,9 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                     // tslint:disable-next-line jsx-no-lambda
                                     onSubmit={async e => {
                                         e.preventDefault();
+                                        if (!auth.token)
+                                            notificationListener.errorNotification(new Error("Need Sign in"));
+
                                         const work = await new Promise<Work>(resolve => createWork({
                                             variables: {
                                                 work: {
@@ -173,6 +183,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                     userId: auth.token!.payload.sub,
                                                     imageUrl: this.state.mainImageUrl,
                                                     tags: this.state.chipsData.map(x => x.label),
+                                                    isPublic: this.state.isPublic
                                                 }
                                             },
                                             optimisticResponse: {
@@ -184,6 +195,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                     userId: auth.token!.payload.sub,
                                                     imageUrl: this.state.mainImageUrl,
                                                     tags: this.state.chipsData.map(x => x.label),
+                                                    isPublic: this.state.isPublic,
                                                     createdAt: +new Date(),
                                                     __typename: "Work"
                                                 }
@@ -207,6 +219,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                     imageUrl: this.state.mainImageUrl,
                                                     userId: auth.token!.payload.sub,
                                                     tags: this.state.chipsData.map(x => x.label),
+                                                    isPublic: this.state.isPublic,
                                                     createdAt: +new Date(),
                                                     __typename: "Work"
                                                 }
@@ -260,6 +273,8 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                     labelText="create-work-main-image"
                                                     // tslint:disable-next-line:jsx-no-lambda
                                                     onChange={async e => {
+                                                        if (!auth.token)
+                                                            notificationListener.errorNotification(new Error("Need Sign in"));
                                                         const image = e.target.files![0];
                                                         const result = await createSignedUrl({
                                                             jwt: auth.token!.jwtToken,
@@ -546,7 +561,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                                 );
                                                             }}
                                                         >
-                                                            <BoldIcon/ >
+                                                            <BoldIcon />
                                                         </ToolItem>
                                                         <ToolItem
                                                             // tslint:disable-next-line:jsx-no-lambda
@@ -597,6 +612,26 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                         </div>
                                         <ActionArea>
                                             <div/>
+                                            <FormGroup>
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onChange={() =>
+                                                                this.setState({
+                                                                    isPublic: !this.state.isPublic
+                                                                })
+                                                            }
+                                                            color="primary"
+                                                            checked={this.state.isPublic}
+                                                        >
+                                                            Range setting
+                                                        </Switch>
+                                                    }
+                                                    label="公開する"
+                                                    labelPlacement="start"
+                                                />
+                                            </FormGroup>
                                             <Button
                                                 variant="outlined"
                                                 color="primary"
