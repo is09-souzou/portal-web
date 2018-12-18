@@ -72,18 +72,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     emailInput?      : any;
     careerInput?     : any;
     messageInput?    : any;
-<<<<<<< HEAD
-    credentialEmailInput?: any;
-
-    componentWillMount() {
-        this.setState({
-            whileEditingItem: [],
-            editableAvatarDialogIsVisible: false,
-            uploadingAvatarImage: false,
-        });
-    }
-=======
->>>>>>> fix(ProfilePage.tsx): change to bluk update
 
     state = {
         chipsData: [] as Chip[],
