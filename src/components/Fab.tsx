@@ -8,6 +8,9 @@ const Fab = styled<ButtonProps>(Button)`
         right: 0;
         bottom: 0;
         margin: 2rem;
+        @media (max-width: 768px) {
+            bottom: 2rem;
+        }
     }
 `;
 

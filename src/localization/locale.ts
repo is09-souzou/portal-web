@@ -5,9 +5,17 @@ export const locale = {
         profile: {
             displayName: "DisplayName",
             mailAdress: "Mail Adress",
-            carrer: "Carrer",
+            career: "Career",
             message: "Message",
-            skill: "Skill"
+            skill: "Skill",
+            inputSkill: "Input Skill!",
+            save: "save",
+            cancel: "cancel",
+            dialog: {
+                submit: "submit",
+                cancel: "cancel",
+                title: "Upload Avatar"
+            }
         },
         works: {
             title: "Title",
@@ -45,9 +53,17 @@ export const locale = {
         profile: {
             displayName: "ユーザー名",
             mailAdress: "メールアドレス",
-            carrer: "経歴",
+            career: "経歴",
             message: "一言",
-            skill: "スキル"
+            skill: "スキル",
+            inputSkill: "スキルを入力してください",
+            save: "保存",
+            cancel: "キャンセル",
+            dialog: {
+                submit: "保存",
+                cancel: "キャンセル",
+                title: "アバター画像を選択"
+            }
         },
         works: {
             title: "タイトル",
