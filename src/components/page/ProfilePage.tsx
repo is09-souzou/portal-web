@@ -35,7 +35,7 @@ interface Chip {
 }
 
 interface State {
-    chipsData: Chip[];
+    chipsData?: Chip[];
     editableAvatarDialogIsVisible: boolean;
     uploadingAvatarImage: boolean;
 }
@@ -74,26 +74,34 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     messageInput?    : any;
 
     state = {
-        chipsData: [] as Chip[],
+        chipsData: undefined,
         editableAvatarDialogIsVisible: false,
         uploadingAvatarImage: false
     };
 
-    deleteChip = (data: Chip) => () => this.setState({
-        chipsData: this.state.chipsData.filter((x: Chip): boolean => data.key !== x.key)
-    })
+    deleteChip = (data: Chip) => () => {
+        if (this.state.chipsData === undefined)
+            return;
+
+        this.setState({
+            chipsData: (this.state.chipsData || [] as Chip[]).filter((x: Chip): boolean => data.key !== x.key)
+        });
+    }
 
     tagInputKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (this.state.chipsData.length >= 5)
+        if (this.state.chipsData === undefined)
+            return;
+
+        if ((this.state.chipsData || [] as Chip[]).length >= 5)
             return e.preventDefault();
 
         const inputValue = (e.target as any).value;
         if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
             e.preventDefault();
             if (inputValue.length > 1) {
-                if (!this.state.chipsData.some(x => x.label === inputValue))
+                if (!(this.state.chipsData || [] as Chip[]).some(x => x.label === inputValue))
                     this.setState({
-                        chipsData: this.state.chipsData.concat({
+                        chipsData: (this.state.chipsData || [] as Chip[]).concat({
                             key: (e.target as any).value,
                             label: (e.target as any).value
                         })
@@ -159,6 +167,11 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 
                         const currentUser = data.getUser;
 
+                        if (this.state.chipsData === undefined)
+                            this.setState({
+                                chipsData: currentUser.skillList.map((x: string) => ({ key: x, label: x }))
+                            });
+
                         return (
                             <LocaleContext.Consumer>
                                 {({ locale }) => (
@@ -179,7 +192,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                             email: this.emailInput.value,
                                                             message: this.messageInput.value,
                                                             career: this.careerInput.value,
-                                                            skillList: this.state.chipsData.map(x => x.label),
+                                                            skillList: (this.state.chipsData || [] as Chip[]).map(x => x.label) as string[],
                                                         }
                                                     },
                                                     optimisticResponse: {
@@ -190,7 +203,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                             email: this.emailInput.value,
                                                             message: this.messageInput.value,
                                                             career: this.careerInput.value,
-                                                            skillList: this.state.chipsData.map(x => x.label),
+                                                            skillList: (this.state.chipsData || [] as Chip[]).map(x => x.label) as string[],
                                                             __typename: "User"
                                                         }
                                                     },
@@ -270,14 +283,16 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                         }}
                                                     />
                                                     <ChipList>
-                                                        {this.state.chipsData.map(data =>
-                                                            <Chip
-                                                                key={data.key}
-                                                                clickable={false}
-                                                                label={data.label}
-                                                                onDelete={this.deleteChip(data)}
-                                                            />
-                                                        )}
+                                                        {(this.state.chipsData || currentUser.skillList.map((x: string) => ({ key: x, label: x })))
+                                                            .map((data: any) =>
+                                                                <Chip
+                                                                    key={data.key}
+                                                                    clickable={false}
+                                                                    label={data.label}
+                                                                    onDelete={this.deleteChip(data)}
+                                                                />
+                                                            )
+                                                        }
                                                     </ChipList>
                                                 </div>
                                                 <div>
