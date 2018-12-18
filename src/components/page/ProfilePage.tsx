@@ -273,7 +273,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 />
                                                 <div>
                                                     <TextField
-                                                        label={locale.works.tags}
+                                                        label={locale.profile.skill}
                                                         placeholder={locale.profile.inputSkill}
                                                         onKeyDown={this.tagInputKeyDown}
                                                         margin="normal"
