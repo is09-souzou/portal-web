@@ -207,6 +207,8 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                         }
                                                     },
                                                 });
+
+                                                notificationListener.notification("info", "Update Profile!");
                                                 history.push(("/users/") + currentUser.id);
                                             }}
                                         >
@@ -222,7 +224,8 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                     <div>
                                                         <TextField
                                                             id="profile-name"
-                                                            margin="normal"
+                                                            margin="dense"
+                                                            label={locale.profile.displayName}
                                                             // tslint:disable-next-line:jsx-no-lambda
                                                             onChange={(e: any) => this.displayNameInput.value = (e.target.value)}
                                                             defaultValue={currentUser.displayName}
@@ -232,7 +235,8 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                         />
                                                         <TextField
                                                             id="profile-email"
-                                                            margin="normal"
+                                                            margin="dense"
+                                                            label={locale.profile.mailAdress}
                                                             // tslint:disable-next-line:jsx-no-lambda
                                                             onChange={(e: any) => this.emailInput.value = (e.target.value)}
                                                             type="email"
@@ -240,24 +244,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                             // tslint:disable-next-line:jsx-no-lambda
                                                             inputRef={x => this.emailInput = x}
                                                         />
-                                                    </div>
-                                                    <div>
-                                                        <Button
-                                                            type="outlined"
-                                                            color="primary"
-                                                            // tslint:disable-next-line:jsx-no-lambda
-                                                            onClick={() => history.push(("/users/") + currentUser.id)}
-                                                        >
-                                                            cancel
-                                                        </Button>
-                                                        <Button
-                                                            type="submit"
-                                                            component="button"
-                                                            variant="raised"
-                                                            color="primary"
-                                                        >
-                                                            save
-                                                        </Button>
                                                     </div>
                                                 </div>
                                             </ProfilePageHeader>
@@ -305,6 +291,24 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                             />
                                                         )}
                                                     </ChipList>
+                                                </div>
+                                                <div>
+                                                    <Button
+                                                        variant="outlined"
+                                                        color="primary"
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        onClick={() => history.push(("/users/") + currentUser.id)}
+                                                    >
+                                                        cancel
+                                                    </Button>
+                                                    <Button
+                                                        type="submit"
+                                                        component="button"
+                                                        variant="raised"
+                                                        color="primary"
+                                                    >
+                                                        save
+                                                    </Button>
                                                 </div>
                                             </ProfileContent>
                                             <Dialog
@@ -354,7 +358,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 
                                                             refetch();
                                                             this.setState({ uploadingAvatarImage: false });
-
                                                             this.closeEditableAvatarDialog();
                                                         } catch (e) {
                                                             this.setState({ uploadingAvatarImage: false });
@@ -408,6 +411,7 @@ const PageHost = styled(Page)`
     display: flex;
     flex-direction: column;
     margin-top: -7rem;
+    padding-bottom: 7rem;
     transition: all .3s ease-out;
 `;
 
@@ -417,8 +421,12 @@ const ChipList = styled.div`
     align-items: flex-end;
     padding-bottom: .5rem;
     flex-grow: 1;
+    flex-wrap: wrap;
     > :nth-child(n + 1) {
-        margin-left: .5rem;
+        margin: .5rem 0 0 .5rem;
+    }
+    @media (max-width: 768px) {
+        margin-left: initial;
     }
 `;
 
@@ -464,20 +472,19 @@ const ProfilePageHeader = styled.div`
     }
     > :last-child {
         display: flex;
-        height: 7rem;
+        height: 8rem;
         align-items: center;
         margin-left: 5rem;
         > :first-child {
-            margin-bottom: 3rem;
-        }
-        > :nth-child(2) {
-            display: flex;
-            flex-direction: column;
-            margin-left: 2rem;
+            margin-bottom: 2rem;
         }
         > :last-child {
-            display; flex;
-            max-width: max-content;
+            display: flex;
+            flex-direction: column;
+            margin-left: 1rem;
+        }
+        @media (max-width: 768px) {
+            margin-left: 1rem;
         }
     }
 `;
@@ -485,14 +492,26 @@ const ProfilePageHeader = styled.div`
 const ProfileContent = styled.div`
     display: flex;
     flex-direction: column;
-    margin-top: 2rem;
     margin: 1rem 6rem 1rem 6rem;
-    > :last-child {
+    > :nth-child(3) {
         display: flex;
+        > :first-child {
+            min-width: max-content;
+            max-width: max-content;
+        }
+    }
+    > :last-child {
+        display; flex;
+        margin-left: auto;
+        > * {
+            margin-left: .5rem;
+        }
     }
     @media (max-width: 768px) {
-        > * {
-            margin-left: 1rem;
+        margin: 1rem 2rem;
+        > :nth-child(3) {
+            display: flex;
+            flex-direction: column;
         }
     }
 `;
