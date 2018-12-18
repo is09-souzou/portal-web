@@ -274,7 +274,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                 <div>
                                                     <TextField
                                                         label={locale.works.tags}
-                                                        placeholder={"Input Tags!"}
+                                                        placeholder={locale.profile.inputSkill}
                                                         onKeyDown={this.tagInputKeyDown}
                                                         margin="normal"
                                                         inputProps={{
@@ -299,7 +299,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                         // tslint:disable-next-line:jsx-no-lambda
                                                         onClick={() => history.push(("/users/") + currentUser.id)}
                                                     >
-                                                        cancel
+                                                        {locale.profile.cancel}
                                                     </Button>
                                                     <Button
                                                         type="submit"
@@ -307,7 +307,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                         variant="raised"
                                                         color="primary"
                                                     >
-                                                        save
+                                                        {locale.profile.save}
                                                     </Button>
                                                 </div>
                                             </ProfileContent>
@@ -368,7 +368,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                     <DialogTitle
                                                         id="editable-avatar-dialog-title"
                                                     >
-                                                        Upload Avatar
+                                                        {locale.profile.dialog.title}
                                                     </DialogTitle>
                                                     <DialogContent>
                                                         <ImageInput
@@ -382,14 +382,14 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                         <Button
                                                             onClick={this.closeEditableAvatarDialog}
                                                         >
-                                                            Cancel
+                                                            {locale.profile.dialog.cancel}
                                                         </Button>
                                                         <Button
                                                             component="button"
                                                             color="primary"
                                                             type="submit"
                                                         >
-                                                            Submit
+                                                            {locale.profile.dialog.submit}
                                                         </Button>
                                                     </DialogActions>
                                                 </form>
