@@ -2,13 +2,14 @@ import React, { Fragment } from "react";
 import {
     Avatar,
     Button,
+    Chip,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     Divider,
     TextField,
-    LinearProgress
+    LinearProgress,
 } from "@material-ui/core";
 import gql                 from "graphql-tag";
 import { Query, Mutation } from "react-apollo";
@@ -28,7 +29,13 @@ import ImageInput                    from "../ImageInput";
 import NotFound                      from "../NotFound";
 import Page                          from "../Page";
 
+interface Chip {
+    key  : string;
+    label: string;
+}
+
 interface State {
+    chipsData: Chip[];
     editableAvatarDialogIsVisible: boolean;
     uploadingAvatarImage: boolean;
 }
@@ -42,6 +49,7 @@ const QueryGetUser = gql(`
             career
             avatarUri
             message
+            skillList
         }
     }
 `);
@@ -78,9 +86,35 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 >>>>>>> fix(ProfilePage.tsx): change to bluk update
 
     state = {
+        chipsData: [] as Chip[],
         editableAvatarDialogIsVisible: false,
         uploadingAvatarImage: false
     };
+
+    deleteChip = (data: Chip) => () => this.setState({
+        chipsData: this.state.chipsData.filter((x: Chip): boolean => data.key !== x.key)
+    })
+
+    tagInputKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (this.state.chipsData.length >= 5)
+            return e.preventDefault();
+
+        const inputValue = (e.target as any).value;
+        if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
+            e.preventDefault();
+            if (inputValue.length > 1) {
+                if (!this.state.chipsData.some(x => x.label === inputValue))
+                    this.setState({
+                        chipsData: this.state.chipsData.concat({
+                            key: (e.target as any).value,
+                            label: (e.target as any).value
+                        })
+                    });
+
+                (e.target as any).value = "";
+            }
+        }
+    }
 
     openEditableAvatarDialog = () => this.setState({ editableAvatarDialogIsVisible: true });
 
@@ -157,6 +191,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                             email: this.emailInput.value,
                                                             message: this.messageInput.value,
                                                             career: this.careerInput.value,
+                                                            skillList: this.state.chipsData.map(x => x.label),
                                                         }
                                                     },
                                                     optimisticResponse: {
@@ -167,6 +202,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                             email: this.emailInput.value,
                                                             message: this.messageInput.value,
                                                             career: this.careerInput.value,
+                                                            skillList: this.state.chipsData.map(x => x.label),
                                                             __typename: "User"
                                                         }
                                                     },
@@ -205,14 +241,24 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                             inputRef={x => this.emailInput = x}
                                                         />
                                                     </div>
-                                                    <Button
-                                                        type="submit"
-                                                        component="button"
-                                                        variant="raised"
-                                                        color="primary"
-                                                    >
-                                                        save
-                                                    </Button>
+                                                    <div>
+                                                        <Button
+                                                            type="outlined"
+                                                            color="primary"
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onClick={() => history.push(("/users/") + currentUser.id)}
+                                                        >
+                                                            cancel
+                                                        </Button>
+                                                        <Button
+                                                            type="submit"
+                                                            component="button"
+                                                            variant="raised"
+                                                            color="primary"
+                                                        >
+                                                            save
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             </ProfilePageHeader>
                                             <Divider />
@@ -239,6 +285,27 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                     // tslint:disable-next-line:jsx-no-lambda
                                                     inputRef={x => this.careerInput = x}
                                                 />
+                                                <div>
+                                                    <TextField
+                                                        label={locale.works.tags}
+                                                        placeholder={"Input Tags!"}
+                                                        onKeyDown={this.tagInputKeyDown}
+                                                        margin="normal"
+                                                        inputProps={{
+                                                            maxLength: 10,
+                                                        }}
+                                                    />
+                                                    <ChipList>
+                                                        {this.state.chipsData.map(data =>
+                                                            <Chip
+                                                                key={data.key}
+                                                                clickable={false}
+                                                                label={data.label}
+                                                                onDelete={this.deleteChip(data)}
+                                                            />
+                                                        )}
+                                                    </ChipList>
+                                                </div>
                                             </ProfileContent>
                                             <Dialog
                                                 open={this.state.editableAvatarDialogIsVisible}
@@ -344,6 +411,17 @@ const PageHost = styled(Page)`
     transition: all .3s ease-out;
 `;
 
+const ChipList = styled.div`
+    margin-left: 1rem;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: .5rem;
+    flex-grow: 1;
+    > :nth-child(n + 1) {
+        margin-left: .5rem;
+    }
+`;
+
 const UserAvatar = styled(Avatar)`
     && {
         border: 1px solid #ccc;
@@ -409,6 +487,9 @@ const ProfileContent = styled.div`
     flex-direction: column;
     margin-top: 2rem;
     margin: 1rem 6rem 1rem 6rem;
+    > :last-child {
+        display: flex;
+    }
     @media (max-width: 768px) {
         > * {
             margin-left: 1rem;
