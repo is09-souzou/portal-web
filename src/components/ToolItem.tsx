@@ -10,6 +10,7 @@ export default styled.div`
     justify-content: center;
     transition: all .2s ease-out;
     cursor: pointer;
+    user-select: none;
     :hover {
         background: rgba(0, 0, 0, .1);
     }

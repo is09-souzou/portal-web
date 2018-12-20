@@ -7,11 +7,11 @@ const HtmlWebpackPlugin        = require('html-webpack-plugin');
 const HardSourceWebpackPlugin  = require('hard-source-webpack-plugin');
 const Uglify                   = require("uglifyjs-webpack-plugin");
 
-const NODE_ENV = process.env.NODE_ENV;
+const NODE_ENV = process.env.NODE_ENV || "development";
 
 module.exports = {
     entry: "./src/index.tsx",
-    mode: process.env.NODE_ENV || "production",
+    mode: NODE_ENV || "production",
     output: {
         filename: "[name].js",
         path: path.resolve(__dirname, "dist"),
@@ -35,7 +35,7 @@ module.exports = {
         ]
     },
     optimization: {
-        ...(process.env.NODE_ENV === "production" ? {
+        ...(NODE_ENV === "production" ? {
             minimizer: [
                 new Uglify({
                     test: /\.js($|\?)/i,
@@ -83,7 +83,7 @@ module.exports = {
     },
     plugins: [
         // new BundleAnalyzerPlugin(),
-        ...(process.env.NODE_ENV === "development" ? [new HardSourceWebpackPlugin()] : []),
+        ...(NODE_ENV === "development" ? [new HardSourceWebpackPlugin()] : []),
         new DefinePlugin(
             Object.entries(process.env)
                 .map(x => ({["process.env." + x[0]]: JSON.stringify(x[1])}))
@@ -91,9 +91,9 @@ module.exports = {
         ),
         new HtmlWebpackPlugin({
             hash: true,
-            title: "Portal" + process.env.NODE_ENV === "development" ? " - dev" : "",
+            title: "Portal" + NODE_ENV === "development" ? " - dev" : "",
             minify: (
-                process.env.NODE_ENV === "production" ? {
+                NODE_ENV === "production" ? {
                     caseSensitive: true,
                     collapseBooleanAttributes: true,
                     collapseInlineTagWhitespace: true,

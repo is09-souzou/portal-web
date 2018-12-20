@@ -358,9 +358,9 @@ const Host = styled.form`
     margin: 0 2rem;
     width: calc(100% - 4rem);
     > * {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
     }
 `;
 

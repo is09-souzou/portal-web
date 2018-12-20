@@ -13,7 +13,7 @@
     "build": "yarn build:dev",
     "build:dev": "env NODE_ENV=development webpack --mode=development --config webpack.config.js",
     "build:prod": "env NODE_ENV=production webpack --mode=production --config webpack.config.js",
-    "cache-clean": "rm -Rf ./node_modules/.cache/hard-source",
+    "clean-cache": "rm -Rf ./node_modules/.cache/hard-source",
     "lint": "tslint -p ./ -c ./tslint.json './src/**/*.ts{,x}'",
     "test": "yarn lint && yarn build",
     "size-analyze": "yarn build:prod --json | tail -n +2 | webpack-bundle-size-analyzer",
