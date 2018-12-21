@@ -1,2 +1,6 @@
-*.ts @NozomiSugiyama
-*.tsx @NozomiSugiyama
+* @Shuhei28
+/src/components/page/* @hashiserver
+/src/components/*.tsx @alf852
+/src/api/* @YuitoYamamoto
+/src/util/* @NozomiSugiyama
+/src/graphQL/* @Bigfoot0305
