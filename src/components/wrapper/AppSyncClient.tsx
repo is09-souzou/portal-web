@@ -1,12 +1,9 @@
 import React, { ReactChild } from "react";
-import { AUTH_TYPE }        from "aws-appsync/lib/link/auth-link";
 import { ApolloProvider }   from "react-apollo";
 import config               from "../../config";
 import { AuthProps }        from "./Auth";
-
-declare function require(x: string): any;
-const { Rehydrated }       = require("aws-appsync-react");
-const { AWSAppSyncClient } = require("aws-appsync");
+import { Rehydrated }       from "aws-appsync-react";
+import { AWSAppSyncClient } from "aws-appsync";
 
 interface Props extends AuthProps {
     children: ReactChild;
@@ -18,18 +15,17 @@ interface State {
 
 export default class extends React.Component<Props, State> {
 
-    componentWillMount() {
-        this.setState({
-            client: new AWSAppSyncClient({
-                url: config.appSync.graphqlEndpoint,
-                region: config.appSync.region,
-                auth: {
-                    type: AUTH_TYPE.AMAZON_COGNITO_USER_POOLS,
-                    jwtToken: () => this.props.auth.token ? this.props.auth.token.jwtToken : ""
-                }
-            })
-        });
-    }
+    state = {
+        client: new AWSAppSyncClient({
+            url: this.props.auth.token ? config.appSync.graphqlEndpoint : config.publicAppSync.graphqlEndpoint,
+            region: config.appSync.region,
+            auth: {
+                type: this.props.auth.token ? config.appSync.authenticationType : config.publicAppSync.authenticationType,
+                jwtToken: () => this.props.auth.token ? this.props.auth.token.jwtToken : "",
+                apiKey: config.publicAppSync.apiKey
+            }
+        })
+    };
 
     render () {
         const {
@@ -39,7 +35,7 @@ export default class extends React.Component<Props, State> {
         } = this.props;
 
         return (
-            <ApolloProvider client={this.state.client}>
+            <ApolloProvider client={this.state.client as any}>
                 <Rehydrated>
                     {children &&
                         React.cloneElement(

@@ -1,9 +1,17 @@
+import { AUTH_TYPE } from "aws-appsync/lib/link/auth-link";
+
 export default {
     appSync : {
         graphqlEndpoint: "https://2y3z3mqk3vacvkudw22wqicade.appsync-api.ap-northeast-1.amazonaws.com/graphql",
         region: "ap-northeast-1",
-        authenticationType: "API_KEY",
-        apiKey: "da2-zdk6vnvwybb2lkmnccbdy5rjpu",
+        authenticationType: AUTH_TYPE.AMAZON_COGNITO_USER_POOLS,
+    },
+    publicAppSync : {
+        graphqlEndpoint: "https://l7ebet6hcndmjpgmbkthbiyvem.appsync-api.ap-northeast-1.amazonaws.com/graphql",
+        region: "ap-northeast-1",
+        authenticationType: AUTH_TYPE.API_KEY,
+        // apiKey's deadline is Sat, 21 Dec 2019 00: 00: 00 GMT
+        apiKey: "da2-ropcunocwzddldbksqr54lenwy",
     },
     apiGateway: {
         uri: "https://qh0uqafx50.execute-api.ap-northeast-1.amazonaws.com/dev"
