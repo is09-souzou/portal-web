@@ -207,7 +207,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                                 imageUrl: this.state.mainImageUrl ? currentWork.imageUrl : this.state.mainImageUrl,
                                                                 tags: (
                                                                     this.state.chipsData ? ((this.state.chipsData || [] as Chip[]).map(x => x.label))
-                                                                        :                        currentWork.tags
+                                                                  :                        currentWork.tags
                                                                 )
                                                             }
                                                         },
@@ -221,7 +221,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                                 imageUrl: this.state.mainImageUrl,
                                                                 tags: (
                                                                     this.state.chipsData ? ((this.state.chipsData || [] as Chip[]).map(x => x.label))
-                                                                        :                        currentWork.tags
+                                                                  :                        currentWork.tags
                                                                 ),
                                                                 __typename: "Work"
                                                             }
