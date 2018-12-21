@@ -17,6 +17,7 @@ import ErrorPage              from "../ErrorPage";
 import GraphQLProgress        from "../GraphQLProgress";
 import Header                 from "../Header";
 import ImageInputDialog       from "../ImageInputDialog";
+import MarkdownSupports       from "../MarkdownSupports";
 import NotFound               from "../NotFound";
 import Page                   from "../Page";
 import PortalMarkdown         from "../PortalMarkdown";
@@ -71,6 +72,8 @@ const MutationUpdateWork = gql(`
 `);
 
 export default class extends React.Component<PageComponentProps<{id: string}>, State> {
+
+    descriptionInput?: HTMLTextAreaElement;
 
     state = {
         chipsData: undefined,
@@ -178,6 +181,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
 
                         const currentWork = data.getWork as Work;
 
+                        // FIXME: Render methods should be a pure function of props and state.
                         if (this.state.chipsData === undefined)
                             this.setState({
                                 chipsData: currentWork.tags.map(x => ({ key: x, label: x }))
@@ -272,21 +276,40 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                     )}
                                                     onClick={this.onOpenImageInputDialog}
                                                 />
-                                                <TextField
-                                                    label="Description"
-                                                    multiline
-                                                    margin="normal"
-                                                    required
-                                                    placeholder={"Input Description!"}
-                                                    rowsMax={30}
-                                                    fullWidth
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    onChange={(e: any) => this.setState({ description: e.target.value })}
-                                                    defaultValue={currentWork.description}
-                                                />
+                                                <div>
+                                                    <TextField
+                                                        label="Description"
+                                                        multiline
+                                                        margin="normal"
+                                                        required
+                                                        placeholder={"Input Description!"}
+                                                        rowsMax={30}
+                                                        fullWidth
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        onChange={(e: any) => this.setState({ description: e.target.value })}
+                                                        defaultValue={currentWork.description}
+                                                        value={this.state.description}
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        inputRef={x => this.descriptionInput = x}
+                                                    />
+                                                    <MarkdownSupports
+                                                        element={this.descriptionInput}
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        onChangeValue={(description, lines) => {
+                                                            this.setState(
+                                                                { description },
+                                                                () => {
+                                                                    if (this.descriptionInput) {
+                                                                        this.descriptionInput.setSelectionRange(lines[0], lines[1]);
+                                                                    }
+                                                                }
+                                                            );
+                                                        }}
+                                                    />
+                                                </div>
                                             </div>
                                             <PortalMarkdown
-                                                source={this.state.description ? currentWork.description : this.state.description}
+                                                source={this.state.description ? this.state.description : currentWork.description}
                                                 rawSourcePos
                                             />
                                         </WorkContentArea>

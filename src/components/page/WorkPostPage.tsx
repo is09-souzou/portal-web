@@ -34,8 +34,6 @@ interface State {
     isPublic: boolean;
     title: string;
     workDialogVisible: boolean;
-    descriptionSelectionStart: number;
-    descriptionSelectionEnd: number;
 }
 
 const MutationCreateWork = gql(`
@@ -87,34 +85,8 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         previewWork: undefined,
         isPublic: true,
         title: "",
-        workDialogVisible: false,
-        descriptionSelectionStart: 0,
-        descriptionSelectionEnd: 0
+        workDialogVisible: false
     };
-
-    needReserection:boolean = false;
-
-    componentDidUpdate() {
-        if (this.needReserection) {
-            console.log(
-                "componentDidUpdate",
-                this.state.descriptionSelectionStart,
-                this.state.descriptionSelectionEnd
-            );
-            if (this.descriptionInput) {
-                this.descriptionInput.selectionStart = this.state.descriptionSelectionStart;
-                this.descriptionInput.selectionEnd   = this.state.descriptionSelectionEnd;
-                this.descriptionInput.setSelectionRange(this.state.descriptionSelectionStart, this.state.descriptionSelectionEnd);
-            }
-
-            this.needReserection = false;
-            console.log(
-                "didupdate test",
-                this.descriptionInput && this.descriptionInput.selectionStart,
-                this.descriptionInput && this.descriptionInput.selectionEnd
-            );
-        }
-    }
 
     deleteChip = (data: Chip) => () => this.setState({
         chipsData: this.state.chipsData.filter((x: Chip): boolean => data.key !== x.key)
@@ -327,31 +299,11 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                         element={this.descriptionInput}
                                                         // tslint:disable-next-line:jsx-no-lambda
                                                         onChangeValue={(description, lines) => {
-                                                            this.needReserection = true;
                                                             this.setState(
-                                                                {
-                                                                    description,
-                                                                    descriptionSelectionStart: lines[0],
-                                                                    descriptionSelectionEnd: lines[1]
-                                                                },
+                                                                { description },
                                                                 () => {
                                                                     if (this.descriptionInput) {
                                                                         this.descriptionInput.setSelectionRange(lines[0], lines[1]);
-                                                                        console.log(
-                                                                            "after setState",
-                                                                            this.descriptionInput.selectionStart,
-                                                                            this.descriptionInput.selectionEnd
-                                                                        );
-                                                                        setInterval(
-                                                                            () => console.log(
-                                                                                "interval test",
-                                                                                this.descriptionInput && this.descriptionInput.selectionStart,
-                                                                                this.descriptionInput && this.descriptionInput.selectionEnd
-                                                                            ),
-                                                                            2000
-                                                                        );
-                                                                        // this.descriptionInput.selectionStart = lines[0];
-                                                                        // this.descriptionInput.selectionEnd   = lines[1];
                                                                     }
                                                                 }
                                                             );

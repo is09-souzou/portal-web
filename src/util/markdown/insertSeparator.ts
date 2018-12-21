@@ -7,7 +7,7 @@ export default (element: HTMLInputElement | HTMLTextAreaElement, lines: number[]
                     adjustmentCount = adjustmentCount - 3;
                     return x.replace(/^[-]{3}/g, "");
                 }
-                return x.replace(/^/g, "\n---\n\n");
+                return x.replace(/^/g, "\n---\n");
             }
             adjustmentCount = adjustmentCount + 3;
             return x;
