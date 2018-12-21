@@ -10,6 +10,7 @@ export default {
         graphqlEndpoint: "https://l7ebet6hcndmjpgmbkthbiyvem.appsync-api.ap-northeast-1.amazonaws.com/graphql",
         region: "ap-northeast-1",
         authenticationType: AUTH_TYPE.API_KEY,
+        // apiKey's deadline is Sat, 21 Dec 2019 00: 00: 00 GMT
         apiKey: "da2-ropcunocwzddldbksqr54lenwy",
     },
     apiGateway: {
