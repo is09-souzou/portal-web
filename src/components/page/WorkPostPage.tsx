@@ -104,9 +104,15 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
             if (this.descriptionInput) {
                 this.descriptionInput.selectionStart = this.state.descriptionSelectionStart;
                 this.descriptionInput.selectionEnd   = this.state.descriptionSelectionEnd;
+                this.descriptionInput.setSelectionRange(this.state.descriptionSelectionStart, this.state.descriptionSelectionEnd);
             }
 
             this.needReserection = false;
+            console.log(
+                "didupdate test",
+                this.descriptionInput && this.descriptionInput.selectionStart,
+                this.descriptionInput && this.descriptionInput.selectionEnd
+            );
         }
     }
 

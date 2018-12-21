@@ -76,12 +76,12 @@ export default (
         <ToolItem
             onClick={handleConvert("list", onChangeValue, element)}
         >
-            ・
+            <span>・</span>
         </ToolItem>
         <ToolItem
             onClick={handleConvert("separator", onChangeValue, element)}
         >
-            ─
+            <span>─</span>
         </ToolItem>
         <ToolItem
             onClick={handleConvert("anchor", onChangeValue, element)}
