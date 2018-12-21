@@ -2,13 +2,14 @@ import React, { Fragment } from "react";
 import {
     Avatar,
     Button,
+    Chip,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
+    Divider,
     TextField,
-    Typography,
-    LinearProgress
+    LinearProgress,
 } from "@material-ui/core";
 import gql                 from "graphql-tag";
 import { Query, Mutation } from "react-apollo";
@@ -19,6 +20,7 @@ import createSignedUrl               from "../../api/createSignedUrl";
 import fileUploadToS3                from "../../api/fileUploadToS3";
 import { PageComponentProps }        from "../../App";
 import { AuthProps }                 from "../wrapper/Auth";
+import { LocaleContext }             from "../wrapper/MainLayout";
 import { NotificationListenerProps } from "../wrapper/NotificationListener";
 import ErrorPage                     from "../ErrorPage";
 import GraphQLProgress               from "../GraphQLProgress";
@@ -27,13 +29,15 @@ import ImageInput                    from "../ImageInput";
 import NotFound                      from "../NotFound";
 import Page                          from "../Page";
 
-type Item = "displayName" | "email" | "career" | "message" | "avatarUri" | "credentialEmail";
+interface Chip {
+    key  : string;
+    label: string;
+}
 
 interface State {
-    whileEditingItem: Item[];
+    chipsData?: Chip[];
     editableAvatarDialogIsVisible: boolean;
     uploadingAvatarImage: boolean;
-    updatePasswordDialogVisible: boolean;
 }
 
 const QueryGetUser = gql(`
@@ -45,6 +49,7 @@ const QueryGetUser = gql(`
             career
             avatarUri
             message
+            skillList
         }
     }
 `);
@@ -67,54 +72,49 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     emailInput?      : any;
     careerInput?     : any;
     messageInput?    : any;
-    credentialEmailInput?: any;
 
-    componentWillMount() {
+    state = {
+        chipsData: undefined,
+        editableAvatarDialogIsVisible: false,
+        uploadingAvatarImage: false
+    };
+
+    deleteChip = (data: Chip) => () => {
+        if (this.state.chipsData === undefined)
+            return;
+
         this.setState({
-            whileEditingItem: [],
-            editableAvatarDialogIsVisible: false,
-            uploadingAvatarImage: false,
-            updatePasswordDialogVisible: false
+            chipsData: (this.state.chipsData || [] as Chip[]).filter((x: Chip): boolean => data.key !== x.key)
         });
     }
 
-    addWhileEditingItem = (item: Item) => (
-        () => (
-            !this.state.whileEditingItem.includes(item)
-         && this.setState({ whileEditingItem: this.state.whileEditingItem.concat(item) })
-        )
-    )
+    tagInputKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (this.state.chipsData === undefined)
+            return;
 
-    callUpdateUser = async (updateUser: Function, item: Item, value: any) => {
-        try {
-            await updateUser({
-                variables: {
-                    user: {
-                        [item]: value,
-                        id: this.props.auth.token!.payload.sub,
-                    }
-                },
-                optimisticResponse: {
-                    __typename: "Mutation",
-                    updateUser: {
-                        id: this.props.auth.token!.payload.sub,
-                        __typename: "User"
-                    }
-                },
-            });
-            this.setState({ whileEditingItem: this.state.whileEditingItem.filter(x => x !== item) });
-        } catch (err) {
-            this.props.notificationListener.errorNotification(err);
+        if ((this.state.chipsData || [] as Chip[]).length >= 5)
+            return e.preventDefault();
+
+        const inputValue = (e.target as any).value;
+        if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
+            e.preventDefault();
+            if (inputValue.length > 1) {
+                if (!(this.state.chipsData || [] as Chip[]).some(x => x.label === inputValue))
+                    this.setState({
+                        chipsData: (this.state.chipsData || [] as Chip[]).concat({
+                            key: (e.target as any).value,
+                            label: (e.target as any).value
+                        })
+                    });
+
+                (e.target as any).value = "";
+            }
         }
     }
 
     openEditableAvatarDialog = () => this.setState({ editableAvatarDialogIsVisible: true });
 
     closeEditableAvatarDialog = () => this.setState({ editableAvatarDialogIsVisible: false });
-
-    openUpdatePasswordDialog = () => this.setState({ updatePasswordDialogVisible: true });
-
-    closeUpdatePasswordDialog = () => this.setState({ updatePasswordDialogVisible: false });
 
     render() {
         const {
@@ -148,7 +148,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                 <Query
                     query={QueryGetUser}
                     variables={{ id: auth.token!.payload.sub }}
-                    fetchPolicy="cache-and-network"
+                    fetchPolicy="network-only"
                 >
                     {({ loading, error, data, refetch }) => {
                         if (loading) return <GraphQLProgress />;
@@ -167,375 +167,281 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
 
                         const currentUser = data.getUser;
 
+                        if (this.state.chipsData === undefined)
+                            this.setState({
+                                chipsData: currentUser.skillList.map((x: string) => ({ key: x, label: x }))
+                            });
+
                         return (
-                            <Mutation
-                                mutation={MutationUpdateUser}
-                            >
-                                {updateUser => (
-                                    <ProfileForm>
-                                        <Typography gutterBottom variant="title">
-                                            Profile
-                                        </Typography>
-                                        <div>
-                                            <UserAvatar
-                                                src={currentUser.avatarUri}
-                                                onClick={this.openEditableAvatarDialog}
-                                            />
-                                            <div>
-                                                <TextField
-                                                    label="DisplayName"
-                                                    margin="normal"
-                                                    InputProps={{
-                                                        endAdornment: (
-                                                            this.state.whileEditingItem.includes("displayName")
-                                                         && <Button
-                                                            // tslint:disable-next-line:jsx-no-lambda
-                                                            onClick={() =>
-                                                                /[a-zA-Z1-9]{4,}/.test(this.displayNameInput.value)
-                                                             && this.callUpdateUser(
-                                                                    updateUser,
-                                                                    "displayName",
-                                                                    this.displayNameInput.value
-                                                                )
-                                                            }
-                                                         >
-                                                            Save
-                                                         </Button>
-                                                        )
-                                                    }}
-                                                    onChange={this.addWhileEditingItem("displayName")}
-                                                    defaultValue={currentUser.displayName}
-                                                    fullWidth
-                                                    required
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    inputRef={x => this.displayNameInput = x}
-                                                />
-                                                <TextField
-                                                    id="profile-email"
-                                                    label="Mail Address"
-                                                    margin="normal"
-                                                    InputProps={{
-                                                        endAdornment: (
-                                                            this.state.whileEditingItem.includes("email")
-                                                            && <Button
-                                                                // tslint:disable-next-line:jsx-no-lambda
-                                                                onClick={() =>
-                                                                    this.callUpdateUser(
-                                                                        updateUser,
-                                                                        "email",
-                                                                        this.emailInput.value
-                                                                    )
-                                                                }
-                                                            >
-                                                                Save
-                                                            </Button>
-                                                        )
-                                                    }}
-                                                    type="email"
-                                                    onChange={this.addWhileEditingItem("email")}
-                                                    defaultValue={currentUser.email}
-                                                    fullWidth
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    inputRef={x => this.emailInput = x}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <TextField
-                                                id="profile-career"
-                                                label="Career"
-                                                margin="normal"
-                                                InputProps={{
-                                                    endAdornment: (
-                                                        this.state.whileEditingItem.includes("career")
-                                                        && <Button
-                                                            // tslint:disable-next-line:jsx-no-lambda
-                                                            onClick={() =>
-                                                                this.callUpdateUser(
-                                                                    updateUser,
-                                                                    "career",
-                                                                    this.careerInput.value
-                                                                )
-                                                            }
-                                                        >
-                                                            Save
-                                                        </Button>
-                                                    )
-                                                }}
-                                                onChange={this.addWhileEditingItem("career")}
-                                                defaultValue={currentUser.career}
-                                                multiline
-                                                rows={4}
-                                                // tslint:disable-next-line:jsx-no-lambda
-                                                inputRef={x => this.careerInput = x}
-                                            />
-                                            <TextField
-                                                id="profile-message"
-                                                label="Message"
-                                                margin="normal"
-                                                InputProps={{
-                                                    endAdornment: (
-                                                        this.state.whileEditingItem.includes("message")
-                                                        && <Button
-                                                            // tslint:disable-next-line:jsx-no-lambda
-                                                            onClick={() =>
-                                                                this.callUpdateUser(
-                                                                    updateUser,
-                                                                    "message",
-                                                                    this.messageInput.value
-                                                                )
-                                                            }
-                                                        >
-                                                            Save
-                                                        </Button>
-                                                    )
-                                                }}
-                                                onChange={this.addWhileEditingItem("message")}
-                                                defaultValue={currentUser.message}
-                                                // tslint:disable-next-line:jsx-no-lambda
-                                                inputRef={x => this.messageInput = x}
-                                            />
-                                        </div>
-                                        <Dialog
-                                            open={this.state.editableAvatarDialogIsVisible}
-                                            onClose={this.closeEditableAvatarDialog}
-                                            aria-labelledby="editable-avatar-dialog-title"
+                            <LocaleContext.Consumer>
+                                {({ locale }) => (
+                                <Mutation
+                                    mutation={MutationUpdateUser}
+                                    refetchQueries={[]}
+                                >
+                                    {updateUser => (
+                                        <form
+                                            // tslint:disable-next-line jsx-no-lambda
+                                            onSubmit={async e => {
+                                                e.preventDefault();
+                                                await updateUser({
+                                                    variables: {
+                                                        user: {
+                                                            id: this.props.auth.token!.payload.sub,
+                                                            displayName: this.displayNameInput.value,
+                                                            email: this.emailInput.value,
+                                                            message: this.messageInput.value,
+                                                            career: this.careerInput.value,
+                                                            skillList: (this.state.chipsData || [] as Chip[]).map(x => x.label) as string[],
+                                                        }
+                                                    },
+                                                    optimisticResponse: {
+                                                        __typename: "Mutation",
+                                                        updateUser: {
+                                                            id: this.props.auth.token!.payload.sub,
+                                                            displayName: this.displayNameInput.value,
+                                                            email: this.emailInput.value,
+                                                            message: this.messageInput.value,
+                                                            career: this.careerInput.value,
+                                                            skillList: (this.state.chipsData || [] as Chip[]).map(x => x.label) as string[],
+                                                            __typename: "User"
+                                                        }
+                                                    },
+                                                });
+
+                                                notificationListener.notification("info", "Update Profile!");
+                                                history.push(("/users/") + currentUser.id);
+                                            }}
                                         >
-                                            <form
-                                                // tslint:disable-next-line:jsx-no-lambda
-                                                onSubmit={async e => {
-                                                    e.preventDefault();
-                                                    const image = (e.target as any).elements["newAvatarImage"].files[0];
-
-                                                    try {
-                                                        this.setState({ uploadingAvatarImage: true });
-                                                        const {
-                                                            signedUrl,
-                                                            uploadedUrl
-                                                        } = await createSignedUrl({
-                                                            jwt: auth.token!.jwtToken,
-                                                            userId: auth.token!.payload.sub,
-                                                            type: "profile",
-                                                            mimetype: image.type
-                                                        });
-
-                                                        await Promise.all([
-                                                            fileUploadToS3({
-                                                                url: signedUrl,
-                                                                file: image
-                                                            }),
-                                                            updateUser({
-                                                                variables: {
-                                                                    user: {
-                                                                        avatarUri: uploadedUrl,
-                                                                        id: this.props.auth.token!.payload.sub,
-                                                                    }
-                                                                },
-                                                                optimisticResponse: {
-                                                                    __typename: "Mutation",
-                                                                    updateUser: {
-                                                                        id: this.props.auth.token!.payload.sub,
-                                                                        __typename: "User"
-                                                                    }
-                                                                },
-                                                            })
-                                                        ]);
-
-                                                        refetch();
-                                                        this.setState({ uploadingAvatarImage: false });
-
-                                                        this.closeEditableAvatarDialog();
-                                                    } catch (e) {
-                                                        this.setState({ uploadingAvatarImage: false });
-                                                        notificationListener.errorNotification(e);
-                                                    }
-                                                }}
-                                            >
-                                                <DialogTitle
-                                                    id="editable-avatar-dialog-title"
-                                                >
-                                                    Upload Avatar
-                                                </DialogTitle>
-                                                <DialogContent>
-                                                    <ImageInput
-                                                        name="newAvatarImage"
-                                                        width="256"
-                                                        height="256"
+                                            <ProfilePageHeader>
+                                                <img
+                                                    src={currentUser.avatarUri}
+                                                />
+                                                <div>
+                                                    <UserAvatar
+                                                        src={currentUser.avatarUri}
+                                                        onClick={this.openEditableAvatarDialog}
                                                     />
-                                                </DialogContent>
-                                                {this.state.uploadingAvatarImage && <LinearProgress/>}
-                                                <DialogActions>
+                                                    <div>
+                                                        <TextField
+                                                            id="profile-name"
+                                                            margin="dense"
+                                                            label={locale.profile.displayName}
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onChange={(e: any) => this.displayNameInput.value = (e.target.value)}
+                                                            defaultValue={currentUser.displayName}
+                                                            required
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            inputRef={x => this.displayNameInput = x}
+                                                        />
+                                                        <TextField
+                                                            id="profile-email"
+                                                            margin="dense"
+                                                            label={locale.profile.mailAdress}
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onChange={(e: any) => this.emailInput.value = (e.target.value)}
+                                                            type="email"
+                                                            defaultValue={currentUser.email}
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            inputRef={x => this.emailInput = x}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </ProfilePageHeader>
+                                            <Divider />
+                                            <ProfileContent>
+                                                <TextField
+                                                    id="profile-message"
+                                                    label={locale.profile.message}
+                                                    margin="normal"
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    onChange={(e: any) => this.messageInput.value = (e.target.value)}
+                                                    defaultValue={currentUser.message}
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    inputRef={x => this.messageInput = x}
+                                                />
+                                                <TextField
+                                                    id="profile-career"
+                                                    label={locale.profile.career}
+                                                    margin="normal"
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    onChange={(e: any) => this.careerInput.value = (e.target.value)}
+                                                    defaultValue={currentUser.career}
+                                                    multiline
+                                                    rows={4}
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    inputRef={x => this.careerInput = x}
+                                                />
+                                                <div>
+                                                    <TextField
+                                                        label={locale.profile.skill}
+                                                        placeholder={locale.profile.inputSkill}
+                                                        onKeyDown={this.tagInputKeyDown}
+                                                        margin="normal"
+                                                        inputProps={{
+                                                            maxLength: 10,
+                                                        }}
+                                                    />
+                                                    <ChipList>
+                                                        {(this.state.chipsData || currentUser.skillList.map((x: string) => ({ key: x, label: x })))
+                                                            .map((data: any) =>
+                                                                <Chip
+                                                                    key={data.key}
+                                                                    clickable={false}
+                                                                    label={data.label}
+                                                                    onDelete={this.deleteChip(data)}
+                                                                />
+                                                            )
+                                                        }
+                                                    </ChipList>
+                                                </div>
+                                                <div>
                                                     <Button
-                                                        onClick={this.closeEditableAvatarDialog}
-                                                    >
-                                                        Cancel
-                                                    </Button>
-                                                    <Button
-                                                        component="button"
+                                                        variant="outlined"
                                                         color="primary"
-                                                        type="submit"
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        onClick={() => history.push(("/users/") + currentUser.id)}
                                                     >
-                                                        Submit
+                                                        {locale.profile.cancel}
                                                     </Button>
-                                                </DialogActions>
-                                            </form>
-                                        </Dialog>
-                                    </ProfileForm>
+                                                    <Button
+                                                        type="submit"
+                                                        component="button"
+                                                        variant="raised"
+                                                        color="primary"
+                                                    >
+                                                        {locale.profile.save}
+                                                    </Button>
+                                                </div>
+                                            </ProfileContent>
+                                            <Dialog
+                                                open={this.state.editableAvatarDialogIsVisible}
+                                                onClose={this.closeEditableAvatarDialog}
+                                                aria-labelledby="editable-avatar-dialog-title"
+                                            >
+                                                <form
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    onSubmit={async e => {
+                                                        e.preventDefault();
+                                                        const image = (e.target as any).elements["newAvatarImage"].files[0];
+
+                                                        try {
+                                                            this.setState({ uploadingAvatarImage: true });
+                                                            const {
+                                                                signedUrl,
+                                                                uploadedUrl
+                                                            } = await createSignedUrl({
+                                                                jwt: auth.token!.jwtToken,
+                                                                userId: auth.token!.payload.sub,
+                                                                type: "profile",
+                                                                mimetype: image.type
+                                                            });
+
+                                                            await Promise.all([
+                                                                fileUploadToS3({
+                                                                    url: signedUrl,
+                                                                    file: image
+                                                                }),
+                                                                updateUser({
+                                                                    variables: {
+                                                                        user: {
+                                                                            avatarUri: uploadedUrl,
+                                                                            id: this.props.auth.token!.payload.sub,
+                                                                        }
+                                                                    },
+                                                                    optimisticResponse: {
+                                                                        __typename: "Mutation",
+                                                                        updateUser: {
+                                                                            id: this.props.auth.token!.payload.sub,
+                                                                            __typename: "User"
+                                                                        }
+                                                                    },
+                                                                })
+                                                            ]);
+
+                                                            refetch();
+                                                            this.setState({ uploadingAvatarImage: false });
+                                                            this.closeEditableAvatarDialog();
+                                                        } catch (e) {
+                                                            this.setState({ uploadingAvatarImage: false });
+                                                            notificationListener.errorNotification(e);
+                                                        }
+                                                    }}
+                                                >
+                                                    <DialogTitle
+                                                        id="editable-avatar-dialog-title"
+                                                    >
+                                                        {locale.profile.dialog.title}
+                                                    </DialogTitle>
+                                                    <DialogContent>
+                                                        <ImageInput
+                                                            name="newAvatarImage"
+                                                            width="256"
+                                                            height="256"
+                                                        />
+                                                    </DialogContent>
+                                                    {this.state.uploadingAvatarImage && <LinearProgress/>}
+                                                    <DialogActions>
+                                                        <Button
+                                                            onClick={this.closeEditableAvatarDialog}
+                                                        >
+                                                            {locale.profile.dialog.cancel}
+                                                        </Button>
+                                                        <Button
+                                                            component="button"
+                                                            color="primary"
+                                                            type="submit"
+                                                        >
+                                                            {locale.profile.dialog.submit}
+                                                        </Button>
+                                                    </DialogActions>
+                                                </form>
+                                            </Dialog>
+                                        </form>
+                                    )}
+                                </Mutation>
                                 )}
-                            </Mutation>
+                            </LocaleContext.Consumer>
                         );
                     }}
                 </Query>
-                <form
-                    // tslint:disable-next-line:jsx-no-lambda
-                    onSubmit={async e => {
-                        e.preventDefault();
-
-                        const email = (e.target as any).elements["profile-credential-email"].value;
-
-                        try {
-                            await this.props.auth.updateEmail(email);
-                            notificationListener.notification("info", "Send Mail");
-                        } catch (e) {
-                            notificationListener.errorNotification(e);
-                            return;
-                        }
-                    }}
-                >
-                    <Typography gutterBottom variant="title">
-                        Credential
-                    </Typography>
-                    <div>
-                        <TextField
-                            id="profile-credential-email"
-                            label="Mail Address"
-                            margin="none"
-                            helperText="Update a Credential Email"
-                            InputProps={{
-                                endAdornment: (
-                                    this.state.whileEditingItem.includes("credentialEmail")
-                                    &&
-                                    <Button
-                                        type="submit"
-                                    >
-                                        Update
-                                    </Button>
-                                )
-                            }}
-                            type="email"
-                            onChange={this.addWhileEditingItem("credentialEmail")}
-                            fullWidth
-                            // tslint:disable-next-line:jsx-no-lambda
-                            inputRef={x => this.credentialEmailInput = x}
-                        />
-                    </div>
-                    <Button
-                        onClick={this.openUpdatePasswordDialog}
-                        variant="contained"
-                        color="primary"
-                    >
-                        Update password
-                    </Button>
-                </form>
-                <Dialog
-                    open={this.state.updatePasswordDialogVisible}
-                    onClose={this.closeUpdatePasswordDialog}
-                    aria-labelledby="profile-update-password"
-                >
-                    <form
-                        // tslint:disable-next-line:jsx-no-lambda
-                        onSubmit={async e => {
-                            e.preventDefault();
-
-                            const oldPassword = (e.target as any).elements["profile-old-password"].value;
-                            const newPassword = (e.target as any).elements["profile-new-password"].value;
-                            try {
-                                await this.props.auth.updatePassword(oldPassword, newPassword);
-                                this.closeUpdatePasswordDialog();
-                                notificationListener.notification("info", "Success update password");
-                            } catch (e) {
-                                console.error(e);
-                                notificationListener.errorNotification(e);
-                            }
-                        }}
-                    >
-                        <DialogTitle
-                            id="profile-update-password"
-                        >
-                            Update password
-                        </DialogTitle>
-                        <StyledDialogContent>
-                            <TextField
-                                id="profile-old-password"
-                                label="Old password"
-                                margin="normal"
-                                type="password"
-                                required
-                            />
-                            <TextField
-                                id="profile-new-password"
-                                label="New password"
-                                margin="normal"
-                                type="password"
-                                required
-                            />
-                        </StyledDialogContent>
-                        <DialogActions>
-                            <Button
-                                onClick={this.closeUpdatePasswordDialog}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                component="button"
-                                color="primary"
-                                type="submit"
-                            >
-                                Submit
-                            </Button>
-                        </DialogActions>
-                    </form>
-                </Dialog>
             </ProfilePageHost>
         );
     }
 }
 
-const ProfileForm = styled.form`
+const PageHost = styled(Page)`
     display: flex;
     flex-direction: column;
-    > :nth-child(2) {
-        display: flex;
-        justify-content: space-evenly;
-        margin-bottom: 1rem;
-        @media (max-width: 768px) {
-            flex-direction: column;
-        }
-        > :nth-child(2) {
-            flex-grow: 1;
-        }
+    margin-top: -7rem;
+    padding-bottom: 7rem;
+    transition: all .3s ease-out;
+`;
+
+const ChipList = styled.div`
+    margin-left: 1rem;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: .5rem;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    > :nth-child(n + 1) {
+        margin: .5rem 0 0 .5rem;
     }
-    > :nth-child(3) {
-        display: flex;
-        flex-direction: column;
+    @media (max-width: 768px) {
+        margin-left: initial;
     }
 `;
 
 const UserAvatar = styled(Avatar)`
     && {
-        cursor: pointer;
         border: 1px solid #ccc;
-        width: 8rem;
-        height: 8rem;
-        margin: 1rem 4rem 0 1rem;
-    }
-`;
-
-const StyledDialogContent = styled(DialogContent)`
-    && {
-        max-width: 20rem;
-        display: flex;
-        flex-direction: column;
+        width: 10rem;
+        height: 10rem;
+        @media (max-width: 768px) {
+            width: 6rem;
+            height: 6rem;
+        }
     }
 `;
 
@@ -560,23 +466,55 @@ const ProfilePageHost = (
     </PageHost>
 );
 
-const PageHost = styled(Page)`
-    max-width: 40rem;
-    margin-left: auto;
-    margin-right: auto;
-    > :nth-child(2) {
-        > :nth-child(n + 1) {
-            margin-top: 4rem;
+const ProfilePageHeader = styled.div`
+    display: flex;
+    flex-direction: column;
+    > :first-child {
+        height: 10rem;
+        object-fit: cover;
+    }
+    > :last-child {
+        display: flex;
+        height: 8rem;
+        align-items: center;
+        margin-left: 5rem;
+        > :first-child {
+            margin-bottom: 2rem;
         }
-        > :nth-child(2) {
-            width: 28rem;
-            > :nth-child(3){
-                margin-top: 3rem;
-            }
+        > :last-child {
+            display: flex;
+            flex-direction: column;
+            margin-left: 1rem;
+        }
+        @media (max-width: 768px) {
+            margin-left: 1rem;
+        }
+    }
+`;
+
+const ProfileContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 6rem 1rem 6rem;
+    > :nth-child(3) {
+        display: flex;
+        > :first-child {
+            min-width: max-content;
+            max-width: max-content;
+        }
+    }
+    > :last-child {
+        display; flex;
+        margin-left: auto;
+        > * {
+            margin-left: .5rem;
         }
     }
     @media (max-width: 768px) {
-        width: unset;
-        margin: 0 4rem;
+        margin: 1rem 2rem;
+        > :nth-child(3) {
+            display: flex;
+            flex-direction: column;
+        }
     }
 `;

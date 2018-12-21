@@ -32,5 +32,6 @@ export { default as WorkPostPage   } from "./components/page/WorkPostPage";
 export { default as WorkUpdatePage } from "./components/page/WorkUpdatePage";
 export { default as WorkListPage   } from "./components/page/WorkListPage";
 export { default as ProfilePage    } from "./components/page/ProfilePage";
+export { default as SettingsPage   } from "./components/page/SettingsPage";
 export { default as UserListPage   } from "./components/page/UserListPage";
 export { default as UserPage       } from "./components/page/UserPage";

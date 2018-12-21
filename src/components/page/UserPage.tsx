@@ -6,13 +6,16 @@ import {
     Tab,
     Tabs,
 } from "@material-ui/core";
+import EditIcon            from "@material-ui/icons/Edit";
 import gql                 from "graphql-tag";
 import styled              from "styled-components";
 import { Query }           from "react-apollo";
 import toObjectFromURIQuery            from "../../api/toObjectFromURIQuery";
 import { PageComponentProps }          from "../../App";
 import { User, Work, WorkConnection }  from "../../graphQL/type";
+import { LocaleContext }               from "../wrapper/MainLayout";
 import ErrorPage                       from "../ErrorPage";
+import Fab                             from "../Fab";
 import GraphQLProgress                 from "../GraphQLProgress";
 import Header                          from "../Header";
 import NotFound                        from "../NotFound";
@@ -155,85 +158,88 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                         const userWorks = this.state.userWorks.concat(workConnection ? workConnection.items : [] as Work[]);
 
                         return (
-                            <Host>
-                                <UserPageHeader>
-                                    <img
-                                        src={user.avatarUri}
-                                    />
-                                    <div>
-                                        <UserAvatar
+                            <LocaleContext.Consumer>
+                                {({ locale }) => (
+                                <Host>
+                                    <UserPageHeader>
+                                        <img
                                             src={user.avatarUri}
                                         />
                                         <div>
-                                            <StyledTypography gutterBottom>
-                                                {user.displayName}
-                                            </StyledTypography>
-                                            <StyledTypography>
-                                                {user.email}
-                                            </StyledTypography>
-                                        </div>
-                                        <Tabs
-                                            value={contentType}
-                                            indicatorColor="primary"
-                                            textColor="primary"
-                                        >
-                                            <StyledTab
-                                                disableRipple
-                                                label="Profile"
-                                                value="user"
-                                                onClick={this.handleContentType("user")}
+                                            <UserAvatar
+                                                src={user.avatarUri}
                                             />
-                                            <StyledTab
-                                                disableRipple
-                                                label={("WorkList(") + userWorks.length + (")")}
-                                                value="work"
-                                                onClick={this.handleContentType("work")}
+                                            <div>
+                                                <StyledTypography gutterBottom>
+                                                    {user.displayName}
+                                                </StyledTypography>
+                                                <StyledTypography>
+                                                    {user.email}
+                                                </StyledTypography>
+                                            </div>
+                                            <Tabs
+                                                value={contentType}
+                                                indicatorColor="primary"
+                                                textColor="primary"
+                                            >
+                                                <StyledTab
+                                                    disableRipple
+                                                    label={locale.tab.profile}
+                                                    value="user"
+                                                    onClick={this.handleContentType("user")}
+                                                />
+                                                <StyledTab
+                                                    disableRipple
+                                                    label={locale.tab.workList + ("(") + userWorks.length + (")")}
+                                                    value="work"
+                                                    onClick={this.handleContentType("work")}
+                                                />
+                                            </Tabs>
+                                        </div>
+                                    </UserPageHeader>
+                                    <Divider />
+                                    <ViewPager
+                                        selectedIndex={this.state.selectedIndex}
+                                    >
+                                        <UserContent>
+                                            <div>
+                                                <Typography gutterBottom variant="caption">
+                                                    {locale.profile.message}
+                                                </Typography>
+                                                <StyledTypography gutterBottom>
+                                                    {user.message}
+                                                </StyledTypography>
+                                            </div>
+                                            <div>
+                                                <Typography gutterBottom variant="caption">
+                                                    {locale.profile.career}
+                                                </Typography>
+                                                <StyledTypography gutterBottom>
+                                                    {user.career}
+                                                </StyledTypography>
+                                            </div>
+                                            <div>
+                                                <Typography gutterBottom variant="caption">
+                                                    {locale.profile.skill}
+                                                </Typography>
+                                                {user.skillList && user.skillList.map(x =>
+                                                    <SkillTag key={x}>{x}</SkillTag>
+                                                )}
+                                            </div>
+                                        </UserContent>
+                                        <WorkContent>
+                                            <WorkList
+                                                works={userWorks}
+                                                workListRow={this.state.workListRow}
+                                                onWorkItemClick={this.handleClickOpen}
                                             />
-                                        </Tabs>
-                                    </div>
-                                </UserPageHeader>
-                                <Divider />
-                                <ViewPager
-                                    selectedIndex={this.state.selectedIndex}
-                                >
-                                    <UserContent>
-                                        <div>
-                                            <Typography gutterBottom variant="caption">
-                                                Message
-                                            </Typography>
-                                            <StyledTypography gutterBottom>
-                                                {user.message}
-                                            </StyledTypography>
-                                        </div>
-                                        <div>
-                                            <Typography gutterBottom variant="caption">
-                                                Career
-                                            </Typography>
-                                            <StyledTypography gutterBottom>
-                                                {user.career}
-                                            </StyledTypography>
-                                        </div>
-                                        <div>
-                                            <Typography gutterBottom variant="caption">
-                                                Skill
-                                            </Typography>
-                                            {user.skillList && user.skillList.map(x =>
-                                                <SkillTag key={x}>{x}</SkillTag>
-                                            )}
-                                        </div>
-                                    </UserContent>
-                                    <WorkContent>
-                                        <WorkList
-                                            works={userWorks}
-                                            workListRow={this.state.workListRow}
-                                            onWorkItemClick={this.handleClickOpen}
-                                        />
-                                        <WorkDialog
-                                            history={history}
-                                            open={this.state.workDialogVisible}
-                                            onClose={this.handleClose}
-                                            work={this.state.selectedWork}
-                                            userId={auth.token!.payload.sub}
+                                            <WorkDialog
+                                                history={history}
+                                                open={this.state.workDialogVisible}
+                                                onClose={this.handleClose}
+                                                work={this.state.selectedWork}
+                                                locale={locale.location}
+                                                userId={auth.token!.payload.sub}
                                         />
                                         <StreamSpinner
                                             key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
@@ -276,19 +282,28 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                     >
                                         <StyledTab
                                             disableRipple
-                                            label="Profile"
-                                            value="user"
-                                            onClick={this.handleContentType("user")}
-                                        />
-                                        <StyledTab
-                                            disableRipple
-                                            label={("WorkList(") + userWorks.length + (")")}
-                                            value="work"
-                                            onClick={this.handleContentType("work")}
-                                        />
-                                    </Tabs>
-                                </Footer>
-                            </Host>
+                                            label={locale.tab.profile}
+                                                value="user"
+                                                onClick={this.handleContentType("user")}
+                                            />
+                                            <StyledTab
+                                                disableRipple
+                                                label={locale.tab.workList + ("(") + userWorks.length + (")")}
+                                                value="work"
+                                                onClick={this.handleContentType("work")}
+                                            />
+                                        </Tabs>
+                                    </Footer>
+                                    <Fab
+                                        style={{ visibility: user.id === auth.token!.payload.sub && contentType === "user" ? "visible" : "hidden" }}
+                                        // tslint:disable-next-line:jsx-no-lambda
+                                        onClick={() => history.push("/profile")}
+                                    >
+                                        <EditIcon />
+                                    </Fab>
+                                </Host>
+                                )}
+                            </LocaleContext.Consumer>
                         );
                     }}
                 </Query>
@@ -301,6 +316,7 @@ const Host = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: -7rem;
+    padding-bottom: 7rem;
     transition: all .3s ease-out;
 `;
 

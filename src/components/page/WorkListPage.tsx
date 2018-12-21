@@ -6,6 +6,7 @@ import { Query }           from "react-apollo";
 import getTagsByURLQueryParam   from "../../util/getTagsByURLQueryParam";
 import { Work, WorkConnection } from "../../graphQL/type";
 import { PageComponentProps }   from "./../../App";
+import { LocaleContext }        from "../wrapper/MainLayout";
 import ErrorPage                from "../ErrorPage";
 import Fab                      from "../Fab";
 import Header                   from "../Header";
@@ -143,48 +144,53 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                         const workConnection = data.listWorks as WorkConnection;
 
                         return(
-                            <Host>
-                                <WorkList
-                                    works={workConnection.items}
-                                    workListRow={this.state.workListRow}
-                                    onWorkItemClick={this.handleClickOpen}
-                                />
-                                <WorkDialog
-                                    history={history}
-                                    open={this.state.workDialogVisible}
-                                    onClose={this.handleClose}
-                                    work={this.state.selectedWork}
-                                    userId={auth.token!.payload.sub}
-                                />
-                                <StreamSpinner
-                                    key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${getTagsByURLQueryParam(history).join("_")}`}
-                                    disable={!workConnection.exclusiveStartKey ? true : false}
-                                    // tslint:disable-next-line:jsx-no-lambda
-                                    onVisible={() => {
-                                        if (workConnection && workConnection.exclusiveStartKey)
-                                            fetchMore<any>({
-                                                variables: {
-                                                    exclusiveStartKey: workConnection.exclusiveStartKey
-                                                },
-                                                updateQuery: (previousResult, { fetchMoreResult }) =>
-                                                    previousResult.listWorks.items.length ? ({
-                                                        listWorks: {
-                                                            __typename: previousResult.listWorks.__typename,
-                                                            items: (
-                                                                [
-                                                                    ...previousResult.listWorks.items,
-                                                                    ...fetchMoreResult.listWorks.items
-                                                                ].filter((x, i, self) => (
-                                                                    self.findIndex(y => y.id === x.id) === i
-                                                                ))
-                                                            ),
-                                                            exclusiveStartKey: fetchMoreResult.listWorks.exclusiveStartKey
-                                                        }
-                                                    })               : previousResult
-                                            });
-                                    }}
-                                />
-                            </Host>
+                            <LocaleContext.Consumer>
+                                {({ locale }) => (
+                                <Host>
+                                    <WorkList
+                                        works={workConnection.items}
+                                        workListRow={this.state.workListRow}
+                                        onWorkItemClick={this.handleClickOpen}
+                                    />
+                                    <WorkDialog
+                                        history={history}
+                                        open={this.state.workDialogVisible}
+                                        onClose={this.handleClose}
+                                        work={this.state.selectedWork}
+                                        locale={locale.location}
+                                        userId={auth.token ? auth.token.payload.sub : ""}
+                                    />
+                                    <StreamSpinner
+                                        key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${getTagsByURLQueryParam(history).join("_")}`}
+                                        disable={!workConnection.exclusiveStartKey ? true : false}
+                                        // tslint:disable-next-line:jsx-no-lambda
+                                        onVisible={() => {
+                                            if (workConnection && workConnection.exclusiveStartKey)
+                                                fetchMore<any>({
+                                                    variables: {
+                                                        exclusiveStartKey: workConnection.exclusiveStartKey
+                                                    },
+                                                    updateQuery: (previousResult, { fetchMoreResult }) =>
+                                                        previousResult.listWorks.items.length ? ({
+                                                            listWorks: {
+                                                                __typename: previousResult.listWorks.__typename,
+                                                                items: (
+                                                                    [
+                                                                        ...previousResult.listWorks.items,
+                                                                        ...fetchMoreResult.listWorks.items
+                                                                    ].filter((x, i, self) => (
+                                                                        self.findIndex(y => y.id === x.id) === i
+                                                                    ))
+                                                                ),
+                                                                exclusiveStartKey: fetchMoreResult.listWorks.exclusiveStartKey
+                                                            }
+                                                        })               : previousResult
+                                                });
+                                        }}
+                                    />
+                                </Host>
+                                )}
+                            </LocaleContext.Consumer>
                         );
                     }}
                 </Query>

@@ -14,15 +14,15 @@ import styled       from "styled-components";
 import { Query }    from "react-apollo";
 import { Redirect } from "react-router";
 import * as H       from "history";
-import toObjectFromURIQuery      from "../api/toObjectFromURIQuery";
-import { AuthProps }             from "./wrapper/Auth";
-import { DrawerContext }         from "./wrapper/MainLayout";
-import { NotificationListener }  from "./wrapper/NotificationListener";
-import InitialRegistrationDialog from "./InitialRegistrationDialog";
-import Link                      from "./Link";
-import SignInDialog              from "./SignInDialog";
-import SignUpDialog              from "./SignUpDialog";
-import GraphQLProgress           from "./GraphQLProgress";
+import toObjectFromURIQuery                 from "../api/toObjectFromURIQuery";
+import { AuthProps }                        from "./wrapper/Auth";
+import { DrawerContext, LocaleContext }     from "./wrapper/MainLayout";
+import { NotificationListener }             from "./wrapper/NotificationListener";
+import InitialRegistrationDialog            from "./InitialRegistrationDialog";
+import Link                                 from "./Link";
+import SignInDialog                         from "./SignInDialog";
+import SignUpDialog                         from "./SignUpDialog";
+import GraphQLProgress                      from "./GraphQLProgress";
 
 interface Props extends AuthProps {
     history: H.History;
@@ -100,105 +100,109 @@ export default class extends React.Component<Props, State> {
 
         return (
             <StyledAppBar position="fixed">
-                <StyledToolbar>
-                    <DrawerContext.Consumer>
-                        {({ toggleDrawer }) =>
-                            <MenuIconButton
-                                color="inherit"
-                                aria-label="open drawer"
-                                onClick={toggleDrawer}
-                            >
-                                <MenuIcon />
-                            </MenuIconButton>
-                        }
-                    </DrawerContext.Consumer>
-                    <Typography variant="title" color="inherit">
-                        Work List
-                    </Typography>
-                    <div>
-                        {!auth.token ?
-                            <Button onClick={this.signInDialogOpen} >
-                                Sign In
-                            </Button>
-                      :     (
-                                <Query
-                                    query={QueryGetUser}
-                                    variables={{ id: auth.token!.payload.sub }}
-                                    fetchPolicy="cache-and-network"
+                <LocaleContext.Consumer>
+                    {({ locale }) => (
+                    <StyledToolbar>
+                        <DrawerContext.Consumer>
+                            {({ toggleDrawer }) =>
+                                <MenuIconButton
+                                    color="inherit"
+                                    aria-label="open drawer"
+                                    onClick={toggleDrawer}
                                 >
-                                    {({ loading, error, data }) => {
-                                        if (loading) return <GraphQLProgress size={24} />;
-                                        if (error) {
-                                            console.error(error);
+                                    <MenuIcon />
+                                </MenuIconButton>
+                            }
+                        </DrawerContext.Consumer>
+                        <Typography variant="title" color="inherit">
+                            Work List
+                        </Typography>
+                        <div>
+                            {!auth.token ?
+                                <Button onClick={this.signInDialogOpen} >
+                                    Sign In
+                                </Button>
+                        :     (
+                                    <Query
+                                        query={QueryGetUser}
+                                        variables={{ id: auth.token!.payload.sub }}
+                                        fetchPolicy="cache-and-network"
+                                    >
+                                        {({ loading, error, data }) => {
+                                            if (loading) return <GraphQLProgress size={24} />;
+                                            if (error) {
+                                                console.error(error);
+                                                return (
+                                                    <Fragment>
+                                                        <div>?</div>
+                                                        <notificationListener.ErrorComponent error={error} />
+                                                    </Fragment>
+                                                );
+                                            }
+
+                                            if (!data.getUser)
+                                                return <Redirect to="/profile?initial-registration=true" />;
+
                                             return (
                                                 <Fragment>
-                                                    <div>?</div>
-                                                    <notificationListener.ErrorComponent error={error} />
+                                                    <IconButton
+                                                        aria-owns={this.state.userMenuOpend ? "menu-appbar" : undefined}
+                                                        aria-haspopup="true"
+                                                        onClick={this.handleMenu}
+                                                        color="inherit"
+                                                    >
+                                                        <AccountCircleIcon />
+                                                    </IconButton>
+                                                    <Popover
+                                                        id="menu-appbar"
+                                                        anchorEl={this.state.userMenuAnchorEl}
+                                                        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                                                        transformOrigin={{ vertical: "top", horizontal: "right" }}
+                                                        open={!!this.state.userMenuAnchorEl}
+                                                        onClose={this.menuClose}
+                                                    >
+                                                        <PopoverContent>
+                                                            <div>
+                                                                <div>
+                                                                    <Typography variant="caption">{locale.header.name}</Typography>
+                                                                    <Typography gutterBottom>
+                                                                        {data.getUser.displayName}
+                                                                    </Typography>
+                                                                </div>
+                                                                <div>
+                                                                    <Typography variant="caption">{locale.header.mailAdress}</Typography>
+                                                                    <Typography gutterBottom>
+                                                                        {data.getUser.email}
+                                                                    </Typography>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <Link
+                                                                    to={("/users/") + auth.token!.payload.sub}
+                                                                    onClick={this.menuClose}
+                                                                >
+                                                                    <Button>
+                                                                        {locale.header.profile}
+                                                                    </Button>
+                                                                </Link>
+                                                                <Button
+                                                                    onClick={auth.signOut}
+                                                                >
+                                                                    {locale.header.signOut}
+                                                                </Button>
+                                                            </div>
+                                                        </PopoverContent>
+                                                    </Popover>
                                                 </Fragment>
                                             );
-                                        }
-
-                                        if (!data.getUser)
-                                            return <Redirect to="/profile?initial-registration=true" />;
-
-                                        return (
-                                            <Fragment>
-                                                <IconButton
-                                                    aria-owns={this.state.userMenuOpend ? "menu-appbar" : undefined}
-                                                    aria-haspopup="true"
-                                                    onClick={this.handleMenu}
-                                                    color="inherit"
-                                                >
-                                                    <AccountCircleIcon />
-                                                </IconButton>
-                                                <Popover
-                                                    id="menu-appbar"
-                                                    anchorEl={this.state.userMenuAnchorEl}
-                                                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                                                    transformOrigin={{ vertical: "top", horizontal: "right" }}
-                                                    open={!!this.state.userMenuAnchorEl}
-                                                    onClose={this.menuClose}
-                                                >
-                                                    <PopoverContent>
-                                                        <div>
-                                                            <div>
-                                                                <Typography variant="caption">Name</Typography>
-                                                                <Typography gutterBottom>
-                                                                    {data.getUser.displayName}
-                                                                </Typography>
-                                                            </div>
-                                                            <div>
-                                                                <Typography variant="caption">Mail Address</Typography>
-                                                                <Typography gutterBottom>
-                                                                    {data.getUser.email}
-                                                                </Typography>
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <Link
-                                                                to="/profile"
-                                                                onClick={this.menuClose}
-                                                            >
-                                                                <Button>
-                                                                    Profile
-                                                                </Button>
-                                                            </Link>
-                                                            <Button
-                                                                onClick={auth.signOut}
-                                                            >
-                                                                sign-out
-                                                            </Button>
-                                                        </div>
-                                                    </PopoverContent>
-                                                </Popover>
-                                            </Fragment>
-                                        );
-                                    }}
-                                </Query>
-                            )
-                        }
-                    </div>
-                </StyledToolbar>
+                                        }}
+                                    </Query>
+                                )
+                            }
+                        </div>
+                    </StyledToolbar>
+                    )}
+                </LocaleContext.Consumer>
                 <SignInDialog
                     open={signInDialogVisible}
                     onClose={this.signInDialogClose}
