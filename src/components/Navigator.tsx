@@ -91,7 +91,7 @@ export default class extends React.Component<Props, State> {
                     </Title>
                     <Divider />
                     <List
-                        subheader={<ListSubheader component="div">{locale.navigater.works}</ListSubheader>}
+                        subheader={<ListSubheader component="div">{locale.navigator.works}</ListSubheader>}
                     >
                         <Link
                             to="/works/popular"
@@ -105,7 +105,7 @@ export default class extends React.Component<Props, State> {
                                         <StyledText
                                             selected={history.location.pathname === "/works/popular"}
                                         >
-                                            {locale.navigater.popular}
+                                            {locale.navigator.popular}
                                         </StyledText>
                                     }
                                 />
@@ -123,7 +123,7 @@ export default class extends React.Component<Props, State> {
                                         <StyledText
                                             selected={history.location.pathname === "/works/new"}
                                         >
-                                            {locale.navigater.new}
+                                            {locale.navigator.new}
                                         </StyledText>
                                     }
                                 />
@@ -136,7 +136,7 @@ export default class extends React.Component<Props, State> {
                             <ListItemIcon>
                                 <ColorLensIcon />
                             </ListItemIcon>
-                            <ListItemText primary={locale.navigater.tags} />
+                            <ListItemText primary={locale.navigator.tags} />
                             {this.state.tagListVisible ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                         </ListItem>
                         <Collapse in={this.state.tagListVisible} timeout="auto" unmountOnExit>
@@ -201,19 +201,19 @@ export default class extends React.Component<Props, State> {
                         </Collapse>
                     </List>
                     <List
-                        subheader={<ListSubheader component="div">{locale.navigater.designer}</ListSubheader>}
+                        subheader={<ListSubheader component="div">{locale.navigator.designer}</ListSubheader>}
                     >
                         <ListItem button>
                             <ListItemIcon>
                                 <StarIcon />
                             </ListItemIcon>
-                            <ListItemText primary={locale.navigater.popular} />
+                            <ListItemText primary={locale.navigator.popular} />
                         </ListItem>
                         <ListItem button>
                             <ListItemIcon>
                                 <NewReleasesIcon />
                             </ListItemIcon>
-                            <ListItemText primary={locale.navigater.new} />
+                            <ListItemText primary={locale.navigator.new} />
                         </ListItem>
                     </List>
                     <div>
@@ -227,7 +227,7 @@ export default class extends React.Component<Props, State> {
                                     <LanguageIcon />
                                 </ListItemIcon>
                                 <ListItemText>
-                                    {locale.navigater.language}
+                                    {locale.navigator.language}
                                 </ListItemText>
                             </ListItem>
                             <Link
@@ -244,7 +244,7 @@ export default class extends React.Component<Props, State> {
                                             <StyledText
                                                 selected={history.location.pathname === "/settings"}
                                             >
-                                                {locale.navigater.settings}
+                                                {locale.navigator.settings}
                                             </StyledText>
                                         }
                                     />
