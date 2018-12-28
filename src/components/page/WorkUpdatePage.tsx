@@ -201,10 +201,10 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                         variables: {
                                                             work: {
                                                                 id: this.props.computedMatch!.params.id,
-                                                                title: this.state.title ? currentWork.title : this.state.title,
-                                                                description: this.state.description ? currentWork.description : this.state.description,
+                                                                title: this.state.title ? this.state.title : currentWork.title,
+                                                                description: this.state.description ? this.state.description : currentWork.description,
                                                                 userId: auth.token!.payload.sub,
-                                                                imageUrl: this.state.mainImageUrl ? currentWork.imageUrl : this.state.mainImageUrl,
+                                                                imageUrl: this.state.mainImageUrl ? this.state.mainImageUrl : currentWork.imageUrl,
                                                                 tags: (
                                                                     this.state.chipsData ? ((this.state.chipsData || [] as Chip[]).map(x => x.label))
                                                                   :                        currentWork.tags
@@ -215,10 +215,10 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                             __typename: "Mutation",
                                                             updateWork: {
                                                                 id: this.props.computedMatch!.params.id,
-                                                                title: this.state.title,
-                                                                description: this.state.description,
+                                                                title: this.state.title ? this.state.title : currentWork.title,
+                                                                description: this.state.description ? this.state.description : currentWork.description,
                                                                 userId: auth.token!.payload.sub,
-                                                                imageUrl: this.state.mainImageUrl,
+                                                                imageUrl:  this.state.mainImageUrl ? this.state.mainImageUrl : currentWork.imageUrl,
                                                                 tags: (
                                                                     this.state.chipsData ? ((this.state.chipsData || [] as Chip[]).map(x => x.label))
                                                                   :                        currentWork.tags
@@ -228,7 +228,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                         },
                                                         update: (_, { data: { updateWork } }) => updateWork.id !== "new" && resolve(updateWork as Work)
                                                     }));
-                                                    notificationListener.notification("info", "Created Work!");
+                                                    notificationListener.notification("info", "Updated Work!");
                                                     history.push("/");
                                                 }}
                                             >
@@ -331,7 +331,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                             variant="raised"
                                                             color="primary"
                                                         >
-                                                            create
+                                                            update
                                                         </Button>
                                                     </ActionArea>
                                                 </div>
