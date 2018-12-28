@@ -31,13 +31,14 @@ interface Chip {
 }
 
 interface State {
-    chipsData?               : Chip[];
-    description?             : string;
-    imageInputDialogVisible? : boolean;
-    mainImageUrl?            : string;
-    previewWork?             : Work;
-    title?                   : string;
-    workDialogVisible?       : boolean;
+    chipsData?              : Chip[];
+    description?            : string;
+    imageInputDialogVisible : boolean;
+    mainImageUrl?           : string;
+    previewWork?            : Work;
+    title?                  : string;
+    workDialogVisible       : boolean;
+    descriptionInput?       : HTMLTextAreaElement;
 }
 
 const QueryGetWorkById = gql(`
@@ -74,9 +75,7 @@ const MutationUpdateWork = gql(`
 
 export default class extends React.Component<PageComponentProps<{id: string}>, State> {
 
-    descriptionInput?: HTMLTextAreaElement;
-
-    state = {
+    state: State = {
         chipsData: undefined,
         description: undefined,
         mainImageUrl: undefined,
@@ -84,6 +83,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         title: undefined,
         workDialogVisible: false,
         imageInputDialogVisible: false,
+        descriptionInput: undefined
     };
 
     deleteChip = (data: Chip) => () => {
@@ -293,17 +293,17 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                                     defaultValue={currentWork.description}
                                                                     value={this.state.description}
                                                                     // tslint:disable-next-line:jsx-no-lambda
-                                                                    inputRef={x => this.descriptionInput = x}
+                                                                    inputRef={descriptionInput => this.setState({ descriptionInput })}
                                                                 />
                                                                 <MarkdownSupports
-                                                                    element={this.descriptionInput}
+                                                                    element={this.state.descriptionInput}
                                                                     // tslint:disable-next-line:jsx-no-lambda
                                                                     onChangeValue={(description, lines) => {
                                                                         this.setState(
                                                                             { description },
                                                                             () => {
-                                                                                if (this.descriptionInput) {
-                                                                                    this.descriptionInput.setSelectionRange(lines[0], lines[1]);
+                                                                                if (this.state.descriptionInput) {
+                                                                                    this.state.descriptionInput.setSelectionRange(lines[0], lines[1]);
                                                                                 }
                                                                             }
                                                                         );

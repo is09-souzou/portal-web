@@ -31,6 +31,7 @@ const handleConvert = (
     onChangeValue: MarkdownSupportsProps["onChangeValue"],
     element?: HTMLInputElement | HTMLTextAreaElement
 ) => () => {
+    console.log("show", element, !!element);
     if (!element) return;
 
     const selectionNumbers = getSelectionNumbers(element);
@@ -64,6 +65,7 @@ export default (
 ) => (
     <ToolList>
         <ToolItem
+            // tslint:disable-next-line:jsx-no-lambda
             onClick={handleConvert("heading", onChangeValue, element)}
         >
             <span>H</span>
