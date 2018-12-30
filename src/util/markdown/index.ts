@@ -10,3 +10,4 @@ export { default as getLineNumber }          from "./getLineNumber";
 export { default as getLines }               from "./getLines";
 export { default as getSelectionNumbers }    from "./getSelectionNumbers";
 export { default as insertSeparator }        from "./insertSeparator";
+export { default as baseTextConverter }   from "./baseTextConverter";

@@ -1,7 +1,11 @@
-export default (element: HTMLInputElement | HTMLTextAreaElement, lines: number[]): [string, number] => {
+import getLines from "./getLines";
+
+export default (value: string, selectionNumbers: [number, number]): [string, [number, number]] => {
+    const lines = getLines(value, selectionNumbers);
+
     let count = 0;
     let adjustmentCount = 0;
-    const value = element.value.split("\n")
+    const convertedValue = value.split("\n")
         .map((x: string, i: number) => {
             if (i + 1 >= lines[0] && i + 1 <= lines[1]) {
                 const match = (x.match(/^[0-9]*\. /g) || [])[0];
@@ -17,5 +21,11 @@ export default (element: HTMLInputElement | HTMLTextAreaElement, lines: number[]
         })
         .join("\n");
 
-    return ([value, adjustmentCount]);
+    return [
+        convertedValue,
+        [
+            selectionNumbers[0],
+            selectionNumbers[1] + adjustmentCount
+        ]
+    ];
 };

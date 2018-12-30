@@ -14,7 +14,6 @@ import {
     convertToList,
     convertToListNumber,
     convertToStrikethrough,
-    getLines,
     getSelectionNumbers,
     insertSeparator
 } from "./../util/markdown";
@@ -27,36 +26,35 @@ export type MarkdownSupportsProps = {
 };
 
 const handleConvert = (
-    type: "anchor" | "bold" | "heading" | "italic" | "list" | "listNumber" | "separator" | "strikethrough",
+    type: "anchor" | "bold" | "heading" | "italic" | "list" | "listNumber" | "strikethrough" | "separator",
     onChangeValue: MarkdownSupportsProps["onChangeValue"],
     element?: HTMLInputElement | HTMLTextAreaElement
 ) => () => {
-    console.log("show", element, !!element);
     if (!element) return;
 
     const selectionNumbers = getSelectionNumbers(element);
-    const lines = getLines(element, selectionNumbers);
 
-    const convertFunc: (element: HTMLInputElement | HTMLTextAreaElement, lines: number[]) => [string, number] = (
+    const convertFunc: (value: string, selectionNumbers: [number, number]) => [string, [number, number]] = (
         type === "anchor"        ? convertToAnchor
       : type === "bold"          ? convertToBold
       : type === "heading"       ? convertToHeading
       : type === "italic"        ? convertToItalic
       : type === "list"          ? convertToList
       : type === "listNumber"    ? convertToListNumber
-      : type === "separator"     ? insertSeparator
       : type === "strikethrough" ? convertToStrikethrough
-      :                            convertToStrikethrough
+      : type === "separator"     ? insertSeparator
+      :                            insertSeparator
     );
 
-    const [value, adjustmentCount] = convertFunc(element, lines);
+    const [value, newSelectionNumbers] = convertFunc(element.value, selectionNumbers);
 
     onChangeValue(
         value,
-        [selectionNumbers[0], selectionNumbers[1] + adjustmentCount]
+        newSelectionNumbers
     );
 };
 
+// TODO: https://mimemo.io/m/mqLXOlJe7ozQ19r
 export default (
     {
         element,
