@@ -120,7 +120,7 @@ export default class extends React.Component<Props, State> {
                         <div>
                             {!auth.token ?
                                 <Button onClick={this.signInDialogOpen} >
-                                    Sign In
+                                    {locale.header.signIn}
                                 </Button>
                         :     (
                                     <Query

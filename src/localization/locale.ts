@@ -31,13 +31,12 @@ export const locale = {
             profile: "Profile",
             workList: "WorkList"
         },
-        navigater: {
+        navigator: {
             works: "Works",
             designer: "Designer",
             popular: "Popular",
             new: "New",
             tags: "Tags",
-            languages: "Languages",
             language: "English",
             settings: "settings"
         },
@@ -45,7 +44,22 @@ export const locale = {
             name: "Name",
             mailAdress: "Mail Adress",
             profile: "Profile",
-            signOut: "sign-out"
+            signIn: "sign in",
+            signOut: "sign out"
+        },
+        signInDialog: {
+            signIn: "signIn",
+            email: "Email Adress",
+            password: "Password",
+            createAcount: "Create Acount"
+        },
+        signUpDialog: {
+            createAcount: "Create Account",
+            email: "Email Adress",
+            password: "Password",
+            displayName: "Display Name",
+            cancel: "cancel",
+            submit: "submit"
         },
         location: "us"
     },
@@ -79,7 +93,7 @@ export const locale = {
             profile: "プロフィール",
             workList: "作品一覧"
         },
-        navigater: {
+        navigator: {
             works: "作品",
             designer: "デザイナー",
             popular: "人気",
@@ -93,7 +107,22 @@ export const locale = {
             name: "ユーザー名",
             mailAdress: "メールアドレス",
             profile: "プロフィール",
+            signIn: "サインイン",
             signOut: "サインアウト"
+        },
+        signInDialog: {
+            signIn: "サインイン",
+            email: "Eメールアドレス",
+            password: "パスワード",
+            createAcount: "アカウント作成"
+        },
+        signUpDialog: {
+            createAcount: "アカウント作成",
+            email: "Eメールアドレス",
+            password: "パスワード",
+            displayName: "ユーザー名",
+            cancel: "キャンセル",
+            submit: "作成"
         },
         location: "jp"
     }
