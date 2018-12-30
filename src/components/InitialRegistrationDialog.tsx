@@ -229,7 +229,7 @@ export default class extends React.Component<Props, State> {
     }
 }
 
-const Transition = (props:SlideProps) =>  <Slide direction="up" {...props} />;
+const Transition = (props: SlideProps) =>  <Slide direction="up" {...props} />;
 
 const StyledDialogContent = styled(DialogContent)`
     && {
@@ -254,8 +254,29 @@ const AvatarInput = styled(ImageInput)`
     overflow: hidden;
 `;
 
-const CareerTextField = styled(TextField)`
+const StyledTextField = styled(TextField)`
     && {
         min-height: 4rem;
     }
 `;
+
+const CareerTextField = ({
+    ...props
+}) => (
+    <StyledTextField
+        defaultValue=""
+        classes={undefined}
+        className={undefined}
+        style={undefined}
+        onChange={undefined}
+        innerRef={undefined}
+        value={undefined}
+        variant={undefined}
+        inputProps={undefined}
+        InputProps={undefined}
+        inputRef={undefined}
+        rows={undefined}
+        rowsMax={undefined}
+        {...props}
+    />
+);

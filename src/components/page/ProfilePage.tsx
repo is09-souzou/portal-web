@@ -175,231 +175,231 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                         return (
                             <LocaleContext.Consumer>
                                 {({ locale }) => (
-                                <Mutation
-                                    mutation={MutationUpdateUser}
-                                    refetchQueries={[]}
-                                >
-                                    {updateUser => (
-                                        <form
-                                            // tslint:disable-next-line jsx-no-lambda
-                                            onSubmit={async e => {
-                                                e.preventDefault();
-                                                await updateUser({
-                                                    variables: {
-                                                        user: {
-                                                            id: this.props.auth.token!.payload.sub,
-                                                            displayName: this.displayNameInput.value,
-                                                            email: this.emailInput.value,
-                                                            message: this.messageInput.value,
-                                                            career: this.careerInput.value,
-                                                            skillList: (this.state.chipsData || [] as Chip[]).map(x => x.label) as string[],
-                                                        }
-                                                    },
-                                                    optimisticResponse: {
-                                                        __typename: "Mutation",
-                                                        updateUser: {
-                                                            id: this.props.auth.token!.payload.sub,
-                                                            displayName: this.displayNameInput.value,
-                                                            email: this.emailInput.value,
-                                                            message: this.messageInput.value,
-                                                            career: this.careerInput.value,
-                                                            skillList: (this.state.chipsData || [] as Chip[]).map(x => x.label) as string[],
-                                                            __typename: "User"
-                                                        }
-                                                    },
-                                                });
+                                    <Mutation
+                                        mutation={MutationUpdateUser}
+                                        refetchQueries={[]}
+                                    >
+                                        {updateUser => (
+                                            <form
+                                                // tslint:disable-next-line jsx-no-lambda
+                                                onSubmit={async e => {
+                                                    e.preventDefault();
+                                                    await updateUser({
+                                                        variables: {
+                                                            user: {
+                                                                id: this.props.auth.token!.payload.sub,
+                                                                displayName: this.displayNameInput.value,
+                                                                email: this.emailInput.value,
+                                                                message: this.messageInput.value,
+                                                                career: this.careerInput.value,
+                                                                skillList: (this.state.chipsData || [] as Chip[]).map(x => x.label) as string[],
+                                                            }
+                                                        },
+                                                        optimisticResponse: {
+                                                            __typename: "Mutation",
+                                                            updateUser: {
+                                                                id: this.props.auth.token!.payload.sub,
+                                                                displayName: this.displayNameInput.value,
+                                                                email: this.emailInput.value,
+                                                                message: this.messageInput.value,
+                                                                career: this.careerInput.value,
+                                                                skillList: (this.state.chipsData || [] as Chip[]).map(x => x.label) as string[],
+                                                                __typename: "User"
+                                                            }
+                                                        },
+                                                    });
 
-                                                notificationListener.notification("info", "Update Profile!");
-                                                history.push(("/users/") + currentUser.id);
-                                            }}
-                                        >
-                                            <ProfilePageHeader>
-                                                <img
-                                                    src={currentUser.avatarUri}
-                                                />
-                                                <div>
-                                                    <UserAvatar
+                                                    notificationListener.notification("info", "Update Profile!");
+                                                    history.push(("/users/") + currentUser.id);
+                                                }}
+                                            >
+                                                <ProfilePageHeader>
+                                                    <img
                                                         src={currentUser.avatarUri}
-                                                        onClick={this.openEditableAvatarDialog}
+                                                    />
+                                                    <div>
+                                                        <UserAvatar
+                                                            src={currentUser.avatarUri}
+                                                            onClick={this.openEditableAvatarDialog}
+                                                        />
+                                                        <div>
+                                                            <TextField
+                                                                id="profile-name"
+                                                                margin="dense"
+                                                                label={locale.profile.displayName}
+                                                                // tslint:disable-next-line:jsx-no-lambda
+                                                                onChange={(e: any) => this.displayNameInput.value = (e.target.value)}
+                                                                defaultValue={currentUser.displayName}
+                                                                required
+                                                                // tslint:disable-next-line:jsx-no-lambda
+                                                                inputRef={x => this.displayNameInput = x}
+                                                            />
+                                                            <TextField
+                                                                id="profile-email"
+                                                                margin="dense"
+                                                                label={locale.profile.mailAdress}
+                                                                // tslint:disable-next-line:jsx-no-lambda
+                                                                onChange={(e: any) => this.emailInput.value = (e.target.value)}
+                                                                type="email"
+                                                                defaultValue={currentUser.email}
+                                                                // tslint:disable-next-line:jsx-no-lambda
+                                                                inputRef={x => this.emailInput = x}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </ProfilePageHeader>
+                                                <Divider />
+                                                <ProfileContent>
+                                                    <TextField
+                                                        id="profile-message"
+                                                        label={locale.profile.message}
+                                                        margin="normal"
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        onChange={(e: any) => this.messageInput.value = (e.target.value)}
+                                                        defaultValue={currentUser.message}
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        inputRef={x => this.messageInput = x}
+                                                    />
+                                                    <TextField
+                                                        id="profile-career"
+                                                        label={locale.profile.career}
+                                                        margin="normal"
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        onChange={(e: any) => this.careerInput.value = (e.target.value)}
+                                                        defaultValue={currentUser.career}
+                                                        multiline
+                                                        rows={4}
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        inputRef={x => this.careerInput = x}
                                                     />
                                                     <div>
                                                         <TextField
-                                                            id="profile-name"
-                                                            margin="dense"
-                                                            label={locale.profile.displayName}
-                                                            // tslint:disable-next-line:jsx-no-lambda
-                                                            onChange={(e: any) => this.displayNameInput.value = (e.target.value)}
-                                                            defaultValue={currentUser.displayName}
-                                                            required
-                                                            // tslint:disable-next-line:jsx-no-lambda
-                                                            inputRef={x => this.displayNameInput = x}
+                                                            label={locale.profile.skill}
+                                                            placeholder={locale.profile.inputSkill}
+                                                            onKeyDown={this.tagInputKeyDown}
+                                                            margin="normal"
+                                                            inputProps={{
+                                                                maxLength: 10,
+                                                            }}
                                                         />
-                                                        <TextField
-                                                            id="profile-email"
-                                                            margin="dense"
-                                                            label={locale.profile.mailAdress}
-                                                            // tslint:disable-next-line:jsx-no-lambda
-                                                            onChange={(e: any) => this.emailInput.value = (e.target.value)}
-                                                            type="email"
-                                                            defaultValue={currentUser.email}
-                                                            // tslint:disable-next-line:jsx-no-lambda
-                                                            inputRef={x => this.emailInput = x}
-                                                        />
+                                                        <ChipList>
+                                                            {(this.state.chipsData || currentUser.skillList.map((x: string) => ({ key: x, label: x })))
+                                                                .map((data: any) =>
+                                                                    <Chip
+                                                                        key={data.key}
+                                                                        clickable={false}
+                                                                        label={data.label}
+                                                                        onDelete={this.deleteChip(data)}
+                                                                    />
+                                                                )
+                                                            }
+                                                        </ChipList>
                                                     </div>
-                                                </div>
-                                            </ProfilePageHeader>
-                                            <Divider />
-                                            <ProfileContent>
-                                                <TextField
-                                                    id="profile-message"
-                                                    label={locale.profile.message}
-                                                    margin="normal"
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    onChange={(e: any) => this.messageInput.value = (e.target.value)}
-                                                    defaultValue={currentUser.message}
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    inputRef={x => this.messageInput = x}
-                                                />
-                                                <TextField
-                                                    id="profile-career"
-                                                    label={locale.profile.career}
-                                                    margin="normal"
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    onChange={(e: any) => this.careerInput.value = (e.target.value)}
-                                                    defaultValue={currentUser.career}
-                                                    multiline
-                                                    rows={4}
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    inputRef={x => this.careerInput = x}
-                                                />
-                                                <div>
-                                                    <TextField
-                                                        label={locale.profile.skill}
-                                                        placeholder={locale.profile.inputSkill}
-                                                        onKeyDown={this.tagInputKeyDown}
-                                                        margin="normal"
-                                                        inputProps={{
-                                                            maxLength: 10,
-                                                        }}
-                                                    />
-                                                    <ChipList>
-                                                        {(this.state.chipsData || currentUser.skillList.map((x: string) => ({ key: x, label: x })))
-                                                            .map((data: any) =>
-                                                                <Chip
-                                                                    key={data.key}
-                                                                    clickable={false}
-                                                                    label={data.label}
-                                                                    onDelete={this.deleteChip(data)}
-                                                                />
-                                                            )
-                                                        }
-                                                    </ChipList>
-                                                </div>
-                                                <div>
-                                                    <Button
-                                                        variant="outlined"
-                                                        color="primary"
-                                                        // tslint:disable-next-line:jsx-no-lambda
-                                                        onClick={() => history.push(("/users/") + currentUser.id)}
-                                                    >
-                                                        {locale.profile.cancel}
-                                                    </Button>
-                                                    <Button
-                                                        type="submit"
-                                                        component="button"
-                                                        variant="raised"
-                                                        color="primary"
-                                                    >
-                                                        {locale.profile.save}
-                                                    </Button>
-                                                </div>
-                                            </ProfileContent>
-                                            <Dialog
-                                                open={this.state.editableAvatarDialogIsVisible}
-                                                onClose={this.closeEditableAvatarDialog}
-                                                aria-labelledby="editable-avatar-dialog-title"
-                                            >
-                                                <form
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    onSubmit={async e => {
-                                                        e.preventDefault();
-                                                        const image = (e.target as any).elements["newAvatarImage"].files[0];
-
-                                                        try {
-                                                            this.setState({ uploadingAvatarImage: true });
-                                                            const {
-                                                                signedUrl,
-                                                                uploadedUrl
-                                                            } = await createSignedUrl({
-                                                                jwt: auth.token!.jwtToken,
-                                                                userId: auth.token!.payload.sub,
-                                                                type: "profile",
-                                                                mimetype: image.type
-                                                            });
-
-                                                            await Promise.all([
-                                                                fileUploadToS3({
-                                                                    url: signedUrl,
-                                                                    file: image
-                                                                }),
-                                                                updateUser({
-                                                                    variables: {
-                                                                        user: {
-                                                                            avatarUri: uploadedUrl,
-                                                                            id: this.props.auth.token!.payload.sub,
-                                                                        }
-                                                                    },
-                                                                    optimisticResponse: {
-                                                                        __typename: "Mutation",
-                                                                        updateUser: {
-                                                                            id: this.props.auth.token!.payload.sub,
-                                                                            __typename: "User"
-                                                                        }
-                                                                    },
-                                                                })
-                                                            ]);
-
-                                                            refetch();
-                                                            this.setState({ uploadingAvatarImage: false });
-                                                            this.closeEditableAvatarDialog();
-                                                        } catch (e) {
-                                                            this.setState({ uploadingAvatarImage: false });
-                                                            notificationListener.errorNotification(e);
-                                                        }
-                                                    }}
-                                                >
-                                                    <DialogTitle
-                                                        id="editable-avatar-dialog-title"
-                                                    >
-                                                        {locale.profile.dialog.title}
-                                                    </DialogTitle>
-                                                    <DialogContent>
-                                                        <ImageInput
-                                                            name="newAvatarImage"
-                                                            width="256"
-                                                            height="256"
-                                                        />
-                                                    </DialogContent>
-                                                    {this.state.uploadingAvatarImage && <LinearProgress/>}
-                                                    <DialogActions>
+                                                    <div>
                                                         <Button
-                                                            onClick={this.closeEditableAvatarDialog}
-                                                        >
-                                                            {locale.profile.dialog.cancel}
-                                                        </Button>
-                                                        <Button
-                                                            component="button"
+                                                            variant="outlined"
                                                             color="primary"
-                                                            type="submit"
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onClick={() => history.push(("/users/") + currentUser.id)}
                                                         >
-                                                            {locale.profile.dialog.submit}
+                                                            {locale.profile.cancel}
                                                         </Button>
-                                                    </DialogActions>
-                                                </form>
-                                            </Dialog>
-                                        </form>
-                                    )}
-                                </Mutation>
+                                                        <Button
+                                                            type="submit"
+                                                            component="button"
+                                                            variant="raised"
+                                                            color="primary"
+                                                        >
+                                                            {locale.profile.save}
+                                                        </Button>
+                                                    </div>
+                                                </ProfileContent>
+                                                <Dialog
+                                                    open={this.state.editableAvatarDialogIsVisible}
+                                                    onClose={this.closeEditableAvatarDialog}
+                                                    aria-labelledby="editable-avatar-dialog-title"
+                                                >
+                                                    <form
+                                                        // tslint:disable-next-line:jsx-no-lambda
+                                                        onSubmit={async e => {
+                                                            e.preventDefault();
+                                                            const image = (e.target as any).elements["newAvatarImage"].files[0];
+
+                                                            try {
+                                                                this.setState({ uploadingAvatarImage: true });
+                                                                const {
+                                                                    signedUrl,
+                                                                    uploadedUrl
+                                                                } = await createSignedUrl({
+                                                                    jwt: auth.token!.jwtToken,
+                                                                    userId: auth.token!.payload.sub,
+                                                                    type: "profile",
+                                                                    mimetype: image.type
+                                                                });
+
+                                                                await Promise.all([
+                                                                    fileUploadToS3({
+                                                                        url: signedUrl,
+                                                                        file: image
+                                                                    }),
+                                                                    updateUser({
+                                                                        variables: {
+                                                                            user: {
+                                                                                avatarUri: uploadedUrl,
+                                                                                id: this.props.auth.token!.payload.sub,
+                                                                            }
+                                                                        },
+                                                                        optimisticResponse: {
+                                                                            __typename: "Mutation",
+                                                                            updateUser: {
+                                                                                id: this.props.auth.token!.payload.sub,
+                                                                                __typename: "User"
+                                                                            }
+                                                                        },
+                                                                    })
+                                                                ]);
+
+                                                                refetch();
+                                                                this.setState({ uploadingAvatarImage: false });
+                                                                this.closeEditableAvatarDialog();
+                                                            } catch (e) {
+                                                                this.setState({ uploadingAvatarImage: false });
+                                                                notificationListener.errorNotification(e);
+                                                            }
+                                                        }}
+                                                    >
+                                                        <DialogTitle
+                                                            id="editable-avatar-dialog-title"
+                                                        >
+                                                            {locale.profile.dialog.title}
+                                                        </DialogTitle>
+                                                        <DialogContent>
+                                                            <ImageInput
+                                                                name="newAvatarImage"
+                                                                width="256"
+                                                                height="256"
+                                                            />
+                                                        </DialogContent>
+                                                        {this.state.uploadingAvatarImage && <LinearProgress/>}
+                                                        <DialogActions>
+                                                            <Button
+                                                                onClick={this.closeEditableAvatarDialog}
+                                                            >
+                                                                {locale.profile.dialog.cancel}
+                                                            </Button>
+                                                            <Button
+                                                                component="button"
+                                                                color="primary"
+                                                                type="submit"
+                                                            >
+                                                                {locale.profile.dialog.submit}
+                                                            </Button>
+                                                        </DialogActions>
+                                                    </form>
+                                                </Dialog>
+                                            </form>
+                                        )}
+                                    </Mutation>
                                 )}
                             </LocaleContext.Consumer>
                         );

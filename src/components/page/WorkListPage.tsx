@@ -35,6 +35,7 @@ const QueryListWorks = gql(`
                 id
                 userId
                 imageUrl
+                userId
                 user {
                     displayName
                     message
@@ -157,6 +158,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                         onClose={this.handleClose}
                                         work={this.state.selectedWork}
                                         locale={locale.location}
+                                        userId={auth.token ? auth.token.payload.sub : ""}
                                     />
                                     <StreamSpinner
                                         key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${getTagsByURLQueryParam(history).join("_")}`}

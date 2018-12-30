@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import {
     Avatar,
     AppBar,
+    Button,
     Dialog,
     DialogContent,
     IconButton,
@@ -24,6 +25,7 @@ interface Props {
     work?: Work;
     history: H.History;
     locale: string;
+    userId: string;
 }
 
 interface State {
@@ -49,6 +51,7 @@ export default class extends React.Component<Props, State> {
             onClose,
             work,
             locale,
+            userId,
             ...props
         } = this.props;
 
@@ -145,6 +148,20 @@ export default class extends React.Component<Props, State> {
                                                     <Typography gutterBottom>{work.user && work.user.displayName}</Typography>
                                                 </div>
                                             </UserInformation>
+                                        </Link>
+                                        <Link
+                                            to={
+                                                ("/works/update-work/") + work.id
+                                            }
+                                            onClick={onClose}
+                                        >
+                                            <Button
+                                                style={{ display: work.userId === userId ? "" : "none" }}
+                                                variant="outlined"
+                                                color="primary"
+                                            >
+                                                edit
+                                            </Button>
                                         </Link>
                                     </div>
                                 </div>
