@@ -295,7 +295,11 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                             </Tabs>
                                         </Footer>
                                         <Fab
-                                            style={{ visibility: user.id === auth.token!.payload.sub && contentType === "user" ? "visible" : "hidden" }}
+                                            style={{
+                                                visibility: (
+                                                    (auth.token && user.id === auth.token!.payload.sub) && contentType === "user" ? "visible" : "hidden"
+                                                )
+                                            }}
                                             // tslint:disable-next-line:jsx-no-lambda
                                             onClick={() => history.push("/profile")}
                                         >
