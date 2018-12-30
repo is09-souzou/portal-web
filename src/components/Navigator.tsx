@@ -164,7 +164,7 @@ export default class extends React.Component<Props, State> {
                                     const popularTags = (data.listPopularTags as PopularTags).map(x => x.name);
 
                                     return (
-                                        <List component="div" disablePadding>
+                                        <List disablePadding>
                                             {popularTags.concat(this.state.tags)
                                                 .filter((x, i, self) => self.indexOf(x) === i)
                                                 .map(tag => (

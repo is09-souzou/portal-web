@@ -2,11 +2,13 @@ import React from "react";
 import {
     Button,
     Chip,
+    FormGroup,
+    FormControlLabel,
+    Switch,
     TextField
 } from "@material-ui/core";
 import gql           from "graphql-tag";
 import { Mutation }  from "react-apollo";
-import ReactMarkdown from "react-markdown";
 import styled        from "styled-components";
 import createSignedUrl        from "../../api/createSignedUrl";
 import fileUploadToS3         from "../../api/fileUploadToS3";
@@ -14,7 +16,9 @@ import { PageComponentProps } from "../../App";
 import { LocaleContext }      from "../wrapper/MainLayout";
 import Header                 from "../Header";
 import ImageInput             from "../ImageInput";
+import MarkdownSupports       from "../MarkdownSupports";
 import Page                   from "../Page";
+import PortalMarkdown         from "../PortalMarkdown";
 import WorkDialog             from "../WorkDialog";
 import { Work }               from "../../graphQL/type";
 
@@ -24,12 +28,14 @@ interface Chip {
 }
 
 interface State {
-    chipsData: Chip[];
-    description: string;
-    mainImageUrl: string;
-    previewWork?: Work;
-    title: string;
+    chipsData        : Chip[];
+    description      : string;
+    mainImageUrl     : string;
+    previewWork?     : Work;
+    isPublic         : boolean;
+    title            : string;
     workDialogVisible: boolean;
+    descriptionInput?: HTMLTextAreaElement;
 }
 
 const MutationCreateWork = gql(`
@@ -45,6 +51,7 @@ const MutationCreateWork = gql(`
             userId
             title
             tags
+            isPublic
             createdAt
         }
     }
@@ -63,20 +70,23 @@ const MutationUpdateWork = gql(`
             userId
             title
             tags
+            isPublic
             createdAt
         }
     }
 `);
 
-export default class extends React.Component<PageComponentProps<void>, State> {
+export default class extends React.Component<PageComponentProps<{id: string}>, State> {
 
-    state = {
+    state: State = {
         chipsData: [] as Chip[],
         description: "",
         mainImageUrl: "",
         previewWork: undefined,
+        isPublic: true,
         title: "",
-        workDialogVisible: false
+        workDialogVisible: false,
+        descriptionInput: undefined
     };
 
     deleteChip = (data: Chip) => () => this.setState({
@@ -110,10 +120,11 @@ export default class extends React.Component<PageComponentProps<void>, State> {
                 id: "preview",
                 title: this.state.title,
                 description: this.state.description,
-                userId: this.props.auth.token!.payload.sub,
+                userId: (this.props.auth.token || { payload: { sub: "xxx" } }).payload.sub,
                 imageUrl: this.state.mainImageUrl,
                 tags: this.state.chipsData.map(x => x.label) as string[],
                 createdAt: +new Date() / 1000,
+                isPublic: this.state.isPublic,
                 user: {
                     id: "preview",
                     email: "preview",
@@ -139,184 +150,231 @@ export default class extends React.Component<PageComponentProps<void>, State> {
         return (
             <LocaleContext.Consumer>
                 {({ locale }) => (
-                <Page>
-                    <Header
-                        auth={auth}
-                        history={history}
-                        notificationListener={notificationListener}
-                    />
-                    <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
-                        {(createWork, { error: createWorkError }) => (
-                            <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
-                                {(updateWork, { error: updateWorkError }) => (
-                                    <Host
-                                        // tslint:disable-next-line jsx-no-lambda
-                                        onSubmit={async e => {
-                                            e.preventDefault();
-                                            const work = await new Promise<Work>(resolve => createWork({
-                                                variables: {
-                                                    work: {
-                                                        title: this.state.title,
-                                                        description: this.state.description,
-                                                        userId: auth.token!.payload.sub,
-                                                        imageUrl: this.state.mainImageUrl,
-                                                        tags: this.state.chipsData.map(x => x.label),
-                                                    }
-                                                },
-                                                optimisticResponse: {
-                                                    __typename: "Mutation",
-                                                    createWork: {
-                                                        title: this.state.title,
-                                                        description: this.state.description,
-                                                        id: "new",
-                                                        userId: auth.token!.payload.sub,
-                                                        imageUrl: this.state.mainImageUrl,
-                                                        tags: this.state.chipsData.map(x => x.label),
-                                                        createdAt: +new Date(),
-                                                        __typename: "Work"
-                                                    }
-                                                },
-                                                update: (_, { data: { createWork } }) => createWork.id !== "new" && resolve(createWork as Work)
-                                            }));
+                    <Page>
+                        <Header
+                            auth={auth}
+                            history={history}
+                            notificationListener={notificationListener}
+                        />
+                        <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
+                            {(createWork, { error: createWorkError }) => (
+                                <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
+                                    {(updateWork, { error: updateWorkError }) => (
+                                        <Host
+                                            // tslint:disable-next-line jsx-no-lambda
+                                            onSubmit={async e => {
+                                                e.preventDefault();
+                                                if (!auth.token)
+                                                    notificationListener.errorNotification(new Error("Need Sign in"));
 
-                                            await updateWork({
-                                                variables: {
-                                                    work: {
-                                                        id: work.id,
-                                                        userId: auth.token!.payload.sub,
-                                                    }
-                                                },
-                                                optimisticResponse: {
-                                                    __typename: "Mutation",
-                                                    updateWork: {
-                                                        title: this.state.title,
-                                                        description: this.state.description,
-                                                        id: work.id,
-                                                        imageUrl: this.state.mainImageUrl,
-                                                        userId: auth.token!.payload.sub,
-                                                        tags: this.state.chipsData.map(x => x.label),
-                                                        createdAt: +new Date(),
-                                                        __typename: "Work"
-                                                    }
-                                                }
-                                            });
+                                                const work = await new Promise<Work>(resolve => createWork({
+                                                    variables: {
+                                                        work: {
+                                                            title: this.state.title,
+                                                            description: this.state.description,
+                                                            userId: auth.token!.payload.sub,
+                                                            imageUrl: this.state.mainImageUrl,
+                                                            tags: this.state.chipsData.map(x => x.label),
+                                                            isPublic: this.state.isPublic
+                                                        }
+                                                    },
+                                                    optimisticResponse: {
+                                                        __typename: "Mutation",
+                                                        createWork: {
+                                                            title: this.state.title,
+                                                            description: this.state.description,
+                                                            id: "new",
+                                                            userId: auth.token!.payload.sub,
+                                                            imageUrl: this.state.mainImageUrl,
+                                                            tags: this.state.chipsData.map(x => x.label),
+                                                            isPublic: this.state.isPublic,
+                                                            createdAt: +new Date(),
+                                                            __typename: "Work"
+                                                        }
+                                                    },
+                                                    update: (_, { data: { createWork } }) => createWork.id !== "new" && resolve(createWork as Work)
+                                                }));
 
-                                            notificationListener.notification("info", "Created Work!");
-                                            history.push("/");
-                                        }}
-                                    >
-                                        <div>
-                                            <Head>
-                                                <TextField
-                                                    id="title"
-                                                    label={locale.works.title}
-                                                    placeholder={locale.works.inputTitle}
-                                                    margin="normal"
-                                                    fullWidth
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    onChange={(e: any) => this.setState({
-                                                        title: e.target.value
-                                                    })}
-                                                    value={this.state.title}
-                                                    required
-                                                />
-                                                <div>
+                                                await updateWork({
+                                                    variables: {
+                                                        work: {
+                                                            id: work.id,
+                                                            userId: auth.token!.payload.sub,
+                                                        }
+                                                    },
+                                                    optimisticResponse: {
+                                                        __typename: "Mutation",
+                                                        updateWork: {
+                                                            title: this.state.title,
+                                                            description: this.state.description,
+                                                            id: work.id,
+                                                            imageUrl: this.state.mainImageUrl,
+                                                            userId: auth.token!.payload.sub,
+                                                            tags: this.state.chipsData.map(x => x.label),
+                                                            isPublic: this.state.isPublic,
+                                                            createdAt: +new Date(),
+                                                            __typename: "Work"
+                                                        }
+                                                    }
+                                                });
+
+                                                notificationListener.notification("info", "Created Work!");
+                                                history.push("/");
+                                            }}
+                                        >
+                                            <div>
+                                                <Head>
                                                     <TextField
-                                                        label={locale.works.tags}
-                                                        placeholder={"Input Tags!"}
-                                                        onKeyDown={this.tagInputKeyDown}
+                                                        id="title"
+                                                        label={locale.works.title}
+                                                        placeholder={locale.works.inputTitle}
                                                         margin="normal"
-                                                        inputProps={{
-                                                            maxLength: 10,
-                                                        }}
-                                                    />
-                                                    <ChipList>
-                                                        {this.state.chipsData.map(data =>
-                                                            <Chip
-                                                                key={data.key}
-                                                                clickable={false}
-                                                                label={data.label}
-                                                                onDelete={this.deleteChip(data)}
-                                                            />
-                                                        )}
-                                                    </ChipList>
-                                                </div>
-                                            </Head>
-                                            <WorkContentArea>
-                                                <div>
-                                                    <MainImageInput
-                                                        labelText={locale.works.image}
-                                                        // tslint:disable-next-line:jsx-no-lambda
-                                                        onChange={async e => {
-                                                            const image = e.target.files![0];
-                                                            const result = await createSignedUrl({
-                                                                jwt: auth.token!.jwtToken,
-                                                                userId: auth.token!.payload.sub,
-                                                                type: "work",
-                                                                mimetype: image.type
-                                                            });
-                                                            await fileUploadToS3({
-                                                                url: result.signedUrl,
-                                                                file: image
-                                                            });
-                                                            this.setState({
-                                                                mainImageUrl: result.uploadedUrl
-                                                            });
-                                                        }}
-                                                    />
-                                                    <TextField
-                                                        label={locale.works.description}
-                                                        multiline
-                                                        margin="normal"
-                                                        required
-                                                        placeholder={locale.works.inputDiscription}
-                                                        rowsMax={30}
                                                         fullWidth
                                                         // tslint:disable-next-line:jsx-no-lambda
-                                                        onChange={(e: any) => this.setState({ description: e.target.value })}
-                                                        value={this.state.description}
+                                                        onChange={(e: any) => this.setState({
+                                                            title: e.target.value
+                                                        })}
+                                                        value={this.state.title}
+                                                        required
                                                     />
-                                                </div>
-                                                <ReactMarkdown
-                                                    source={this.state.description}
-                                                    rawSourcePos
-                                                />
-                                            </WorkContentArea>
-                                            <ActionArea>
-                                                <div/>
-                                                <Button
-                                                    variant="outlined"
-                                                    color="primary"
-                                                    onClick={this.onOpenPreview}
-                                                >
-                                                    {locale.works.preview}
-                                                </Button>
-                                                <Button
-                                                    type="submit"
-                                                    component="button"
-                                                    variant="raised"
-                                                    color="primary"
-                                                >
-                                                    {locale.works.create}
-                                                </Button>
-                                            </ActionArea>
-                                        </div>
-                                        {(updateWorkError || createWorkError) &&
-                                            <notificationListener.ErrorComponent message={updateWorkError || createWorkError}/>
-                                        }
-                                    </Host>
-                                )}
-                            </Mutation>
-                        )}
-                    </Mutation>
-                    <WorkDialog
-                        history={history}
-                        open={this.state.workDialogVisible}
-                        onClose={this.onClosePreview}
-                        work={this.state.previewWork}
-                        locale={locale.location}
-                    />
-                </Page>
+                                                    <div>
+                                                        <TextField
+                                                            label={locale.works.tags}
+                                                            placeholder={"Input Tags!"}
+                                                            onKeyDown={this.tagInputKeyDown}
+                                                            margin="normal"
+                                                            inputProps={{
+                                                                maxLength: 10,
+                                                            }}
+                                                        />
+                                                        <ChipList>
+                                                            {this.state.chipsData.map(data =>
+                                                                <Chip
+                                                                    key={data.key}
+                                                                    clickable={false}
+                                                                    label={data.label}
+                                                                    onDelete={this.deleteChip(data)}
+                                                                />
+                                                            )}
+                                                        </ChipList>
+                                                    </div>
+                                                </Head>
+                                                <WorkContentArea>
+                                                    <div>
+                                                        <MainImageInput
+                                                            labelText={locale.works.image}
+                                                            // tslint:disable-next-line:jsx-no-lambda
+                                                            onChange={async e => {
+                                                                if (!auth.token)
+                                                                    notificationListener.errorNotification(new Error("Need Sign in"));
+                                                                const image = e.target.files![0];
+                                                                const result = await createSignedUrl({
+                                                                    jwt: auth.token!.jwtToken,
+                                                                    userId: auth.token!.payload.sub,
+                                                                    type: "work",
+                                                                    mimetype: image.type
+                                                                });
+                                                                await fileUploadToS3({
+                                                                    url: result.signedUrl,
+                                                                    file: image
+                                                                });
+                                                                this.setState({
+                                                                    mainImageUrl: result.uploadedUrl
+                                                                });
+                                                            }}
+                                                        />
+                                                        <div>
+                                                            <TextField
+                                                                label={locale.works.description}
+                                                                multiline
+                                                                margin="normal"
+                                                                required
+                                                                placeholder={locale.works.inputDiscription}
+                                                                rowsMax={30}
+                                                                fullWidth
+                                                                // tslint:disable-next-line:jsx-no-lambda
+                                                                onChange={(e: any) => this.setState({ description: e.target.value })}
+                                                                value={this.state.description}
+                                                                // tslint:disable-next-line:jsx-no-lambda
+                                                                inputRef={descriptionInput => this.setState({ descriptionInput })}
+                                                            />
+                                                            <MarkdownSupports
+                                                                element={this.state.descriptionInput}
+                                                                // tslint:disable-next-line:jsx-no-lambda
+                                                                onChangeValue={(description, lines) => {
+                                                                    this.setState(
+                                                                        { description },
+                                                                        () => {
+                                                                            if (this.state.descriptionInput) {
+                                                                                this.state.descriptionInput.setSelectionRange(lines[0], lines[1]);
+                                                                            }
+                                                                        }
+                                                                    );
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <PortalMarkdown
+                                                        source={this.state.description}
+                                                        rawSourcePos
+                                                    />
+                                                </WorkContentArea>
+                                                <ActionArea>
+                                                    <div/>
+                                                    <FormGroup>
+                                                        <FormControlLabel
+                                                            control={
+                                                                <Switch
+                                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                                    onChange={() =>
+                                                                        this.setState({
+                                                                            isPublic: !this.state.isPublic
+                                                                        })
+                                                                    }
+                                                                    color="primary"
+                                                                    checked={this.state.isPublic}
+                                                                >
+                                                                    Range setting
+                                                                </Switch>
+                                                            }
+                                                            label="公開する"
+                                                            labelPlacement="start"
+                                                        />
+                                                    </FormGroup>
+                                                    <Button
+                                                        variant="outlined"
+                                                        color="primary"
+                                                        onClick={this.onOpenPreview}
+                                                    >
+                                                        {locale.works.preview}
+                                                    </Button>
+                                                    <Button
+                                                        type="submit"
+                                                        component="button"
+                                                        variant="raised"
+                                                        color="primary"
+                                                    >
+                                                        {locale.works.create}
+                                                    </Button>
+                                                </ActionArea>
+                                            </div>
+                                            {(createWorkError || updateWorkError) &&
+                                            <notificationListener.ErrorComponent message={createWorkError || updateWorkError}/>
+                                            }
+                                        </Host>
+                                    )}
+                                </Mutation>
+                            )}
+                        </Mutation>
+                        <WorkDialog
+                            history={history}
+                            open={this.state.workDialogVisible}
+                            onClose={this.onClosePreview}
+                            work={this.state.previewWork}
+                            userId={auth.token!.payload.sub}
+                            locale={locale.location}
+                        />
+                    </Page>
                 )}
             </LocaleContext.Consumer>
         );
@@ -330,9 +388,9 @@ const Host = styled.form`
     margin: 0 2rem;
     width: calc(100% - 4rem);
     > * {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
     }
 `;
 

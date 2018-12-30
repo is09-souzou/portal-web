@@ -160,23 +160,121 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                         return (
                             <LocaleContext.Consumer>
                                 {({ locale }) => (
-                                <Host>
-                                    <UserPageHeader>
-                                        <img
-                                            src={user.avatarUri}
-                                        />
-                                        <div>
-                                            <UserAvatar
+                                    <Host>
+                                        <UserPageHeader>
+                                            <img
                                                 src={user.avatarUri}
                                             />
                                             <div>
-                                                <StyledTypography gutterBottom>
-                                                    {user.displayName}
-                                                </StyledTypography>
-                                                <StyledTypography>
-                                                    {user.email}
-                                                </StyledTypography>
+                                                <UserAvatar
+                                                    src={user.avatarUri}
+                                                />
+                                                <div>
+                                                    <StyledTypography gutterBottom>
+                                                        {user.displayName}
+                                                    </StyledTypography>
+                                                    <StyledTypography>
+                                                        {user.email}
+                                                    </StyledTypography>
+                                                </div>
+                                                <Tabs
+                                                    value={contentType}
+                                                    indicatorColor="primary"
+                                                    textColor="primary"
+                                                >
+                                                    <StyledTab
+                                                        disableRipple
+                                                        label={locale.tab.profile}
+                                                        value="user"
+                                                        onClick={this.handleContentType("user")}
+                                                    />
+                                                    <StyledTab
+                                                        disableRipple
+                                                        label={locale.tab.workList + ("(") + userWorks.length + (")")}
+                                                        value="work"
+                                                        onClick={this.handleContentType("work")}
+                                                    />
+                                                </Tabs>
                                             </div>
+                                        </UserPageHeader>
+                                        <Divider />
+                                        <ViewPager
+                                            selectedIndex={this.state.selectedIndex}
+                                        >
+                                            <UserContent>
+                                                <div>
+                                                    <Typography gutterBottom variant="caption">
+                                                        {locale.profile.message}
+                                                    </Typography>
+                                                    <StyledTypography gutterBottom>
+                                                        {user.message}
+                                                    </StyledTypography>
+                                                </div>
+                                                <div>
+                                                    <Typography gutterBottom variant="caption">
+                                                        {locale.profile.career}
+                                                    </Typography>
+                                                    <StyledTypography gutterBottom>
+                                                        {user.career}
+                                                    </StyledTypography>
+                                                </div>
+                                                <div>
+                                                    <Typography gutterBottom variant="caption">
+                                                        {locale.profile.skill}
+                                                    </Typography>
+                                                    {user.skillList && user.skillList.map(x =>
+                                                        <SkillTag key={x}>{x}</SkillTag>
+                                                    )}
+                                                </div>
+                                            </UserContent>
+                                            <WorkContent>
+                                                <WorkList
+                                                    works={userWorks}
+                                                    workListRow={this.state.workListRow}
+                                                    onWorkItemClick={this.handleClickOpen}
+                                                />
+                                                <WorkDialog
+                                                    history={history}
+                                                    open={this.state.workDialogVisible}
+                                                    onClose={this.handleClose}
+                                                    work={this.state.selectedWork}
+                                                    locale={locale.location}
+                                                    userId={auth.token!.payload.sub}
+                                                />
+                                                <StreamSpinner
+                                                    key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
+                                                    disable={!workConnection.exclusiveStartKey ? true : false}
+                                                    // tslint:disable-next-line:jsx-no-lambda
+                                                    onVisible={() => {
+                                                        if (workConnection && workConnection.exclusiveStartKey)
+                                                            fetchMore<any>({
+                                                                variables: {
+                                                                    exclusiveStartKey: workConnection.exclusiveStartKey
+                                                                },
+                                                                updateQuery: (previousResult, { fetchMoreResult }) =>
+                                                                    previousResult.getUser.works.items ? ({
+                                                                        getUser: {
+                                                                            ...previousResult.getUser,
+                                                                            works: {
+                                                                                ...previousResult.getUser.works,
+                                                                                items: (
+                                                                                    [
+                                                                                        ...previousResult.getUser.works.items,
+                                                                                        ...fetchMoreResult.getUser.works.items
+                                                                                    ].filter((x, i, self) => (
+                                                                                        self.findIndex(y => y.id === x.id) === i
+                                                                                    ))
+                                                                                ),
+                                                                                exclusiveStartKey: fetchMoreResult.getUser.works.exclusiveStartKey
+                                                                            }
+                                                                        }
+                                                                    })               : previousResult
+                                                            });
+                                                    }}
+                                                />
+                                            </WorkContent>
+                                        </ViewPager>
+                                        <Footer>
                                             <Tabs
                                                 value={contentType}
                                                 indicatorColor="primary"
@@ -195,112 +293,19 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                                     onClick={this.handleContentType("work")}
                                                 />
                                             </Tabs>
-                                        </div>
-                                    </UserPageHeader>
-                                    <Divider />
-                                    <ViewPager
-                                        selectedIndex={this.state.selectedIndex}
-                                    >
-                                        <UserContent>
-                                            <div>
-                                                <Typography gutterBottom variant="caption">
-                                                    {locale.profile.message}
-                                                </Typography>
-                                                <StyledTypography gutterBottom>
-                                                    {user.message}
-                                                </StyledTypography>
-                                            </div>
-                                            <div>
-                                                <Typography gutterBottom variant="caption">
-                                                    {locale.profile.career}
-                                                </Typography>
-                                                <StyledTypography gutterBottom>
-                                                    {user.career}
-                                                </StyledTypography>
-                                            </div>
-                                            <div>
-                                                <Typography gutterBottom variant="caption">
-                                                    {locale.profile.skill}
-                                                </Typography>
-                                                {user.skillList && user.skillList.map(x =>
-                                                    <SkillTag key={x}>{x}</SkillTag>
-                                                )}
-                                            </div>
-                                        </UserContent>
-                                        <WorkContent>
-                                            <WorkList
-                                                works={userWorks}
-                                                workListRow={this.state.workListRow}
-                                                onWorkItemClick={this.handleClickOpen}
-                                            />
-                                            <WorkDialog
-                                                history={history}
-                                                open={this.state.workDialogVisible}
-                                                onClose={this.handleClose}
-                                                work={this.state.selectedWork}
-                                                locale={locale.location}
-                                            />
-                                            <StreamSpinner
-                                                key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
-                                                disable={!workConnection.exclusiveStartKey ? true : false}
-                                                // tslint:disable-next-line:jsx-no-lambda
-                                                onVisible={() => {
-                                                    if (workConnection && workConnection.exclusiveStartKey)
-                                                        fetchMore<any>({
-                                                            variables: {
-                                                                exclusiveStartKey: workConnection.exclusiveStartKey
-                                                            },
-                                                            updateQuery: (previousResult, { fetchMoreResult }) =>
-                                                                previousResult.getUser.works.items ? ({
-                                                                    getUser: {
-                                                                        ...previousResult.getUser,
-                                                                        works: {
-                                                                            ...previousResult.getUser.works,
-                                                                            items: (
-                                                                                [
-                                                                                    ...previousResult.getUser.works.items,
-                                                                                    ...fetchMoreResult.getUser.works.items
-                                                                                ].filter((x, i, self) => (
-                                                                                    self.findIndex(y => y.id === x.id) === i
-                                                                                ))
-                                                                            ),
-                                                                            exclusiveStartKey: fetchMoreResult.getUser.works.exclusiveStartKey
-                                                                        }
-                                                                    }
-                                                                })               : previousResult
-                                                        });
-                                                }}
-                                            />
-                                        </WorkContent>
-                                    </ViewPager>
-                                    <Footer>
-                                        <Tabs
-                                            value={contentType}
-                                            indicatorColor="primary"
-                                            textColor="primary"
+                                        </Footer>
+                                        <Fab
+                                            style={{
+                                                visibility: (
+                                                    (auth.token && user.id === auth.token!.payload.sub) && contentType === "user" ? "visible" : "hidden"
+                                                )
+                                            }}
+                                            // tslint:disable-next-line:jsx-no-lambda
+                                            onClick={() => history.push("/profile")}
                                         >
-                                            <StyledTab
-                                                disableRipple
-                                                label={locale.tab.profile}
-                                                value="user"
-                                                onClick={this.handleContentType("user")}
-                                            />
-                                            <StyledTab
-                                                disableRipple
-                                                label={locale.tab.workList + ("(") + userWorks.length + (")")}
-                                                value="work"
-                                                onClick={this.handleContentType("work")}
-                                            />
-                                        </Tabs>
-                                    </Footer>
-                                    <Fab
-                                        style={{ visibility: user.id === auth.token!.payload.sub && contentType === "user" ? "visible" : "hidden" }}
-                                        // tslint:disable-next-line:jsx-no-lambda
-                                        onClick={() => history.push("/profile")}
-                                    >
-                                        <EditIcon />
-                                    </Fab>
-                                </Host>
+                                            <EditIcon />
+                                        </Fab>
+                                    </Host>
                                 )}
                             </LocaleContext.Consumer>
                         );

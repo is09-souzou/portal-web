@@ -14,8 +14,8 @@ import { TransitionProps }                  from "react-transition-group/Transit
 import styled                               from "styled-components";
 
 interface Props extends StandardProps<
-  React.HTMLAttributes<HTMLDivElement> & Partial<TransitionHandlerProps>,
-  SnackbarClassKey
+    React.HTMLAttributes<HTMLDivElement> & Partial<TransitionHandlerProps>,
+    SnackbarClassKey
 > {
     action?: React.ReactElement<any> | React.ReactElement<any>[];
     anchorOrigin?: SnackbarOrigin;
