@@ -1,11 +1,13 @@
-import React    from "react";
 import {
     FormatBoldRounded         as BoldIcon,
-    FormatListNumberedRounded as ListIcon,
     FormatItalicRounded       as ItalicIcon,
+    FormatListNumberedRounded as ListIcon,
     LinkRounded               as LinkIcon,
     StrikethroughSRounded     as StrikeIcon
-}               from "@material-ui/icons";
+} from "@material-ui/icons";
+import React from "react";
+import ToolItem from "src/components/atoms/ToolItem";
+import ToolList from "src/components/atoms/ToolList";
 import {
     convertToAnchor,
     convertToBold,
@@ -16,9 +18,7 @@ import {
     convertToStrikethrough,
     getSelectionNumbers,
     insertSeparator
-}               from "src/util/markdown";
-import ToolItem from "src/components/atoms/ToolItem";
-import ToolList from "src/components/atoms/ToolList";
+} from "src/util/markdown";
 
 export type MarkdownSupportsProps = {
     element?: HTMLInputElement | HTMLTextAreaElement;

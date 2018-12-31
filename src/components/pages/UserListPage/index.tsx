@@ -1,17 +1,17 @@
-import React, { Fragment }    from "react";
 import {
     List,
     ListItem,
     ListItemText
-}                             from "@material-ui/core";
-import gql                    from "graphql-tag";
-import { Query }              from "react-apollo";
+} from "@material-ui/core";
+import gql from "graphql-tag";
+import React, { Fragment } from "react";
+import { Query } from "react-apollo";
+import GraphQLProgress from "src/components/atoms/GraphQLProgress";
+import Page from "src/components/atoms/Page";
+import Header from "src/components/molecules/Header";
+import NotFound from "src/components/molecules/NotFound";
+import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import { PageComponentProps } from "src/App";
-import ErrorTemplate          from "src/components/templates/ErrorTemplate";
-import GraphQLProgress        from "src/components/atoms/GraphQLProgress";
-import Header                 from "src/components/molecules/Header";
-import NotFound               from "src/components/molecules/NotFound";
-import Page                   from "src/components/atoms/Page";
 
 const QueryGetUserList = gql(`
     query($limit: Int, $nextToken: ID) {

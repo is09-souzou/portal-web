@@ -1,5 +1,5 @@
-import React, { ReactNode, Fragment } from "react";
-import NotificationComponent          from "src/components/atoms/Notification";
+import React, { Fragment, ReactNode } from "react";
+import NotificationComponent from "src/components/atoms/Notification";
 
 export type Notification = (type: "info" | "error", message: string) => void;
 export type ErrorNotification = (error: Error) => void;

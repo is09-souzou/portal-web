@@ -1,7 +1,7 @@
-import React          from "react";
 import { Typography } from "@material-ui/core";
-import styled         from "styled-components";
-import { Work }       from "src/graphQL/type";
+import React from "react";
+import { Work } from "src/graphQL/type";
+import styled from "styled-components";
 
 interface Props {
     works: Work[];

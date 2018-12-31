@@ -1,6 +1,6 @@
-import React                   from "react";
 import Button, { ButtonProps } from "@material-ui/core/Button";
-import styled                  from "styled-components";
+import React from "react";
+import styled from "styled-components";
 
 const Fab = styled(Button as React.SFC<ButtonProps>)`
     && {

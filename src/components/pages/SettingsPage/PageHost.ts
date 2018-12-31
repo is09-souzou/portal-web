@@ -1,5 +1,5 @@
+import Page from "src/components/atoms/Page";
 import styled from "styled-components";
-import Page   from "src/components/atoms/Page";
 
 export default styled(Page)`
     max-width: 40rem;

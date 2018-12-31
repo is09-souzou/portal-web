@@ -1,23 +1,23 @@
-import React, { Fragment }                   from "react";
 import {
     Avatar,
     Button,
     Dialog,
     IconButton,
     Toolbar
-}                                            from "@material-ui/core";
-import AppBar, { AppBarProps }               from "@material-ui/core/AppBar";
+} from "@material-ui/core";
+import AppBar, { AppBarProps } from "@material-ui/core/AppBar";
 import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
-import Typography, { TypographyProps }       from "@material-ui/core/Typography";
-import CloseIcon                             from "@material-ui/icons/Close";
-import * as H                                from "history";
-import ReactMarkdown                         from "react-markdown";
-import styled                                from "styled-components";
-import formatTagsOfURLQueryParam             from "src/util/formatTagsOfURLQueryParam";
-import getTagsByURLQueryParam                from "src/util/getTagsByURLQueryParam";
-import { Work }                              from "src/graphQL/type";
-import Link                                  from "src/components/atoms/Link";
-import FormatStringDate                      from "src/components/atoms/FormatStringDate";
+import Typography, { TypographyProps } from "@material-ui/core/Typography";
+import CloseIcon from "@material-ui/icons/Close";
+import * as H from "history";
+import React, { Fragment } from "react";
+import ReactMarkdown from "react-markdown";
+import FormatStringDate from "src/components/atoms/FormatStringDate";
+import Link from "src/components/atoms/Link";
+import { Work } from "src/graphQL/type";
+import formatTagsOfURLQueryParam from "src/util/formatTagsOfURLQueryParam";
+import getTagsByURLQueryParam from "src/util/getTagsByURLQueryParam";
+import styled from "styled-components";
 
 interface Props {
     open: boolean;

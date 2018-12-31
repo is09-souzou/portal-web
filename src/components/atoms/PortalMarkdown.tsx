@@ -1,6 +1,6 @@
-import React         from "react";
+import React from "react";
 import ReactMarkdown from "react-markdown";
-import styled        from "styled-components";
+import styled from "styled-components";
 
 export default (
     props: ReactMarkdown.ReactMarkdownProps

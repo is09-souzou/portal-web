@@ -1,10 +1,10 @@
-import React                         from "react";
-import { Drawer }                    from "@material-ui/core";
-import { RouteComponentProps }       from "react-router-dom";
-import styled                        from "styled-components";
-import Locale, { location }          from "src/localization/locale";
-import Navigator                     from "src/components/molecules/Navigator";
+import { Drawer } from "@material-ui/core";
+import React from "react";
+import { RouteComponentProps } from "react-router-dom";
+import Navigator from "src/components/molecules/Navigator";
 import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
+import Locale, { location } from "src/localization/locale";
+import styled from "styled-components";
 
 interface State {
     drawerOpend: boolean;

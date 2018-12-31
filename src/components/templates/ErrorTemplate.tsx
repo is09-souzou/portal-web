@@ -1,6 +1,6 @@
-import React          from "react";
 import { Typography } from "@material-ui/core";
-import styled         from "styled-components";
+import React from "react";
+import styled from "styled-components";
 
 const emojiList = ["(・－・)・・・", "(ノд・。) ", "(´；ω；`)", "(´･д･`)", "( ´･ω･)´･ω)(ω･`(･ω･` )"];
 

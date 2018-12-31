@@ -1,20 +1,20 @@
+import AddIcon from "@material-ui/icons/Add";
+import gql from "graphql-tag";
 import React, { Fragment } from "react";
-import AddIcon             from "@material-ui/icons/Add";
-import gql                 from "graphql-tag";
-import { Query }           from "react-apollo";
-import getTagsByURLQueryParam   from "src/util/getTagsByURLQueryParam";
+import { Query } from "react-apollo";
+import Fab from "src/components/atoms/Fab";
+import Page from "src/components/atoms/Page";
+import StreamSpinner from "src/components/atoms/StreamSpinner";
+import WorkList from "src/components/atoms/WorkList";
+import Header from "src/components/molecules/Header";
+import NotFound from "src/components/molecules/NotFound";
+import WorkDialog from "src/components/organisms/WorkDialog";
+import Host from "src/components/pages/WorkListPage/Host";
+import ErrorTemplate from "src/components/templates/ErrorTemplate";
+import { LocaleContext } from "src/components/wrappers/MainLayout";
 import { Work, WorkConnection } from "src/graphQL/type";
-import { PageComponentProps }   from "src/App";
-import Fab                      from "src/components/atoms/Fab";
-import Page                     from "src/components/atoms/Page";
-import StreamSpinner            from "src/components/atoms/StreamSpinner";
-import WorkList                 from "src/components/atoms/WorkList";
-import Header                   from "src/components/molecules/Header";
-import NotFound                 from "src/components/molecules/NotFound";
-import WorkDialog               from "src/components/organisms/WorkDialog";
-import Host                     from "src/components/pages/WorkListPage/Host";
-import ErrorTemplate            from "src/components/templates/ErrorTemplate";
-import { LocaleContext }        from "src/components/wrappers/MainLayout";
+import getTagsByURLQueryParam from "src/util/getTagsByURLQueryParam";
+import { PageComponentProps } from "src/App";
 
 interface State {
     selectedWork?: Work;

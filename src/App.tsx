@@ -1,26 +1,26 @@
-import React                         from "react";
-import { createMuiTheme }            from "@material-ui/core/styles";
-import { MuiThemeProvider }          from "@material-ui/core";
+import { MuiThemeProvider } from "@material-ui/core";
+import { createMuiTheme } from "@material-ui/core/styles";
+import React from "react";
 import {
+    match,
     BrowserRouter as Router,
-    RouteComponentProps,
-    match
-}                                    from "react-router-dom";
-import ComposingRoute                from "src/components/atoms/ComposingRoute";
-import ComposingSwitch               from "src/components/atoms/ComposingSwitch";
-import { AuthProps }                 from "src/components/wrappers/Auth";
-import { MainLayoutEventProps }      from "src/components/wrappers/MainLayout";
+    RouteComponentProps
+} from "react-router-dom";
+import ComposingRoute from "src/components/atoms/ComposingRoute";
+import ComposingSwitch from "src/components/atoms/ComposingSwitch";
+import { AuthProps } from "src/components/wrappers/Auth";
+import { MainLayoutEventProps } from "src/components/wrappers/MainLayout";
 import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
+import Root from "src/Root";
 import {
-    WorkPostPage,
-    WorkUpdatePage,
-    WorkListPage,
     ProfilePage,
     SettingsPage,
+    UserListPage,
     UserPage,
-    UserListPage
+    WorkListPage,
+    WorkPostPage,
+    WorkUpdatePage
 } from "src/Routes";
-import Root from "src/Root";
 
 export default () => (
     <MuiThemeProvider theme={theme}>
@@ -75,23 +75,23 @@ export default () => (
 );
 
 const theme = createMuiTheme({
-    palette: {
-        primary: {
-            light: "#ffc246",
-            main: "#ff9100",
-            dark: "#c56200",
-            contrastText: "#fff",
-        },
-    },
     overrides: {
         MuiDialog: {
             paper: {
-                borderRadius: 8,
                 border: 0,
+                borderRadius: 8,
                 color: "white",
             },
         },
     },
+    palette: {
+        primary: {
+            contrastText: "#fff",
+            dark: "#c56200",
+            light: "#ffc246",
+            main: "#ff9100",
+        },
+    }
 });
 
 export interface PageComponentProps<T> extends RouteComponentProps<T>, AuthProps, NotificationListenerProps, MainLayoutEventProps {

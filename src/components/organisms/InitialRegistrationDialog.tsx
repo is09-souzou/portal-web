@@ -1,22 +1,22 @@
-import React                                 from "react";
 import {
     Button,
     DialogActions,
     DialogTitle,
     LinearProgress
-}                                            from "@material-ui/core";
-import Dialog, { DialogProps }               from "@material-ui/core/Dialog";
+} from "@material-ui/core";
+import Dialog, { DialogProps } from "@material-ui/core/Dialog";
 import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
-import Slide, { SlideProps }                 from "@material-ui/core/Slide";
-import TextField, { TextFieldProps }         from "@material-ui/core/TextField";
-import gql                                   from "graphql-tag";
-import { Mutation }                          from "react-apollo";
-import styled                                from "styled-components";
-import createSignedUrl                       from "src/api/createSignedUrl";
-import fileUploadToS3                        from "src/api/fileUploadToS3";
-import ImageInput                            from "src/components/atoms/ImageInput";
-import { Token }                             from "src/components/wrappers/Auth";
-import { NotificationListenerProps }         from "src/components/wrappers/NotificationListener";
+import Slide, { SlideProps } from "@material-ui/core/Slide";
+import TextField, { TextFieldProps } from "@material-ui/core/TextField";
+import gql from "graphql-tag";
+import React from "react";
+import { Mutation } from "react-apollo";
+import createSignedUrl from "src/api/createSignedUrl";
+import fileUploadToS3 from "src/api/fileUploadToS3";
+import ImageInput from "src/components/atoms/ImageInput";
+import { Token } from "src/components/wrappers/Auth";
+import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
+import styled from "styled-components";
 
 interface Props extends DialogProps, NotificationListenerProps {
     token: Token;
@@ -113,9 +113,9 @@ export default class extends React.Component<Props, State> {
                                     if (image) {
                                         const result = await createSignedUrl({
                                             jwt: token.jwtToken,
-                                            userId: token.payload.sub,
+                                            mimetype: image.type,
                                             type: "profile",
-                                            mimetype: image.type
+                                            userId: token.payload.sub
                                         });
                                         signedUrl = result.signedUrl;
                                         uploadedUrl = result.uploadedUrl;
@@ -139,24 +139,24 @@ export default class extends React.Component<Props, State> {
                                             file: image
                                         }) : new Promise(x => x()),
                                         createUser({
-                                            variables: {
-                                                user: {
-                                                    ...(uploadedUrl ? { avatarUri: uploadedUrl } : {}),
-                                                    ...variables
-                                                }
-                                            },
                                             optimisticResponse: {
                                                 __typename: "Mutation",
                                                 createUser: {
-                                                    email,
-                                                    displayName,
                                                     career,
+                                                    displayName,
+                                                    email,
                                                     message: "",
                                                     avatarUri: uploadedUrl ? uploadedUrl : "",
                                                     id: token!.payload.sub,
                                                     __typename: "User"
                                                 }
                                             },
+                                            variables: {
+                                                user: {
+                                                    ...(uploadedUrl ? { avatarUri: uploadedUrl } : {}),
+                                                    ...variables
+                                                }
+                                            }
                                         })
                                     ]);
                                     onClose && onClose();

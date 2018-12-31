@@ -1,11 +1,11 @@
-import React                           from "react";
 import {
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-}                                      from "@material-ui/core";
+} from "@material-ui/core";
+import React from "react";
 import ImageInput, { ImageInputProps } from "src/components/atoms/ImageInput";
 
 export interface ImageInpuDialogProps extends ImageInputProps {

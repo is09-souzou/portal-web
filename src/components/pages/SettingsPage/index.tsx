@@ -1,4 +1,3 @@
-import React                  from "react";
 import {
     Button,
     Dialog,
@@ -6,12 +5,13 @@ import {
     DialogTitle,
     TextField,
     Typography,
-}                             from "@material-ui/core";
+} from "@material-ui/core";
+import React from "react";
+import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
+import NotFound from "src/components/molecules/NotFound";
+import SettingsPageHost from "src/components/pages/SettingsPage/SettingsPageHost";
+import StyledDialogContent from "src/components/pages/SettingsPage/StyledDialogContent";
 import { PageComponentProps } from "src/App";
-import toObjectFromURIQuery   from "src/api/toObjectFromURIQuery";
-import NotFound               from "src/components/molecules/NotFound";
-import SettingsPageHost       from "src/components/pages/SettingsPage/SettingsPageHost";
-import StyledDialogContent    from "src/components/pages/SettingsPage/StyledDialogContent";
 
 type Item = "credentialEmail";
 

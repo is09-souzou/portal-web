@@ -1,6 +1,6 @@
-import React  from "react";
+import React from "react";
+import Image from "src/components/atoms/Image";
 import styled from "styled-components";
-import Image  from "src/components/atoms/Image";
 
 export interface ImageInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     defaultImageUrl?: string;

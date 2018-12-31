@@ -1,18 +1,18 @@
-import React                                 from "react";
 import {
+    Button,
     DialogActions,
     DialogTitle,
     TextField,
-    Button,
-}                                            from "@material-ui/core";
-import Dialog, { DialogProps }               from "@material-ui/core/Dialog";
+} from "@material-ui/core";
+import Dialog, { DialogProps } from "@material-ui/core/Dialog";
 import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
-import Slide, { SlideProps }                 from "@material-ui/core/Slide";
-import styled                                from "styled-components";
-import uuidv4                                from "uuid/v4";
-import { SingUp }                            from "src/components/wrappers/Auth";
-import { LocaleContext }                     from "src/components/wrappers/MainLayout";
-import { NotificationListener }              from "src/components/wrappers/NotificationListener";
+import Slide, { SlideProps } from "@material-ui/core/Slide";
+import React from "react";
+import { SingUp } from "src/components/wrappers/Auth";
+import { LocaleContext } from "src/components/wrappers/MainLayout";
+import { NotificationListener } from "src/components/wrappers/NotificationListener";
+import styled from "styled-components";
+import uuidv4 from "uuid/v4";
 
 const Transition = (props: SlideProps) =>  <Slide direction="up" {...props} />;
 

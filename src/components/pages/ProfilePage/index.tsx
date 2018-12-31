@@ -1,4 +1,3 @@
-import React, { Fragment }           from "react";
 import {
     Button,
     Chip,
@@ -7,25 +6,26 @@ import {
     DialogContent,
     DialogTitle,
     Divider,
-    TextField,
     LinearProgress,
-}                                    from "@material-ui/core";
-import gql                           from "graphql-tag";
-import { Query, Mutation }           from "react-apollo";
-import toObjectFromURIQuery          from "src/api/toObjectFromURIQuery";
-import createSignedUrl               from "src/api/createSignedUrl";
-import fileUploadToS3                from "src/api/fileUploadToS3";
-import { PageComponentProps }        from "src/App";
-import GraphQLProgress               from "src/components/atoms/GraphQLProgress";
-import ImageInput                    from "src/components/atoms/ImageInput";
-import NotFound                      from "src/components/molecules/NotFound";
-import ChipList                      from "src/components/pages/ProfilePage/ChipList";
-import ProfileContent                from "src/components/pages/ProfilePage/ProfileContent";
-import ProfilePageHeader             from "src/components/pages/ProfilePage/ProfilePageHeader";
-import ProfilePageHost               from "src/components/pages/ProfilePage/ProfilePageHost";
-import UserAvatar                    from "src/components/pages/ProfilePage/UserAvatar";
-import ErrorTemplate                 from "src/components/templates/ErrorTemplate";
-import { LocaleContext }             from "src/components/wrappers/MainLayout";
+    TextField,
+} from "@material-ui/core";
+import gql from "graphql-tag";
+import React, { Fragment } from "react";
+import { Mutation, Query } from "react-apollo";
+import createSignedUrl from "src/api/createSignedUrl";
+import fileUploadToS3 from "src/api/fileUploadToS3";
+import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
+import GraphQLProgress from "src/components/atoms/GraphQLProgress";
+import ImageInput from "src/components/atoms/ImageInput";
+import NotFound from "src/components/molecules/NotFound";
+import ChipList from "src/components/pages/ProfilePage/ChipList";
+import ProfileContent from "src/components/pages/ProfilePage/ProfileContent";
+import ProfilePageHeader from "src/components/pages/ProfilePage/ProfilePageHeader";
+import ProfilePageHost from "src/components/pages/ProfilePage/ProfilePageHost";
+import UserAvatar from "src/components/pages/ProfilePage/UserAvatar";
+import ErrorTemplate from "src/components/templates/ErrorTemplate";
+import { LocaleContext } from "src/components/wrappers/MainLayout";
+import { PageComponentProps } from "src/App";
 
 interface Chip {
     key  : string;

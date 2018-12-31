@@ -1,37 +1,37 @@
-import React, { Fragment }             from "react";
 import {
+    withTheme,
     Checkbox,
     Collapse,
     Divider,
     List,
-    ListItemSecondaryAction,
     ListItemIcon,
+    ListItemSecondaryAction,
     ListItemText,
     ListSubheader,
-    withTheme,
-}                                      from "@material-ui/core";
-import ListItem, { ListItemProps }     from "@material-ui/core/ListItem";
+} from "@material-ui/core";
+import ListItem, { ListItemProps } from "@material-ui/core/ListItem";
 import Typography, { TypographyProps } from "@material-ui/core/Typography";
-import ColorLensIcon                   from "@material-ui/icons/ColorLens";
-import ExpandLessIcon                  from "@material-ui/icons/ExpandLess";
-import ExpandMoreIcon                  from "@material-ui/icons/ExpandMore";
-import LanguageIcon                    from "@material-ui/icons/Language";
-import NewReleasesIcon                 from "@material-ui/icons/NewReleases";
-import SettingsIcon                    from "@material-ui/icons/Settings";
-import StarIcon                        from "@material-ui/icons/Star";
-import gql                             from "graphql-tag";
-import * as H                          from "history";
-import { Query }                       from "react-apollo";
-import styled                          from "styled-components";
-import deduplicationFromArray          from "src/util/deduplicationFromArray";
-import formatTagsOfURLQueryParam       from "src/util/formatTagsOfURLQueryParam";
-import getTagsByURLQueryParam          from "src/util/getTagsByURLQueryParam";
-import isSubset                        from "src/util/isSubset";
-import { PopularTags }                 from "src/graphQL/type";
-import { LocaleContext }               from "src/components/wrappers/MainLayout";
-import { NotificationListenerProps }   from "src/components/wrappers/NotificationListener";
-import GraphQLProgress                 from "src/components/atoms/GraphQLProgress";
-import Link                            from "src/components/atoms/Link";
+import ColorLensIcon from "@material-ui/icons/ColorLens";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import LanguageIcon from "@material-ui/icons/Language";
+import NewReleasesIcon from "@material-ui/icons/NewReleases";
+import SettingsIcon from "@material-ui/icons/Settings";
+import StarIcon from "@material-ui/icons/Star";
+import gql from "graphql-tag";
+import * as H from "history";
+import React, { Fragment } from "react";
+import { Query } from "react-apollo";
+import GraphQLProgress from "src/components/atoms/GraphQLProgress";
+import Link from "src/components/atoms/Link";
+import { LocaleContext } from "src/components/wrappers/MainLayout";
+import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
+import { PopularTags } from "src/graphQL/type";
+import deduplicationFromArray from "src/util/deduplicationFromArray";
+import formatTagsOfURLQueryParam from "src/util/formatTagsOfURLQueryParam";
+import getTagsByURLQueryParam from "src/util/getTagsByURLQueryParam";
+import isSubset from "src/util/isSubset";
+import styled from "styled-components";
 
 interface Props extends NotificationListenerProps {
     history: H.History;
@@ -54,8 +54,8 @@ const QueryListPopularTags = gql(`
 export default class extends React.Component<Props, State> {
 
     state: State = {
-        tags: getTagsByURLQueryParam(this.props.history),
-        tagListVisible: getTagsByURLQueryParam(this.props.history).length !== 0
+        tagListVisible: getTagsByURLQueryParam(this.props.history).length !== 0,
+        tags: getTagsByURLQueryParam(this.props.history)
     };
 
     toggleTagListVisible = () => this.setState({ tagListVisible: !this.state.tagListVisible });

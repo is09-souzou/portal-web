@@ -1,16 +1,16 @@
-import React                                 from "react";
 import {
     Button,
     Dialog,
     DialogActions,
     DialogTitle,
     TextField
-}                                            from "@material-ui/core";
+} from "@material-ui/core";
 import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
-import Slide, { SlideProps }                 from "@material-ui/core/Slide";
-import styled                                from "styled-components";
-import { LocaleContext }                     from "src/components/wrappers/MainLayout";
-import { ErrorNotification }                 from "src/components/wrappers/NotificationListener";
+import Slide, { SlideProps } from "@material-ui/core/Slide";
+import React from "react";
+import { LocaleContext } from "src/components/wrappers/MainLayout";
+import { ErrorNotification } from "src/components/wrappers/NotificationListener";
+import styled from "styled-components";
 
 interface Props {
     open: boolean;

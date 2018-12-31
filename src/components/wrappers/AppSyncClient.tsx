@@ -1,9 +1,9 @@
-import React, { ReactChild } from "react";
-import { ApolloProvider }   from "react-apollo";
-import config               from "src/config";
-import { AuthProps }        from "src/components/wrappers/Auth";
-import { Rehydrated }       from "aws-appsync-react";
 import { AWSAppSyncClient } from "aws-appsync";
+import { Rehydrated } from "aws-appsync-react";
+import React, { ReactChild } from "react";
+import { ApolloProvider } from "react-apollo";
+import { AuthProps } from "src/components/wrappers/Auth";
+import config from "src/config";
 
 interface Props extends AuthProps {
     children: ReactChild;

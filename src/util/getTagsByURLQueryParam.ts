@@ -1,4 +1,4 @@
-import * as H               from "history";
+import * as H from "history";
 import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 
 export default (history: H.History) => {

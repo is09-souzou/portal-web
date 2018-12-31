@@ -1,4 +1,4 @@
-import React  from "react";
+import React from "react";
 import styled from "styled-components";
 
 export default (
@@ -19,12 +19,8 @@ export default (
         style={{
             // tslint:disable-next-line:prefer-template
             backgroundImage: (src ? `url(${src}),` : "")
-                        + "linear-gradient(45deg, #fcfcfc 25%, transparent 25%, transparent 75%, #fcfcfc 75%, #fcfcfc),"
-                        + "linear-gradient(45deg, #fcfcfc 25%, transparent 25%, transparent 75%, #fcfcfc 75%, #fcfcfc)",
-            // tslint:disable-next-line:prefer-template
-            backgroundSize: (src ? "contain," : "")
-                          + "12.5px 12.5px,"
-                          + "12.5px 12.5px",
+                           + "linear-gradient(45deg, #fcfcfc 25%, transparent 25%, transparent 75%, #fcfcfc 75%, #fcfcfc),"
+                           + "linear-gradient(45deg, #fcfcfc 25%, transparent 25%, transparent 75%, #fcfcfc 75%, #fcfcfc)",
             // tslint:disable-next-line:prefer-template
             backgroundPosition: (src ? "center," : "")
                               + "0 0,"
@@ -33,10 +29,14 @@ export default (
             backgroundRepeat: (src ? "no-repeat," : "")
                             + "repeat,"
                             + "repeat",
-            width: width !== undefined ? `${width}px`
-                 :                       undefined,
+            // tslint:disable-next-line:prefer-template
+            backgroundSize: (src ? "contain," : "")
+                          + "12.5px 12.5px,"
+                          + "12.5px 12.5px",
             height: height !== undefined ? `${height}px`
                   :                        undefined,
+            width: width !== undefined ? `${width}px`
+                 :                       undefined,
             ...style
         }}
     >

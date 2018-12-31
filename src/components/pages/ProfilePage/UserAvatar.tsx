@@ -1,6 +1,6 @@
-import React                   from "react";
 import Avatar, { AvatarProps } from "@material-ui/core/Avatar";
-import styled                  from "styled-components";
+import React from "react";
+import styled from "styled-components";
 
 export default styled(Avatar as React.SFC<AvatarProps>)`
     && {

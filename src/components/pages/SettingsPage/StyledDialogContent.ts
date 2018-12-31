@@ -1,5 +1,5 @@
 import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
-import styled                                from "styled-components";
+import styled from "styled-components";
 
 export default styled(DialogContent as React.SFC<DialogContentProps>)`
     && {

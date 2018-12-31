@@ -1,7 +1,7 @@
-import React                                       from "react";
-import ReactDOM                                    from "react-dom";
 import CircularProgress, { CircularProgressProps } from "@material-ui/core/CircularProgress";
-import styled                                      from "styled-components";
+import React from "react";
+import ReactDOM from "react-dom";
+import styled from "styled-components";
 
 interface State {
     visible: boolean;
@@ -16,7 +16,6 @@ interface Props extends CircularProgressProps {
 export default class extends React.Component<Props, State> {
 
     state: State = {
-        visible: false,
         onScroll: () => {
             if (!this.props.disable) {
                 const rect = (ReactDOM.findDOMNode(this) as Element).getBoundingClientRect();
@@ -27,7 +26,8 @@ export default class extends React.Component<Props, State> {
                     this.setState({ visible: false });
                 }
             }
-        }
+        },
+        visible: false
     };
 
     componentDidMount() {

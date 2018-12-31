@@ -1,5 +1,5 @@
 import Typography, { TypographyProps } from "@material-ui/core/Typography";
-import styled                          from "styled-components";
+import styled from "styled-components";
 
 export default styled(Typography as React.SFC<TypographyProps>)`
     && {

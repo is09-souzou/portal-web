@@ -1,17 +1,17 @@
-import React                                     from "react";
 import {
-    Snackbar,
-    StandardProps,
+    withTheme,
     IconButton,
-    withTheme
-}                                                from "@material-ui/core";
-import { SvgIconProps }                          from "@material-ui/core/SvgIcon";
-import { SnackbarClassKey, SnackbarOrigin }      from "@material-ui/core/Snackbar";
+    Snackbar,
+    StandardProps
+} from "@material-ui/core";
+import { TransitionHandlerProps } from "@material-ui/core/transitions/transition";
+import { SnackbarClassKey, SnackbarOrigin } from "@material-ui/core/Snackbar";
 import SnackbarContent, { SnackbarContentProps } from "@material-ui/core/SnackbarContent";
-import { TransitionHandlerProps }                from "@material-ui/core/transitions/transition";
-import CloseIcon                                 from "@material-ui/icons/Close";
-import { TransitionProps }                       from "react-transition-group/Transition";
-import styled                                    from "styled-components";
+import { SvgIconProps } from "@material-ui/core/SvgIcon";
+import CloseIcon from "@material-ui/icons/Close";
+import React from "react";
+import { TransitionProps } from "react-transition-group/Transition";
+import styled from "styled-components";
 
 interface Props extends StandardProps<
     React.HTMLAttributes<HTMLDivElement> & Partial<TransitionHandlerProps>,
@@ -58,8 +58,8 @@ export default class extends React.Component<Props, State> {
         return (
             <Snackbar
                 anchorOrigin={{
-                    vertical: "bottom",
                     horizontal: "left",
+                    vertical: "bottom"
                 }}
                 onClose={onClose || this.onClose}
                 autoHideDuration={6000}

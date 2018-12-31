@@ -1,30 +1,30 @@
-import React                  from "react";
 import {
     Button,
     Chip,
-    FormGroup,
     FormControlLabel,
+    FormGroup,
     Switch,
     TextField
-}                             from "@material-ui/core";
-import gql                    from "graphql-tag";
-import { Mutation }           from "react-apollo";
-import createSignedUrl        from "src/api/createSignedUrl";
-import fileUploadToS3         from "src/api/fileUploadToS3";
+} from "@material-ui/core";
+import gql from "graphql-tag";
+import React from "react";
+import { Mutation } from "react-apollo";
+import createSignedUrl from "src/api/createSignedUrl";
+import fileUploadToS3 from "src/api/fileUploadToS3";
+import Page from "src/components/atoms/Page";
+import PortalMarkdown from "src/components/atoms/PortalMarkdown";
+import Header from "src/components/molecules/Header";
+import MarkdownSupports from "src/components/organisms/MarkdownSupports";
+import WorkDialog from "src/components/organisms/WorkDialog";
+import ActionArea from "src/components/pages/WorkPostPage/ActionArea";
+import ChipList from "src/components/pages/WorkPostPage/ChipList";
+import Head from "src/components/pages/WorkPostPage/Head";
+import Host from "src/components/pages/WorkPostPage/Host";
+import MainImageInput from "src/components/pages/WorkPostPage/MainImageInput";
+import WorkContentArea from "src/components/pages/WorkPostPage/WorkContentArea";
+import { LocaleContext } from "src/components/wrappers/MainLayout";
+import { Work } from "src/graphQL/type";
 import { PageComponentProps } from "src/App";
-import Page                   from "src/components/atoms/Page";
-import PortalMarkdown         from "src/components/atoms/PortalMarkdown";
-import Header                 from "src/components/molecules/Header";
-import MarkdownSupports       from "src/components/organisms/MarkdownSupports";
-import WorkDialog             from "src/components/organisms/WorkDialog";
-import ActionArea             from "src/components/pages/WorkPostPage/ActionArea";
-import ChipList               from "src/components/pages/WorkPostPage/ChipList";
-import Head                   from "src/components/pages/WorkPostPage/Head";
-import Host                   from "src/components/pages/WorkPostPage/Host";
-import MainImageInput         from "src/components/pages/WorkPostPage/MainImageInput";
-import WorkContentArea        from "src/components/pages/WorkPostPage/WorkContentArea";
-import { LocaleContext }      from "src/components/wrappers/MainLayout";
-import { Work }               from "src/graphQL/type";
 
 interface Chip {
     key  : string;
