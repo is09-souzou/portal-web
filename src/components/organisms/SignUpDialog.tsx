@@ -1,20 +1,18 @@
-import React                    from "react";
+import React                                 from "react";
 import {
-    Slide,
-    Dialog,
     DialogActions,
-    DialogContent,
     DialogTitle,
     TextField,
     Button,
-}                               from "@material-ui/core";
-import { DialogProps }          from "@material-ui/core/Dialog";
-import { SlideProps }           from "@material-ui/core/Slide";
-import styled                   from "styled-components";
-import uuidv4                   from "uuid/v4";
-import { SingUp }               from "src/components/wrappers/Auth";
-import { LocaleContext }        from "src/components/wrappers/MainLayout";
-import { NotificationListener } from "src/components/wrappers/NotificationListener";
+}                                            from "@material-ui/core";
+import Dialog, { DialogProps }               from "@material-ui/core/Dialog";
+import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
+import Slide, { SlideProps }                 from "@material-ui/core/Slide";
+import styled                                from "styled-components";
+import uuidv4                                from "uuid/v4";
+import { SingUp }                            from "src/components/wrappers/Auth";
+import { LocaleContext }                     from "src/components/wrappers/MainLayout";
+import { NotificationListener }              from "src/components/wrappers/NotificationListener";
 
 const Transition = (props: SlideProps) =>  <Slide direction="up" {...props} />;
 
@@ -105,7 +103,7 @@ export default (
     </LocaleContext.Consumer>
 );
 
-const StyledDialogContent = styled(DialogContent)`
+const StyledDialogContent = styled(DialogContent as React.SFC<DialogContentProps>)`
     && {
         display: flex;
         flex-direction: column;

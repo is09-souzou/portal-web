@@ -2,11 +2,11 @@ import React  from "react";
 import styled from "styled-components";
 import Image  from "src/components/atoms/Image";
 
-interface PropsBase {
+export interface ImageInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     defaultImageUrl?: string;
     hintText?: string;
     labelText?: string;
-    onLoad?: (event: React.SyntheticEvent<HTMLImageElement>) => void;
+    onImageLoad?: (event: React.SyntheticEvent<HTMLImageElement>) => void;
 }
 
 interface State {
@@ -14,8 +14,6 @@ interface State {
     imageUrl: string | undefined;
     invalid: boolean;
 }
-
-export type ImageInputProps = React.InputHTMLAttributes<HTMLInputElement> & PropsBase;
 
 export default class extends React.Component<ImageInputProps, State> {
     componentWillMount() {
@@ -39,8 +37,8 @@ export default class extends React.Component<ImageInputProps, State> {
             onChange = () => undefined,
             onFocus = () => undefined,
             onSubmit = () => undefined,
-            onLoad,
             width = "",
+            onImageLoad,
             ...props
         } = this.props;
 
@@ -65,7 +63,7 @@ export default class extends React.Component<ImageInputProps, State> {
                     <StyledImage
                         alt={hintText}
                         height={height}
-                        onLoad={onLoad}
+                        onLoad={onImageLoad}
                         src={this.state.imageUrl || defaultImageUrl}
                         width={width}
                     />
@@ -115,7 +113,7 @@ const Host = styled.div`
     display: flex;
 `;
 
-const StyledImage = styled(Image)`
+const StyledImage = styled(Image as React.SFC<React.ImgHTMLAttributes<HTMLImageElement>>)`
     border: 1px solid #DDD;
     height: calc(100% - 1.1rem);
 `;
@@ -135,7 +133,7 @@ interface LabelTextProps {
     disabled: boolean;
 }
 
-const LabelText = styled<LabelTextProps, any>("span")`
+const LabelText = styled("span")`
     :not(:empty) {
         display      : inline-block;
         margin-bottom: 8px;

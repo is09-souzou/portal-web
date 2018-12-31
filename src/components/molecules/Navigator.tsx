@@ -1,37 +1,37 @@
-import React, { Fragment }           from "react";
+import React, { Fragment }             from "react";
 import {
     Checkbox,
     Collapse,
     Divider,
     List,
-    ListItem,
     ListItemSecondaryAction,
     ListItemIcon,
     ListItemText,
     ListSubheader,
-    Typography,
     withTheme,
-}                                    from "@material-ui/core";
-import ColorLensIcon                 from "@material-ui/icons/ColorLens";
-import ExpandLessIcon                from "@material-ui/icons/ExpandLess";
-import ExpandMoreIcon                from "@material-ui/icons/ExpandMore";
-import LanguageIcon                  from "@material-ui/icons/Language";
-import NewReleasesIcon               from "@material-ui/icons/NewReleases";
-import SettingsIcon                  from "@material-ui/icons/Settings";
-import StarIcon                      from "@material-ui/icons/Star";
-import gql                           from "graphql-tag";
-import * as H                        from "history";
-import { Query }                     from "react-apollo";
-import styled                        from "styled-components";
-import deduplicationFromArray        from "src/util/deduplicationFromArray";
-import formatTagsOfURLQueryParam     from "src/util/formatTagsOfURLQueryParam";
-import getTagsByURLQueryParam        from "src/util/getTagsByURLQueryParam";
-import isSubset                      from "src/util/isSubset";
-import { PopularTags }               from "src/graphQL/type";
-import { LocaleContext }             from "src/components/wrappers/MainLayout";
-import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
-import GraphQLProgress               from "src/components/atoms/GraphQLProgress";
-import Link                          from "src/components/atoms/Link";
+}                                      from "@material-ui/core";
+import ListItem, { ListItemProps }     from "@material-ui/core/ListItem";
+import Typography, { TypographyProps } from "@material-ui/core/Typography";
+import ColorLensIcon                   from "@material-ui/icons/ColorLens";
+import ExpandLessIcon                  from "@material-ui/icons/ExpandLess";
+import ExpandMoreIcon                  from "@material-ui/icons/ExpandMore";
+import LanguageIcon                    from "@material-ui/icons/Language";
+import NewReleasesIcon                 from "@material-ui/icons/NewReleases";
+import SettingsIcon                    from "@material-ui/icons/Settings";
+import StarIcon                        from "@material-ui/icons/Star";
+import gql                             from "graphql-tag";
+import * as H                          from "history";
+import { Query }                       from "react-apollo";
+import styled                          from "styled-components";
+import deduplicationFromArray          from "src/util/deduplicationFromArray";
+import formatTagsOfURLQueryParam       from "src/util/formatTagsOfURLQueryParam";
+import getTagsByURLQueryParam          from "src/util/getTagsByURLQueryParam";
+import isSubset                        from "src/util/isSubset";
+import { PopularTags }                 from "src/graphQL/type";
+import { LocaleContext }               from "src/components/wrappers/MainLayout";
+import { NotificationListenerProps }   from "src/components/wrappers/NotificationListener";
+import GraphQLProgress                 from "src/components/atoms/GraphQLProgress";
+import Link                            from "src/components/atoms/Link";
 
 interface Props extends NotificationListenerProps {
     history: H.History;
@@ -275,14 +275,14 @@ const Host = styled.div`
     }
 `;
 
-const Title = styled(Typography)`
+const Title = styled(Typography as React.SFC<TypographyProps>)`
     padding-top: 2.5rem;
     padding-bottom: .5rem;
     text-align: center;
     letter-spacing: .4rem;
 `;
 
-const NestedListItem = styled(ListItem)`
+const NestedListItem = styled(ListItem as React.SFC<ListItemProps>)`
     && {
         padding-left: 2rem;
     }

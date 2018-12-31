@@ -1,17 +1,16 @@
-import React                 from "react";
+import React                                 from "react";
 import {
     Button,
     Dialog,
     DialogActions,
-    DialogContent,
     DialogTitle,
-    Slide,
     TextField
-} from "@material-ui/core";
-import { SlideProps }        from "@material-ui/core/Slide";
-import styled                from "styled-components";
-import { LocaleContext }     from "src/components/wrappers/MainLayout";
-import { ErrorNotification } from "src/components/wrappers/NotificationListener";
+}                                            from "@material-ui/core";
+import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
+import Slide, { SlideProps }                 from "@material-ui/core/Slide";
+import styled                                from "styled-components";
+import { LocaleContext }                     from "src/components/wrappers/MainLayout";
+import { ErrorNotification }                 from "src/components/wrappers/NotificationListener";
 
 interface Props {
     open: boolean;
@@ -95,7 +94,7 @@ export default (
 
 const Transition = (props:SlideProps) =>  <Slide direction="up" {...props} />;
 
-const StyledDialogContent = styled(DialogContent)`
+const StyledDialogContent = styled(DialogContent as React.SFC<DialogContentProps>)`
     && {
         display: flex;
         flex-direction: column;

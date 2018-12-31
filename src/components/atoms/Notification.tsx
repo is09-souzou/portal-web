@@ -1,17 +1,17 @@
-import React                                from "react";
+import React                                     from "react";
 import {
     Snackbar,
-    SnackbarContent,
     StandardProps,
     IconButton,
     withTheme
-}                                           from "@material-ui/core";
-import CloseIcon                            from "@material-ui/icons/Close";
-import { SnackbarClassKey, SnackbarOrigin } from "@material-ui/core/Snackbar";
-import { SnackbarContentProps }             from "@material-ui/core/SnackbarContent";
-import { TransitionHandlerProps }           from "@material-ui/core/transitions/transition";
-import { TransitionProps }                  from "react-transition-group/Transition";
-import styled                               from "styled-components";
+}                                                from "@material-ui/core";
+import { SvgIconProps }                          from "@material-ui/core/SvgIcon";
+import { SnackbarClassKey, SnackbarOrigin }      from "@material-ui/core/Snackbar";
+import SnackbarContent, { SnackbarContentProps } from "@material-ui/core/SnackbarContent";
+import { TransitionHandlerProps }                from "@material-ui/core/transitions/transition";
+import CloseIcon                                 from "@material-ui/icons/Close";
+import { TransitionProps }                       from "react-transition-group/Transition";
+import styled                                    from "styled-components";
 
 interface Props extends StandardProps<
     React.HTMLAttributes<HTMLDivElement> & Partial<TransitionHandlerProps>,
@@ -86,7 +86,7 @@ export default class extends React.Component<Props, { open: boolean }> {
     }
 }
 
-const StyledSnackbarContentBase = styled(SnackbarContent)`
+const StyledSnackbarContentBase = styled(SnackbarContent as React.SFC<SnackbarContentProps>)`
     && {
         ${(props: any) => props.type === "error" ? `background-color: ${props.theme.palette.error.dark}` : ""}
     }
@@ -96,7 +96,7 @@ const StyledSnackbarContent = withTheme()(
     (props: any) => <StyledSnackbarContentBase {...props}/>
 );
 
-const StyledCloseIcon = styled(CloseIcon)`
+const StyledCloseIcon = styled(CloseIcon as React.SFC<SvgIconProps>)`
     && {
         font-size: 1.5rem;
     }

@@ -1,3 +1,4 @@
+import React                   from "react";
 import Avatar, { AvatarProps } from "@material-ui/core/Avatar";
 import styled                  from "styled-components";
 

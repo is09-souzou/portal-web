@@ -1,12 +1,8 @@
 import React, { Fragment }              from "react";
-import {
-    AppBar,
-    Button,
-    IconButton,
-    Popover,
-    Toolbar,
-    Typography
-} from "@material-ui/core";
+import { Button, Popover, Typography }  from "@material-ui/core";
+import AppBar, { AppBarProps }          from "@material-ui/core/AppBar";
+import IconButton, { IconButtonProps }  from "@material-ui/core/IconButton";
+import Toolbar, { ToolbarProps }        from "@material-ui/core/Toolbar";
 import AccountCircleIcon                from "@material-ui/icons/AccountCircle";
 import MenuIcon                         from "@material-ui/icons/Menu";
 import gql                              from "graphql-tag";
@@ -227,7 +223,7 @@ export default class extends React.Component<Props, State> {
     }
 }
 
-const StyledAppBar = styled(AppBar)`
+const StyledAppBar = styled(AppBar as React.SFC<AppBarProps>)`
     && {
         width: calc(100% - 15rem - 6rem);
         margin: 1rem 3rem 0 2rem;
@@ -240,7 +236,7 @@ const StyledAppBar = styled(AppBar)`
     }
 `;
 
-const MenuIconButton = styled(IconButton)`
+const MenuIconButton = styled(IconButton as React.SFC<IconButtonProps>)`
     && {
         @media (min-width: 768px) {
             display: none;
@@ -248,7 +244,7 @@ const MenuIconButton = styled(IconButton)`
     }
 `;
 
-const StyledToolbar = styled(Toolbar)`
+const StyledToolbar = styled(Toolbar as React.SFC<ToolbarProps>)`
     && {
         display: flex;
         > :nth-child(2) {

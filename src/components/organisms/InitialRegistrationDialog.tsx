@@ -1,24 +1,22 @@
-import React                         from "react";
+import React                                 from "react";
 import {
     Button,
-    Dialog,
     DialogActions,
-    DialogContent,
     DialogTitle,
-    LinearProgress,
-    Slide,
-    TextField
-}                                    from "@material-ui/core";
-import { DialogProps }               from "@material-ui/core/Dialog";
-import { SlideProps }                from "@material-ui/core/Slide";
-import gql                           from "graphql-tag";
-import { Mutation }                  from "react-apollo";
-import styled                        from "styled-components";
-import createSignedUrl               from "src/api/createSignedUrl";
-import fileUploadToS3                from "src/api/fileUploadToS3";
-import ImageInput                    from "src/components/atoms/ImageInput";
-import { Token }                     from "src/components/wrappers/Auth";
-import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
+    LinearProgress
+}                                            from "@material-ui/core";
+import Dialog, { DialogProps }               from "@material-ui/core/Dialog";
+import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
+import Slide, { SlideProps }                 from "@material-ui/core/Slide";
+import TextField, { TextFieldProps }         from "@material-ui/core/TextField";
+import gql                                   from "graphql-tag";
+import { Mutation }                          from "react-apollo";
+import styled                                from "styled-components";
+import createSignedUrl                       from "src/api/createSignedUrl";
+import fileUploadToS3                        from "src/api/fileUploadToS3";
+import ImageInput                            from "src/components/atoms/ImageInput";
+import { Token }                             from "src/components/wrappers/Auth";
+import { NotificationListenerProps }         from "src/components/wrappers/NotificationListener";
 
 interface Props extends DialogProps, NotificationListenerProps {
     token: Token;
@@ -231,7 +229,7 @@ export default class extends React.Component<Props, State> {
 
 const Transition = (props: SlideProps) =>  <Slide direction="up" {...props} />;
 
-const StyledDialogContent = styled(DialogContent)`
+const StyledDialogContent = styled(DialogContent as React.SFC<DialogContentProps>)`
     && {
         display: flex;
         flex-direction: column;
@@ -254,7 +252,7 @@ const AvatarInput = styled(ImageInput)`
     overflow: hidden;
 `;
 
-const StyledTextField = styled(TextField)`
+const StyledTextField = styled(TextField as React.SFC<TextFieldProps>)`
     && {
         min-height: 4rem;
     }

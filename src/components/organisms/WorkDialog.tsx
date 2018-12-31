@@ -1,23 +1,23 @@
-import React, { Fragment }       from "react";
+import React, { Fragment }                   from "react";
 import {
     Avatar,
-    AppBar,
     Button,
     Dialog,
-    DialogContent,
     IconButton,
-    Toolbar,
-    Typography,
-}                                from "@material-ui/core";
-import CloseIcon                 from "@material-ui/icons/Close";
-import * as H                    from "history";
-import ReactMarkdown             from "react-markdown";
-import styled                    from "styled-components";
-import formatTagsOfURLQueryParam from "src/util/formatTagsOfURLQueryParam";
-import getTagsByURLQueryParam    from "src/util/getTagsByURLQueryParam";
-import { Work }                  from "src/graphQL/type";
-import Link                      from "src/components/atoms/Link";
-import FormatStringDate          from "src/components/atoms/FormatStringDate";
+    Toolbar
+}                                            from "@material-ui/core";
+import AppBar, { AppBarProps }               from "@material-ui/core/AppBar";
+import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
+import Typography, { TypographyProps }       from "@material-ui/core/Typography";
+import CloseIcon                             from "@material-ui/icons/Close";
+import * as H                                from "history";
+import ReactMarkdown                         from "react-markdown";
+import styled                                from "styled-components";
+import formatTagsOfURLQueryParam             from "src/util/formatTagsOfURLQueryParam";
+import getTagsByURLQueryParam                from "src/util/getTagsByURLQueryParam";
+import { Work }                              from "src/graphQL/type";
+import Link                                  from "src/components/atoms/Link";
+import FormatStringDate                      from "src/components/atoms/FormatStringDate";
 
 interface Props {
     open: boolean;
@@ -189,7 +189,7 @@ export default class extends React.Component<Props, State> {
     }
 }
 
-const WorkAppBar = styled(AppBar)`
+const WorkAppBar = styled(AppBar as React.SFC<AppBarProps>)`
     && {
         width: calc(100% - 6rem);
         margin: 1rem 3rem 0 2rem;
@@ -247,7 +247,7 @@ const WorkContent = styled.div`
     }
 `;
 
-const StyledDialogContent = styled(DialogContent)`
+const StyledDialogContent = styled(DialogContent as React.SFC<DialogContentProps>)`
     && {
         display: flex;
         flex-direction: column;
@@ -283,12 +283,12 @@ const MainImageWrapper = styled.div`
     overflow: hidden;
 `;
 
-const MainImage = styled<{ rotate: string}, any>("img")`
+const MainImage = styled("img")`
     display: flex;
     cursor: pointer;
     transition: all .3s ease-out;
     :hover {
-        transform: scale(1.2) rotate(${props => props.rotate}deg);
+        transform: scale(1.2) rotate(${(props: { rotate: string }) => props.rotate}deg);
     }
 `;
 
@@ -333,7 +333,7 @@ const UserInformation = styled.div`
     }
 `;
 
-const WorkTitle = styled(Typography)`
+const WorkTitle = styled(Typography as React.SFC<TypographyProps>)`
     && {
         margin-top: 1.5rem;
         font-size: 1.8rem;
