@@ -1,11 +1,11 @@
-import React from "react";
-import { createMuiTheme }   from "@material-ui/core/styles";
-import { MuiThemeProvider } from "@material-ui/core";
+import React                         from "react";
+import { createMuiTheme }            from "@material-ui/core/styles";
+import { MuiThemeProvider }          from "@material-ui/core";
 import {
     BrowserRouter as Router,
     RouteComponentProps,
     match
-} from "react-router-dom";
+}                                    from "react-router-dom";
 import ComposingRoute                from "src/components/atoms/ComposingRoute";
 import ComposingSwitch               from "src/components/atoms/ComposingSwitch";
 import { AuthProps }                 from "src/components/wrappers/Auth";

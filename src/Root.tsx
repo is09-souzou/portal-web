@@ -1,8 +1,8 @@
-import React from "react";
+import React                                                from "react";
 import {
     withRouter,
     RouteComponentProps,
-} from "react-router-dom";
+}                                                           from "react-router-dom";
 import Auth, { AuthProps }                                  from "src/components/wrappers/Auth";
 import AppSyncClient                                        from "src/components/wrappers/AppSyncClient";
 import MainLayout, { MainLayoutEventProps }                 from "src/components/wrappers/MainLayout";

@@ -15,5 +15,5 @@ export default styled(Page)`
     @media (max-width: 768px) {
         width: unset;
         margin: 0 4rem;
-}
+    }
 `;
