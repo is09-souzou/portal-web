@@ -15,22 +15,20 @@ interface Props extends CircularProgressProps {
 
 export default class extends React.Component<Props, State> {
 
-    componentWillMount() {
-        this.setState({
-            visible: false,
-            onScroll: () => {
-                if (!this.props.disable) {
-                    const rect = (ReactDOM.findDOMNode(this) as Element).getBoundingClientRect();
-                    if (rect.top < window.innerHeight && !this.state.visible) {
-                        this.props.onVisible();
-                        this.setState({ visible: true });
-                    } else if (this.state.visible) {
-                        this.setState({ visible: false });
-                    }
+    state: State = {
+        visible: false,
+        onScroll: () => {
+            if (!this.props.disable) {
+                const rect = (ReactDOM.findDOMNode(this) as Element).getBoundingClientRect();
+                if (rect.top < window.innerHeight && !this.state.visible) {
+                    this.props.onVisible();
+                    this.setState({ visible: true });
+                } else if (this.state.visible) {
+                    this.setState({ visible: false });
                 }
             }
-        });
-    }
+        }
+    };
 
     componentDidMount() {
         this.state.onScroll();

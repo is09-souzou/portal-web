@@ -16,13 +16,11 @@ interface State {
 }
 
 export default class extends React.Component<ImageInputProps, State> {
-    componentWillMount() {
-        this.setState({
-            focused : false,
-            imageUrl: undefined,
-            invalid : false
-        });
-    }
+    state: State = {
+        focused : false,
+        imageUrl: undefined,
+        invalid : false
+    };
 
     render() {
         const {

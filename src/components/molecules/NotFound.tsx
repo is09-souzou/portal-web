@@ -9,11 +9,9 @@ interface State {
 }
 
 export default class extends React.Component<React.HTMLAttributes<HTMLDivElement>, State> {
-    componentWillMount() {
-        this.setState({
-            emoji: emojiList[Math.floor(Math.random() * emojiList.length)]
-        });
-    }
+    state: State = {
+        emoji: emojiList[Math.floor(Math.random() * emojiList.length)]
+    };
 
     render() {
         return (

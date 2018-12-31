@@ -10,7 +10,6 @@ interface State {
     drawerOpend: boolean;
     fabIsVisible: boolean;
     fabClickSubscribers: { key: number; fn: (e: any) => void; }[];
-    fabIcon: React.ReactNode;
     locale: location;
 }
 
@@ -36,23 +35,15 @@ export const LocaleContext = React.createContext({
 
 export default class extends React.Component<Props, State> {
 
-    componentWillMount() {
-        this.setState({
+    constructor(props: Props) {
+        super(props);
+        const language = (window.navigator.languages && window.navigator.languages[0]) || window.navigator.language;
+        this.state = {
             drawerOpend: false,
             fabIsVisible: true,
-            fabClickSubscribers: []
-        });
-        this.setLocale();
-    }
-
-    setLocale = () => {
-        const language = (window.navigator.languages && window.navigator.languages[0]) ||
-            window.navigator.language;
-        language === "ja" || "ja-JP" ?
-            this.setState({ locale: "jp" })
-        :
-            this.setState({ locale: "us" })
-        ;
+            fabClickSubscribers: [],
+            locale: language === "ja" || language === "ja-JP" ? "jp" : "us"
+        };
     }
 
     toggleDrawer = () => this.setState({ drawerOpend: !this.state.drawerOpend });

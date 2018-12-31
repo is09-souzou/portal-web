@@ -5,72 +5,51 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    LinearProgress,
 }                                      from "@material-ui/core";
 import ImageInput, { ImageInputProps } from "src/components/atoms/ImageInput";
 
-interface Props extends ImageInputProps {
+export interface ImageInpuDialogProps extends ImageInputProps {
     open: boolean;
     onClose: () => void;
 }
 
-interface State {
-    imageInputDialogVisible: boolean;
-    imageUrl: string;
-    uploadingImage: boolean;
-}
-
-export default class extends React.Component<Props, State> {
-
-    componentWillMount() {
-        this.setState({
-            imageInputDialogVisible: false,
-            uploadingImage: false
-        });
-    }
-
-    render() {
-        const {
-            onClose,
-            onChange,
-            open = false,
-            ...props
-        } = this.props;
-
-        return (
-            <Dialog
-                open={open}
-                onClose={onClose}
-                aria-labelledby="alert-dialog-slide-title"
+export default (
+    {
+        onClose,
+        open = false,
+        ...props
+    }: ImageInpuDialogProps
+) => (
+    <Dialog
+        open={open}
+        onClose={onClose}
+        aria-labelledby="alert-dialog-slide-title"
+    >
+        <DialogTitle
+            id="editable-avatar-dialog-title"
+        >
+            Upload Image
+        </DialogTitle>
+        <DialogContent>
+            <ImageInput
+                name="newImage"
+                width="256"
+                height="256"
+                {...props}
+            />
+        </DialogContent>
+        <DialogActions>
+            <Button
+                onClick={onClose}
             >
-                <DialogTitle
-                    id="editable-avatar-dialog-title"
-                >
-                    Upload Image
-                </DialogTitle>
-                <DialogContent>
-                    <ImageInput
-                        name="newImage"
-                        width="256"
-                        height="256"
-                        {...props}
-                    />
-                </DialogContent>
-                {this.state.uploadingImage && <LinearProgress/>}
-                <DialogActions>
-                    <Button
-                        onClick={onClose}
-                    >
-                        cancel
-                    </Button>
-                    <Button
-                        component="button"
-                        color="primary"
-                    >
-                        Submit
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        );
-    }
-}
+                cancel
+            </Button>
+            <Button
+                component="button"
+                color="primary"
+            >
+                Submit
+            </Button>
+        </DialogActions>
+    </Dialog>
+);

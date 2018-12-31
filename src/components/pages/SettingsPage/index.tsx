@@ -24,12 +24,10 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
 
     credentialEmailInput?: any;
 
-    componentWillMount() {
-        this.setState({
-            whileEditingItem: [],
-            updatePasswordDialogVisible: false
-        });
-    }
+    state: State = {
+        whileEditingItem: [],
+        updatePasswordDialogVisible: false
+    };
 
     addWhileEditingItem = (item: Item) => (
         () => (

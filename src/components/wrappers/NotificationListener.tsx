@@ -27,15 +27,13 @@ interface State {
 
 export default class extends React.Component<Props, State> {
 
+    state: State = {
+        notifications: []
+    };
+
     onCloseByKey = (key: number) => () => this.setState({
         notifications: this.state.notifications.filter(y => key !== y.key)
     })
-
-    componentWillMount() {
-        this.setState({
-            notifications: []
-        });
-    }
 
     render() {
 

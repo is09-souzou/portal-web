@@ -53,13 +53,10 @@ const QueryListPopularTags = gql(`
 
 export default class extends React.Component<Props, State> {
 
-    state = {
+    state: State = {
         tags: getTagsByURLQueryParam(this.props.history),
         tagListVisible: getTagsByURLQueryParam(this.props.history).length !== 0
     };
-
-    componentDidMount() {
-    }
 
     toggleTagListVisible = () => this.setState({ tagListVisible: !this.state.tagListVisible });
 
@@ -69,8 +66,6 @@ export default class extends React.Component<Props, State> {
             this.setState({ tags: deduplicationFromArray(this.state.tags.concat(tags)) });
         return null;
     }
-
-    componentDidUpdate() {}
 
     render() {
         const {

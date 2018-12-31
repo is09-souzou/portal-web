@@ -34,13 +34,15 @@ interface Props extends StandardProps<
     type: "info" | "error";
 }
 
-export default class extends React.Component<Props, { open: boolean }> {
+interface State {
+    open: boolean;
+}
 
-    componentWillMount() {
-        this.setState({
-            open: true
-        });
-    }
+export default class extends React.Component<Props, State> {
+
+    state: State = {
+        open: true
+    };
 
     onClose = () => this.setState({ open: false });
 

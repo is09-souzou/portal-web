@@ -15,7 +15,7 @@ interface State {
 
 export default class extends React.Component<Props, State> {
 
-    state = {
+    state: State = {
         client: new AWSAppSyncClient({
             url: this.props.auth.token ? config.appSync.graphqlEndpoint : config.publicAppSync.graphqlEndpoint,
             region: config.appSync.region,

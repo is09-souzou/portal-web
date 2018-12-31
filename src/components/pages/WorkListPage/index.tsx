@@ -53,7 +53,7 @@ const QueryListWorks = gql(`
 
 export default class extends React.Component<PageComponentProps<{}>, State> {
 
-    state = {
+    state: State = {
         selectedWork: undefined,
         userMenuAnchorEl: undefined,
         userMenuOpend: false,

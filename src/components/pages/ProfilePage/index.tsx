@@ -72,9 +72,9 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     messageInput?    : any;
 
     state = {
-        chipsData: undefined,
+        chipsData                    : undefined,
         editableAvatarDialogIsVisible: false,
-        uploadingAvatarImage: false
+        uploadingAvatarImage         : false
     };
 
     deleteChip = (data: Chip) => () => {

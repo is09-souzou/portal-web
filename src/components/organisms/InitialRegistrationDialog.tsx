@@ -62,12 +62,10 @@ export default class extends React.Component<Props, State> {
 
     handleStep = (x: number) => () => this.setState({ activeStep: x });
 
-    componentWillMount() {
-        this.setState({
-            activeStep: 0,
-            isProcessing: false
-        });
-    }
+    state: State = {
+        activeStep: 0,
+        isProcessing: false
+    };
 
     render () {
         const {

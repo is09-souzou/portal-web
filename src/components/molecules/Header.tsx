@@ -42,12 +42,10 @@ const QueryGetUser = gql(`
 
 export default class extends React.Component<Props, State> {
 
-    componentWillMount() {
-        this.setState({
-            userMenuAnchorEl: undefined,
-            userMenuOpend: false,
-        });
-    }
+    state: State = {
+        userMenuAnchorEl: undefined,
+        userMenuOpend: false,
+    };
 
     handleMenu = (event: React.MouseEvent<HTMLElement>): void =>
         this.setState({ userMenuAnchorEl: event.currentTarget })

@@ -47,26 +47,28 @@ interface State {
 
 export default class extends React.Component<Props, State> {
 
-    componentWillMount() {
+    constructor(props: Props) {
+        super(props);
         const cognitoUserPool = new CognitoUserPool(config.cognito);
 
         const cognitoUser = cognitoUserPool.getCurrentUser();
 
-        this.setState({
+        this.state = {
             cognitoUser,
             cognitoUserPool,
             token: null
-        });
+        };
 
         if (cognitoUser != null) {
             cognitoUser.getSession((err: any, session: any) => {
                 if (err) {
                     throw err;
                 }
-                this.setState({
+                this.state = {
                     cognitoUser,
+                    cognitoUserPool,
                     token: session.accessToken
-                });
+                };
             });
         }
     }

@@ -74,14 +74,14 @@ const MutationUpdateWork = gql(`
 export default class extends React.Component<PageComponentProps<{id: string}>, State> {
 
     state: State = {
-        chipsData: undefined,
-        description: undefined,
-        mainImageUrl: undefined,
-        previewWork: undefined,
-        title: undefined,
-        workDialogVisible: false,
+        chipsData              : undefined,
+        description            : undefined,
+        mainImageUrl           : undefined,
+        previewWork            : undefined,
+        title                  : undefined,
+        workDialogVisible      : false,
         imageInputDialogVisible: false,
-        descriptionInput: undefined
+        descriptionInput       : undefined
     };
 
     deleteChip = (data: Chip) => () => {

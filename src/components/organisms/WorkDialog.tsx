@@ -34,11 +34,9 @@ interface State {
 
 export default class extends React.Component<Props, State> {
 
-    componentWillMount() {
-        this.setState({
-            workItemImageDialogVisible: false
-        });
-    }
+    state: State = {
+        workItemImageDialogVisible: false
+    };
 
     openWorkItemImageDialog = () => this.setState({ workItemImageDialogVisible: true });
 
