@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment }       from "react";
 import {
     Avatar,
     AppBar,
@@ -8,11 +8,11 @@ import {
     IconButton,
     Toolbar,
     Typography,
-} from "@material-ui/core";
-import CloseIcon          from "@material-ui/icons/Close";
-import * as H        from "history";
-import ReactMarkdown from "react-markdown";
-import styled        from "styled-components";
+}                                from "@material-ui/core";
+import CloseIcon                 from "@material-ui/icons/Close";
+import * as H                    from "history";
+import ReactMarkdown             from "react-markdown";
+import styled                    from "styled-components";
 import formatTagsOfURLQueryParam from "src/util/formatTagsOfURLQueryParam";
 import getTagsByURLQueryParam    from "src/util/getTagsByURLQueryParam";
 import { Work }                  from "src/graphQL/type";

@@ -1,29 +1,27 @@
-import React, { Fragment }from "react";
-import {
-    Button,
-    Chip,
-    TextField
-} from "@material-ui/core";
-import gql           from "graphql-tag";
-import {
-    Mutation,
-    Query
-}  from "react-apollo";
-import styled        from "styled-components";
-import createSignedUrl        from "src/api/createSignedUrl";
-import fileUploadToS3         from "src/api/fileUploadToS3";
-import { LocaleContext }      from "src/components/wrappers/MainLayout";
-import { PageComponentProps } from "src/App";
-import ErrorTemplate          from "src/components/templates/ErrorTemplate";
-import GraphQLProgress        from "src/components/atoms/GraphQLProgress";
-import Header                 from "src/components/molecules/Header";
-import ImageInputDialog       from "src/components/molecules/ImageInputDialog";
-import MarkdownSupports       from "src/components/organisms/MarkdownSupports";
-import NotFound               from "src/components/molecules/NotFound";
-import Page                   from "src/components/atoms/Page";
-import PortalMarkdown         from "src/components/atoms/PortalMarkdown";
-import WorkDialog             from "src/components/organisms/WorkDialog";
-import { Work }               from "src/graphQL/type";
+import React, { Fragment }         from "react";
+import { Button, Chip, TextField } from "@material-ui/core";
+import gql                         from "graphql-tag";
+import { Mutation, Query }         from "react-apollo";
+import createSignedUrl             from "src/api/createSignedUrl";
+import fileUploadToS3              from "src/api/fileUploadToS3";
+import { PageComponentProps }      from "src/App";
+import GraphQLProgress             from "src/components/atoms/GraphQLProgress";
+import Page                        from "src/components/atoms/Page";
+import PortalMarkdown              from "src/components/atoms/PortalMarkdown";
+import Header                      from "src/components/molecules/Header";
+import ImageInputDialog            from "src/components/molecules/ImageInputDialog";
+import NotFound                    from "src/components/molecules/NotFound";
+import MarkdownSupports            from "src/components/organisms/MarkdownSupports";
+import WorkDialog                  from "src/components/organisms/WorkDialog";
+import ActionArea                  from "src/components/pages/WorkUpdatePage/ActionArea";
+import ChipList                    from "src/components/pages/WorkUpdatePage/ChipList";
+import Head                        from "src/components/pages/WorkUpdatePage/Head";
+import Host                        from "src/components/pages/WorkUpdatePage/Host";
+import WorkContentArea             from "src/components/pages/WorkUpdatePage/WorkContentArea";
+import WorkImage                   from "src/components/pages/WorkUpdatePage/WorkImage";
+import ErrorTemplate               from "src/components/templates/ErrorTemplate";
+import { LocaleContext }           from "src/components/wrappers/MainLayout";
+import { Work }                    from "src/graphQL/type";
 
 interface Chip {
     key  : string;
@@ -379,71 +377,3 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         );
     }
 }
-
-const Host = styled.form`
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 0 2rem;
-    width: calc(100% - 4rem);
-    > * {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-    }
-`;
-
-const Head = styled.div`
-    display: flex;
-    flex-direction: column;
-    > :nth-child(1) {
-        margin-bottom: 1rem;
-    }
-    > :nth-child(2) {
-        display: flex;
-    }
-`;
-
-const ChipList = styled.div`
-    margin-left: 1rem;
-    display: flex;
-    align-items: flex-end;
-    padding-bottom: .5rem;
-    flex-grow: 1;
-    > :nth-child(n + 1) {
-        margin-left: .5rem;
-    }
-`;
-
-const WorkImage = styled.img`
-    width: 100%;
-    vertical-align: bottom;
-    object-fit: cover;
-`;
-
-const WorkContentArea = styled.div`
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    > * {
-        width: calc(50% - 1rem);
-    }
-    > :first-child {
-        display: flex;
-        flex-direction: column;
-    }
-    > :last-child {
-        overflow: auto;
-        margin-left: 2rem;
-    }
-`;
-
-const ActionArea = styled.div`
-    display: flex;
-    > :first-child {
-        flex-grow: 1
-    }
-    > * {
-        margin-left: .5rem !important;
-    }
-`;

@@ -1,4 +1,4 @@
-import React from "react";
+import React                    from "react";
 import {
     Slide,
     Dialog,
@@ -7,11 +7,11 @@ import {
     DialogTitle,
     TextField,
     Button,
-} from "@material-ui/core";
-import { DialogProps } from "@material-ui/core/Dialog";
-import { SlideProps }  from "@material-ui/core/Slide";
-import styled          from "styled-components";
-import uuidv4          from "uuid/v4";
+}                               from "@material-ui/core";
+import { DialogProps }          from "@material-ui/core/Dialog";
+import { SlideProps }           from "@material-ui/core/Slide";
+import styled                   from "styled-components";
+import uuidv4                   from "uuid/v4";
 import { SingUp }               from "src/components/wrappers/Auth";
 import { LocaleContext }        from "src/components/wrappers/MainLayout";
 import { NotificationListener } from "src/components/wrappers/NotificationListener";

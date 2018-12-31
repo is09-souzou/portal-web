@@ -1,4 +1,4 @@
-import React from "react";
+import React                  from "react";
 import {
     Button,
     Dialog,
@@ -6,7 +6,7 @@ import {
     DialogTitle,
     TextField,
     Typography,
-} from "@material-ui/core";
+}                             from "@material-ui/core";
 import { PageComponentProps } from "src/App";
 import toObjectFromURIQuery   from "src/api/toObjectFromURIQuery";
 import NotFound               from "src/components/molecules/NotFound";

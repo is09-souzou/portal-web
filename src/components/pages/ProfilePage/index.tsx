@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment }           from "react";
 import {
     Button,
     Chip,
@@ -9,9 +9,9 @@ import {
     Divider,
     TextField,
     LinearProgress,
-} from "@material-ui/core";
-import gql                 from "graphql-tag";
-import { Query, Mutation } from "react-apollo";
+}                                    from "@material-ui/core";
+import gql                           from "graphql-tag";
+import { Query, Mutation }           from "react-apollo";
 import toObjectFromURIQuery          from "src/api/toObjectFromURIQuery";
 import createSignedUrl               from "src/api/createSignedUrl";
 import fileUploadToS3                from "src/api/fileUploadToS3";

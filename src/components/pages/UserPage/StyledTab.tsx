@@ -1,4 +1,4 @@
-import Tab from "@material-ui/core/Tab";
+import Tab    from "@material-ui/core/Tab";
 import styled from "styled-components";
 
 export default styled(Tab)`

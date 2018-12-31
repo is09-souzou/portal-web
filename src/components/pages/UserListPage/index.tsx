@@ -1,11 +1,11 @@
-import React, { Fragment } from "react";
+import React, { Fragment }    from "react";
 import {
     List,
     ListItem,
     ListItemText
-} from "@material-ui/core";
-import gql       from "graphql-tag";
-import { Query } from "react-apollo";
+}                             from "@material-ui/core";
+import gql                    from "graphql-tag";
+import { Query }              from "react-apollo";
 import { PageComponentProps } from "src/App";
 import ErrorTemplate          from "src/components/templates/ErrorTemplate";
 import GraphQLProgress        from "src/components/atoms/GraphQLProgress";

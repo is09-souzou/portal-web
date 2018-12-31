@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment }           from "react";
 import {
     Checkbox,
     Collapse,
@@ -11,14 +11,14 @@ import {
     ListSubheader,
     Typography,
     withTheme,
-} from "@material-ui/core";
-import ColorLensIcon   from "@material-ui/icons/ColorLens";
-import ExpandLessIcon  from "@material-ui/icons/ExpandLess";
-import ExpandMoreIcon  from "@material-ui/icons/ExpandMore";
-import LanguageIcon    from "@material-ui/icons/Language";
-import NewReleasesIcon from "@material-ui/icons/NewReleases";
-import SettingsIcon    from "@material-ui/icons/Settings";
-import StarIcon        from "@material-ui/icons/Star";
+}                                    from "@material-ui/core";
+import ColorLensIcon                 from "@material-ui/icons/ColorLens";
+import ExpandLessIcon                from "@material-ui/icons/ExpandLess";
+import ExpandMoreIcon                from "@material-ui/icons/ExpandMore";
+import LanguageIcon                  from "@material-ui/icons/Language";
+import NewReleasesIcon               from "@material-ui/icons/NewReleases";
+import SettingsIcon                  from "@material-ui/icons/Settings";
+import StarIcon                      from "@material-ui/icons/Star";
 import gql                           from "graphql-tag";
 import * as H                        from "history";
 import { Query }                     from "react-apollo";

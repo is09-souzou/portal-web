@@ -1,5 +1,5 @@
 import Typography from "@material-ui/core/Typography";
-import styled from "styled-components";
+import styled     from "styled-components";
 
 export default styled(Typography)`
     && {

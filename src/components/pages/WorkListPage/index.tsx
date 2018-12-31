@@ -1,20 +1,20 @@
 import React, { Fragment } from "react";
 import AddIcon             from "@material-ui/icons/Add";
 import gql                 from "graphql-tag";
-import styled              from "styled-components";
 import { Query }           from "react-apollo";
 import getTagsByURLQueryParam   from "src/util/getTagsByURLQueryParam";
 import { Work, WorkConnection } from "src/graphQL/type";
 import { PageComponentProps }   from "src/App";
-import { LocaleContext }        from "src/components/wrappers/MainLayout";
-import ErrorTemplate            from "src/components/templates/ErrorTemplate";
 import Fab                      from "src/components/atoms/Fab";
-import Header                   from "src/components/molecules/Header";
-import NotFound                 from "src/components/molecules/NotFound";
 import Page                     from "src/components/atoms/Page";
-import WorkDialog               from "src/components/organisms/WorkDialog";
 import StreamSpinner            from "src/components/atoms/StreamSpinner";
 import WorkList                 from "src/components/atoms/WorkList";
+import Header                   from "src/components/molecules/Header";
+import NotFound                 from "src/components/molecules/NotFound";
+import WorkDialog               from "src/components/organisms/WorkDialog";
+import Host                     from "src/components/pages/WorkListPage/Host";
+import ErrorTemplate            from "src/components/templates/ErrorTemplate";
+import { LocaleContext }        from "src/components/wrappers/MainLayout";
 
 interface State {
     selectedWork?: Work;
@@ -204,8 +204,3 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
         );
     }
 }
-
-const Host = styled.div`
-    display: flex;
-    flex-direction: column;
-`;

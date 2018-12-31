@@ -1,4 +1,4 @@
-import React from "react";
+import React                 from "react";
 import {
     Button,
     Dialog,
@@ -8,8 +8,8 @@ import {
     Slide,
     TextField
 } from "@material-ui/core";
-import { SlideProps } from "@material-ui/core/Slide";
-import styled         from "styled-components";
+import { SlideProps }        from "@material-ui/core/Slide";
+import styled                from "styled-components";
 import { LocaleContext }     from "src/components/wrappers/MainLayout";
 import { ErrorNotification } from "src/components/wrappers/NotificationListener";
 

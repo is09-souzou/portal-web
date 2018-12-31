@@ -1,4 +1,4 @@
-import React from "react";
+import React                           from "react";
 import {
     Button,
     Dialog,
@@ -6,7 +6,7 @@ import {
     DialogContent,
     DialogTitle,
     LinearProgress,
-} from "@material-ui/core";
+}                                      from "@material-ui/core";
 import ImageInput, { ImageInputProps } from "src/components/atoms/ImageInput";
 
 interface Props extends ImageInputProps {

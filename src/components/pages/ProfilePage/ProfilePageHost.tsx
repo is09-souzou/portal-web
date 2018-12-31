@@ -1,5 +1,5 @@
-import React from "react";
-import * as H from "history";
+import React                         from "react";
+import * as H                        from "history";
 import Header                        from "src/components/molecules/Header";
 import PageHost                      from "src/components/pages/ProfilePage/PageHost";
 import { AuthProps }                 from "src/components/wrappers/Auth";

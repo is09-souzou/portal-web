@@ -1,4 +1,4 @@
-import React from "react";
+import React                         from "react";
 import {
     Button,
     Dialog,
@@ -8,7 +8,7 @@ import {
     LinearProgress,
     Slide,
     TextField
-} from "@material-ui/core";
+}                                    from "@material-ui/core";
 import { DialogProps }               from "@material-ui/core/Dialog";
 import { SlideProps }                from "@material-ui/core/Slide";
 import gql                           from "graphql-tag";

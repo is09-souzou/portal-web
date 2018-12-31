@@ -1,5 +1,5 @@
-import React from "react";
-import * as H from "history";
+import React                         from "react";
+import * as H                        from "history";
 import { AuthProps }                 from "src/components/wrappers/Auth";
 import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
 import PageHost                      from "src/components/pages/SettingsPage/PageHost";
