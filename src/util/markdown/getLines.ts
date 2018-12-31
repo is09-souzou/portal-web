@@ -1,4 +1,4 @@
-import getLineNumber from "./getLineNumber";
+import getLineNumber from "src/util/markdown/getLineNumber";
 
 export default (value: string, selectionNumbers: number[]) => {
     return [

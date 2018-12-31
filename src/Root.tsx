@@ -3,11 +3,11 @@ import {
     withRouter,
     RouteComponentProps,
 } from "react-router-dom";
-import Auth, { AuthProps }                                  from "./components/wrapper/Auth";
-import AppSyncClient                                        from "./components/wrapper/AppSyncClient";
-import MainLayout, { MainLayoutEventProps }                 from "./components/wrapper/MainLayout";
-import NotificationListener, { NotificationListenerProps }  from "./components/wrapper/NotificationListener";
-import { PageComponentProps }                               from "./App";
+import Auth, { AuthProps }                                  from "src/components/wrappers/Auth";
+import AppSyncClient                                        from "src/components/wrappers/AppSyncClient";
+import MainLayout, { MainLayoutEventProps }                 from "src/components/wrappers/MainLayout";
+import NotificationListener, { NotificationListenerProps }  from "src/components/wrappers/NotificationListener";
+import { PageComponentProps }                               from "src/App";
 
 // tslint:disable-next-line:max-line-length
 export default withRouter<RouteComponentProps<any> & { children: React.ReactElement<any> }>((props: RouteComponentProps<any> & { children: React.ReactElement<PageComponentProps<any>> }) => (

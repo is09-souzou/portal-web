@@ -6,11 +6,11 @@ import {
     RouteComponentProps,
     match
 } from "react-router-dom";
-import ComposingRoute                from "./components/ComposingRoute";
-import ComposingSwitch               from "./components/ComposingSwitch";
-import { AuthProps }                 from "./components/wrapper/Auth";
-import { MainLayoutEventProps }      from "./components/wrapper/MainLayout";
-import { NotificationListenerProps } from "./components/wrapper/NotificationListener";
+import ComposingRoute                from "src/components/atoms/ComposingRoute";
+import ComposingSwitch               from "src/components/atoms/ComposingSwitch";
+import { AuthProps }                 from "src/components/wrappers/Auth";
+import { MainLayoutEventProps }      from "src/components/wrappers/MainLayout";
+import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
 import {
     WorkPostPage,
     WorkUpdatePage,
@@ -19,8 +19,8 @@ import {
     SettingsPage,
     UserPage,
     UserListPage
-} from "./Routes";
-import Root from "./Root";
+} from "src/Routes";
+import Root from "src/Root";
 
 export default () => (
     <MuiThemeProvider theme={theme}>

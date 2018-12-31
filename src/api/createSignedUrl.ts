@@ -1,5 +1,5 @@
-import config     from "../config";
-import toURIQuery from "./toURIQuery";
+import config     from "src/config";
+import toURIQuery from "src/api/toURIQuery";
 
 interface Props {
     userId  : string;

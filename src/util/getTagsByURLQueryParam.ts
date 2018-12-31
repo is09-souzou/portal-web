@@ -1,5 +1,5 @@
 import * as H               from "history";
-import toObjectFromURIQuery from "../api/toObjectFromURIQuery";
+import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 
 export default (history: H.History) => {
     const queryParam = toObjectFromURIQuery(history.location.search);

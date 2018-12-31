@@ -4,34 +4,34 @@
 // const Loading = () => <div>Loading...</div>;
 
 // export const WorkPostPage = Loadable({
-//     loader: () => import("./components/page/WorkPostPage"),
+//     loader: () => import("src/components/pages/WorkPostPage"),
 //     loading: Loading,
 // });
 
 // export const WorkListPage = Loadable({
-//     loader: () => import("./components/page/WorkListPage"),
+//     loader: () => import("src/components/pages/WorkListPage"),
 //     loading: Loading,
 // });
 
 // export const ProfilePage = Loadable({
-//     loader: () => import("./components/page/ProfilePage"),
+//     loader: () => import("src/components/pages/ProfilePage"),
 //     loading: Loading,
 // });
 
 // export const UserListPage = Loadable({
-//     loader: () => import("./components/page/UserListPage"),
+//     loader: () => import("src/components/pages/UserListPage"),
 //     loading: Loading,
 // });
 
 // export const UserPage = Loadable({
-//     loader: () => import("./components/page/UserPage"),
+//     loader: () => import("src/components/pages/UserPage"),
 //     loading: Loading,
 // });
 
-export { default as WorkPostPage   } from "./components/page/WorkPostPage";
-export { default as WorkUpdatePage } from "./components/page/WorkUpdatePage";
-export { default as WorkListPage   } from "./components/page/WorkListPage";
-export { default as ProfilePage    } from "./components/page/ProfilePage";
-export { default as SettingsPage   } from "./components/page/SettingsPage";
-export { default as UserListPage   } from "./components/page/UserListPage";
-export { default as UserPage       } from "./components/page/UserPage";
+export { default as WorkPostPage   } from "src/components/pages/WorkPostPage";
+export { default as WorkUpdatePage } from "src/components/pages/WorkUpdatePage";
+export { default as WorkListPage   } from "src/components/pages/WorkListPage";
+export { default as ProfilePage    } from "src/components/pages/ProfilePage";
+export { default as SettingsPage   } from "src/components/pages/SettingsPage";
+export { default as UserListPage   } from "src/components/pages/UserListPage";
+export { default as UserPage       } from "src/components/pages/UserPage";

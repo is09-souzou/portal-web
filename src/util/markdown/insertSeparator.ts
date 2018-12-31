@@ -1,4 +1,4 @@
-import getLines from "./getLines";
+import getLines from "src/util/markdown/getLines";
 
 export default (value: string, selectionNumbers: [number, number]): [string, [number, number]] => {
     const lines = getLines(value, selectionNumbers);

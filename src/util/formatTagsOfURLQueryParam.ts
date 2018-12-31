@@ -1,4 +1,4 @@
-import deduplicationFromArray from "./deduplicationFromArray";
+import deduplicationFromArray from "src/util/deduplicationFromArray";
 
 export default (tags: string[], currentTags?: string[]) =>
     // tslint:disable-next-line:prefer-template
