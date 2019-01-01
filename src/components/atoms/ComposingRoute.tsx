@@ -1,5 +1,6 @@
 import React from "react";
-import { Route, RouteProps } from "react-router-dom";
+import { StaticContext } from "react-router";
+import { Route, RouteComponentProps, RouteProps } from "react-router-dom";
 
 export default (
     {
@@ -8,12 +9,15 @@ export default (
         ...props
     }: RouteProps
 ) => {
-    const Component = component as React.ComponentClass<any>;
     return (
         <Route
             path={path}
-            // tslint:disable-next-line:jsx-no-lambda
-            render={x => <Component {...x} {...props} />}
+            render={onRender(component as React.ComponentClass<any>, props)}
         />
     );
+};
+
+const onRender = (component: React.ComponentClass<any>, props: RouteProps) => (x: RouteComponentProps<any, StaticContext, any>) => {
+    const Component = component;
+    return <Component {...x} {...props} />;
 };

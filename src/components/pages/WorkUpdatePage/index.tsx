@@ -1,7 +1,7 @@
 import { Button, Chip, TextField } from "@material-ui/core";
 import gql from "graphql-tag";
 import React, { Fragment } from "react";
-import { Mutation, Query } from "react-apollo";
+import { Mutation, MutationFn, OperationVariables, Query } from "react-apollo";
 import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
@@ -84,6 +84,10 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         descriptionInput       : undefined
     };
 
+    setTitle = (e: any) => this.setState({ title: e.target.value });
+    setDescription = (e: any) => this.setState({ description: e.target.value });
+    setDescriptionInput = (descriptionInput: HTMLTextAreaElement) => this.setState({ descriptionInput });
+
     deleteChip = (data: Chip) => () => {
         if (this.state.chipsData === undefined)
             return;
@@ -140,11 +144,89 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         });
     }
 
+    hostSubmitHandler = (
+        currentWork: Work,
+        updateWork: MutationFn<any, OperationVariables>
+    ) => async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!this.props.auth.token) {
+            this.props.notificationListener.errorNotification(new Error("Need Sign in"));
+            return;
+        }
+
+        await new Promise<Work>(resolve => updateWork({
+            variables: {
+                work: {
+                    id: this.props.computedMatch!.params.id,
+                    title: this.state.title ? this.state.title : currentWork.title,
+                    description: this.state.description ? this.state.description : currentWork.description,
+                    userId: this.props.auth.token!.payload.sub,
+                    imageUrl: this.state.mainImageUrl ? this.state.mainImageUrl : currentWork.imageUrl,
+                    tags: (
+                        this.state.chipsData ? ((this.state.chipsData || [] as Chip[]).map(x => x.label))
+                      :                        currentWork.tags
+                    )
+                }
+            },
+            optimisticResponse: {
+                __typename: "Mutation",
+                updateWork: {
+                    id: this.props.computedMatch!.params.id,
+                    title: this.state.title ? this.state.title : currentWork.title,
+                    description: this.state.description ? this.state.description : currentWork.description,
+                    userId: this.props.auth.token!.payload.sub,
+                    imageUrl:  this.state.mainImageUrl ? this.state.mainImageUrl : currentWork.imageUrl,
+                    tags: (
+                        this.state.chipsData ? ((this.state.chipsData || [] as Chip[]).map(x => x.label))
+                      :                        currentWork.tags
+                    ),
+                    __typename: "Work"
+                }
+            },
+            update: (_, { data: { updateWork } }) => updateWork.id !== "new" && resolve(updateWork as Work)
+        }));
+        this.props.notificationListener.notification("info", "Updated Work!");
+        this.props.history.push("/");
+    }
+
     onClosePreview = () => this.setState({ previewWork: undefined, workDialogVisible: false });
 
     onOpenImageInputDialog = () => this.setState({ imageInputDialogVisible: true });
 
     onCloseImageInputDialog = () => this.setState({ imageInputDialogVisible: false });
+
+    markdownSupportsChangeValueHandler = (description: string, lines: [number, number]) => {
+        this.setState(
+            { description },
+            () => {
+                if (this.state.descriptionInput) {
+                    this.state.descriptionInput.setSelectionRange(lines[0], lines[1]);
+                }
+            }
+        );
+    }
+
+    imageInputDialogChangeHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) {
+            this.props.notificationListener.errorNotification(new Error("Set Image"));
+            return;
+        }
+
+        const image = e.target.files![0];
+        const result = await createSignedUrl({
+            jwt: this.props.auth.token!.jwtToken,
+            userId: this.props.auth.token!.payload.sub,
+            type: "work",
+            mimetype: image.type
+        });
+        await fileUploadToS3({
+            url: result.signedUrl,
+            file: image
+        });
+        this.setState({
+            mainImageUrl: result.uploadedUrl
+        });
+    }
 
     render() {
         const {
@@ -192,43 +274,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                     <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
                                         {(updateWork, { error: updateWorkError }) => (
                                             <Host
-                                                // tslint:disable-next-line jsx-no-lambda
-                                                onSubmit={async e => {
-                                                    e.preventDefault();
-                                                    await new Promise<Work>(resolve => updateWork({
-                                                        variables: {
-                                                            work: {
-                                                                id: this.props.computedMatch!.params.id,
-                                                                title: this.state.title ? this.state.title : currentWork.title,
-                                                                description: this.state.description ? this.state.description : currentWork.description,
-                                                                userId: auth.token!.payload.sub,
-                                                                imageUrl: this.state.mainImageUrl ? this.state.mainImageUrl : currentWork.imageUrl,
-                                                                tags: (
-                                                                    this.state.chipsData ? ((this.state.chipsData || [] as Chip[]).map(x => x.label))
-                                                                  :                        currentWork.tags
-                                                                )
-                                                            }
-                                                        },
-                                                        optimisticResponse: {
-                                                            __typename: "Mutation",
-                                                            updateWork: {
-                                                                id: this.props.computedMatch!.params.id,
-                                                                title: this.state.title ? this.state.title : currentWork.title,
-                                                                description: this.state.description ? this.state.description : currentWork.description,
-                                                                userId: auth.token!.payload.sub,
-                                                                imageUrl:  this.state.mainImageUrl ? this.state.mainImageUrl : currentWork.imageUrl,
-                                                                tags: (
-                                                                    this.state.chipsData ? ((this.state.chipsData || [] as Chip[]).map(x => x.label))
-                                                                  :                        currentWork.tags
-                                                                ),
-                                                                __typename: "Work"
-                                                            }
-                                                        },
-                                                        update: (_, { data: { updateWork } }) => updateWork.id !== "new" && resolve(updateWork as Work)
-                                                    }));
-                                                    notificationListener.notification("info", "Updated Work!");
-                                                    history.push("/");
-                                                }}
+                                                onSubmit={this.hostSubmitHandler(currentWork, updateWork)}
                                             >
                                                 <div>
                                                     <Head>
@@ -238,10 +284,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                             placeholder={"Input Title!"}
                                                             margin="normal"
                                                             fullWidth
-                                                            // tslint:disable-next-line:jsx-no-lambda
-                                                            onChange={(e: any) => this.setState({
-                                                                title: e.target.value
-                                                            })}
+                                                            onChange={this.setTitle}
                                                             defaultValue={currentWork.title}
                                                             required
                                                         />
@@ -286,26 +329,14 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                                     placeholder={"Input Description!"}
                                                                     rowsMax={30}
                                                                     fullWidth
-                                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                                    onChange={(e: any) => this.setState({ description: e.target.value })}
+                                                                    onChange={this.setDescription}
                                                                     defaultValue={currentWork.description}
                                                                     value={this.state.description}
-                                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                                    inputRef={descriptionInput => this.setState({ descriptionInput })}
+                                                                    inputRef={this.setDescriptionInput}
                                                                 />
                                                                 <MarkdownSupports
                                                                     element={this.state.descriptionInput}
-                                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                                    onChangeValue={(description, lines) => {
-                                                                        this.setState(
-                                                                            { description },
-                                                                            () => {
-                                                                                if (this.state.descriptionInput) {
-                                                                                    this.state.descriptionInput.setSelectionRange(lines[0], lines[1]);
-                                                                                }
-                                                                            }
-                                                                        );
-                                                                    }}
+                                                                    onChangeValue={this.markdownSupportsChangeValueHandler}
                                                                 />
                                                             </div>
                                                         </div>
@@ -353,23 +384,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                         <ImageInputDialog
                             open={this.state.imageInputDialogVisible}
                             onClose={this.onCloseImageInputDialog}
-                            // tslint:disable-next-line:jsx-no-lambda
-                            onChange={async e => {
-                                const image = e.target.files![0];
-                                const result = await createSignedUrl({
-                                    jwt: auth.token!.jwtToken,
-                                    userId: auth.token!.payload.sub,
-                                    type: "work",
-                                    mimetype: image.type
-                                });
-                                await fileUploadToS3({
-                                    url: result.signedUrl,
-                                    file: image
-                                });
-                                this.setState({
-                                    mainImageUrl: result.uploadedUrl
-                                });
-                            }}
+                            onChange={this.imageInputDialogChangeHandler}
                         />
                     </Page>
                 )}

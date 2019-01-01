@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import gql from "graphql-tag";
 import React from "react";
-import { Mutation } from "react-apollo";
+import { Mutation, MutationFn, OperationVariables } from "react-apollo";
 import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
 import Page from "src/components/atoms/Page";
@@ -93,6 +93,12 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         descriptionInput : undefined
     };
 
+    setTitle = (e: any) => this.setState({ title: e.target.value });
+    setDescription = (e: any) => this.setState({ description: e.target.value });
+    setDescriptionInput = (descriptionInput: HTMLTextAreaElement) => this.setState({ descriptionInput });
+
+    togglePublic = () => this.setState({ isPublic: !this.state.isPublic });
+
     deleteChip = (data: Chip) => () => this.setState({
         chipsData: this.state.chipsData.filter((x: Chip): boolean => data.key !== x.key)
     })
@@ -144,6 +150,109 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
 
     onClosePreview = () => this.setState({ previewWork: undefined, workDialogVisible: false });
 
+    submitMainImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!this.props.auth.token) {
+            this.props.notificationListener.errorNotification(new Error("Need Sign in"));
+            return;
+        }
+
+        if (!e.target.files) {
+            this.props.notificationListener.errorNotification(new Error("Set Image"));
+            return;
+        }
+
+        const image = e.target.files![0];
+        const result = await createSignedUrl({
+            jwt: this.props.auth.token!.jwtToken,
+            userId: this.props.auth.token!.payload.sub,
+            type: "work",
+            mimetype: image.type
+        });
+        await fileUploadToS3({
+            url: result.signedUrl,
+            file: image
+        });
+        this.setState({
+            mainImageUrl: result.uploadedUrl
+        });
+    }
+
+    hostSubmitHandler = (
+        createWork: MutationFn<any, OperationVariables>,
+        updateWork: MutationFn<any, OperationVariables>
+    ) => async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!this.props.auth.token) {
+            this.props.notificationListener.errorNotification(new Error("Need Sign in"));
+            return;
+        }
+
+        const work = await new Promise<Work>(resolve => createWork({
+            variables: {
+                work: {
+                    title: this.state.title,
+                    description: this.state.description,
+                    userId: this.props.auth.token!.payload.sub,
+                    imageUrl: this.state.mainImageUrl,
+                    tags: this.state.chipsData.map(x => x.label),
+                    isPublic: this.state.isPublic
+                }
+            },
+            optimisticResponse: {
+                __typename: "Mutation",
+                createWork: {
+                    title: this.state.title,
+                    description: this.state.description,
+                    id: "new",
+                    userId: this.props.auth.token!.payload.sub,
+                    imageUrl: this.state.mainImageUrl,
+                    tags: this.state.chipsData.map(x => x.label),
+                    isPublic: this.state.isPublic,
+                    createdAt: +new Date(),
+                    __typename: "Work"
+                }
+            },
+            update: (_, { data: { createWork } }) => createWork.id !== "new" && resolve(createWork as Work)
+        }));
+
+        await updateWork({
+            variables: {
+                work: {
+                    id: work.id,
+                    userId: this.props.auth.token!.payload.sub,
+                }
+            },
+            optimisticResponse: {
+                __typename: "Mutation",
+                updateWork: {
+                    title: this.state.title,
+                    description: this.state.description,
+                    id: work.id,
+                    imageUrl: this.state.mainImageUrl,
+                    userId: this.props.auth.token!.payload.sub,
+                    tags: this.state.chipsData.map(x => x.label),
+                    isPublic: this.state.isPublic,
+                    createdAt: +new Date(),
+                    __typename: "Work"
+                }
+            }
+        });
+
+        this.props.notificationListener.notification("info", "Created Work!");
+        this.props.history.push("/");
+    }
+
+    markdownSupportsChangeValueHandler = (description: string, lines: [number, number]) => {
+        this.setState(
+            { description },
+            () => {
+                if (this.state.descriptionInput) {
+                    this.state.descriptionInput.setSelectionRange(lines[0], lines[1]);
+                }
+            }
+        );
+    }
+
     render() {
         const {
             auth,
@@ -165,66 +274,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                 <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
                                     {(updateWork, { error: updateWorkError }) => (
                                         <Host
-                                            // tslint:disable-next-line jsx-no-lambda
-                                            onSubmit={async e => {
-                                                e.preventDefault();
-                                                if (!auth.token)
-                                                    notificationListener.errorNotification(new Error("Need Sign in"));
-
-                                                const work = await new Promise<Work>(resolve => createWork({
-                                                    variables: {
-                                                        work: {
-                                                            title: this.state.title,
-                                                            description: this.state.description,
-                                                            userId: auth.token!.payload.sub,
-                                                            imageUrl: this.state.mainImageUrl,
-                                                            tags: this.state.chipsData.map(x => x.label),
-                                                            isPublic: this.state.isPublic
-                                                        }
-                                                    },
-                                                    optimisticResponse: {
-                                                        __typename: "Mutation",
-                                                        createWork: {
-                                                            title: this.state.title,
-                                                            description: this.state.description,
-                                                            id: "new",
-                                                            userId: auth.token!.payload.sub,
-                                                            imageUrl: this.state.mainImageUrl,
-                                                            tags: this.state.chipsData.map(x => x.label),
-                                                            isPublic: this.state.isPublic,
-                                                            createdAt: +new Date(),
-                                                            __typename: "Work"
-                                                        }
-                                                    },
-                                                    update: (_, { data: { createWork } }) => createWork.id !== "new" && resolve(createWork as Work)
-                                                }));
-
-                                                await updateWork({
-                                                    variables: {
-                                                        work: {
-                                                            id: work.id,
-                                                            userId: auth.token!.payload.sub,
-                                                        }
-                                                    },
-                                                    optimisticResponse: {
-                                                        __typename: "Mutation",
-                                                        updateWork: {
-                                                            title: this.state.title,
-                                                            description: this.state.description,
-                                                            id: work.id,
-                                                            imageUrl: this.state.mainImageUrl,
-                                                            userId: auth.token!.payload.sub,
-                                                            tags: this.state.chipsData.map(x => x.label),
-                                                            isPublic: this.state.isPublic,
-                                                            createdAt: +new Date(),
-                                                            __typename: "Work"
-                                                        }
-                                                    }
-                                                });
-
-                                                notificationListener.notification("info", "Created Work!");
-                                                history.push("/");
-                                            }}
+                                            onSubmit={this.hostSubmitHandler(createWork, updateWork)}
                                         >
                                             <div>
                                                 <Head>
@@ -234,10 +284,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                         placeholder={locale.works.inputTitle}
                                                         margin="normal"
                                                         fullWidth
-                                                        // tslint:disable-next-line:jsx-no-lambda
-                                                        onChange={(e: any) => this.setState({
-                                                            title: e.target.value
-                                                        })}
+                                                        onChange={this.setTitle}
                                                         value={this.state.title}
                                                         required
                                                     />
@@ -248,7 +295,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                             onKeyDown={this.tagInputKeyDown}
                                                             margin="normal"
                                                             inputProps={{
-                                                                maxLength: 10,
+                                                                maxLength: 10
                                                             }}
                                                         />
                                                         <ChipList>
@@ -267,25 +314,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                     <div>
                                                         <MainImageInput
                                                             labelText={locale.works.image}
-                                                            // tslint:disable-next-line:jsx-no-lambda
-                                                            onChange={async e => {
-                                                                if (!auth.token)
-                                                                    notificationListener.errorNotification(new Error("Need Sign in"));
-                                                                const image = e.target.files![0];
-                                                                const result = await createSignedUrl({
-                                                                    jwt: auth.token!.jwtToken,
-                                                                    userId: auth.token!.payload.sub,
-                                                                    type: "work",
-                                                                    mimetype: image.type
-                                                                });
-                                                                await fileUploadToS3({
-                                                                    url: result.signedUrl,
-                                                                    file: image
-                                                                });
-                                                                this.setState({
-                                                                    mainImageUrl: result.uploadedUrl
-                                                                });
-                                                            }}
+                                                            onChange={this.submitMainImage}
                                                         />
                                                         <div>
                                                             <TextField
@@ -296,25 +325,13 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                                 placeholder={locale.works.inputDiscription}
                                                                 rowsMax={30}
                                                                 fullWidth
-                                                                // tslint:disable-next-line:jsx-no-lambda
-                                                                onChange={(e: any) => this.setState({ description: e.target.value })}
+                                                                onChange={this.setDescription}
                                                                 value={this.state.description}
-                                                                // tslint:disable-next-line:jsx-no-lambda
-                                                                inputRef={descriptionInput => this.setState({ descriptionInput })}
+                                                                inputRef={this.setDescriptionInput}
                                                             />
                                                             <MarkdownSupports
                                                                 element={this.state.descriptionInput}
-                                                                // tslint:disable-next-line:jsx-no-lambda
-                                                                onChangeValue={(description, lines) => {
-                                                                    this.setState(
-                                                                        { description },
-                                                                        () => {
-                                                                            if (this.state.descriptionInput) {
-                                                                                this.state.descriptionInput.setSelectionRange(lines[0], lines[1]);
-                                                                            }
-                                                                        }
-                                                                    );
-                                                                }}
+                                                                onChangeValue={this.markdownSupportsChangeValueHandler}
                                                             />
                                                         </div>
                                                     </div>
@@ -329,12 +346,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                         <FormControlLabel
                                                             control={
                                                                 <Switch
-                                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                                    onChange={() =>
-                                                                        this.setState({
-                                                                            isPublic: !this.state.isPublic
-                                                                        })
-                                                                    }
+                                                                    onChange={this.togglePublic}
                                                                     color="primary"
                                                                     checked={this.state.isPublic}
                                                                 >
@@ -362,8 +374,9 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                     </Button>
                                                 </ActionArea>
                                             </div>
-                                            {(createWorkError || updateWorkError) &&
-                                            <notificationListener.ErrorComponent message={createWorkError || updateWorkError}/>
+                                            {
+                                                (createWorkError || updateWorkError)
+                                             && <notificationListener.ErrorComponent message={createWorkError || updateWorkError}/>
                                             }
                                         </Host>
                                     )}

@@ -29,12 +29,43 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         updatePasswordDialogVisible: false
     };
 
+    emailUpdateSubmitHandler = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const email = (e.target as any).elements["profile-credential-email"].value;
+
+        try {
+            await this.props.auth.updateEmail(email);
+            this.props.notificationListener.notification("info", "Send Mail");
+        } catch (e) {
+            this.props.notificationListener.errorNotification(e);
+        }
+    }
+
+    passwordUpdateSubmitHandler = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const oldPassword = (e.target as any).elements["profile-old-password"].value;
+        const newPassword = (e.target as any).elements["profile-new-password"].value;
+        try {
+            await this.props.auth.updatePassword(oldPassword, newPassword);
+            this.closeUpdatePasswordDialog();
+            this.props.notificationListener.notification("info", "Success update password");
+        } catch (e) {
+            console.error(e);
+            this.props.notificationListener.errorNotification(e);
+        }
+    }
+
+    setCredentialEmailInput = (x: any) => this.credentialEmailInput = x;
+
     addWhileEditingItem = (item: Item) => (
         () => (
             !this.state.whileEditingItem.includes(item)
          && this.setState({ whileEditingItem: this.state.whileEditingItem.concat(item) })
         )
     )
+
     openUpdatePasswordDialog = () => this.setState({ updatePasswordDialogVisible: true });
 
     closeUpdatePasswordDialog = () => this.setState({ updatePasswordDialogVisible: false });
@@ -70,20 +101,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                 notificationListener={notificationListener}
             >
                 <form
-                    // tslint:disable-next-line:jsx-no-lambda
-                    onSubmit={async e => {
-                        e.preventDefault();
-
-                        const email = (e.target as any).elements["profile-credential-email"].value;
-
-                        try {
-                            await this.props.auth.updateEmail(email);
-                            notificationListener.notification("info", "Send Mail");
-                        } catch (e) {
-                            notificationListener.errorNotification(e);
-                            return;
-                        }
-                    }}
+                    onSubmit={this.emailUpdateSubmitHandler}
                 >
                     <Typography gutterBottom variant="title">
                         Credential
@@ -108,8 +126,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                             type="email"
                             onChange={this.addWhileEditingItem("credentialEmail")}
                             fullWidth
-                            // tslint:disable-next-line:jsx-no-lambda
-                            inputRef={x => this.credentialEmailInput = x}
+                            inputRef={this.setCredentialEmailInput}
                         />
                     </div>
                     <Button
@@ -125,21 +142,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                     open={this.state.updatePasswordDialogVisible}
                 >
                     <form
-                        // tslint:disable-next-line:jsx-no-lambda
-                        onSubmit={async e => {
-                            e.preventDefault();
-
-                            const oldPassword = (e.target as any).elements["profile-old-password"].value;
-                            const newPassword = (e.target as any).elements["profile-new-password"].value;
-                            try {
-                                await this.props.auth.updatePassword(oldPassword, newPassword);
-                                this.closeUpdatePasswordDialog();
-                                notificationListener.notification("info", "Success update password");
-                            } catch (e) {
-                                console.error(e);
-                                notificationListener.errorNotification(e);
-                            }
-                        }}
+                        onSubmit={this.passwordUpdateSubmitHandler}
                     >
                         <DialogTitle
                             id="profile-update-password"

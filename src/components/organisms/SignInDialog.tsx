@@ -20,9 +20,22 @@ interface Props {
     onCreateAcountButtonClick: () => void;
 }
 
+const submitHandler = (onSignIn: Props["onSignIn"], onError: Props["onError"]) => async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const email = (e.target as any).elements["sign-in-email"].value;
+    const password = (e.target as any).elements["sign-in-password"].value;
+
+    try {
+        await onSignIn(email, password);
+    } catch (e) {
+        onError(e);
+    }
+};
+
 export default (
     {
-        open    = false,
+        open = false,
         onClose,
         onError,
         onSignIn,
@@ -41,19 +54,7 @@ export default (
             {...props}
         >
             <form
-                // tslint:disable-next-line:jsx-no-lambda
-                onSubmit={async e => {
-                    e.preventDefault();
-
-                    const email = (e.target as any).elements["sign-in-email"].value;
-                    const password = (e.target as any).elements["sign-in-password"].value;
-
-                    try {
-                        await onSignIn(email, password);
-                    } catch (e) {
-                        onError(e);
-                    }
-                }}
+                onSubmit={submitHandler(onSignIn, onError)}
             >
                 <DialogTitle id="alert-dialog-slide-title">
                     {locale.signInDialog.signIn}

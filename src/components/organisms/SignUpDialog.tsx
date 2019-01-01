@@ -16,6 +16,30 @@ import uuidv4 from "uuid/v4";
 
 const Transition = (props: SlideProps) =>  <Slide direction="up" {...props} />;
 
+const submitHandler = (
+    onSignUp: SingUp,
+    onClose: DialogProps["onClose"],
+    notificationListener: NotificationListener
+) => async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const userName = uuidv4();
+
+    const displayName = (e.target as any).elements["sign-up-display-name"].value;
+    const email = (e.target as any).elements["sign-up-email"].value;
+    const password = (e.target as any).elements["sign-up-password"].value;
+
+    try {
+        await onSignUp(
+            userName, password,
+            { email, "custom:display_name": displayName }
+        );
+        notificationListener.notification("info", "Send Mail");
+    } catch (e) {
+        notificationListener.errorNotification(e);
+        return;
+    }
+    onClose && onClose(e);
+};
 interface Props extends DialogProps {
     notificationListener: NotificationListener;
     onSignUp: SingUp;
@@ -39,27 +63,7 @@ export default (
             {...props}
         >
             <form
-                // tslint:disable-next-line:jsx-no-lambda
-                onSubmit={async e => {
-                    e.preventDefault();
-                    const userName = uuidv4();
-
-                    const displayName = (e.target as any).elements["sign-up-display-name"].value;
-                    const email = (e.target as any).elements["sign-up-email"].value;
-                    const password = (e.target as any).elements["sign-up-password"].value;
-
-                    try {
-                        await onSignUp(
-                            userName, password,
-                            { email, "custom:display_name": displayName }
-                        );
-                        notificationListener.notification("info", "Send Mail");
-                    } catch (e) {
-                        notificationListener.errorNotification(e);
-                        return;
-                    }
-                    onClose && onClose(e);
-                }}
+                onSubmit={submitHandler(onSignUp, onClose, notificationListener)}
             >
                 <DialogTitle id="alert-dialog-slide-title">
                     {locale.signUpDialog.createAcount}

@@ -22,6 +22,32 @@ export default class extends React.Component<ImageInputProps, State> {
         invalid : false
     };
 
+    changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.props.onChange && this.props.onChange(e);
+        if (this.state.imageUrl) {
+            URL.revokeObjectURL(this.state.imageUrl);
+        }
+        const file = e.target.files![0];
+        this.setState({
+            imageUrl: file && URL.createObjectURL(file)
+        });
+    }
+
+    blurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+        this.props.onBlur && this.props.onBlur(e);
+        this.setState({
+            focused: false,
+            invalid: !e.target.validity.valid
+        });
+    }
+
+    focusHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+        this.props.onFocus && this.props.onFocus(e);
+        this.setState({
+            focused: true
+        });
+    }
+
     render() {
         const {
             className,
@@ -71,32 +97,9 @@ export default class extends React.Component<ImageInputProps, State> {
                     disabled={disabled}
                     id={id}
                     name={name}
-                    // tslint:disable-next-line:jsx-no-lambda
-                    onChange={e => {
-                        onChange(e);
-                        if (this.state.imageUrl) {
-                            URL.revokeObjectURL(this.state.imageUrl);
-                        }
-                        const file = e.target.files![0];
-                        this.setState({
-                            imageUrl: file && URL.createObjectURL(file)
-                        });
-                    }}
-                    // tslint:disable-next-line:jsx-no-lambda
-                    onBlur={e => {
-                        onBlur(e);
-                        this.setState({
-                            focused: false,
-                            invalid: !e.target.validity.valid
-                        });
-                    }}
-                    // tslint:disable-next-line:jsx-no-lambda
-                    onFocus={e => {
-                        onFocus(e);
-                        this.setState({
-                            focused: true
-                        });
-                    }}
+                    onChange={this.changeHandler}
+                    onBlur={this.blurHandler}
+                    onFocus={this.focusHandler}
                     type="file"
                     {...props}
                     unselectable={undefined}

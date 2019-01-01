@@ -10,7 +10,7 @@ import Slide, { SlideProps } from "@material-ui/core/Slide";
 import TextField, { TextFieldProps } from "@material-ui/core/TextField";
 import gql from "graphql-tag";
 import React from "react";
-import { Mutation } from "react-apollo";
+import { Mutation, MutationFn, MutationUpdaterFn, OperationVariables } from "react-apollo";
 import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
 import ImageInput from "src/components/atoms/ImageInput";
@@ -60,12 +60,98 @@ const MutationCreateUser = gql(`
 
 export default class extends React.Component<Props, State> {
 
-    handleStep = (x: number) => () => this.setState({ activeStep: x });
-
     state: State = {
         activeStep: 0,
         isProcessing: false
     };
+
+    handleStep = (x: number) => () => this.setState({ activeStep: x });
+
+    submitHandler = (createUser: MutationFn<any, OperationVariables>) => async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const {
+            token,
+            onClose,
+            notificationListener
+        } = this.props;
+
+        const target = e.target as any;
+
+        try {
+            const image = target.elements["avatar-image"].files[0];
+
+            this.setState({ isProcessing: true });
+
+            let signedUrl;
+            let uploadedUrl;
+
+            if (image) {
+                const result = await createSignedUrl({
+                    jwt: token.jwtToken,
+                    mimetype: image.type,
+                    type: "profile",
+                    userId: token.payload.sub
+                });
+                signedUrl = result.signedUrl;
+                uploadedUrl = result.uploadedUrl;
+            }
+
+            const displayName = target.elements["initial-registration-dialog-display-name"].value;
+            const email       = target.elements["initial-registration-dialog-email"].value;
+            const career      = target.elements["initial-registration-dialog-career"].value;
+
+            let variables = {};
+            if (displayName)
+                variables = { ...variables, displayName };
+            if (email)
+                variables = { ...variables, email };
+            if (career)
+                variables = { ...variables, career };
+
+            await Promise.all([
+                signedUrl ? fileUploadToS3({
+                    url: signedUrl,
+                    file: image
+                }) : new Promise(x => x()),
+                createUser({
+                    optimisticResponse: {
+                        __typename: "Mutation",
+                        createUser: {
+                            career,
+                            displayName,
+                            email,
+                            message: "",
+                            avatarUri: uploadedUrl ? uploadedUrl : "",
+                            id: token!.payload.sub,
+                            __typename: "User"
+                        }
+                    },
+                    variables: {
+                        user: {
+                            ...(uploadedUrl ? { avatarUri: uploadedUrl } : {}),
+                            ...variables
+                        }
+                    }
+                })
+            ]);
+            onClose && onClose();
+        } catch (error) {
+            console.error(error);
+            notificationListener.errorNotification(error);
+        }
+        this.setState({ isProcessing: false });
+    }
+
+    mutationUpdater: MutationUpdaterFn<any> = (cache, { data }) => {
+        cache.writeQuery({
+            data: {
+                getUser: data.createUser
+            },
+            query: QueryGetUser,
+            variables: { id: data.createUser.id }
+        });
+    }
 
     render () {
         const {
@@ -84,88 +170,11 @@ export default class extends React.Component<Props, State> {
             >
                 <Mutation
                     mutation={MutationCreateUser}
-                    // tslint:disable-next-line:jsx-no-lambda
-                    update={(cache, { data }) =>
-                        cache.writeQuery({
-                            data: {
-                                getUser: data.createUser
-                            },
-                            query: QueryGetUser,
-                            variables: { id: data.createUser.id }
-                        })
-                    }
+                    update={this.mutationUpdater}
                 >
                     {createUser => (
                         <form
-                            // tslint:disable-next-line:jsx-no-lambda
-                            onSubmit={async e => {
-                                e.preventDefault();
-                                const target = e.target as any;
-
-                                try {
-                                    const image = target.elements["avatar-image"].files[0];
-
-                                    this.setState({ isProcessing: true });
-
-                                    let signedUrl;
-                                    let uploadedUrl;
-
-                                    if (image) {
-                                        const result = await createSignedUrl({
-                                            jwt: token.jwtToken,
-                                            mimetype: image.type,
-                                            type: "profile",
-                                            userId: token.payload.sub
-                                        });
-                                        signedUrl = result.signedUrl;
-                                        uploadedUrl = result.uploadedUrl;
-                                    }
-
-                                    const displayName = target.elements["initial-registration-dialog-display-name"].value;
-                                    const email       = target.elements["initial-registration-dialog-email"].value;
-                                    const career      = target.elements["initial-registration-dialog-career"].value;
-
-                                    let variables = {};
-                                    if (displayName)
-                                        variables = { ...variables, displayName };
-                                    if (email)
-                                        variables = { ...variables, email };
-                                    if (career)
-                                        variables = { ...variables, career };
-
-                                    await Promise.all([
-                                        signedUrl ? fileUploadToS3({
-                                            url: signedUrl,
-                                            file: image
-                                        }) : new Promise(x => x()),
-                                        createUser({
-                                            optimisticResponse: {
-                                                __typename: "Mutation",
-                                                createUser: {
-                                                    career,
-                                                    displayName,
-                                                    email,
-                                                    message: "",
-                                                    avatarUri: uploadedUrl ? uploadedUrl : "",
-                                                    id: token!.payload.sub,
-                                                    __typename: "User"
-                                                }
-                                            },
-                                            variables: {
-                                                user: {
-                                                    ...(uploadedUrl ? { avatarUri: uploadedUrl } : {}),
-                                                    ...variables
-                                                }
-                                            }
-                                        })
-                                    ]);
-                                    onClose && onClose();
-                                } catch (error) {
-                                    console.error(error);
-                                    notificationListener.errorNotification(error);
-                                }
-                                this.setState({ isProcessing: false });
-                            }}
+                            onSubmit={this.submitHandler(createUser)}
                         >
                             <DialogTitle id="alert-dialog-slide-title">
                                 Initial Registration Profile

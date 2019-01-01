@@ -1,4 +1,6 @@
 import AddIcon from "@material-ui/icons/Add";
+import { ApolloQueryResult, FetchMoreOptions, FetchMoreQueryOptions } from "apollo-client";
+import { DocumentNode } from "apollo-link/lib/types";
 import gql from "graphql-tag";
 import React, { Fragment } from "react";
 import { Query } from "react-apollo";
@@ -61,6 +63,15 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
         workListRow: 4,
     };
 
+    componentDidMount() {
+        this.onResize();
+        window.addEventListener("resize", this.onResize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.onResize);
+    }
+
     onResize = () => {
         const row = (
             window.innerWidth > 767 ?
@@ -81,18 +92,50 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
         selectedWork: x,
     })
 
+    streamSpinnerVisibleHandler = (
+        workConnection: WorkConnection,
+        fetchMore: (<K extends "option" | "limit" | "exclusiveStartKey">(fetchMoreOptions: FetchMoreQueryOptions<{
+            limit: number;
+            exclusiveStartKey: null;
+            option: {
+                tags: string[];
+            };
+        }, K> & FetchMoreOptions<any, {
+            limit: number;
+            exclusiveStartKey: null;
+            option: {
+                tags: string[];
+            };
+        }>) => Promise<ApolloQueryResult<any>>) & (<TData2, TVariables2, K extends keyof TVariables2>(fetchMoreOptions: {
+            query: DocumentNode;
+        } & FetchMoreQueryOptions<TVariables2, K> & FetchMoreOptions<TData2, TVariables2>) => Promise<ApolloQueryResult<TData2>>)
+    ) => () => {
+        if (workConnection && workConnection.exclusiveStartKey)
+            fetchMore<any>({
+                variables: {
+                    exclusiveStartKey: workConnection.exclusiveStartKey
+                },
+                updateQuery: (previousResult, { fetchMoreResult }) =>
+                    previousResult.listWorks.items.length ? ({
+                        listWorks: {
+                            __typename: previousResult.listWorks.__typename,
+                            items: (
+                                [
+                                    ...previousResult.listWorks.items,
+                                    ...fetchMoreResult.listWorks.items
+                                ].filter((x, i, self) => (
+                                    self.findIndex(y => y.id === x.id) === i
+                                ))
+                            ),
+                            exclusiveStartKey: fetchMoreResult.listWorks.exclusiveStartKey
+                        }
+                    })               : previousResult
+            });
+    }
+
     handleClose = () => this.setState({ workDialogVisible: false });
 
-    componentDidMount() {
-        this.onResize();
-        window.addEventListener("resize", this.onResize);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("resize", this.onResize);
-    }
-
-    componentDidUpdate() {}
+    handleFabClick = () => this.props.history.push("/works/create-work");
 
     render() {
 
@@ -133,8 +176,6 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                 <Host>
                                     <StreamSpinner
                                         disable={false}
-                                        // tslint:disable-next-line:jsx-no-lambda
-                                        onVisible={() => undefined}
                                     />
                                 </Host>
                             );
@@ -146,57 +187,33 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                         return(
                             <LocaleContext.Consumer>
                                 {({ locale }) => (
-                                <Host>
-                                    <WorkList
-                                        works={workConnection.items}
-                                        workListRow={this.state.workListRow}
-                                        onWorkItemClick={this.handleClickOpen}
-                                    />
-                                    <WorkDialog
-                                        history={history}
-                                        open={this.state.workDialogVisible}
-                                        onClose={this.handleClose}
-                                        work={this.state.selectedWork}
-                                        locale={locale.location}
-                                        userId={auth.token ? auth.token.payload.sub : ""}
-                                    />
-                                    <StreamSpinner
-                                        key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${getTagsByURLQueryParam(history).join("_")}`}
-                                        disable={!workConnection.exclusiveStartKey ? true : false}
-                                        // tslint:disable-next-line:jsx-no-lambda
-                                        onVisible={() => {
-                                            if (workConnection && workConnection.exclusiveStartKey)
-                                                fetchMore<any>({
-                                                    variables: {
-                                                        exclusiveStartKey: workConnection.exclusiveStartKey
-                                                    },
-                                                    updateQuery: (previousResult, { fetchMoreResult }) =>
-                                                        previousResult.listWorks.items.length ? ({
-                                                            listWorks: {
-                                                                __typename: previousResult.listWorks.__typename,
-                                                                items: (
-                                                                    [
-                                                                        ...previousResult.listWorks.items,
-                                                                        ...fetchMoreResult.listWorks.items
-                                                                    ].filter((x, i, self) => (
-                                                                        self.findIndex(y => y.id === x.id) === i
-                                                                    ))
-                                                                ),
-                                                                exclusiveStartKey: fetchMoreResult.listWorks.exclusiveStartKey
-                                                            }
-                                                        })               : previousResult
-                                                });
-                                        }}
-                                    />
-                                </Host>
+                                    <Host>
+                                        <WorkList
+                                            works={workConnection.items}
+                                            workListRow={this.state.workListRow}
+                                            onWorkItemClick={this.handleClickOpen}
+                                        />
+                                        <WorkDialog
+                                            history={history}
+                                            open={this.state.workDialogVisible}
+                                            onClose={this.handleClose}
+                                            work={this.state.selectedWork}
+                                            locale={locale.location}
+                                            userId={auth.token ? auth.token.payload.sub : ""}
+                                        />
+                                        <StreamSpinner
+                                            key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${getTagsByURLQueryParam(history).join("_")}`}
+                                            disable={!workConnection.exclusiveStartKey ? true : false}
+                                            onVisible={this.streamSpinnerVisibleHandler(workConnection, fetchMore)}
+                                        />
+                                    </Host>
                                 )}
                             </LocaleContext.Consumer>
                         );
                     }}
                 </Query>
                 <Fab
-                    // tslint:disable-next-line:jsx-no-lambda
-                    onClick={() => history.push("/works/create-work")}
+                    onClick={this.handleFabClick}
                 >
                     <AddIcon />
                 </Fab>

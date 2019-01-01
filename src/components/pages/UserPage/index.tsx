@@ -1,5 +1,7 @@
 import { Divider, Tabs, Typography } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
+import { ApolloQueryResult, FetchMoreOptions, FetchMoreQueryOptions } from "apollo-client";
+import { DocumentNode } from "apollo-link";
 import gql from "graphql-tag";
 import React, { Fragment } from "react";
 import { Query } from "react-apollo";
@@ -117,6 +119,49 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
         window.removeEventListener("resize", this.onResize);
     }
 
+    streamSpinnerVisibleHandler = (
+        workConnection: WorkConnection,
+        fetchMore: (<K extends "id" | "limit" | "exclusiveStartKey">(fetchMoreOptions: FetchMoreQueryOptions<{
+            id: string;
+            limit: number;
+            exclusiveStartKey: null;
+        }, K> & FetchMoreOptions<any, {
+            id: string;
+            limit: number;
+            exclusiveStartKey: null;
+        }>) => Promise<ApolloQueryResult<any>>) & (<TData2, TVariables2, K extends keyof TVariables2>(fetchMoreOptions: {
+            query: DocumentNode;
+        } & FetchMoreQueryOptions<TVariables2, K> & FetchMoreOptions<TData2, TVariables2>) => Promise<ApolloQueryResult<TData2>>)
+    ) => () => {
+        if (workConnection && workConnection.exclusiveStartKey) {
+            fetchMore<any>({
+                variables: {
+                    exclusiveStartKey: workConnection.exclusiveStartKey
+                },
+                updateQuery: (previousResult, { fetchMoreResult }) =>
+                    previousResult.getUser.works.items ? ({
+                        getUser: {
+                            ...previousResult.getUser,
+                            works: {
+                                ...previousResult.getUser.works,
+                                items: (
+                                    [
+                                        ...previousResult.getUser.works.items,
+                                        ...fetchMoreResult.getUser.works.items
+                                    ].filter((x, i, self) => (
+                                        self.findIndex(y => y.id === x.id) === i
+                                    ))
+                                ),
+                                exclusiveStartKey: fetchMoreResult.getUser.works.exclusiveStartKey
+                            }
+                        }
+                    })               : previousResult
+            });
+        }
+    }
+
+    moveProfilePage = () => this.props.history.push("/profile");
+
     render() {
 
         const {
@@ -127,7 +172,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
 
         const queryParam = toObjectFromURIQuery(this.props.history.location.search);
         const contentType = queryParam ? queryParam["content"]
-                                       : "user";
+                          :              "user";
 
         return (
             <Page>
@@ -246,33 +291,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                                 <StreamSpinner
                                                     key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
                                                     disable={!workConnection.exclusiveStartKey ? true : false}
-                                                    // tslint:disable-next-line:jsx-no-lambda
-                                                    onVisible={() => {
-                                                        if (workConnection && workConnection.exclusiveStartKey)
-                                                            fetchMore<any>({
-                                                                variables: {
-                                                                    exclusiveStartKey: workConnection.exclusiveStartKey
-                                                                },
-                                                                updateQuery: (previousResult, { fetchMoreResult }) =>
-                                                                    previousResult.getUser.works.items ? ({
-                                                                        getUser: {
-                                                                            ...previousResult.getUser,
-                                                                            works: {
-                                                                                ...previousResult.getUser.works,
-                                                                                items: (
-                                                                                    [
-                                                                                        ...previousResult.getUser.works.items,
-                                                                                        ...fetchMoreResult.getUser.works.items
-                                                                                    ].filter((x, i, self) => (
-                                                                                        self.findIndex(y => y.id === x.id) === i
-                                                                                    ))
-                                                                                ),
-                                                                                exclusiveStartKey: fetchMoreResult.getUser.works.exclusiveStartKey
-                                                                            }
-                                                                        }
-                                                                    })               : previousResult
-                                                            });
-                                                    }}
+                                                    onVisible={this.streamSpinnerVisibleHandler(workConnection, fetchMore)}
                                                 />
                                             </WorkContent>
                                         </ViewPager>
@@ -302,8 +321,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                                     (auth.token && user.id === auth.token!.payload.sub) && contentType === "user" ? "visible" : "hidden"
                                                 )
                                             }}
-                                            // tslint:disable-next-line:jsx-no-lambda
-                                            onClick={() => history.push("/profile")}
+                                            onClick={this.moveProfilePage}
                                         >
                                             <EditIcon />
                                         </Fab>

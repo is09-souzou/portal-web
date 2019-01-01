@@ -9,7 +9,7 @@ interface State {
 }
 
 interface Props extends CircularProgressProps {
-    onVisible: () => void;
+    onVisible?: () => void;
     disable: boolean;
 }
 
@@ -20,7 +20,7 @@ export default class extends React.Component<Props, State> {
             if (!this.props.disable) {
                 const rect = (ReactDOM.findDOMNode(this) as Element).getBoundingClientRect();
                 if (rect.top < window.innerHeight && !this.state.visible) {
-                    this.props.onVisible();
+                    this.props.onVisible && this.props.onVisible();
                     this.setState({ visible: true });
                 } else if (this.state.visible) {
                     this.setState({ visible: false });
