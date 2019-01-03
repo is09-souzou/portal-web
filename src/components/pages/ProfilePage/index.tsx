@@ -84,7 +84,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
     setCareerInput = (x: any) => this.careerInput = x;
     setMessageInput = (x: any) => this.messageInput = x;
 
-    userUpdateHandler = (
+    handleUpdateUserFormSubmit = (
         updateUser: MutationFn<any, OperationVariables>,
         currentUser: User
     ) => async (e: React.FormEvent) => {
@@ -118,7 +118,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
         this.props.history.push(("/users/") + currentUser.id);
     }
 
-    avatarUpdateHandler = (
+    handleUpdateAvatarFormSubmit = (
         updateUser: MutationFn<any, OperationVariables>,
         refetch: (variables?: { id: any; } | undefined) => Promise<ApolloQueryResult<any>>
     ) => async (e: React.FormEvent) => {
@@ -275,7 +275,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                     >
                                         {updateUser => (
                                             <form
-                                                onSubmit={this.userUpdateHandler(updateUser, currentUser)}
+                                                onSubmit={this.handleUpdateUserFormSubmit(updateUser, currentUser)}
                                             >
                                                 <ProfilePageHeader>
                                                     <img
@@ -371,7 +371,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                     aria-labelledby="editable-avatar-dialog-title"
                                                 >
                                                     <form
-                                                        onSubmit={this.avatarUpdateHandler(updateUser, refetch)}
+                                                        onSubmit={this.handleUpdateAvatarFormSubmit(updateUser, refetch)}
                                                     >
                                                         <DialogTitle
                                                             id="editable-avatar-dialog-title"

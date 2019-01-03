@@ -124,7 +124,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         }
     }
 
-    onOpenPreview = () => {
+    openPreview = () => {
         this.setState({
             previewWork: ({
                 id: "preview",
@@ -177,7 +177,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         });
     }
 
-    hostSubmitHandler = (
+    handleHostSubmit = (
         createWork: MutationFn<any, OperationVariables>,
         updateWork: MutationFn<any, OperationVariables>
     ) => async (e: React.FormEvent) => {
@@ -242,7 +242,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         this.props.history.push("/");
     }
 
-    markdownSupportsChangeValueHandler = (description: string, lines: [number, number]) => {
+    handleMarkdownSupportsChangeValue = (description: string, lines: [number, number]) => {
         this.setState(
             { description },
             () => {
@@ -274,7 +274,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                 <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
                                     {(updateWork, { error: updateWorkError }) => (
                                         <Host
-                                            onSubmit={this.hostSubmitHandler(createWork, updateWork)}
+                                            onSubmit={this.handleHostSubmit(createWork, updateWork)}
                                         >
                                             <div>
                                                 <Head>
@@ -331,7 +331,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                             />
                                                             <MarkdownSupports
                                                                 element={this.state.descriptionInput}
-                                                                onChangeValue={this.markdownSupportsChangeValueHandler}
+                                                                onChangeValue={this.handleMarkdownSupportsChangeValue}
                                                             />
                                                         </div>
                                                     </div>
@@ -360,7 +360,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                     <Button
                                                         variant="outlined"
                                                         color="primary"
-                                                        onClick={this.onOpenPreview}
+                                                        onClick={this.openPreview}
                                                     >
                                                         {locale.works.preview}
                                                     </Button>

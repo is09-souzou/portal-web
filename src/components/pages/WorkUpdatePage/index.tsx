@@ -12,11 +12,11 @@ import ImageInputDialog from "src/components/molecules/ImageInputDialog";
 import NotFound from "src/components/molecules/NotFound";
 import MarkdownSupports from "src/components/organisms/MarkdownSupports";
 import WorkDialog from "src/components/organisms/WorkDialog";
-import ActionArea from "src/components/pages/WorkUpdatePage/ActionArea";
-import ChipList from "src/components/pages/WorkUpdatePage/ChipList";
-import Head from "src/components/pages/WorkUpdatePage/Head";
-import Host from "src/components/pages/WorkUpdatePage/Host";
-import WorkContentArea from "src/components/pages/WorkUpdatePage/WorkContentArea";
+import ActionArea from "src/components/pages/WorkPostPage/ActionArea";
+import ChipList from "src/components/pages/WorkPostPage/ChipList";
+import Head from "src/components/pages/WorkPostPage/Head";
+import Host from "src/components/pages/WorkPostPage/Host";
+import WorkContentArea from "src/components/pages/WorkPostPage/WorkContentArea";
 import WorkImage from "src/components/pages/WorkUpdatePage/WorkImage";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import { LocaleContext } from "src/components/wrappers/MainLayout";
@@ -121,7 +121,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         }
     }
 
-    onOpenPreview = () => {
+    openPreview = () => {
         this.setState({
             previewWork: ({
                 id: "preview",
@@ -144,7 +144,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         });
     }
 
-    hostSubmitHandler = (
+    handleHostSubmit = (
         currentWork: Work,
         updateWork: MutationFn<any, OperationVariables>
     ) => async (e: React.FormEvent) => {
@@ -195,7 +195,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
 
     onCloseImageInputDialog = () => this.setState({ imageInputDialogVisible: false });
 
-    markdownSupportsChangeValueHandler = (description: string, lines: [number, number]) => {
+    handleMarkdownSupportsChangeValue = (description: string, lines: [number, number]) => {
         this.setState(
             { description },
             () => {
@@ -206,7 +206,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         );
     }
 
-    imageInputDialogChangeHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleimageInputDialogChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) {
             this.props.notificationListener.errorNotification(new Error("Set Image"));
             return;
@@ -274,7 +274,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                     <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
                                         {(updateWork, { error: updateWorkError }) => (
                                             <Host
-                                                onSubmit={this.hostSubmitHandler(currentWork, updateWork)}
+                                                onSubmit={this.handleHostSubmit(currentWork, updateWork)}
                                             >
                                                 <div>
                                                     <Head>
@@ -336,7 +336,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                                 />
                                                                 <MarkdownSupports
                                                                     element={this.state.descriptionInput}
-                                                                    onChangeValue={this.markdownSupportsChangeValueHandler}
+                                                                    onChangeValue={this.handleMarkdownSupportsChangeValue}
                                                                 />
                                                             </div>
                                                         </div>
@@ -350,7 +350,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                         <Button
                                                             variant="outlined"
                                                             color="primary"
-                                                            onClick={this.onOpenPreview}
+                                                            onClick={this.openPreview}
                                                         >
                                                             preview
                                                         </Button>
@@ -384,7 +384,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                         <ImageInputDialog
                             open={this.state.imageInputDialogVisible}
                             onClose={this.onCloseImageInputDialog}
-                            onChange={this.imageInputDialogChangeHandler}
+                            onChange={this.handleimageInputDialogChange}
                         />
                     </Page>
                 )}

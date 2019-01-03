@@ -92,7 +92,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
         selectedWork: x,
     })
 
-    streamSpinnerVisibleHandler = (
+    handleStreamSpinnerVisible = (
         workConnection: WorkConnection,
         fetchMore: (<K extends "option" | "limit" | "exclusiveStartKey">(fetchMoreOptions: FetchMoreQueryOptions<{
             limit: number;
@@ -133,9 +133,9 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
             });
     }
 
-    handleClose = () => this.setState({ workDialogVisible: false });
+    handleCloseWorkDialog = () => this.setState({ workDialogVisible: false });
 
-    handleFabClick = () => this.props.history.push("/works/create-work");
+    moveCreateWorkPage = () => this.props.history.push("/works/create-work");
 
     render() {
 
@@ -196,7 +196,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                         <WorkDialog
                                             history={history}
                                             open={this.state.workDialogVisible}
-                                            onClose={this.handleClose}
+                                            onClose={this.handleCloseWorkDialog}
                                             work={this.state.selectedWork}
                                             locale={locale.location}
                                             userId={auth.token ? auth.token.payload.sub : ""}
@@ -204,7 +204,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                         <StreamSpinner
                                             key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${getTagsByURLQueryParam(history).join("_")}`}
                                             disable={!workConnection.exclusiveStartKey ? true : false}
-                                            onVisible={this.streamSpinnerVisibleHandler(workConnection, fetchMore)}
+                                            onVisible={this.handleStreamSpinnerVisible(workConnection, fetchMore)}
                                         />
                                     </Host>
                                 )}
@@ -213,7 +213,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     }}
                 </Query>
                 <Fab
-                    onClick={this.handleFabClick}
+                    onClick={this.moveCreateWorkPage}
                 >
                     <AddIcon />
                 </Fab>

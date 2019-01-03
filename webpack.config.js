@@ -5,7 +5,7 @@ const history                 = require('connect-history-api-fallback');
 const BundleAnalyzerPlugin    = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const HtmlWebpackPlugin       = require('html-webpack-plugin');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
-const Uglify                  = require("uglifyjs-webpack-plugin");
+// const UglifyJsPlugin          = require("uglifyjs-webpack-plugin");
 
 const NODE_ENV = process.env.NODE_ENV || "development";
 
@@ -39,25 +39,6 @@ module.exports = {
     },
     optimization: {
         ...(NODE_ENV === "production" ? {
-            minimizer: [
-                new Uglify({
-                    test: /\.js($|\?)/i,
-                    exclude: [
-                        // /app/
-                    ],
-                    sourceMap: false,
-                    uglifyOptions: {
-                        ecma: 8,
-                        parallel: true,
-                        mangle: {},
-                        output: {
-                            comments: /^\**!\|@preserve\|@license\|@cc_on/,
-                            beautify: false
-                        },
-                    },
-                    extractComments: true
-                }),
-            ],
             splitChunks: {
                 cacheGroups: {
                     appRoot: {

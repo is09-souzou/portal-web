@@ -9,7 +9,7 @@ import { SnackbarClassKey, SnackbarOrigin } from "@material-ui/core/Snackbar";
 import SnackbarContent, { SnackbarContentProps } from "@material-ui/core/SnackbarContent";
 import { SvgIconProps } from "@material-ui/core/SvgIcon";
 import CloseIcon from "@material-ui/icons/Close";
-import React from "react";
+import React, { useState } from "react";
 import { TransitionProps } from "react-transition-group/Transition";
 import styled from "styled-components";
 
@@ -34,59 +34,48 @@ interface Props extends StandardProps<
     type: "info" | "error";
 }
 
-interface State {
-    open: boolean;
-}
+export default (
+    {
+        onClose,
+        type,
+        message,
+        ...props
+    }: Props
+) => {
+    const [open, setOpen] = useState(true);
+    const _onClose = () => setOpen(false);
 
-export default class extends React.Component<Props, State> {
-
-    state: State = {
-        open: true
-    };
-
-    onClose = () => this.setState({ open: false });
-
-    render() {
-
-        const {
-            onClose,
-            type,
-            message,
-            ...props
-        } = this.props;
-
-        return (
-            <Snackbar
-                anchorOrigin={{
-                    horizontal: "left",
-                    vertical: "bottom"
-                }}
-                onClose={onClose || this.onClose}
-                autoHideDuration={6000}
-                ContentProps={{
-                    "aria-describedby": "message-id",
-                }}
-                open={this.state.open}
-                {...props}
-            >
-                <StyledSnackbarContent
-                    type={type}
-                    message={<span id="message-id">{message}</span>}
-                    action={[
-                        <IconButton
-                            key="close"
-                            aria-label="Close"
-                            color="inherit"
-                            onClick={this.props.onClose || this.onClose}
-                        >
-                            <StyledCloseIcon />
-                        </IconButton>
-                    ]}
-                />
-            </Snackbar>
-        );
-    }
-}
+    return (
+        <Snackbar
+            anchorOrigin={{
+                horizontal: "left",
+                vertical: "bottom"
+            }}
+            onClose={onClose || _onClose}
+            autoHideDuration={6000}
+            ContentProps={{
+                "aria-describedby": "message-id",
+            }}
+            open={open}
+            {...props}
+        >
+            <StyledSnackbarContent
+                type={type}
+                message={<span id="message-id">{message}</span>}
+                action={[
+                    <IconButton
+                        key="close"
+                        aria-label="Close"
+                        color="inherit"
+                        onClick={onClose || _onClose}
+                    >
+                        <StyledCloseIcon />
+                    </IconButton>
+                ]}
+            />
+        </Snackbar>
+    );
+};
 
 const StyledSnackbarContentBase = styled(SnackbarContent as React.SFC<SnackbarContentProps>)`
     && {

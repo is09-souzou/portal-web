@@ -70,22 +70,21 @@ const QueryGetUser = gql(`
 
 export default class UserListPage extends React.Component<PageComponentProps<{id: string}>, State> {
 
-    state = {
+    state: State = {
         selectedWork: undefined,
         workDialogVisible: false,
         userWorks: [] as Work[],
         workListRow: 4,
-        selectedIndex: 0,
+        selectedIndex: 0
     };
 
-    handleContentType = (content: string) => () => {
-        if (content === "user") {
-            this.props.history.push("?content=user");
-            this.setState({ selectedIndex: 0 });
-        } else {
-            this.props.history.push("?content=work");
-            this.setState({ selectedIndex: 1 });
-        }
+    componentDidMount() {
+        this.onResize();
+        window.addEventListener("resize", this.onResize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.onResize);
     }
 
     onResize = () => {
@@ -103,23 +102,24 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
             this.setState({ workListRow: row });
     }
 
-    handleClickOpen = (x: Work) => () => this.setState({
+    handleContentType = (content: "user" | "work") => () => {
+        if (content === "user") {
+            this.props.history.push("?content=user");
+            this.setState({ selectedIndex: 0 });
+        } else {
+            this.props.history.push("?content=work");
+            this.setState({ selectedIndex: 1 });
+        }
+    }
+
+    handleWorkListWorkItemClick = (x: Work) => () => this.setState({
         workDialogVisible: true,
         selectedWork: x,
     })
 
-    handleClose = () => this.setState({ workDialogVisible: false });
+    handleCloseWorkDialog = () => this.setState({ workDialogVisible: false });
 
-    componentDidMount() {
-        this.onResize();
-        window.addEventListener("resize", this.onResize);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("resize", this.onResize);
-    }
-
-    streamSpinnerVisibleHandler = (
+    handleStreamSpinnerVisible = (
         workConnection: WorkConnection,
         fetchMore: (<K extends "id" | "limit" | "exclusiveStartKey">(fetchMoreOptions: FetchMoreQueryOptions<{
             id: string;
@@ -278,12 +278,12 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                                 <WorkList
                                                     works={userWorks}
                                                     workListRow={this.state.workListRow}
-                                                    onWorkItemClick={this.handleClickOpen}
+                                                    onWorkItemClick={this.handleWorkListWorkItemClick}
                                                 />
                                                 <WorkDialog
                                                     history={history}
                                                     open={this.state.workDialogVisible}
-                                                    onClose={this.handleClose}
+                                                    onClose={this.handleCloseWorkDialog}
                                                     work={this.state.selectedWork}
                                                     locale={locale.location}
                                                     userId={auth.token!.payload.sub}
@@ -291,7 +291,7 @@ export default class UserListPage extends React.Component<PageComponentProps<{id
                                                 <StreamSpinner
                                                     key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
                                                     disable={!workConnection.exclusiveStartKey ? true : false}
-                                                    onVisible={this.streamSpinnerVisibleHandler(workConnection, fetchMore)}
+                                                    onVisible={this.handleStreamSpinnerVisible(workConnection, fetchMore)}
                                                 />
                                             </WorkContent>
                                         </ViewPager>

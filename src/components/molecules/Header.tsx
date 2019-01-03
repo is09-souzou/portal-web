@@ -47,11 +47,11 @@ export default class extends React.Component<Props, State> {
         userMenuOpend: false,
     };
 
-    handleMenu = (event: React.MouseEvent<HTMLElement>): void =>
-        this.setState({ userMenuAnchorEl: event.currentTarget })
+    handleMenu = (e: React.MouseEvent<HTMLElement>): void =>
+        this.setState({ userMenuAnchorEl: e.currentTarget })
 
     // TODO
-    handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    handleSearch = (e: React.KeyboardEvent) => {
         const value = (e.target as any).value;
         if (e.keyCode && e.keyCode === 13) {
             console.log(`if: ${value}`);

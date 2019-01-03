@@ -20,7 +20,7 @@ interface Props {
     onCreateAcountButtonClick: () => void;
 }
 
-const submitHandler = (onSignIn: Props["onSignIn"], onError: Props["onError"]) => async (e: React.FormEvent<HTMLFormElement>) => {
+const handleFormSubmit = (onSignIn: Props["onSignIn"], onError: Props["onError"]) => async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const email = (e.target as any).elements["sign-in-email"].value;
@@ -54,7 +54,7 @@ export default (
             {...props}
         >
             <form
-                onSubmit={submitHandler(onSignIn, onError)}
+                onSubmit={handleFormSubmit(onSignIn, onError)}
             >
                 <DialogTitle id="alert-dialog-slide-title">
                     {locale.signInDialog.signIn}

@@ -16,7 +16,7 @@ import uuidv4 from "uuid/v4";
 
 const Transition = (props: SlideProps) =>  <Slide direction="up" {...props} />;
 
-const submitHandler = (
+const handleFormSubmit = (
     onSignUp: SingUp,
     onClose: DialogProps["onClose"],
     notificationListener: NotificationListener
@@ -63,7 +63,7 @@ export default (
             {...props}
         >
             <form
-                onSubmit={submitHandler(onSignUp, onClose, notificationListener)}
+                onSubmit={handleFormSubmit(onSignUp, onClose, notificationListener)}
             >
                 <DialogTitle id="alert-dialog-slide-title">
                     {locale.signUpDialog.createAcount}

@@ -67,7 +67,7 @@ export default class extends React.Component<Props, State> {
 
     handleStep = (x: number) => () => this.setState({ activeStep: x });
 
-    submitHandler = (createUser: MutationFn<any, OperationVariables>) => async (e: React.FormEvent<HTMLFormElement>) => {
+    handleFormSubmit = (createUser: MutationFn<any, OperationVariables>) => async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const {
@@ -174,7 +174,7 @@ export default class extends React.Component<Props, State> {
                 >
                     {createUser => (
                         <form
-                            onSubmit={this.submitHandler(createUser)}
+                            onSubmit={this.handleFormSubmit(createUser)}
                         >
                             <DialogTitle id="alert-dialog-slide-title">
                                 Initial Registration Profile

@@ -1,38 +1,32 @@
 import Typography from "@material-ui/core/Typography";
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const emojiList = ["(＝△＝)", "(´・ω・`)", "(＿´Д｀)", "(= ‐ω‐ =)", "(*ノω・*)"];
 
-interface State {
-    emoji: string;
-}
+export default (
+    props: React.HTMLAttributes<HTMLDivElement>
+) => {
+    const [emoji] = useState(emojiList[Math.floor(Math.random() * emojiList.length)]);
 
-export default class extends React.Component<React.HTMLAttributes<HTMLDivElement>, State> {
-    state: State = {
-        emoji: emojiList[Math.floor(Math.random() * emojiList.length)]
-    };
-
-    render() {
-        return (
-            <Host
-                {...this.props}
-                unselectable={undefined}
+    return (
+        <Host
+            {...props}
+            unselectable={undefined}
+        >
+            <Typography
+                variant="display3"
             >
-                <Typography
-                    variant="display3"
-                >
-                    {this.state.emoji}
-                </Typography>
-                <Typography
-                    variant="display1"
-                >
-                    Not Found
-                </Typography>
-            </Host>
-        );
-    }
-}
+                {emoji}
+            </Typography>
+            <Typography
+                variant="display1"
+            >
+                Not Found
+            </Typography>
+        </Host>
+    );
+};
 
 const Host = styled.div`
     display: flex;

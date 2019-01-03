@@ -22,7 +22,7 @@ export default class extends React.Component<ImageInputProps, State> {
         invalid : false
     };
 
-    changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         this.props.onChange && this.props.onChange(e);
         if (this.state.imageUrl) {
             URL.revokeObjectURL(this.state.imageUrl);
@@ -33,7 +33,7 @@ export default class extends React.Component<ImageInputProps, State> {
         });
     }
 
-    blurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+    handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
         this.props.onBlur && this.props.onBlur(e);
         this.setState({
             focused: false,
@@ -41,7 +41,7 @@ export default class extends React.Component<ImageInputProps, State> {
         });
     }
 
-    focusHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+    handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
         this.props.onFocus && this.props.onFocus(e);
         this.setState({
             focused: true
@@ -97,9 +97,9 @@ export default class extends React.Component<ImageInputProps, State> {
                     disabled={disabled}
                     id={id}
                     name={name}
-                    onChange={this.changeHandler}
-                    onBlur={this.blurHandler}
-                    onFocus={this.focusHandler}
+                    onChange={this.handleChange}
+                    onBlur={this.handleBlur}
+                    onFocus={this.handleFocus}
                     type="file"
                     {...props}
                     unselectable={undefined}

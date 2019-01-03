@@ -10,7 +10,7 @@ import DialogContent, { DialogContentProps } from "@material-ui/core/DialogConte
 import Typography, { TypographyProps } from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import * as H from "history";
-import React, { Fragment } from "react";
+import React, { useState, Fragment } from "react";
 import ReactMarkdown from "react-markdown";
 import FormatStringDate from "src/components/atoms/FormatStringDate";
 import Link from "src/components/atoms/Link";
@@ -28,164 +28,155 @@ interface Props {
     userId: string;
 }
 
-interface State {
-    workItemImageDialogVisible: boolean;
-}
+export default (
+    {
+        history,
+        open = false,
+        onClose,
+        work,
+        locale,
+        userId,
+        ...props
+    }: Props
+) => {
 
-export default class extends React.Component<Props, State> {
+    const [visibile, setVisibility] = useState(false);
 
-    state: State = {
-        workItemImageDialogVisible: false
-    };
+    const handleOpenDialog = () => setVisibility(true);
+    const handleHiddenDialog = () => setVisibility(false);
 
-    openWorkItemImageDialog = () => this.setState({ workItemImageDialogVisible: true });
+    if (!work)
+        return null;
 
-    closeWorkItemImageDialog = () => this.setState({ workItemImageDialogVisible: false });
-
-    render() {
-        const {
-            history,
-            open = false,
-            onClose,
-            work,
-            locale,
-            userId,
-            ...props
-        } = this.props;
-
-        if (!work)
-            return null;
-
-        return (
-            <Fragment>
-                <Dialog
-                    open={open}
-                    fullScreen={window.innerWidth < 767}
-                    onClose={onClose}
-                    keepMounted
-                    fullWidth
-                    maxWidth="md"
-                    BackdropProps={{
-                        style: {
-                            backgroundColor: "transparent",
-                        }
-                    }}
-                    {...props}
-                >
-                    <WorkContent>
-                        <div>
-                            {window.innerWidth < 767 && (
-                                <WorkAppBar>
-                                    <Toolbar>
-                                        <Typography variant="title" color="inherit">
-                                            {`${work.title} - ${work.user && work.user.displayName}`}
-                                        </Typography>
-                                        <IconButton color="inherit" onClick={onClose} aria-label="Close">
-                                            <CloseIcon />
-                                        </IconButton>
-                                    </Toolbar>
-                                </WorkAppBar>
-                            )}
-                            <MainImageWrapper>
-                                <MainImage
-                                    src={work.imageUrl}
-                                    onClick={this.openWorkItemImageDialog}
-                                    width="100%"
-                                    rotate={(Math.random() > 0.5 ? "-" : "") + Math.floor(Math.random() * (8 - 4 + 1) + 4)}
-                                />
-                            </MainImageWrapper>
-                            <StyledDialogContent>
-                                <div>
-                                    <WorkTitle
-                                        variant="subheading"
-                                    >
-                                        {work.title}
-                                    </WorkTitle>
-                                    <Typography>
-                                        <FormatStringDate
-                                            isMillisec={false}
-                                            timestamp={work.createdAt}
-                                            format={
-                                                locale === "jp"
-                                                ? "%YYYY%年 %MM%月 %DD%日 %HH%時 %mm%分"
-                                                : "%MMMM% %DD%, %YYYY% at %hh%:%mm% %A%"
-                                            }
-                                            locale={locale === "jp" ? "ja-JP" : "en-US"}
-                                        />
+    return (
+        <Fragment>
+            <Dialog
+                open={open}
+                fullScreen={window.innerWidth < 767}
+                onClose={onClose}
+                keepMounted
+                fullWidth
+                maxWidth="md"
+                BackdropProps={{
+                    style: {
+                        backgroundColor: "transparent",
+                    }
+                }}
+                {...props}
+            >
+                <WorkContent>
+                    <div>
+                        {window.innerWidth < 767 && (
+                            <WorkAppBar>
+                                <Toolbar>
+                                    <Typography variant="title" color="inherit">
+                                        {`${work.title} - ${work.user && work.user.displayName}`}
                                     </Typography>
-                                </div>
-                                <div>
-                                    <TagList>
-                                        {work.tags && work.tags.map(x =>
-                                            <Link
-                                                to={(() => {
-                                                    const tags = getTagsByURLQueryParam(history);
-                                                    return formatTagsOfURLQueryParam(tags.concat(x), tags);
-                                                })()}
-                                                onClick={onClose}
-                                                key={x}
-                                            >
-                                                <Tag>{x}</Tag>
-                                            </Link>
-                                        )}
-                                    </TagList>
-                                    <div>
-                                        <Link
-                                            to={
-                                                ("/users/") + work.userId
-                                            }
-                                            onClick={onClose}
-                                        >
-                                            <UserInformation>
-                                                <Avatar
-                                                    alt={work.user && work.user.displayName}
-                                                    src={work.user && work.user.avatarUri}
-                                                />
-                                                <div>
-                                                    <Typography gutterBottom variant="caption">{work.user && work.user.message}</Typography>
-                                                    <Typography gutterBottom>{work.user && work.user.displayName}</Typography>
-                                                </div>
-                                            </UserInformation>
-                                        </Link>
-                                        <Link
-                                            to={
-                                                ("/works/update-work/") + work.id
-                                            }
-                                            onClick={onClose}
-                                        >
-                                            <Button
-                                                style={{ display: work.userId === userId ? "" : "none" }}
-                                                variant="outlined"
-                                                color="primary"
-                                            >
-                                                edit
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                </div>
-                            </StyledDialogContent>
-                        </div>
-                        <div>
-                            <ReactMarkdown
-                                source={work.description}
-                                rawSourcePos
+                                    <IconButton color="inherit" onClick={onClose} aria-label="Close">
+                                        <CloseIcon />
+                                    </IconButton>
+                                </Toolbar>
+                            </WorkAppBar>
+                        )}
+                        <MainImageWrapper>
+                            <MainImage
+                                src={work.imageUrl}
+                                onClick={handleOpenDialog}
+                                width="100%"
+                                rotate={(Math.random() > 0.5 ? "-" : "") + Math.floor(Math.random() * (8 - 4 + 1) + 4)}
                             />
-                        </div>
-                    </WorkContent>
-                </Dialog>
-                <Dialog
-                    open={this.state.workItemImageDialogVisible}
-                    onClose={this.closeWorkItemImageDialog}
-                >
-                    <WorkDialogImage
-                        src={work.imageUrl}
-                        onClick={this.openWorkItemImageDialog}
-                    />
-                </Dialog>
-            </Fragment>
-        );
-    }
-}
+                        </MainImageWrapper>
+                        <StyledDialogContent>
+                            <div>
+                                <WorkTitle
+                                    variant="subheading"
+                                >
+                                    {work.title}
+                                </WorkTitle>
+                                <Typography>
+                                    <FormatStringDate
+                                        isMillisec={false}
+                                        timestamp={work.createdAt}
+                                        format={
+                                            locale === "jp"
+                                            ? "%YYYY%年 %MM%月 %DD%日 %HH%時 %mm%分"
+                                            : "%MMMM% %DD%, %YYYY% at %hh%:%mm% %A%"
+                                        }
+                                        locale={locale === "jp" ? "ja-JP" : "en-US"}
+                                    />
+                                </Typography>
+                            </div>
+                            <div>
+                                <TagList>
+                                    {work.tags && work.tags.map(x =>
+                                        <Link
+                                            to={(() => {
+                                                const tags = getTagsByURLQueryParam(history);
+                                                return formatTagsOfURLQueryParam(tags.concat(x), tags);
+                                            })()}
+                                            onClick={onClose}
+                                            key={x}
+                                        >
+                                            <Tag>{x}</Tag>
+                                        </Link>
+                                    )}
+                                </TagList>
+                                <div>
+                                    <Link
+                                        to={
+                                            ("/users/") + work.userId
+                                        }
+                                        onClick={onClose}
+                                    >
+                                        <UserInformation>
+                                            <Avatar
+                                                alt={work.user && work.user.displayName}
+                                                src={work.user && work.user.avatarUri}
+                                            />
+                                            <div>
+                                                <Typography gutterBottom variant="caption">{work.user && work.user.message}</Typography>
+                                                <Typography gutterBottom>{work.user && work.user.displayName}</Typography>
+                                            </div>
+                                        </UserInformation>
+                                    </Link>
+                                    <Link
+                                        to={
+                                            ("/works/update-work/") + work.id
+                                        }
+                                        onClick={onClose}
+                                    >
+                                        <Button
+                                            style={{ display: work.userId === userId ? "" : "none" }}
+                                            variant="outlined"
+                                            color="primary"
+                                        >
+                                            edit
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+                        </StyledDialogContent>
+                    </div>
+                    <div>
+                        <ReactMarkdown
+                            source={work.description}
+                            rawSourcePos
+                        />
+                    </div>
+                </WorkContent>
+            </Dialog>
+            <Dialog
+                open={visibile}
+                onClose={close}
+            >
+                <WorkDialogImage
+                    src={work.imageUrl}
+                    onClick={handleHiddenDialog}
+                />
+            </Dialog>
+        </Fragment>
+    );
+};
 
 const WorkAppBar = styled(AppBar as React.SFC<AppBarProps>)`
     && {

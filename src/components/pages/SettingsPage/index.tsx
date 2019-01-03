@@ -29,7 +29,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         updatePasswordDialogVisible: false
     };
 
-    emailUpdateSubmitHandler = async (e: React.FormEvent) => {
+    handleUpdateEmailFromSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const email = (e.target as any).elements["profile-credential-email"].value;
@@ -42,7 +42,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
         }
     }
 
-    passwordUpdateSubmitHandler = async (e: React.FormEvent) => {
+    handleUpdatePasswordSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const oldPassword = (e.target as any).elements["profile-old-password"].value;
@@ -101,7 +101,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                 notificationListener={notificationListener}
             >
                 <form
-                    onSubmit={this.emailUpdateSubmitHandler}
+                    onSubmit={this.handleUpdateEmailFromSubmit}
                 >
                     <Typography gutterBottom variant="title">
                         Credential
@@ -142,7 +142,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                     open={this.state.updatePasswordDialogVisible}
                 >
                     <form
-                        onSubmit={this.passwordUpdateSubmitHandler}
+                        onSubmit={this.handleUpdatePasswordSubmit}
                     >
                         <DialogTitle
                             id="profile-update-password"
