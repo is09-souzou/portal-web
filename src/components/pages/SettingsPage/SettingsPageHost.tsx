@@ -3,7 +3,7 @@ import React from "react";
 import Header from "src/components/molecules/Header";
 import PageHost from "src/components/pages/SettingsPage/PageHost";
 import { AuthProps } from "src/components/wrappers/Auth";
-import { NotificationListenerProps } from "src/contexts/NotificationListener";
+import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
 
 export default (
     {

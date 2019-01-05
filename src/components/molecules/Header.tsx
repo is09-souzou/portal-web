@@ -17,7 +17,7 @@ import SignInDialog from "src/components/organisms//SignInDialog";
 import SignUpDialog from "src/components/organisms//SignUpDialog";
 import { AuthProps } from "src/components/wrappers/Auth";
 import { DrawerContext, LocaleContext } from "src/components/wrappers/MainLayout";
-import { NotificationListener } from "src/contexts/NotificationListener";
+import { NotificationListener } from "src/components/wrappers/NotificationListener";
 import styled from "styled-components";
 
 interface Props extends AuthProps {

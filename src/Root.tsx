@@ -3,7 +3,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import AppSyncClient from "src/components/wrappers/AppSyncClient";
 import Auth, { AuthProps } from "src/components/wrappers/Auth";
 import MainLayout, { MainLayoutEventProps } from "src/components/wrappers/MainLayout";
-import NotificationListener, { NotificationListenerProps } from "src/contexts/NotificationListener";
+import NotificationListener, { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
 import { PageComponentProps } from "src/App";
 
 // tslint:disable-next-line:max-line-length

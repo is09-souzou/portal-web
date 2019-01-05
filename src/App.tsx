@@ -10,7 +10,7 @@ import ComposingRoute from "src/components/atoms/ComposingRoute";
 import ComposingSwitch from "src/components/atoms/ComposingSwitch";
 import { AuthProps } from "src/components/wrappers/Auth";
 import { MainLayoutEventProps } from "src/components/wrappers/MainLayout";
-import { NotificationListenerProps } from "src/contexts/NotificationListener";
+import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
 import Root from "src/Root";
 import {
     ProfilePage,

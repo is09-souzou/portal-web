@@ -10,7 +10,7 @@ import Slide, { SlideProps } from "@material-ui/core/Slide";
 import React from "react";
 import { SingUp } from "src/components/wrappers/Auth";
 import { LocaleContext } from "src/components/wrappers/MainLayout";
-import { NotificationListener } from "src/contexts/NotificationListener";
+import { NotificationListener } from "src/components/wrappers/NotificationListener";
 import styled from "styled-components";
 import uuidv4 from "uuid/v4";
 

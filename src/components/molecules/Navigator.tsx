@@ -25,7 +25,7 @@ import { Query } from "react-apollo";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import Link from "src/components/atoms/Link";
 import { LocaleContext } from "src/components/wrappers/MainLayout";
-import { NotificationListenerProps } from "src/contexts/NotificationListener";
+import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
 import { PopularTags } from "src/graphQL/type";
 import deduplicationFromArray from "src/util/deduplicationFromArray";
 import formatTagsOfURLQueryParam from "src/util/formatTagsOfURLQueryParam";
