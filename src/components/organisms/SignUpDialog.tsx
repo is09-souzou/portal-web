@@ -10,7 +10,7 @@ import Slide, { SlideProps } from "@material-ui/core/Slide";
 import React from "react";
 import { SingUp } from "src/components/wrappers/Auth";
 import { LocaleContext } from "src/components/wrappers/MainLayout";
-import { NotificationListener } from "src/components/wrappers/NotificationListener";
+import { NotificationListener } from "src/contexts/NotificationListener";
 import styled from "styled-components";
 import uuidv4 from "uuid/v4";
 
@@ -97,7 +97,7 @@ export default (
                     >
                         {locale.signUpDialog.cancel}
                     </Button>
-                    <Button component="button" color="primary" type="submit" variant="raised">
+                    <Button component="button" color="primary" type="submit" variant="contained">
                         {locale.signUpDialog.submit}
                     </Button>
                 </DialogActions>

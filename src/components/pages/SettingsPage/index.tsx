@@ -103,7 +103,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                 <form
                     onSubmit={this.handleUpdateEmailFromSubmit}
                 >
-                    <Typography gutterBottom variant="title">
+                    <Typography gutterBottom variant="h6">
                         Credential
                     </Typography>
                     <div>

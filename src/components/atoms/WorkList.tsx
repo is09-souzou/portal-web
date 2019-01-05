@@ -63,7 +63,7 @@ const WorkItem = (
             <Typography variant="caption">
                 {work.user && work.user.displayName}
             </Typography>
-            <Typography gutterBottom variant="title" component="h2">
+            <Typography gutterBottom variant="h6" component="h2">
                 {work.title}
             </Typography>
         </div>

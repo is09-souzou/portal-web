@@ -358,7 +358,7 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                                                         <Button
                                                             type="submit"
                                                             component="button"
-                                                            variant="raised"
+                                                            variant="contained"
                                                             color="primary"
                                                         >
                                                             {locale.profile.save}

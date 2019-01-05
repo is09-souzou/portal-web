@@ -15,7 +15,7 @@ import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
 import ImageInput from "src/components/atoms/ImageInput";
 import { Token } from "src/components/wrappers/Auth";
-import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
+import { NotificationListenerProps } from "src/contexts/NotificationListener";
 import styled from "styled-components";
 
 interface Props extends DialogProps, NotificationListenerProps {

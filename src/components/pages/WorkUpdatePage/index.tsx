@@ -357,7 +357,7 @@ export default class extends React.Component<PageComponentProps<{id: string}>, S
                                                         <Button
                                                             type="submit"
                                                             component="button"
-                                                            variant="raised"
+                                                            variant="contained"
                                                             color="primary"
                                                         >
                                                             update

@@ -69,7 +69,7 @@ export default (
                         {window.innerWidth < 767 && (
                             <WorkAppBar>
                                 <Toolbar>
-                                    <Typography variant="title" color="inherit">
+                                    <Typography variant="h6" color="inherit">
                                         {`${work.title} - ${work.user && work.user.displayName}`}
                                     </Typography>
                                     <IconButton color="inherit" onClick={onClose} aria-label="Close">

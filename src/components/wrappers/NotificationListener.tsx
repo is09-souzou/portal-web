@@ -31,6 +31,23 @@ export default class extends React.Component<Props, State> {
         notifications: []
     };
 
+    componentDidCatch(error: Error | null, info: object) {
+        if (!error) {
+            return;
+        }
+
+        console.error(error);
+        console.error(info);
+
+        this.setState({
+            notifications: this.state.notifications.concat({
+                message: error.message,
+                type: "error",
+                key: Date.now()
+            })
+        });
+    }
+
     onCloseByKey = (key: number) => () => this.setState({
         notifications: this.state.notifications.filter(y => key !== y.key)
     })

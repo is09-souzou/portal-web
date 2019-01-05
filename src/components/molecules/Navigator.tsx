@@ -25,7 +25,7 @@ import { Query } from "react-apollo";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import Link from "src/components/atoms/Link";
 import { LocaleContext } from "src/components/wrappers/MainLayout";
-import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
+import { NotificationListenerProps } from "src/contexts/NotificationListener";
 import { PopularTags } from "src/graphQL/type";
 import deduplicationFromArray from "src/util/deduplicationFromArray";
 import formatTagsOfURLQueryParam from "src/util/formatTagsOfURLQueryParam";
@@ -58,7 +58,7 @@ export default class extends React.Component<Props, State> {
         tags: getTagsByURLQueryParam(this.props.history)
     };
 
-    toggleTagListVisible = () => this.setState({ tagListVisible: !this.state.tagListVisible });
+    componentDidUpdate() {}
 
     getSnapshotBeforeUpdate() {
         const tags = getTagsByURLQueryParam(this.props.history);
@@ -66,6 +66,8 @@ export default class extends React.Component<Props, State> {
             this.setState({ tags: deduplicationFromArray(this.state.tags.concat(tags)) });
         return null;
     }
+
+    toggleTagListVisible = () => this.setState({ tagListVisible: !this.state.tagListVisible });
 
     render() {
         const {
@@ -77,7 +79,7 @@ export default class extends React.Component<Props, State> {
             <LocaleContext.Consumer>
                 {({ locale, handleLocale }) => (
                 <Host>
-                    <Title variant="headline">
+                    <Title variant="h5">
                         <Link
                             to="/"
                         >

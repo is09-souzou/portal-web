@@ -9,7 +9,7 @@ import DialogContent, { DialogContentProps } from "@material-ui/core/DialogConte
 import Slide, { SlideProps } from "@material-ui/core/Slide";
 import React from "react";
 import { LocaleContext } from "src/components/wrappers/MainLayout";
-import { ErrorNotification } from "src/components/wrappers/NotificationListener";
+import { ErrorNotification } from "src/contexts/NotificationListener";
 import styled from "styled-components";
 
 interface Props {
