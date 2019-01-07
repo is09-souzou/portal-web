@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "src/components/atoms/Image";
 import styled from "styled-components";
 
@@ -9,105 +9,89 @@ export interface ImageInputProps extends React.InputHTMLAttributes<HTMLInputElem
     onImageLoad?: (event: React.SyntheticEvent<HTMLImageElement>) => void;
 }
 
-interface State {
-    focused: boolean;
-    imageUrl: string | undefined;
-    invalid: boolean;
-}
+export default (
+    {
+        className,
+        defaultImageUrl,
+        disabled = false,
+        height = "",
+        hintText = "",
+        labelText,
+        name = String(Math.random()),
+        onBlur = () => undefined,
+        onChange = () => undefined,
+        onFocus = () => undefined,
+        onSubmit = () => undefined,
+        width = "",
+        onImageLoad,
+        ...props
+    }: ImageInputProps
+) => {
+    const [focused, setFocused] = useState<boolean>(false);
+    const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+    const [invalid, setInvalid] = useState<boolean>(false);
 
-export default class extends React.Component<ImageInputProps, State> {
-    state: State = {
-        focused : false,
-        imageUrl: undefined,
-        invalid : false
-    };
-
-    handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.props.onChange && this.props.onChange(e);
-        if (this.state.imageUrl) {
-            URL.revokeObjectURL(this.state.imageUrl);
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange && onChange(e);
+        if (imageUrl) {
+            URL.revokeObjectURL(imageUrl);
         }
         const file = e.target.files![0];
-        this.setState({
-            imageUrl: file && URL.createObjectURL(file)
-        });
-    }
+        setImageUrl(file && URL.createObjectURL(file));
+    };
 
-    handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-        this.props.onBlur && this.props.onBlur(e);
-        this.setState({
-            focused: false,
-            invalid: !e.target.validity.valid
-        });
-    }
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        onBlur && onBlur(e);
+        setFocused(false);
+        setInvalid(!e.target.validity.valid);
+    };
 
-    handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-        this.props.onFocus && this.props.onFocus(e);
-        this.setState({
-            focused: true
-        });
-    }
+    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+        onFocus && onFocus(e);
+        setFocused(true);
+    };
 
-    render() {
-        const {
-            className,
-            defaultImageUrl,
-            disabled = false,
-            height = "",
-            hintText = "",
-            labelText,
-            name = String(Math.random()),
-            onBlur = () => undefined,
-            onChange = () => undefined,
-            onFocus = () => undefined,
-            onSubmit = () => undefined,
-            width = "",
-            onImageLoad,
-            ...props
-        } = this.props;
+    const id = props.id ? props.id : name;
 
-        const id = this.props.id ? this.props.id : name;
-
-        return (
-            <Host
-                className={className}
+    return (
+        <Host
+            className={className}
+        >
+            <StyledLabel
+                htmlFor={id}
             >
-                <StyledLabel
-                    htmlFor={id}
-                >
-                    {labelText &&
-                        <LabelText
-                            invalid={this.state.invalid}
-                            focused={this.state.focused}
-                            disabled={disabled}
-                        >
-                            {labelText}
-                        </LabelText>
-                    }
-                    <StyledImage
-                        alt={hintText}
-                        height={height}
-                        onLoad={onImageLoad}
-                        src={this.state.imageUrl || defaultImageUrl}
-                        width={width}
-                    />
-                </StyledLabel>
-                <StyledInput
-                    accept="image/*"
-                    disabled={disabled}
-                    id={id}
-                    name={name}
-                    onChange={this.handleChange}
-                    onBlur={this.handleBlur}
-                    onFocus={this.handleFocus}
-                    type="file"
-                    {...props}
-                    unselectable={undefined}
+                {labelText &&
+                    <LabelText
+                        invalid={invalid}
+                        focused={focused}
+                        disabled={disabled}
+                    >
+                        {labelText}
+                    </LabelText>
+                }
+                <StyledImage
+                    alt={hintText}
+                    height={height}
+                    onLoad={onImageLoad}
+                    src={imageUrl || defaultImageUrl}
+                    width={width}
                 />
-            </Host>
-        );
-    }
-}
+            </StyledLabel>
+            <StyledInput
+                accept="image/*"
+                disabled={disabled}
+                id={id}
+                name={name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                onFocus={handleFocus}
+                type="file"
+                {...props}
+                unselectable={undefined}
+            />
+        </Host>
+    );
+};
 
 const Host = styled.div`
     margin: 16px 0 8px 0;

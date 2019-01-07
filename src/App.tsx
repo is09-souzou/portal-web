@@ -8,9 +8,6 @@ import {
 } from "react-router-dom";
 import ComposingRoute from "src/components/atoms/ComposingRoute";
 import ComposingSwitch from "src/components/atoms/ComposingSwitch";
-import { AuthProps } from "src/components/wrappers/Auth";
-import { MainLayoutEventProps } from "src/components/wrappers/MainLayout";
-import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
 import Root from "src/Root";
 import {
     ProfilePage,
@@ -96,7 +93,3 @@ const theme = createMuiTheme({
         },
     }
 });
-
-export interface PageComponentProps<T> extends RouteComponentProps<T>, AuthProps, NotificationListenerProps, MainLayoutEventProps {
-    computedMatch?: match<T>;
-}

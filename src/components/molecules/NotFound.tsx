@@ -7,7 +7,7 @@ const emojiList = ["(＝△＝)", "(´・ω・`)", "(＿´Д｀)", "(= ‐ω‐ 
 export default (
     props: React.HTMLAttributes<HTMLDivElement>
 ) => {
-    const [emoji] = useState(emojiList[Math.floor(Math.random() * emojiList.length)]);
+    const [emoji] = useState<string>(emojiList[Math.floor(Math.random() * emojiList.length)]);
 
     return (
         <Host

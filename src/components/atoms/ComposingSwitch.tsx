@@ -1,15 +1,11 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import { Switch } from "react-router-dom";
-
-interface Props {
-    children: ReactNode;
-}
 
 export default (
     {
         children,
         ...props
-    }: Props
+    }: React.Props<{}>
 ) => (
     <Switch>
         {React.Children.toArray(children).map(

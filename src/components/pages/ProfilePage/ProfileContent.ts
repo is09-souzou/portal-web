@@ -12,7 +12,7 @@ export default styled.div`
         }
     }
     > :last-child {
-        display; flex;
+        display: flex;
         margin-left: auto;
         > * {
             margin-left: .5rem;

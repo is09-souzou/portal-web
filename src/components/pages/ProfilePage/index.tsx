@@ -11,8 +11,8 @@ import {
 } from "@material-ui/core";
 import { ApolloQueryResult } from "apollo-client";
 import gql from "graphql-tag";
-import React, { Fragment } from "react";
-import { Mutation,  MutationFn, OperationVariables, Query } from "react-apollo";
+import React, { useContext, useRef, useState, Fragment } from "react";
+import { Mutation,  MutationFn, OperationVariables, Query, QueryResult } from "react-apollo";
 import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
 import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
@@ -25,19 +25,16 @@ import ProfilePageHeader from "src/components/pages/ProfilePage/ProfilePageHeade
 import ProfilePageHost from "src/components/pages/ProfilePage/ProfilePageHost";
 import UserAvatar from "src/components/pages/ProfilePage/UserAvatar";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
-import { LocaleContext } from "src/components/wrappers/MainLayout";
+import AuthContext, { AuthValue } from "src/contexts/AuthContext";
+import LocalizationContext from "src/contexts/LocalizationContext";
+import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
+import RouterHistoryContext from "src/contexts/RouterHistoryContext";
 import { User } from "src/graphQL/type";
 import { PageComponentProps } from "src/App";
 
 interface Chip {
     key  : string;
     label: string;
-}
-
-interface State {
-    chipsData?: Chip[];
-    editableAvatarDialogIsVisible: boolean;
-    uploadingAvatarImage: boolean;
 }
 
 const QueryGetUser = gql(`
@@ -54,6 +51,45 @@ const QueryGetUser = gql(`
     }
 `);
 
+export default (props: PageComponentProps<{}>) => {
+    const auth = useContext(AuthContext);
+    const notification = useContext(NotificationContext);
+
+    return (
+        <Query
+            query={QueryGetUser}
+            variables={{ id: auth.token!.payload.sub }}
+            fetchPolicy="network-only"
+        >
+            {(query =>
+                (
+                    <ProfilePageHost
+                        {...props}
+                    >
+                        {
+                            query.loading         ? <GraphQLProgress/>
+                          : query.error           ? (
+                                <Fragment>
+                                    <ErrorTemplate/>
+                                    <notification.ErrorComponent error={query.error}/>
+                                </Fragment>
+                            )
+                          : !(query.data.getUser) ? <NotFound/>
+                          :                   (
+                            <ProfilePage
+                                auth={auth}
+                                notification={notification}
+                                query={query}
+                            />
+                            )
+                        }
+                    </ProfilePageHost>
+                )
+            )}
+        </Query>
+    );
+};
+
 const MutationUpdateUser = gql(`
     mutation updateUser(
         $user: UserUpdate!
@@ -66,76 +102,97 @@ const MutationUpdateUser = gql(`
     }
 `);
 
-export default class extends React.Component<PageComponentProps<{}>, State> {
+interface Props extends React.Props<{}> {
+    auth: AuthValue;
+    notification: NotificationValue;
+    query: QueryResult<any, {
+        id: any;
+    }>;
+}
 
-    state: State = {
-        chipsData                    : undefined,
-        editableAvatarDialogIsVisible: false,
-        uploadingAvatarImage         : false
-    };
+const ProfilePage = (
+    {
+        auth,
+        notification,
+        query: {
+            loading,
+            error,
+            data,
+            refetch
+        },
+        ...props
+    }: Props
+) => {
 
-    displayNameInput?: any;
-    emailInput?      : any;
-    careerInput?     : any;
-    messageInput?    : any;
+    const [chipsData, setChipsData] = useState<Chip[]>([]);
+    const [editableAvatarDialogOpend, setEditableAvatarDialogOpen] = useState<boolean>(false);
+    const [uploadingAvatarImage, setUploadingAvatarImage] = useState<boolean>(false);
 
-    setDisplayNameInput = (x: any) => this.displayNameInput = x;
-    setEmailInput = (x: any) => this.emailInput = x;
-    setCareerInput = (x: any) => this.careerInput = x;
-    setMessageInput = (x: any) => this.messageInput = x;
+    const displayNameInputElement = useRef<HTMLInputElement>(null);
+    const emailInputElement = useRef<HTMLInputElement>(null);
+    const careerInputElement = useRef<HTMLInputElement>(null);
+    const messageInputElement = useRef<HTMLInputElement>(null);
 
-    handleUpdateUserFormSubmit = (
+    const localization = useContext(LocalizationContext);
+    const routerHistory = useContext(RouterHistoryContext);
+
+    const handleUpdateUserFormSubmit = (
         updateUser: MutationFn<any, OperationVariables>,
         currentUser: User
     ) => async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!auth.token) return;
+
+        if (!(displayNameInputElement.current && emailInputElement.current && messageInputElement.current && careerInputElement.current)) return;
+
         await updateUser({
             variables: {
                 user: {
-                    id: this.props.auth.token!.payload.sub,
-                    displayName: this.displayNameInput.value,
-                    email: this.emailInput.value,
-                    message: this.messageInput.value,
-                    career: this.careerInput.value,
-                    skillList: (this.state.chipsData || [] as Chip[]).map(x => x.label) as string[],
+                    id: auth.token!.payload.sub,
+                    displayName: displayNameInputElement.current!.value,
+                    email: emailInputElement.current!.value,
+                    message: messageInputElement.current!.value,
+                    career: careerInputElement.current!.value,
+                    skillList: chipsData.map(x => x.label) as string[],
                 }
             },
             optimisticResponse: {
                 __typename: "Mutation",
                 updateUser: {
-                    id: this.props.auth.token!.payload.sub,
-                    displayName: this.displayNameInput.value,
-                    email: this.emailInput.value,
-                    message: this.messageInput.value,
-                    career: this.careerInput.value,
-                    skillList: (this.state.chipsData || [] as Chip[]).map(x => x.label) as string[],
+                    id: auth.token!.payload.sub,
+                    displayName: displayNameInputElement.current!.value,
+                    email: emailInputElement!.current!.value,
+                    message: messageInputElement!.current!.value,
+                    career: careerInputElement!.current!.value,
+                    skillList: chipsData.map(x => x.label) as string[],
                     __typename: "User"
                 }
             },
         });
 
-        this.props.notificationListener.notification("info", "Update Profile!");
-        this.props.history.push(("/users/") + currentUser.id);
-    }
+        notification.notification("info", "Update Profile!");
+        routerHistory.history.push(`/users/${currentUser.id}`);
+    };
 
-    handleUpdateAvatarFormSubmit = (
+    const handleUpdateAvatarFormSubmit = (
         updateUser: MutationFn<any, OperationVariables>,
         refetch: (variables?: { id: any; } | undefined) => Promise<ApolloQueryResult<any>>
     ) => async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!this.props.auth.token) return;
+        if (!auth.token) return;
 
         const image = (e.target as any).elements["newAvatarImage"].files[0];
 
         try {
-            this.setState({ uploadingAvatarImage: true });
+            setUploadingAvatarImage(true);
             const {
                 signedUrl,
                 uploadedUrl
             } = await createSignedUrl({
-                jwt: this.props.auth.token!.jwtToken,
-                userId: this.props.auth.token!.payload.sub,
+                jwt: auth.token!.jwtToken,
+                userId: auth.token!.payload.sub,
                 type: "profile",
                 mimetype: image.type
             });
@@ -149,13 +206,13 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
                     variables: {
                         user: {
                             avatarUri: uploadedUrl,
-                            id: this.props.auth.token!.payload.sub,
+                            id: auth.token!.payload.sub,
                         }
                     },
                     optimisticResponse: {
                         __typename: "Mutation",
                         updateUser: {
-                            id: this.props.auth.token!.payload.sub,
+                            id: auth.token!.payload.sub,
                             __typename: "User"
                         }
                     },
@@ -163,254 +220,190 @@ export default class extends React.Component<PageComponentProps<{}>, State> {
             ]);
 
             refetch();
-            this.setState({ uploadingAvatarImage: false });
-            this.closeEditableAvatarDialog();
+            setUploadingAvatarImage(false);
+            closeEditableAvatarDialog();
         } catch (e) {
-            this.setState({ uploadingAvatarImage: false });
-            this.props.notificationListener.errorNotification(e);
+            setUploadingAvatarImage(false);
+            notification.notification("error", e);
         }
-    }
+    };
 
-    deleteChip = (data: Chip) => () => {
-        if (this.state.chipsData === undefined)
+    const deleteChip = (data: Chip) => () => {
+        setChipsData(chipsData.filter((x: Chip): boolean => data.key !== x.key));
+    };
+
+    const tagInputKeyDown = (e: React.KeyboardEvent) => {
+        e.preventDefault();
+        if (chipsData.length >= 5)
             return;
-
-        this.setState({
-            chipsData: (this.state.chipsData || [] as Chip[]).filter((x: Chip): boolean => data.key !== x.key)
-        });
-    }
-
-    tagInputKeyDown = (e: React.KeyboardEvent) => {
-        if (this.state.chipsData === undefined)
-            return;
-
-        if ((this.state.chipsData || [] as Chip[]).length >= 5)
-            return e.preventDefault();
 
         const inputValue = (e.target as any).value;
         if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
             e.preventDefault();
             if (inputValue.length > 1) {
-                if (!(this.state.chipsData || [] as Chip[]).some(x => x.label === inputValue))
-                    this.setState({
-                        chipsData: (this.state.chipsData || [] as Chip[]).concat({
+                if (!chipsData.some(x => x.label === inputValue))
+                    setChipsData(
+                        chipsData.concat({
                             key: (e.target as any).value,
                             label: (e.target as any).value
                         })
-                    });
+                    );
 
                 (e.target as any).value = "";
             }
         }
+    };
+
+    const openEditableAvatarDialog = () => setEditableAvatarDialogOpen(true);
+
+    const closeEditableAvatarDialog = () => setEditableAvatarDialogOpen(false);
+
+    const moveUserPage = (id: string) => (_: React.MouseEvent) => routerHistory.history.push(`/users/${id}`);
+
+    const currentUser = query.data.getUser as User;
+
+    if (currentUser) {
+        this.setState({
+            chipsData: (currentUser.skillList || []).map((x: string) => ({ key: x, label: x }))
+        });
     }
 
-    openEditableAvatarDialog = () => this.setState({ editableAvatarDialogIsVisible: true });
-
-    closeEditableAvatarDialog = () => this.setState({ editableAvatarDialogIsVisible: false });
-
-    moveUserPage = (id: string) => (_: React.MouseEvent) => this.props.history.push(`/users/${id}`);
-
-    render() {
-        const {
-            auth,
-            history,
-            notificationListener
-        } = this.props;
-
-        if (!auth.token) {
-            const queryParam = toObjectFromURIQuery(history.location.search);
-            if (!((queryParam && queryParam["sign-in"] === "true") || (queryParam && queryParam["sign-up"] === "true")))
-                history.push("?sign-in=true");
-
-            return (
-                <ProfilePageHost
-                    auth={auth}
-                    history={history}
-                    notificationListener={notificationListener}
+    return (
+        <Mutation
+            mutation={MutationUpdateUser}
+            refetchQueries={[]}
+        >
+            {updateUser => (
+                <form
+                    onSubmit={handleUpdateUserFormSubmit(updateUser, currentUser)}
                 >
-                    <NotFound/>
-                </ProfilePageHost>
-            );
-        }
-
-        return (
-            <ProfilePageHost
-                auth={auth}
-                history={history}
-                notificationListener={notificationListener}
-            >
-                <Query
-                    query={QueryGetUser}
-                    variables={{ id: auth.token!.payload.sub }}
-                    fetchPolicy="network-only"
-                >
-                    {({ loading, error, data, refetch }) => {
-                        if (loading) return <GraphQLProgress />;
-                        if (error) {
-                            console.error(error);
-                            return (
-                                <Fragment>
-                                    <ErrorTemplate/>
-                                    <notificationListener.ErrorComponent error={error}/>
-                                </Fragment>
-                            );
-                        }
-
-                        if (!data.getUser)
-                            return  <NotFound />;
-
-                        const currentUser = data.getUser as User;
-
-                        if (this.state.chipsData === undefined)
-                            this.setState({
-                                chipsData: (currentUser.skillList || []).map((x: string) => ({ key: x, label: x }))
-                            });
-
-                        return (
-                            <LocaleContext.Consumer>
-                                {({ locale }) => (
-                                    <Mutation
-                                        mutation={MutationUpdateUser}
-                                        refetchQueries={[]}
-                                    >
-                                        {updateUser => (
-                                            <form
-                                                onSubmit={this.handleUpdateUserFormSubmit(updateUser, currentUser)}
-                                            >
-                                                <ProfilePageHeader>
-                                                    <img
-                                                        src={currentUser.avatarUri}
-                                                    />
-                                                    <div>
-                                                        <UserAvatar
-                                                            src={currentUser.avatarUri}
-                                                            onClick={this.openEditableAvatarDialog}
-                                                        />
-                                                        <div>
-                                                            <TextField
-                                                                id="profile-name"
-                                                                margin="dense"
-                                                                label={locale.profile.displayName}
-                                                                defaultValue={currentUser.displayName}
-                                                                required
-                                                                inputRef={this.setDisplayNameInput}
-                                                            />
-                                                            <TextField
-                                                                id="profile-email"
-                                                                margin="dense"
-                                                                label={locale.profile.mailAdress}
-                                                                type="email"
-                                                                defaultValue={currentUser.email}
-                                                                inputRef={this.setEmailInput}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </ProfilePageHeader>
-                                                <Divider />
-                                                <ProfileContent>
-                                                    <TextField
-                                                        id="profile-message"
-                                                        label={locale.profile.message}
-                                                        margin="normal"
-                                                        defaultValue={currentUser.message}
-                                                        inputRef={this.setMessageInput}
-                                                    />
-                                                    <TextField
-                                                        id="profile-career"
-                                                        label={locale.profile.career}
-                                                        margin="normal"
-                                                        defaultValue={currentUser.career}
-                                                        multiline
-                                                        rows={4}
-                                                        inputRef={this.setCareerInput}
-                                                    />
-                                                    <div>
-                                                        <TextField
-                                                            label={locale.profile.skill}
-                                                            placeholder={locale.profile.inputSkill}
-                                                            onKeyDown={this.tagInputKeyDown}
-                                                            margin="normal"
-                                                            inputProps={{
-                                                                maxLength: 10,
-                                                            }}
-                                                        />
-                                                        <ChipList>
-                                                            {(this.state.chipsData || (currentUser.skillList || []).map((x: string) => ({ key: x, label: x })))
-                                                                .map((data: any) =>
-                                                                    <Chip
-                                                                        key={data.key}
-                                                                        clickable={false}
-                                                                        label={data.label}
-                                                                        onDelete={this.deleteChip(data)}
-                                                                    />
-                                                                )
-                                                            }
-                                                        </ChipList>
-                                                    </div>
-                                                    <div>
-                                                        <Button
-                                                            variant="outlined"
-                                                            color="primary"
-                                                            onClick={this.moveUserPage(currentUser.id)}
-                                                        >
-                                                            {locale.profile.cancel}
-                                                        </Button>
-                                                        <Button
-                                                            type="submit"
-                                                            component="button"
-                                                            variant="contained"
-                                                            color="primary"
-                                                        >
-                                                            {locale.profile.save}
-                                                        </Button>
-                                                    </div>
-                                                </ProfileContent>
-                                                <Dialog
-                                                    open={this.state.editableAvatarDialogIsVisible}
-                                                    onClose={this.closeEditableAvatarDialog}
-                                                    aria-labelledby="editable-avatar-dialog-title"
-                                                >
-                                                    <form
-                                                        onSubmit={this.handleUpdateAvatarFormSubmit(updateUser, refetch)}
-                                                    >
-                                                        <DialogTitle
-                                                            id="editable-avatar-dialog-title"
-                                                        >
-                                                            {locale.profile.dialog.title}
-                                                        </DialogTitle>
-                                                        <DialogContent>
-                                                            <ImageInput
-                                                                name="newAvatarImage"
-                                                                width="256"
-                                                                height="256"
-                                                            />
-                                                        </DialogContent>
-                                                        {this.state.uploadingAvatarImage && <LinearProgress/>}
-                                                        <DialogActions>
-                                                            <Button
-                                                                onClick={this.closeEditableAvatarDialog}
-                                                            >
-                                                                {locale.profile.dialog.cancel}
-                                                            </Button>
-                                                            <Button
-                                                                component="button"
-                                                                color="primary"
-                                                                type="submit"
-                                                            >
-                                                                {locale.profile.dialog.submit}
-                                                            </Button>
-                                                        </DialogActions>
-                                                    </form>
-                                                </Dialog>
-                                            </form>
-                                        )}
-                                    </Mutation>
-                                )}
-                            </LocaleContext.Consumer>
-                        );
-                    }}
-                </Query>
-            </ProfilePageHost>
-        );
-    }
-}
+                    <ProfilePageHeader>
+                        <img
+                            src={currentUser.avatarUri}
+                        />
+                        <div>
+                            <UserAvatar
+                                src={currentUser.avatarUri}
+                                onClick={openEditableAvatarDialog}
+                            />
+                            <div>
+                                <TextField
+                                    id="profile-name"
+                                    margin="dense"
+                                    label={localization.locationText.profile.displayName}
+                                    defaultValue={currentUser.displayName}
+                                    required
+                                    inputRef={displayNameInputElement}
+                                />
+                                <TextField
+                                    id="profile-email"
+                                    margin="dense"
+                                    label={localization.locationText.profile.mailAdress}
+                                    type="email"
+                                    defaultValue={currentUser.email}
+                                    inputRef={emailInputElement}
+                                />
+                            </div>
+                        </div>
+                    </ProfilePageHeader>
+                    <Divider />
+                    <ProfileContent>
+                        <TextField
+                            id="profile-message"
+                            label={localization.locationText.profile.message}
+                            margin="normal"
+                            defaultValue={currentUser.message}
+                            inputRef={messageInputElement}
+                        />
+                        <TextField
+                            id="profile-career"
+                            label={localization.locationText.profile.career}
+                            margin="normal"
+                            defaultValue={currentUser.career}
+                            multiline
+                            rows={4}
+                            inputRef={careerInputElement}
+                        />
+                        <div>
+                            <TextField
+                                label={localization.locationText.profile.skill}
+                                placeholder={localization.locationText.profile.inputSkill}
+                                onKeyDown={tagInputKeyDown}
+                                margin="normal"
+                                inputProps={{
+                                    maxLength: 10,
+                                }}
+                            />
+                            <ChipList>
+                                {(this.state.chipsData || (currentUser.skillList || []).map((x: string) => ({ key: x, label: x })))
+                                    .map((data: any) =>
+                                        <Chip
+                                            key={data.key}
+                                            clickable={false}
+                                            label={data.label}
+                                            onDelete={deleteChip(data)}
+                                        />
+                                    )
+                                }
+                            </ChipList>
+                        </div>
+                        <div>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                onClick={moveUserPage(currentUser.id)}
+                            >
+                                {localization.locationText.profile.cancel}
+                            </Button>
+                            <Button
+                                type="submit"
+                                component="button"
+                                variant="contained"
+                                color="primary"
+                            >
+                                {localization.locationText.profile.save}
+                            </Button>
+                        </div>
+                    </ProfileContent>
+                    <Dialog
+                        open={editableAvatarDialogIsVisible}
+                        onClose={closeEditableAvatarDialog}
+                        aria-labelledby="editable-avatar-dialog-title"
+                    >
+                        <form
+                            onSubmit={handleUpdateAvatarFormSubmit(updateUser, refetch)}
+                        >
+                            <DialogTitle
+                                id="editable-avatar-dialog-title"
+                            >
+                                {localization.locationText.profile.dialog.title}
+                            </DialogTitle>
+                            <DialogContent>
+                                <ImageInput
+                                    name="newAvatarImage"
+                                    width="256"
+                                    height="256"
+                                />
+                            </DialogContent>
+                            {uploadingAvatarImage && <LinearProgress/>}
+                            <DialogActions>
+                                <Button
+                                    onClick={closeEditableAvatarDialog}
+                                >
+                                    {localization.locationText.profile.dialog.cancel}
+                                </Button>
+                                <Button
+                                    component="button"
+                                    color="primary"
+                                    type="submit"
+                                >
+                                    {localization.locationText.profile.dialog.submit}
+                                </Button>
+                            </DialogActions>
+                        </form>
+                    </Dialog>
+                </form>
+            )}
+        </Mutation>
+    );
+};

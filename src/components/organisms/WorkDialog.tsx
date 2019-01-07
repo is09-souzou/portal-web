@@ -40,7 +40,7 @@ export default (
     }: Props
 ) => {
 
-    const [visibile, setVisibility] = useState(false);
+    const [visibile, setVisibility] = useState<boolean>(false);
 
     const handleOpenDialog = () => setVisibility(true);
     const handleHiddenDialog = () => setVisibility(false);

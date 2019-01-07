@@ -1,90 +1,39 @@
 import {
     AuthenticationDetails,
-    CognitoIdToken,
     CognitoUser,
     CognitoUserAttribute,
     CognitoUserPool
 } from "amazon-cognito-identity-js";
-import React, { ReactNode } from "react";
+import React, { useState } from "react";
 import config from "src/config";
+import AuthContext, { Token } from "src/contexts/AuthContext";
 
-export interface Token {
-    jwtToken: string;
-    payload: {
-        [id: string]: any;
-    };
-}
+const cognitoUserPool = new CognitoUserPool(config.cognito);
 
-export type SingIn = (email: string, password: string) => Promise<Token>;
-export type SingUp = (userName: string, password: string, attribute?: {[key: string]: string}) => Promise<string>;
-export type SingOut = () => Promise<void>;
-export type UpdateEmail = (email: string) => Promise<void>;
-export type UpdatePassword = (password: string, newPassword: string) => Promise<void>;
+export default (
+    {
+        children
+    }: React.Props<{}>
+) => {
 
-export type AuthProps = {
-    auth: {
-        signIn: SingIn;
-        signUp: SingUp;
-        signOut: SingOut;
-        updateEmail: UpdateEmail;
-        updatePassword: UpdatePassword;
-        token: Token | null;
-        idToken?: CognitoIdToken;
-        cognitoUser?: CognitoUser | null;
-        cognitoUserPool?: CognitoUserPool | null;
-    };
-};
+    const [cognitoUser, setCognitoUser] = useState<CognitoUser | null>(cognitoUserPool.getCurrentUser());
+    const [token, setToken] = useState<Token | null>(
+        () => cognitoUser && cognitoUser.getSession((err: any, session: any) => {
+            if (err) {
+                throw err;
+            }
+            return session.accessToken;
+        })
+    );
 
-interface Props {
-    render: (auth: AuthProps) => ReactNode;
-}
-
-interface State {
-    cognitoUserPool: CognitoUserPool;
-    token: Token | null;
-    cognitoUser: CognitoUser | null;
-}
-
-export default class extends React.Component<Props, State> {
-
-    constructor(props: Props) {
-        super(props);
-        const cognitoUserPool = new CognitoUserPool(config.cognito);
-
-        const cognitoUser = cognitoUserPool.getCurrentUser();
-
-        this.state = {
-            cognitoUser,
-            cognitoUserPool,
-            token: null
-        };
-
-        if (cognitoUser != null) {
-            cognitoUser.getSession((err: any, session: any) => {
-                if (err) {
-                    throw err;
-                }
-                this.state = {
-                    cognitoUser,
-                    cognitoUserPool,
-                    token: session.accessToken
-                };
-            });
-        }
-    }
-
-    render() {
-
-        const {
-            render
-        } = this.props;
-
-        return render({
-            auth: {
-                cognitoUser: this.state.cognitoUser,
-                cognitoUserPool: this.state.cognitoUserPool,
+    return (
+        <AuthContext.Provider
+            value={{
+                cognitoUser,
+                cognitoUserPool,
+                token,
                 idToken: (() => {
-                    const userSession = this.state.cognitoUser && this.state.cognitoUser.getSignInUserSession();
+                    const userSession = cognitoUser && cognitoUser.getSignInUserSession();
                     if (!userSession)
                         return undefined;
                     return userSession.getIdToken();
@@ -95,10 +44,10 @@ export default class extends React.Component<Props, State> {
                         Username: email
                     });
                     const cognitoUser = new CognitoUser({
-                        Pool    : this.state.cognitoUserPool,
+                        Pool    : cognitoUserPool,
                         Username: email,
                     });
-                    this.setState({ cognitoUser });
+                    setCognitoUser(cognitoUser);
                     cognitoUser.authenticateUser(
                         authenticationDetails,
                         {
@@ -108,30 +57,31 @@ export default class extends React.Component<Props, State> {
                                 const jwtToken = accessToken.getJwtToken();
                                 const token = { jwtToken, payload: accessToken.decodePayload() };
                                 resolve(token);
-                                this.setState({ token });
+                                setToken(token);
                             }
                         }
                     );
                 }),
                 signOut: () => new Promise((resolve, reject) => {
-                    const cognitoUser = this.state.cognitoUser;
                     if (cognitoUser !== null) {
                         (cognitoUser as CognitoUser).globalSignOut({
                             onFailure: err => {
-                                this.setState({ token: null, cognitoUser: null });
+                                setToken(null);
+                                setCognitoUser(null);
                                 localStorage.clear();
                                 location.reload();
                                 reject(err);
                             },
                             onSuccess: () => {
-                                this.setState({ token: null, cognitoUser: null });
+                                setToken(null);
+                                setCognitoUser(null);
                                 resolve();
                             }
                         });
                     }
                 }),
                 signUp: (userName, password, attribute) => new Promise((resolve, reject) => {
-                    this.state.cognitoUserPool.signUp(
+                    cognitoUserPool.signUp(
                         userName,
                         password,
                         Object.entries(attribute || []).map(([Name, Value]) =>
@@ -147,9 +97,8 @@ export default class extends React.Component<Props, State> {
                         }
                     );
                 }),
-                token: this.state.token,
                 updateEmail: (email) => new Promise((resolve, reject) => {
-                    this.state.cognitoUser!.updateAttributes(
+                    cognitoUser!.updateAttributes(
                         [{
                             Name: "email",
                             Value: email
@@ -164,13 +113,15 @@ export default class extends React.Component<Props, State> {
                     );
                 }),
                 updatePassword: (password, newPassword) => new Promise((resolve, reject) =>
-                    this.state.cognitoUser!.changePassword(
+                    cognitoUser!.changePassword(
                         password,
                         newPassword,
                         (err, result) => (err || !result) ? reject(err) : resolve()
                     )
                 ),
-            }
-        });
-    }
-}
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
+};

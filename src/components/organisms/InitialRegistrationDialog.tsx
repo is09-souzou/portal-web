@@ -9,23 +9,17 @@ import DialogContent, { DialogContentProps } from "@material-ui/core/DialogConte
 import Slide, { SlideProps } from "@material-ui/core/Slide";
 import TextField, { TextFieldProps } from "@material-ui/core/TextField";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useContext, useState } from "react";
 import { Mutation, MutationFn, MutationUpdaterFn, OperationVariables } from "react-apollo";
 import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
 import ImageInput from "src/components/atoms/ImageInput";
-import { Token } from "src/components/wrappers/Auth";
-import { NotificationListenerProps } from "src/components/wrappers/NotificationListener";
+import AuthContext from "src/contexts/AuthContext";
+import NotificationContext from "src/contexts/NotificationContext";
 import styled from "styled-components";
 
-interface Props extends DialogProps, NotificationListenerProps {
-    token: Token;
+interface Props extends DialogProps {
     onClose?: () => void;
-}
-
-interface State {
-    activeStep: number;
-    isProcessing: boolean;
 }
 
 const QueryGetUser = gql(`
@@ -58,40 +52,40 @@ const MutationCreateUser = gql(`
     }
 `);
 
-export default class extends React.Component<Props, State> {
+export default (
+    {
+        onClose,
+        ...props
+    }: Props
+) => {
 
-    state: State = {
-        activeStep: 0,
-        isProcessing: false
-    };
+    const [isProcessing, setProcessing] = useState<boolean>(false);
 
-    handleStep = (x: number) => () => this.setState({ activeStep: x });
+    const auth = useContext(AuthContext);
+    const notification = useContext(NotificationContext);
 
-    handleFormSubmit = (createUser: MutationFn<any, OperationVariables>) => async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleFormSubmit = (createUser: MutationFn<any, OperationVariables>) => async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const {
-            token,
-            onClose,
-            notificationListener
-        } = this.props;
+        if (auth.token)
+            return;
 
         const target = e.target as any;
 
         try {
             const image = target.elements["avatar-image"].files[0];
 
-            this.setState({ isProcessing: true });
+            setProcessing(true);
 
             let signedUrl;
             let uploadedUrl;
 
             if (image) {
                 const result = await createSignedUrl({
-                    jwt: token.jwtToken,
+                    jwt: auth.token!.jwtToken,
                     mimetype: image.type,
                     type: "profile",
-                    userId: token.payload.sub
+                    userId: auth.token!.payload.sub
                 });
                 signedUrl = result.signedUrl;
                 uploadedUrl = result.uploadedUrl;
@@ -123,7 +117,7 @@ export default class extends React.Component<Props, State> {
                             email,
                             message: "",
                             avatarUri: uploadedUrl ? uploadedUrl : "",
-                            id: token!.payload.sub,
+                            id: auth.token!.payload.sub,
                             __typename: "User"
                         }
                     },
@@ -138,12 +132,12 @@ export default class extends React.Component<Props, State> {
             onClose && onClose();
         } catch (error) {
             console.error(error);
-            notificationListener.errorNotification(error);
+            notification.notification("error", error.message);
         }
-        this.setState({ isProcessing: false });
-    }
+        setProcessing(false);
+    };
 
-    mutationUpdater: MutationUpdaterFn<any> = (cache, { data }) => {
+    const mutationUpdater: MutationUpdaterFn<any> = (cache, { data }) => {
         cache.writeQuery({
             data: {
                 getUser: data.createUser
@@ -151,88 +145,79 @@ export default class extends React.Component<Props, State> {
             query: QueryGetUser,
             variables: { id: data.createUser.id }
         });
-    }
+    };
 
-    render () {
-        const {
-            token,
-            onClose,
-            notificationListener,
-            ...props
-        } = this.props;
-
-        return (
-            <Dialog
-                TransitionComponent={Transition}
-                keepMounted
-                aria-labelledby="alert-dialog-slide-title"
-                {...props}
+    return (
+        <Dialog
+            TransitionComponent={Transition}
+            keepMounted
+            aria-labelledby="alert-dialog-slide-title"
+            {...props}
+        >
+            <Mutation
+                mutation={MutationCreateUser}
+                update={mutationUpdater}
             >
-                <Mutation
-                    mutation={MutationCreateUser}
-                    update={this.mutationUpdater}
-                >
-                    {createUser => (
-                        <form
-                            onSubmit={this.handleFormSubmit(createUser)}
-                        >
-                            <DialogTitle id="alert-dialog-slide-title">
-                                Initial Registration Profile
-                            </DialogTitle>
-                            <StyledDialogContent>
-                                <div>
-                                    <AvatarInput
-                                        name="avatar-image"
-                                        width="192"
-                                        height="192"
-                                    />
-                                    <div>
-                                        <TextField
-                                            id="initial-registration-dialog-display-name"
-                                            label="Display Name"
-                                            margin="normal"
-                                            fullWidth
-                                            required
-                                        />
-                                        <TextField
-                                            id="initial-registration-dialog-email"
-                                            label="Public Mail Address"
-                                            margin="normal"
-                                            fullWidth
-                                            type="email"
-                                        />
-                                    </div>
-                                </div>
-                                <CareerTextField
-                                    id="initial-registration-dialog-career"
-                                    label="Career"
-                                    margin="normal"
-                                    fullWidth
-                                    multiline
+                {createUser => (
+                    <form
+                        onSubmit={handleFormSubmit(createUser)}
+                    >
+                        <DialogTitle id="alert-dialog-slide-title">
+                            Initial Registration Profile
+                        </DialogTitle>
+                        <StyledDialogContent>
+                            <div>
+                                <AvatarInput
+                                    name="avatar-image"
+                                    width="192"
+                                    height="192"
                                 />
-                            </StyledDialogContent>
-                            {this.state.isProcessing && <LinearProgress/>}
-                            <DialogActions>
-                                <Button
-                                    onClick={onClose}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    component="button"
-                                    color="primary"
-                                    type="submit"
-                                >
-                                    Submit
-                                </Button>
-                            </DialogActions>
-                        </form>
-                    )}
-                </Mutation>
-            </Dialog>
-        );
-    }
-}
+                                <div>
+                                    <TextField
+                                        id="initial-registration-dialog-display-name"
+                                        label="Display Name"
+                                        margin="normal"
+                                        fullWidth
+                                        required
+                                    />
+                                    <TextField
+                                        id="initial-registration-dialog-email"
+                                        label="Public Mail Address"
+                                        margin="normal"
+                                        fullWidth
+                                        type="email"
+                                    />
+                                </div>
+                            </div>
+                            <CareerTextField
+                                id="initial-registration-dialog-career"
+                                label="Career"
+                                margin="normal"
+                                fullWidth
+                                multiline
+                            />
+                        </StyledDialogContent>
+                        {isProcessing && <LinearProgress/>}
+                        <DialogActions>
+                            <Button
+                                onClick={onClose}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                component="button"
+                                color="primary"
+                                type="submit"
+                            >
+                                Submit
+                            </Button>
+                        </DialogActions>
+                    </form>
+                )}
+            </Mutation>
+        </Dialog>
+    );
+};
 
 const Transition = (props: SlideProps) =>  <Slide direction="up" {...props} />;
 

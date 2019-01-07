@@ -42,8 +42,8 @@ export default (
         ...props
     }: Props
 ) => {
-    const [open, setOpen] = useState(true);
-    const _onClose = () => setOpen(false);
+    const [visibled, setVisibility] = useState<boolean>(true);
+    const _onClose = () => setVisibility(false);
 
     return (
         <Snackbar
@@ -56,7 +56,7 @@ export default (
             ContentProps={{
                 "aria-describedby": "message-id",
             }}
-            open={open}
+            open={visibled}
             {...props}
         >
             <StyledSnackbarContent

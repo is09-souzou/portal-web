@@ -1,6 +1,70 @@
-export type location = "us" | "jp";
+export type Location = "us" | "jp";
 
-export const locale = {
+export type LocationText = {
+    profile: {
+        displayName: string,
+        mailAdress: string,
+        career: string,
+        message: string,
+        skill: string,
+        inputSkill: string,
+        save: string,
+        cancel: string,
+        dialog: {
+            submit: string,
+            cancel: string,
+            title: string
+        }
+    },
+    works: {
+        title: string,
+        inputTitle: string,
+        tags: string,
+        description: string,
+        inputDiscription: string,
+        image: string,
+        preview: string,
+        create: string
+    },
+    tab: {
+        profile: string,
+        workList: string
+    },
+    navigator: {
+        works: string,
+        designer: string,
+        popular: string,
+        new: string,
+        tags: string,
+        languages: string,
+        language: string,
+        settings: string
+    },
+    header: {
+        name: string,
+        mailAdress: string,
+        profile: string,
+        signIn: string,
+        signOut: string
+    },
+    signInDialog: {
+        signIn: string,
+        email: string,
+        password: string,
+        createAcount: string
+    },
+    signUpDialog: {
+        createAcount: string,
+        email: string,
+        password: string,
+        displayName: string,
+        cancel: string,
+        submit: string
+    },
+    location: string
+};
+
+const locationTextList:{ [key in Location]: LocationText } = {
     us: {
         profile: {
             displayName: "DisplayName",
@@ -37,6 +101,7 @@ export const locale = {
             popular: "Popular",
             new: "New",
             tags: "Tags",
+            languages: "languages",
             language: "English",
             settings: "settings"
         },
@@ -128,4 +193,4 @@ export const locale = {
     }
 };
 
-export default locale;
+export default locationTextList;

@@ -25,7 +25,6 @@ import UserContent from "src/components/pages/UserPage/UserContent";
 import UserPageHeader from "src/components/pages/UserPage/UserPageHeader";
 import WorkContent from "src/components/pages/UserPage/WorkContent";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
-import { LocaleContext } from "src/components/wrappers/MainLayout";
 import { User, Work, WorkConnection } from "src/graphQL/type";
 import { PageComponentProps } from "src/App";
 
