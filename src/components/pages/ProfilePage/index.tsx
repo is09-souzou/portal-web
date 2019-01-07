@@ -11,11 +11,10 @@ import {
 } from "@material-ui/core";
 import { ApolloQueryResult } from "apollo-client";
 import gql from "graphql-tag";
-import React, { useContext, useRef, useState, Fragment } from "react";
+import React, { useContext, useEffect, useRef, useState, Fragment } from "react";
 import { Mutation,  MutationFn, OperationVariables, Query, QueryResult } from "react-apollo";
 import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
-import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import ImageInput from "src/components/atoms/ImageInput";
 import NotFound from "src/components/molecules/NotFound";
@@ -28,9 +27,8 @@ import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import LocalizationContext from "src/contexts/LocalizationContext";
 import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
-import RouterHistoryContext from "src/contexts/RouterHistoryContext";
+import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { User } from "src/graphQL/type";
-import { PageComponentProps } from "src/App";
 
 interface Chip {
     key  : string;
@@ -51,7 +49,7 @@ const QueryGetUser = gql(`
     }
 `);
 
-export default (props: PageComponentProps<{}>) => {
+export default (props: React.Props<{}>) => {
     const auth = useContext(AuthContext);
     const notification = useContext(NotificationContext);
 
@@ -115,12 +113,9 @@ const ProfilePage = (
         auth,
         notification,
         query: {
-            loading,
-            error,
             data,
             refetch
-        },
-        ...props
+        }
     }: Props
 ) => {
 
@@ -136,137 +131,14 @@ const ProfilePage = (
     const localization = useContext(LocalizationContext);
     const routerHistory = useContext(RouterHistoryContext);
 
-    const handleUpdateUserFormSubmit = (
-        updateUser: MutationFn<any, OperationVariables>,
-        currentUser: User
-    ) => async (e: React.FormEvent) => {
-        e.preventDefault();
+    const currentUser = data.getUser as User;
 
-        if (!auth.token) return;
-
-        if (!(displayNameInputElement.current && emailInputElement.current && messageInputElement.current && careerInputElement.current)) return;
-
-        await updateUser({
-            variables: {
-                user: {
-                    id: auth.token!.payload.sub,
-                    displayName: displayNameInputElement.current!.value,
-                    email: emailInputElement.current!.value,
-                    message: messageInputElement.current!.value,
-                    career: careerInputElement.current!.value,
-                    skillList: chipsData.map(x => x.label) as string[],
-                }
-            },
-            optimisticResponse: {
-                __typename: "Mutation",
-                updateUser: {
-                    id: auth.token!.payload.sub,
-                    displayName: displayNameInputElement.current!.value,
-                    email: emailInputElement!.current!.value,
-                    message: messageInputElement!.current!.value,
-                    career: careerInputElement!.current!.value,
-                    skillList: chipsData.map(x => x.label) as string[],
-                    __typename: "User"
-                }
-            },
-        });
-
-        notification.notification("info", "Update Profile!");
-        routerHistory.history.push(`/users/${currentUser.id}`);
-    };
-
-    const handleUpdateAvatarFormSubmit = (
-        updateUser: MutationFn<any, OperationVariables>,
-        refetch: (variables?: { id: any; } | undefined) => Promise<ApolloQueryResult<any>>
-    ) => async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!auth.token) return;
-
-        const image = (e.target as any).elements["newAvatarImage"].files[0];
-
-        try {
-            setUploadingAvatarImage(true);
-            const {
-                signedUrl,
-                uploadedUrl
-            } = await createSignedUrl({
-                jwt: auth.token!.jwtToken,
-                userId: auth.token!.payload.sub,
-                type: "profile",
-                mimetype: image.type
-            });
-
-            await Promise.all([
-                fileUploadToS3({
-                    url: signedUrl,
-                    file: image
-                }),
-                updateUser({
-                    variables: {
-                        user: {
-                            avatarUri: uploadedUrl,
-                            id: auth.token!.payload.sub,
-                        }
-                    },
-                    optimisticResponse: {
-                        __typename: "Mutation",
-                        updateUser: {
-                            id: auth.token!.payload.sub,
-                            __typename: "User"
-                        }
-                    },
-                })
-            ]);
-
-            refetch();
-            setUploadingAvatarImage(false);
-            closeEditableAvatarDialog();
-        } catch (e) {
-            setUploadingAvatarImage(false);
-            notification.notification("error", e);
-        }
-    };
-
-    const deleteChip = (data: Chip) => () => {
-        setChipsData(chipsData.filter((x: Chip): boolean => data.key !== x.key));
-    };
-
-    const tagInputKeyDown = (e: React.KeyboardEvent) => {
-        e.preventDefault();
-        if (chipsData.length >= 5)
-            return;
-
-        const inputValue = (e.target as any).value;
-        if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
-            e.preventDefault();
-            if (inputValue.length > 1) {
-                if (!chipsData.some(x => x.label === inputValue))
-                    setChipsData(
-                        chipsData.concat({
-                            key: (e.target as any).value,
-                            label: (e.target as any).value
-                        })
-                    );
-
-                (e.target as any).value = "";
-            }
-        }
-    };
-
-    const openEditableAvatarDialog = () => setEditableAvatarDialogOpen(true);
-
-    const closeEditableAvatarDialog = () => setEditableAvatarDialogOpen(false);
-
-    const moveUserPage = (id: string) => (_: React.MouseEvent) => routerHistory.history.push(`/users/${id}`);
-
-    const currentUser = query.data.getUser as User;
-
-    if (currentUser) {
-        this.setState({
-            chipsData: (currentUser.skillList || []).map((x: string) => ({ key: x, label: x }))
-        });
-    }
+    useEffect(
+        () => {
+            setChipsData((currentUser.skillList || []).map((label: string) => ({ label, key: label })));
+        },
+        [currentUser.skillList]
+    );
 
     return (
         <Mutation
@@ -275,7 +147,20 @@ const ProfilePage = (
         >
             {updateUser => (
                 <form
-                    onSubmit={handleUpdateUserFormSubmit(updateUser, currentUser)}
+                    onSubmit={
+                        handleUpdateUserFormSubmit({
+                            chipsData,
+                            updateUser,
+                            currentUser,
+                            auth,
+                            notification,
+                            routerHistory,
+                            displayNameInputElement,
+                            emailInputElement,
+                            messageInputElement,
+                            careerInputElement
+                        })
+                    }
                 >
                     <ProfilePageHeader>
                         <img
@@ -284,7 +169,7 @@ const ProfilePage = (
                         <div>
                             <UserAvatar
                                 src={currentUser.avatarUri}
-                                onClick={openEditableAvatarDialog}
+                                onClick={openEditableAvatarDialog(setEditableAvatarDialogOpen)}
                             />
                             <div>
                                 <TextField
@@ -328,30 +213,28 @@ const ProfilePage = (
                             <TextField
                                 label={localization.locationText.profile.skill}
                                 placeholder={localization.locationText.profile.inputSkill}
-                                onKeyDown={tagInputKeyDown}
+                                onKeyDown={tagInputKeyDown({ chipsData, setChipsData })}
                                 margin="normal"
                                 inputProps={{
                                     maxLength: 10,
                                 }}
                             />
                             <ChipList>
-                                {(this.state.chipsData || (currentUser.skillList || []).map((x: string) => ({ key: x, label: x })))
-                                    .map((data: any) =>
-                                        <Chip
-                                            key={data.key}
-                                            clickable={false}
-                                            label={data.label}
-                                            onDelete={deleteChip(data)}
-                                        />
-                                    )
-                                }
+                                {chipsData.map(chip =>
+                                    <Chip
+                                        key={chip.key}
+                                        clickable={false}
+                                        label={chip.label}
+                                        onDelete={deleteChip({ chip, chipsData, setChipsData })}
+                                    />
+                                )}
                             </ChipList>
                         </div>
                         <div>
                             <Button
                                 variant="outlined"
                                 color="primary"
-                                onClick={moveUserPage(currentUser.id)}
+                                onClick={moveUserPage(currentUser.id, routerHistory)}
                             >
                                 {localization.locationText.profile.cancel}
                             </Button>
@@ -366,12 +249,21 @@ const ProfilePage = (
                         </div>
                     </ProfileContent>
                     <Dialog
-                        open={editableAvatarDialogIsVisible}
-                        onClose={closeEditableAvatarDialog}
+                        open={editableAvatarDialogOpend}
+                        onClose={closeEditableAvatarDialog(setEditableAvatarDialogOpen)}
                         aria-labelledby="editable-avatar-dialog-title"
                     >
                         <form
-                            onSubmit={handleUpdateAvatarFormSubmit(updateUser, refetch)}
+                            onSubmit={
+                                handleUpdateAvatarFormSubmit({
+                                    updateUser,
+                                    refetch,
+                                    auth,
+                                    notification,
+                                    setEditableAvatarDialogOpen,
+                                    setUploadingAvatarImage
+                                })
+                            }
                         >
                             <DialogTitle
                                 id="editable-avatar-dialog-title"
@@ -388,7 +280,7 @@ const ProfilePage = (
                             {uploadingAvatarImage && <LinearProgress/>}
                             <DialogActions>
                                 <Button
-                                    onClick={closeEditableAvatarDialog}
+                                    onClick={closeEditableAvatarDialog(setEditableAvatarDialogOpen)}
                                 >
                                     {localization.locationText.profile.dialog.cancel}
                                 </Button>
@@ -406,4 +298,180 @@ const ProfilePage = (
             )}
         </Mutation>
     );
+};
+
+const handleUpdateUserFormSubmit = (
+    {
+        chipsData,
+        updateUser,
+        currentUser,
+        auth,
+        notification,
+        routerHistory,
+        displayNameInputElement,
+        emailInputElement,
+        messageInputElement,
+        careerInputElement
+    }: {
+        chipsData: Chip[],
+        updateUser: MutationFn<any, OperationVariables>,
+        currentUser: User
+        auth: AuthValue,
+        notification: NotificationValue,
+        routerHistory: RouterHistoryValue,
+        displayNameInputElement: React.RefObject<HTMLInputElement>,
+        emailInputElement: React.RefObject<HTMLInputElement>,
+        messageInputElement: React.RefObject<HTMLInputElement>,
+        careerInputElement: React.RefObject<HTMLInputElement>,
+    }
+) => async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!auth.token) return;
+
+    if (!(displayNameInputElement.current && emailInputElement.current && messageInputElement.current && careerInputElement.current)) return;
+
+    await updateUser({
+        variables: {
+            user: {
+                id: auth.token!.payload.sub,
+                displayName: displayNameInputElement.current!.value,
+                email: emailInputElement.current!.value,
+                message: messageInputElement.current!.value,
+                career: careerInputElement.current!.value,
+                skillList: chipsData.map(x => x.label) as string[],
+            }
+        },
+        optimisticResponse: {
+            __typename: "Mutation",
+            updateUser: {
+                id: auth.token!.payload.sub,
+                displayName: displayNameInputElement.current!.value,
+                email: emailInputElement!.current!.value,
+                message: messageInputElement!.current!.value,
+                career: careerInputElement!.current!.value,
+                skillList: chipsData.map(x => x.label) as string[],
+                __typename: "User"
+            }
+        },
+    });
+
+    notification.notification("info", "Update Profile!");
+    routerHistory.history.push(`/users/${currentUser.id}`);
+};
+
+const deleteChip = (
+    {
+        chip,
+        chipsData,
+        setChipsData
+    }: {
+        chip: Chip,
+        chipsData: Chip[],
+        setChipsData: React.Dispatch<React.SetStateAction<Chip[]>>
+    }
+) => () => {
+    setChipsData(chipsData.filter((x: Chip): boolean => chip.key !== x.key));
+};
+
+const tagInputKeyDown = (
+    {
+        chipsData,
+        setChipsData
+    }: {
+        chipsData: Chip[],
+        setChipsData: React.Dispatch<React.SetStateAction<Chip[]>>
+    }
+) => (e: React.KeyboardEvent) => {
+    e.preventDefault();
+    if (chipsData.length >= 5)
+        return;
+
+    const inputValue = (e.target as any).value;
+    if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
+        e.preventDefault();
+        if (inputValue.length > 1) {
+            if (!chipsData.some(x => x.label === inputValue))
+                setChipsData(
+                    chipsData.concat({
+                        key: (e.target as any).value,
+                        label: (e.target as any).value
+                    })
+                );
+
+            (e.target as any).value = "";
+        }
+    }
+};
+
+const openEditableAvatarDialog = (setEditableAvatarDialogOpen: React.Dispatch<React.SetStateAction<boolean>>) => () => setEditableAvatarDialogOpen(true);
+
+const closeEditableAvatarDialog = (setEditableAvatarDialogOpen: React.Dispatch<React.SetStateAction<boolean>>) => () => setEditableAvatarDialogOpen(false);
+
+const moveUserPage = (id: string, routerHistory: RouterHistoryValue) => (_: React.MouseEvent) => routerHistory.history.push(`/users/${id}`);
+
+const handleUpdateAvatarFormSubmit = (
+    {
+        updateUser,
+        refetch,
+        auth,
+        notification,
+        setUploadingAvatarImage,
+        setEditableAvatarDialogOpen
+    } : {
+        updateUser: MutationFn<any, OperationVariables>,
+        refetch: (variables?: { id: any; } | undefined) => Promise<ApolloQueryResult<any>>,
+        auth: AuthValue,
+        notification: NotificationValue,
+        setUploadingAvatarImage: React.Dispatch<React.SetStateAction<boolean>>,
+        setEditableAvatarDialogOpen: React.Dispatch<React.SetStateAction<boolean>>
+    }
+) => async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!auth.token) return;
+
+    const image = (e.target as any).elements["newAvatarImage"].files[0];
+
+    try {
+        setUploadingAvatarImage(true);
+        const {
+            signedUrl,
+            uploadedUrl
+        } = await createSignedUrl({
+            jwt: auth.token!.jwtToken,
+            userId: auth.token!.payload.sub,
+            type: "profile",
+            mimetype: image.type
+        });
+
+        await Promise.all([
+            fileUploadToS3({
+                url: signedUrl,
+                file: image
+            }),
+            updateUser({
+                variables: {
+                    user: {
+                        avatarUri: uploadedUrl,
+                        id: auth.token!.payload.sub,
+                    }
+                },
+                optimisticResponse: {
+                    __typename: "Mutation",
+                    updateUser: {
+                        id: auth.token!.payload.sub,
+                        __typename: "User"
+                    }
+                },
+            })
+        ]);
+
+        refetch();
+        setUploadingAvatarImage(false);
+        closeEditableAvatarDialog(setEditableAvatarDialogOpen);
+    } catch (e) {
+        setUploadingAvatarImage(false);
+        notification.notification("error", e);
+    }
 };
