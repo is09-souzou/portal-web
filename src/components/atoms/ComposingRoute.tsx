@@ -19,5 +19,5 @@ export default (
 
 const onRender = (component: React.ComponentClass<any>, props: RouteProps) => (x: RouteComponentProps<any, StaticContext, any>) => {
     const Component = component;
-    return <Component {...x} {...props} />;
+    return <Component {...x} {...props}/>;
 };

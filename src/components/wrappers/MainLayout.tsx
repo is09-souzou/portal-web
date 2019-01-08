@@ -11,7 +11,7 @@ export default (
         children
     }: React.Props<{}>
 ) => {
-    const [locale, setLocale] = useState<Location>(
+    const [location, setLocation] = useState<Location>(
         () => {
             const language = (window.navigator.languages && window.navigator.languages[0]) || window.navigator.language;
             return language === "ja" || language === "ja-JP" ? "jp" : "us";
@@ -20,14 +20,15 @@ export default (
     const [drawerOpend, setDrawerOpen] = useState<boolean>(false);
 
     const toggleDrawer = () => setDrawerOpen(!drawerOpend);
-    const handleLocale = () => setLocale(locale === "us" ? "jp" : "us");
+    const handleLocale = () => setLocation(location === "us" ? "jp" : "us");
 
     return (
         <Host>
             <LocalizationContext.Provider
                 value={{
                     handleLocale,
-                    locationText: locationTextList[locale]
+                    location,
+                    locationText: locationTextList[location]
                 }}
             >
                 <div>

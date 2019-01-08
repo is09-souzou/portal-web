@@ -33,7 +33,7 @@ const QueryGetUser = gql(`
 
 export default (props: React.Props<{}>) => {
     const [userMenuVisibled] = useState<boolean>(false);
-    const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<HTMLElement | undefined>(undefined);
+    const [userMenuAnchorElement, setUserMenuAnchorElement] = useState<HTMLElement | undefined>(undefined);
 
     const auth = useContext(AuthContext);
     const drawer = useContext(DrawerContext);
@@ -42,7 +42,7 @@ export default (props: React.Props<{}>) => {
     const notification = useContext(NotificationContext);
 
     const handleMenu = (e: React.MouseEvent<HTMLElement>): void =>
-        setUserMenuAnchorEl(e.currentTarget);
+        setUserMenuAnchorElement(e.currentTarget);
 
     // const handleSearch = (e: React.KeyboardEvent) => {
     //     const value = (e.target as any).value;
@@ -51,7 +51,7 @@ export default (props: React.Props<{}>) => {
     //     }
     // };
 
-    const closeMenu = () => setUserMenuAnchorEl(undefined);
+    const closeMenu = () => setUserMenuAnchorElement(undefined);
     const openSignInDialog = () => routerHistory.history.push("?sign-in=true");
     const openSignUpDialog = () => routerHistory.history.push("?sign-up=true");
     const closeSignInDialog = () => routerHistory.history.push("?sign-in=false");
@@ -82,7 +82,7 @@ export default (props: React.Props<{}>) => {
                         aria-label="open drawer"
                         onClick={drawer.toggleDrawer}
                     >
-                        <MenuIcon />
+                        <MenuIcon/>
                     </MenuIconButton>
                     <Typography variant="h6" color="inherit">
                         Work List
@@ -99,19 +99,19 @@ export default (props: React.Props<{}>) => {
                                     fetchPolicy="cache-and-network"
                                 >
                                     {({ loading, error, data }) => {
-                                        if (loading) return <GraphQLProgress size={24} />;
+                                        if (loading) return <GraphQLProgress size={24}/>;
                                         if (error) {
                                             console.error(error);
                                             return (
                                                 <Fragment>
                                                     <div>?</div>
-                                                    <notification.ErrorComponent error={error} />
+                                                    <notification.ErrorComponent error={error}/>
                                                 </Fragment>
                                             );
                                         }
 
                                         if (!data.getUser)
-                                            return <Redirect to="/profile?initial-registration=true" />;
+                                            return <Redirect to="/profile?initial-registration=true"/>;
 
                                         return (
                                             <Fragment>
@@ -121,14 +121,14 @@ export default (props: React.Props<{}>) => {
                                                     onClick={handleMenu}
                                                     color="inherit"
                                                 >
-                                                    <AccountCircleIcon />
+                                                    <AccountCircleIcon/>
                                                 </IconButton>
                                                 <Popover
                                                     id="menu-appbar"
-                                                    anchorEl={userMenuAnchorEl}
+                                                    anchorEl={userMenuAnchorElement}
                                                     anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                                                     transformOrigin={{ vertical: "top", horizontal: "right" }}
-                                                    open={!!userMenuAnchorEl}
+                                                    open={!!userMenuAnchorElement}
                                                     onClose={closeMenu}
                                                 >
                                                     <PopoverContent>

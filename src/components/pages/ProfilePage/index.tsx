@@ -19,9 +19,9 @@ import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import ImageInput from "src/components/atoms/ImageInput";
 import NotFound from "src/components/molecules/NotFound";
 import ChipList from "src/components/pages/ProfilePage/ChipList";
+import Host from "src/components/pages/ProfilePage/Host";
 import ProfileContent from "src/components/pages/ProfilePage/ProfileContent";
 import ProfilePageHeader from "src/components/pages/ProfilePage/ProfilePageHeader";
-import ProfilePageHost from "src/components/pages/ProfilePage/ProfilePageHost";
 import UserAvatar from "src/components/pages/ProfilePage/UserAvatar";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
@@ -61,7 +61,7 @@ export default (props: React.Props<{}>) => {
         >
             {(query =>
                 (
-                    <ProfilePageHost
+                    <Host
                         {...props}
                     >
                         {
@@ -81,7 +81,7 @@ export default (props: React.Props<{}>) => {
                             />
                             )
                         }
-                    </ProfilePageHost>
+                    </Host>
                 )
             )}
         </Query>
@@ -169,7 +169,7 @@ const ProfilePage = (
                         <div>
                             <UserAvatar
                                 src={currentUser.avatarUri}
-                                onClick={openEditableAvatarDialog(setEditableAvatarDialogOpen)}
+                                onClick={() => setEditableAvatarDialogOpen(true)}
                             />
                             <div>
                                 <TextField
@@ -234,7 +234,7 @@ const ProfilePage = (
                             <Button
                                 variant="outlined"
                                 color="primary"
-                                onClick={moveUserPage(currentUser.id, routerHistory)}
+                                onClick={() => routerHistory.history.push(`/users/${currentUser.id}`)}
                             >
                                 {localization.locationText.profile.cancel}
                             </Button>
@@ -250,7 +250,7 @@ const ProfilePage = (
                     </ProfileContent>
                     <Dialog
                         open={editableAvatarDialogOpend}
-                        onClose={closeEditableAvatarDialog(setEditableAvatarDialogOpen)}
+                        onClose={() => setEditableAvatarDialogOpen(false)}
                         aria-labelledby="editable-avatar-dialog-title"
                     >
                         <form
@@ -280,7 +280,7 @@ const ProfilePage = (
                             {uploadingAvatarImage && <LinearProgress/>}
                             <DialogActions>
                                 <Button
-                                    onClick={closeEditableAvatarDialog(setEditableAvatarDialogOpen)}
+                                    onClick={() => setEditableAvatarDialogOpen(true)}
                                 >
                                     {localization.locationText.profile.dialog.cancel}
                                 </Button>
@@ -404,12 +404,6 @@ const tagInputKeyDown = (
     }
 };
 
-const openEditableAvatarDialog = (setEditableAvatarDialogOpen: React.Dispatch<React.SetStateAction<boolean>>) => () => setEditableAvatarDialogOpen(true);
-
-const closeEditableAvatarDialog = (setEditableAvatarDialogOpen: React.Dispatch<React.SetStateAction<boolean>>) => () => setEditableAvatarDialogOpen(false);
-
-const moveUserPage = (id: string, routerHistory: RouterHistoryValue) => (_: React.MouseEvent) => routerHistory.history.push(`/users/${id}`);
-
 const handleUpdateAvatarFormSubmit = (
     {
         updateUser,
@@ -418,7 +412,7 @@ const handleUpdateAvatarFormSubmit = (
         notification,
         setUploadingAvatarImage,
         setEditableAvatarDialogOpen
-    } : {
+    }: {
         updateUser: MutationFn<any, OperationVariables>,
         refetch: (variables?: { id: any; } | undefined) => Promise<ApolloQueryResult<any>>,
         auth: AuthValue,
@@ -469,7 +463,7 @@ const handleUpdateAvatarFormSubmit = (
 
         refetch();
         setUploadingAvatarImage(false);
-        closeEditableAvatarDialog(setEditableAvatarDialogOpen);
+        setEditableAvatarDialogOpen(false);
     } catch (e) {
         setUploadingAvatarImage(false);
         notification.notification("error", e);

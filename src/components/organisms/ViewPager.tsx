@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
-interface Props {
-    children: React.Props<{}>;
+interface Props extends React.Props<{}> {
+    children: React.ReactNode;
     selectedIndex: number;
 }
 

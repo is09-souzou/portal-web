@@ -70,7 +70,7 @@ export default (
         <ToolItem
             onClick={handleConvert("listNumber", onChangeValue, element)}
         >
-            <ListIcon />
+            <ListIcon/>
         </ToolItem>
         <ToolItem
             onClick={handleConvert("list", onChangeValue, element)}
@@ -85,22 +85,22 @@ export default (
         <ToolItem
             onClick={handleConvert("anchor", onChangeValue, element)}
         >
-            <LinkIcon />
+            <LinkIcon/>
         </ToolItem>
         <ToolItem
             onClick={handleConvert("strikethrough", onChangeValue, element)}
         >
-            <StrikeIcon />
+            <StrikeIcon/>
         </ToolItem>
         <ToolItem
             onClick={handleConvert("bold", onChangeValue, element)}
         >
-            <BoldIcon />
+            <BoldIcon/>
         </ToolItem>
         <ToolItem
             onClick={handleConvert("italic", onChangeValue, element)}
         >
-            <ItalicIcon />
+            <ItalicIcon/>
         </ToolItem>
     </ToolList>
 );

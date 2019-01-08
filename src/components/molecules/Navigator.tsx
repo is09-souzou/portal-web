@@ -116,7 +116,7 @@ class Navigator extends React.Component<Props, State> {
                         PORTAL
                     </Link>
                 </Title>
-                <Divider />
+                <Divider/>
                 <List
                     subheader={<ListSubheader component="div">{locationText.navigator.works}</ListSubheader>}
                 >
@@ -125,7 +125,7 @@ class Navigator extends React.Component<Props, State> {
                     >
                         <ListItem button>
                             <ListItemIcon>
-                                <StarIcon />
+                                <StarIcon/>
                             </ListItemIcon>
                             <ListItemText
                                 primary={
@@ -141,7 +141,7 @@ class Navigator extends React.Component<Props, State> {
                     <Link to="/works/new">
                         <ListItem button>
                             <ListItemIcon>
-                                <NewReleasesIcon />
+                                <NewReleasesIcon/>
                             </ListItemIcon>
                             <ListItemText
                                 primary={
@@ -159,10 +159,10 @@ class Navigator extends React.Component<Props, State> {
                         onClick={this.toggleTagListVisible}
                     >
                         <ListItemIcon>
-                            <ColorLensIcon />
+                            <ColorLensIcon/>
                         </ListItemIcon>
-                        <ListItemText primary={locationText.navigator.tags} />
-                        {this.state.tagListVisible ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                        <ListItemText primary={locationText.navigator.tags}/>
+                        {this.state.tagListVisible ? <ExpandLessIcon /> : <ExpandMoreIcon/>}
                     </ListItem>
                     <Collapse in={this.state.tagListVisible} timeout="auto" unmountOnExit>
                         <Query
@@ -170,7 +170,7 @@ class Navigator extends React.Component<Props, State> {
                             fetchPolicy="cache-and-network"
                         >
                             {({ loading, error, data }) => {
-                                if (loading) return <GraphQLProgress />;
+                                if (loading) return <GraphQLProgress/>;
                                 if (error) {
                                     console.error(error);
                                     return (
@@ -230,26 +230,26 @@ class Navigator extends React.Component<Props, State> {
                 >
                     <ListItem button>
                         <ListItemIcon>
-                            <StarIcon />
+                            <StarIcon/>
                         </ListItemIcon>
-                        <ListItemText primary={locationText.navigator.popular} />
+                        <ListItemText primary={locationText.navigator.popular}/>
                     </ListItem>
                     <ListItem button>
                         <ListItemIcon>
-                            <NewReleasesIcon />
+                            <NewReleasesIcon/>
                         </ListItemIcon>
-                        <ListItemText primary={locationText.navigator.new} />
+                        <ListItemText primary={locationText.navigator.new}/>
                     </ListItem>
                 </List>
                 <div>
-                    <Divider />
+                    <Divider/>
                     <List>
                         <ListItem
                             button
                             onClick={handleLocale}
                         >
                             <ListItemIcon>
-                                <LanguageIcon />
+                                <LanguageIcon/>
                             </ListItemIcon>
                             <ListItemText>
                                 {locationText.navigator.language}
@@ -262,7 +262,7 @@ class Navigator extends React.Component<Props, State> {
                                 button
                             >
                                 <ListItemIcon>
-                                    <SettingsIcon />
+                                    <SettingsIcon/>
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={

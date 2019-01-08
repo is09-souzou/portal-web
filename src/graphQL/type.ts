@@ -18,6 +18,7 @@ export type Work = {
     imageUrl: string;
     description: string;
     user?: User;
+    isPublic: boolean;
 };
 
 export type WorkConnection = {

@@ -10,10 +10,12 @@ import DialogContent, { DialogContentProps } from "@material-ui/core/DialogConte
 import Typography, { TypographyProps } from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import * as H from "history";
-import React, { useState, Fragment } from "react";
+import React, { useContext, useState, Fragment } from "react";
 import ReactMarkdown from "react-markdown";
 import FormatStringDate from "src/components/atoms/FormatStringDate";
 import Link from "src/components/atoms/Link";
+import LocalizationContext, { LocalizationValue } from "src/contexts/LocalizationContext";
+import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { Work } from "src/graphQL/type";
 import formatTagsOfURLQueryParam from "src/util/formatTagsOfURLQueryParam";
 import getTagsByURLQueryParam from "src/util/getTagsByURLQueryParam";
@@ -23,24 +25,22 @@ interface Props {
     open: boolean;
     onClose: () => void;
     work?: Work;
-    history: H.History;
-    locale: string;
     userId: string;
 }
 
 export default (
     {
-        history,
         open = false,
         onClose,
         work,
-        locale,
         userId,
         ...props
     }: Props
 ) => {
 
     const [visibile, setVisibility] = useState<boolean>(false);
+    const routerHistory = useContext<RouterHistoryValue>(RouterHistoryContext);
+    const localization = useContext<LocalizationValue>(LocalizationContext);
 
     const handleOpenDialog = () => setVisibility(true);
     const handleHiddenDialog = () => setVisibility(false);
@@ -73,7 +73,7 @@ export default (
                                         {`${work.title} - ${work.user && work.user.displayName}`}
                                     </Typography>
                                     <IconButton color="inherit" onClick={onClose} aria-label="Close">
-                                        <CloseIcon />
+                                        <CloseIcon/>
                                     </IconButton>
                                 </Toolbar>
                             </WorkAppBar>
@@ -98,11 +98,11 @@ export default (
                                         isMillisec={false}
                                         timestamp={work.createdAt}
                                         format={
-                                            locale === "jp"
+                                            localization.location === "jp"
                                             ? "%YYYY%年 %MM%月 %DD%日 %HH%時 %mm%分"
                                             : "%MMMM% %DD%, %YYYY% at %hh%:%mm% %A%"
                                         }
-                                        locale={locale === "jp" ? "ja-JP" : "en-US"}
+                                        locale={localization.location === "jp" ? "ja-JP" : "en-US"}
                                     />
                                 </Typography>
                             </div>
@@ -111,7 +111,7 @@ export default (
                                     {work.tags && work.tags.map(x =>
                                         <Link
                                             to={(() => {
-                                                const tags = getTagsByURLQueryParam(history);
+                                                const tags = getTagsByURLQueryParam(routerHistory.history);
                                                 return formatTagsOfURLQueryParam(tags.concat(x), tags);
                                             })()}
                                             onClick={onClose}
@@ -123,9 +123,7 @@ export default (
                                 </TagList>
                                 <div>
                                     <Link
-                                        to={
-                                            ("/users/") + work.userId
-                                        }
+                                        to={`/users/${work.userId}`}
                                         onClick={onClose}
                                     >
                                         <UserInformation>
@@ -140,9 +138,7 @@ export default (
                                         </UserInformation>
                                     </Link>
                                     <Link
-                                        to={
-                                            ("/works/update-work/") + work.id
-                                        }
+                                        to={`/works/update-work/${work.id}`}
                                         onClick={onClose}
                                     >
                                         <Button

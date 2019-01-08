@@ -4,14 +4,14 @@ import {
     ListItemText
 } from "@material-ui/core";
 import gql from "graphql-tag";
-import React, { Fragment } from "react";
+import React, { useContext, Fragment } from "react";
 import { Query } from "react-apollo";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import Page from "src/components/atoms/Page";
 import Header from "src/components/molecules/Header";
 import NotFound from "src/components/molecules/NotFound";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
-import { PageComponentProps } from "src/App";
+import NotificationContext from "src/contexts/NotificationContext";
 
 const QueryGetUserList = gql(`
     query($limit: Int, $nextToken: ID) {
@@ -24,55 +24,46 @@ const QueryGetUserList = gql(`
     }
 `);
 
-export default class UserListPage extends React.Component<PageComponentProps<{id: string}>>{
+export default (props: React.Props<{}>) => {
+    const notification = useContext(NotificationContext);
 
-    render() {
-
-        const {
-            auth,
-            history,
-            notificationListener
-        } = this.props;
-
-        return (
-            <Page>
-                <Header
-                    auth={auth}
-                    history={history}
-                    notificationListener={notificationListener}
-                />
-                <Query query={QueryGetUserList} variables={{ limit: 20 }} fetchPolicy="cache-and-network">
-                    {({ loading, error, data }) => {
-                        if (loading) return <GraphQLProgress />;
-                        if (error) {
-                            return (
-                                <Fragment>
-                                    <ErrorTemplate/>
-                                    <notificationListener.ErrorComponent error={error} key="error"/>
-                                </Fragment>
-                            );
-                        }
-
-                        if (!data.listUsers || !data.listUsers.items)
-                            return <NotFound/>;
-
+    return (
+        <Page
+            ref={props.ref as any}
+            {...props}
+        >
+            <Header/>
+            <Query query={QueryGetUserList} variables={{ limit: 20 }} fetchPolicy="cache-and-network">
+                {({ loading, error, data }) => {
+                    if (loading) return <GraphQLProgress />;
+                    if (error) {
                         return (
-                            <div>
-                                <List>
-                                    {data.listUsers.items.map((user: any) =>
-                                        <ListItem key={user.id}>
-                                            <ListItemText
-                                                primary={user.displayName}
-                                                secondary={user.id}
-                                            />
-                                        </ListItem>
-                                    )}
-                                </List>
-                            </div>
+                            <Fragment>
+                                <ErrorTemplate/>
+                                <notification.ErrorComponent error={error} key="error"/>
+                            </Fragment>
                         );
-                    }}
-                </Query>
-            </Page>
-        );
-    }
-}
+                    }
+
+                    if (!data.listUsers || !data.listUsers.items)
+                        return <NotFound/>;
+
+                    return (
+                        <div>
+                            <List>
+                                {data.listUsers.items.map((user: any) =>
+                                    <ListItem key={user.id}>
+                                        <ListItemText
+                                            primary={user.displayName}
+                                            secondary={user.id}
+                                        />
+                                    </ListItem>
+                                )}
+                            </List>
+                        </div>
+                    );
+                }}
+            </Query>
+        </Page>
+    );
+};

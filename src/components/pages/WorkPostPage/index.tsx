@@ -6,8 +6,9 @@ import {
     Switch,
     TextField
 } from "@material-ui/core";
+import { ApolloError } from "apollo-client";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Mutation, MutationFn, OperationVariables } from "react-apollo";
 import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
@@ -22,25 +23,11 @@ import Head from "src/components/pages/WorkPostPage/Head";
 import Host from "src/components/pages/WorkPostPage/Host";
 import MainImageInput from "src/components/pages/WorkPostPage/MainImageInput";
 import WorkContentArea from "src/components/pages/WorkPostPage/WorkContentArea";
-import { LocaleContext } from "src/components/wrappers/MainLayout";
+import AuthContext, { AuthValue } from "src/contexts/AuthContext";
+import LocalizationContext from "src/contexts/LocalizationContext";
+import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
+import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { Work } from "src/graphQL/type";
-import { PageComponentProps } from "src/App";
-
-interface Chip {
-    key  : string;
-    label: string;
-}
-
-interface State {
-    chipsData        : Chip[];
-    description      : string;
-    mainImageUrl     : string;
-    previewWork?     : Work;
-    isPublic         : boolean;
-    title            : string;
-    workDialogVisible: boolean;
-    descriptionInput?: HTMLTextAreaElement;
-}
 
 const MutationCreateWork = gql(`
     mutation createWork(
@@ -80,320 +67,411 @@ const MutationUpdateWork = gql(`
     }
 `);
 
-export default class extends React.Component<PageComponentProps<{id: string}>, State> {
-
-    state: State = {
-        chipsData        : [] as Chip[],
-        description      : "",
-        mainImageUrl     : "",
-        previewWork      : undefined,
-        isPublic         : true,
-        title            : "",
-        workDialogVisible: false,
-        descriptionInput : undefined
-    };
-
-    setTitle = (e: any) => this.setState({ title: e.target.value });
-    setDescription = (e: any) => this.setState({ description: e.target.value });
-    setDescriptionInput = (descriptionInput: HTMLTextAreaElement) => this.setState({ descriptionInput });
-
-    togglePublic = () => this.setState({ isPublic: !this.state.isPublic });
-
-    deleteChip = (data: Chip) => () => this.setState({
-        chipsData: this.state.chipsData.filter((x: Chip): boolean => data.key !== x.key)
-    })
-
-    tagInputKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (this.state.chipsData.length >= 5)
-            return e.preventDefault();
-
-        const inputValue = (e.target as any).value;
-        if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
-            e.preventDefault();
-            if (inputValue.length > 1) {
-                if (!this.state.chipsData.some(x => x.label === inputValue))
-                    this.setState({
-                        chipsData: this.state.chipsData.concat({
-                            key: (e.target as any).value,
-                            label: (e.target as any).value
-                        })
-                    });
-
-                (e.target as any).value = "";
-            }
-        }
-    }
-
-    openPreview = () => {
-        this.setState({
-            previewWork: ({
-                id: "preview",
-                title: this.state.title,
-                description: this.state.description,
-                userId: (this.props.auth.token || { payload: { sub: "xxx" } }).payload.sub,
-                imageUrl: this.state.mainImageUrl,
-                tags: this.state.chipsData.map(x => x.label) as string[],
-                createdAt: +new Date() / 1000,
-                isPublic: this.state.isPublic,
-                user: {
-                    id: "preview",
-                    email: "preview",
-                    displayName: "display name",
-                    career: "career",
-                    avatarUri: "/img/no-image.png",
-                    message: "message"
-                }
-            }),
-            workDialogVisible: true
-        });
-    }
-
-    onClosePreview = () => this.setState({ previewWork: undefined, workDialogVisible: false });
-
-    submitMainImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!this.props.auth.token) {
-            this.props.notificationListener.errorNotification(new Error("Need Sign in"));
-            return;
-        }
-
-        if (!e.target.files) {
-            this.props.notificationListener.errorNotification(new Error("Set Image"));
-            return;
-        }
-
-        const image = e.target.files![0];
-        const result = await createSignedUrl({
-            jwt: this.props.auth.token!.jwtToken,
-            userId: this.props.auth.token!.payload.sub,
-            type: "work",
-            mimetype: image.type
-        });
-        await fileUploadToS3({
-            url: result.signedUrl,
-            file: image
-        });
-        this.setState({
-            mainImageUrl: result.uploadedUrl
-        });
-    }
-
-    handleHostSubmit = (
-        createWork: MutationFn<any, OperationVariables>,
-        updateWork: MutationFn<any, OperationVariables>
-    ) => async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!this.props.auth.token) {
-            this.props.notificationListener.errorNotification(new Error("Need Sign in"));
-            return;
-        }
-
-        const work = await new Promise<Work>(resolve => createWork({
-            variables: {
-                work: {
-                    title: this.state.title,
-                    description: this.state.description,
-                    userId: this.props.auth.token!.payload.sub,
-                    imageUrl: this.state.mainImageUrl,
-                    tags: this.state.chipsData.map(x => x.label),
-                    isPublic: this.state.isPublic
-                }
-            },
-            optimisticResponse: {
-                __typename: "Mutation",
-                createWork: {
-                    title: this.state.title,
-                    description: this.state.description,
-                    id: "new",
-                    userId: this.props.auth.token!.payload.sub,
-                    imageUrl: this.state.mainImageUrl,
-                    tags: this.state.chipsData.map(x => x.label),
-                    isPublic: this.state.isPublic,
-                    createdAt: +new Date(),
-                    __typename: "Work"
-                }
-            },
-            update: (_, { data: { createWork } }) => createWork.id !== "new" && resolve(createWork as Work)
-        }));
-
-        await updateWork({
-            variables: {
-                work: {
-                    id: work.id,
-                    userId: this.props.auth.token!.payload.sub,
-                }
-            },
-            optimisticResponse: {
-                __typename: "Mutation",
-                updateWork: {
-                    title: this.state.title,
-                    description: this.state.description,
-                    id: work.id,
-                    imageUrl: this.state.mainImageUrl,
-                    userId: this.props.auth.token!.payload.sub,
-                    tags: this.state.chipsData.map(x => x.label),
-                    isPublic: this.state.isPublic,
-                    createdAt: +new Date(),
-                    __typename: "Work"
-                }
-            }
-        });
-
-        this.props.notificationListener.notification("info", "Created Work!");
-        this.props.history.push("/");
-    }
-
-    handleMarkdownSupportsChangeValue = (description: string, lines: [number, number]) => {
-        this.setState(
-            { description },
-            () => {
-                if (this.state.descriptionInput) {
-                    this.state.descriptionInput.setSelectionRange(lines[0], lines[1]);
-                }
-            }
-        );
-    }
-
-    render() {
-        const {
-            auth,
-            history,
-            notificationListener,
-        } = this.props;
-
-        return (
-            <LocaleContext.Consumer>
-                {({ locale }) => (
-                    <Page>
-                        <Header
-                            auth={auth}
-                            history={history}
-                            notificationListener={notificationListener}
-                        />
-                        <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
-                            {(createWork, { error: createWorkError }) => (
-                                <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
-                                    {(updateWork, { error: updateWorkError }) => (
-                                        <Host
-                                            onSubmit={this.handleHostSubmit(createWork, updateWork)}
-                                        >
-                                            <div>
-                                                <Head>
-                                                    <TextField
-                                                        id="title"
-                                                        label={locale.works.title}
-                                                        placeholder={locale.works.inputTitle}
-                                                        margin="normal"
-                                                        fullWidth
-                                                        onChange={this.setTitle}
-                                                        value={this.state.title}
-                                                        required
-                                                    />
-                                                    <div>
-                                                        <TextField
-                                                            label={locale.works.tags}
-                                                            placeholder={"Input Tags!"}
-                                                            onKeyDown={this.tagInputKeyDown}
-                                                            margin="normal"
-                                                            inputProps={{
-                                                                maxLength: 10
-                                                            }}
-                                                        />
-                                                        <ChipList>
-                                                            {this.state.chipsData.map(data =>
-                                                                <Chip
-                                                                    key={data.key}
-                                                                    clickable={false}
-                                                                    label={data.label}
-                                                                    onDelete={this.deleteChip(data)}
-                                                                />
-                                                            )}
-                                                        </ChipList>
-                                                    </div>
-                                                </Head>
-                                                <WorkContentArea>
-                                                    <div>
-                                                        <MainImageInput
-                                                            labelText={locale.works.image}
-                                                            onChange={this.submitMainImage}
-                                                        />
-                                                        <div>
-                                                            <TextField
-                                                                label={locale.works.description}
-                                                                multiline
-                                                                margin="normal"
-                                                                required
-                                                                placeholder={locale.works.inputDiscription}
-                                                                rowsMax={30}
-                                                                fullWidth
-                                                                onChange={this.setDescription}
-                                                                value={this.state.description}
-                                                                inputRef={this.setDescriptionInput}
-                                                            />
-                                                            <MarkdownSupports
-                                                                element={this.state.descriptionInput}
-                                                                onChangeValue={this.handleMarkdownSupportsChangeValue}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <PortalMarkdown
-                                                        source={this.state.description}
-                                                        rawSourcePos
-                                                    />
-                                                </WorkContentArea>
-                                                <ActionArea>
-                                                    <div/>
-                                                    <FormGroup>
-                                                        <FormControlLabel
-                                                            control={
-                                                                <Switch
-                                                                    onChange={this.togglePublic}
-                                                                    color="primary"
-                                                                    checked={this.state.isPublic}
-                                                                >
-                                                                    Range setting
-                                                                </Switch>
-                                                            }
-                                                            label="公開する"
-                                                            labelPlacement="start"
-                                                        />
-                                                    </FormGroup>
-                                                    <Button
-                                                        variant="outlined"
-                                                        color="primary"
-                                                        onClick={this.openPreview}
-                                                    >
-                                                        {locale.works.preview}
-                                                    </Button>
-                                                    <Button
-                                                        type="submit"
-                                                        component="button"
-                                                        variant="contained"
-                                                        color="primary"
-                                                    >
-                                                        {locale.works.create}
-                                                    </Button>
-                                                </ActionArea>
-                                            </div>
-                                            {
-                                                (createWorkError || updateWorkError)
-                                             && <notificationListener.ErrorComponent message={createWorkError || updateWorkError}/>
-                                            }
-                                        </Host>
-                                    )}
-                                </Mutation>
-                            )}
-                        </Mutation>
-                        <WorkDialog
-                            history={history}
-                            open={this.state.workDialogVisible}
-                            onClose={this.onClosePreview}
-                            work={this.state.previewWork}
-                            userId={auth.token!.payload.sub}
-                            locale={locale.location}
+export default (props: React.Props<{}>) => (
+    <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
+        {(createWork, { error: createWorkError }) => (
+            <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
+                {(updateWork, { error: updateWorkError }) => (
+                    <Page
+                        {...props}
+                        ref={props.ref as any}
+                    >
+                        <Header/>
+                        <WorkPostPage
+                            createWork={createWork}
+                            updateWork={updateWork}
+                            createWorkError={createWorkError}
+                            updateWorkError={updateWorkError}
                         />
                     </Page>
                 )}
-            </LocaleContext.Consumer>
-        );
+            </Mutation>
+        )}
+    </Mutation>
+);
+
+const WorkPostPage = (
+    {
+        createWork,
+        updateWork,
+        createWorkError,
+        updateWorkError
+    }: {
+        createWork: MutationFn<any, OperationVariables>,
+        updateWork: MutationFn<any, OperationVariables>,
+        createWorkError: ApolloError | undefined,
+        updateWorkError: ApolloError | undefined
     }
-}
+) => {
+
+    const [tags, setTags] = useState<string[]>([]);
+    const [description, setDescription] = useState<string>("");
+    const [previewWork, setPreviewWork] = useState<Work | undefined>(undefined);
+    const [workDialogOpend, setWorkDialogOpen] = useState<boolean>(false);
+    const [mainImageUrl, setMainImageUrl] = useState<string | undefined>(undefined);
+    const [isPublic, setPublic] = useState<boolean>(true);
+    const [isUpdatedByMarkdownSupport, setUpdatedByMarkdownSupport] = useState<boolean>(false);
+    const [adjustLine, setAdjustLine] = useState<[number, number]>([0, 0]);
+
+    const descriptionTextAreaElement = useRef<HTMLTextAreaElement>(null);
+    const titleInputElement = useRef<HTMLInputElement>(null);
+
+    const auth = useContext(AuthContext);
+    const notification = useContext(NotificationContext);
+    const routerHistory = useContext(RouterHistoryContext);
+    const localization = useContext(LocalizationContext);
+
+    useEffect(
+        () => {
+            if (descriptionTextAreaElement.current && isUpdatedByMarkdownSupport) {
+                descriptionTextAreaElement.current!.setSelectionRange(adjustLine[0], adjustLine[1]);
+            }
+        },
+        [description]
+    );
+
+    return (
+        <Host
+            onSubmit={
+                handleHostSubmit({
+                    createWork,
+                    updateWork,
+                    auth,
+                    notification,
+                    titleInputElement,
+                    tags,
+                    description,
+                    isPublic,
+                    routerHistory,
+                    imageUrl: mainImageUrl
+                })}
+        >
+            <div>
+                <Head>
+                    <TextField
+                        id="title"
+                        label={localization.locationText.works.title}
+                        placeholder={localization.locationText.works.inputTitle}
+                        margin="normal"
+                        fullWidth
+                        required
+                    />
+                    <div>
+                        <TextField
+                            label={localization.locationText.works.tags}
+                            placeholder={"Input Tags!"}
+                            onKeyDown={tagInputKeyDown({ tags, setTags })}
+                            margin="normal"
+                            inputProps={{
+                                maxLength: 10
+                            }}
+                        />
+                        <ChipList>
+                            {tags.map(tag => (
+                                <Chip
+                                    key={tag}
+                                    clickable={false}
+                                    label={tag}
+                                    onDelete={() => setTags(tags.filter(x => tag !== x))}
+                                />
+                            ))}
+                        </ChipList>
+                    </div>
+                </Head>
+                <WorkContentArea>
+                    <div>
+                        <MainImageInput
+                            labelText={localization.locationText.works.image}
+                            onChange={submitMainImage({ auth, notification, setMainImageUrl })}
+                        />
+                        <div>
+                            <TextField
+                                label={localization.locationText.works.description}
+                                multiline
+                                margin="normal"
+                                required
+                                placeholder={localization.locationText.works.inputDiscription}
+                                rowsMax={30}
+                                fullWidth
+                                inputRef={descriptionTextAreaElement}
+                                defaultValue={description}
+                                value={description}
+                                onChange={e => setDescription(e.target.value)}
+                            />
+                            <MarkdownSupports
+                                element={descriptionTextAreaElement.current ? descriptionTextAreaElement.current : undefined}
+                                onChangeValue={handleMarkdownSupportsChangeValue({ setAdjustLine, setDescription, setUpdatedByMarkdownSupport })}
+                            />
+                        </div>
+                    </div>
+                    <PortalMarkdown
+                        source={description}
+                        rawSourcePos
+                    />
+                </WorkContentArea>
+                <ActionArea>
+                    <div/>
+                    <FormGroup>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    onChange={() => setPublic(!isPublic)}
+                                    color="primary"
+                                    checked={isPublic}
+                                >
+                                    Range setting
+                                </Switch>
+                            }
+                            label="公開する"
+                            labelPlacement="start"
+                        />
+                    </FormGroup>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => handlePreviewWork({
+                            auth,
+                            setPreviewWork,
+                            setWorkDialogOpen,
+                            tags,
+                            description,
+                            isPublic,
+                            titleInputElement,
+                            imageUrl: mainImageUrl
+                        })}
+                    >
+                        {localization.locationText.works.preview}
+                    </Button>
+                    <Button
+                        type="submit"
+                        component="button"
+                        variant="contained"
+                        color="primary"
+                    >
+                        {localization.locationText.works.create}
+                    </Button>
+                </ActionArea>
+            </div>
+            <WorkDialog
+                open={workDialogOpend}
+                onClose={() => {
+                    setPreviewWork(undefined);
+                    setWorkDialogOpen(false);
+                }}
+                work={previewWork}
+                userId={auth.token!.payload.sub}
+            />
+            {
+                (createWorkError || updateWorkError)
+             && <notification.ErrorComponent message={createWorkError || updateWorkError}/>
+            }
+        </Host>
+    );
+};
+
+const tagInputKeyDown = (
+    {
+        tags,
+        setTags,
+    }: {
+        tags: string[],
+        setTags: React.Dispatch<React.SetStateAction<string[]>>,
+    }
+) => (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (tags.length >= 5)
+        return e.preventDefault();
+
+    const inputValue = (e.target as any).value;
+    if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
+        e.preventDefault();
+        if (inputValue.length > 1) {
+            if (!tags.some(x => x === inputValue))
+                setTags(
+                    tags.concat((e.target as any).value)
+                );
+
+            (e.target as any).value = "";
+        }
+    }
+};
+
+const handlePreviewWork = (
+    {
+        auth,
+        setPreviewWork,
+        setWorkDialogOpen,
+        titleInputElement,
+        tags,
+        imageUrl,
+        description,
+        isPublic
+    }: {
+        auth: AuthValue,
+        setPreviewWork: React.Dispatch<React.SetStateAction<Work | undefined>>,
+        setWorkDialogOpen: React.Dispatch<React.SetStateAction<boolean>>,
+        titleInputElement: React.RefObject<HTMLInputElement>,
+        tags: string[],
+        imageUrl?: string,
+        description: string,
+        isPublic: boolean
+    }
+) => {
+    setPreviewWork(
+        {
+            description,
+            tags,
+            isPublic,
+            id: "preview",
+            imageUrl: imageUrl || "",
+            title: titleInputElement.current ? titleInputElement.current!.value : "",
+            userId: (auth.token || { payload: { sub: "xxx" } }).payload.sub,
+            createdAt: +new Date() / 1000,
+            user: {
+                id: "preview",
+                email: "preview",
+                displayName: "display name",
+                career: "career",
+                avatarUri: "/img/no-image.png",
+                message: "message"
+            }
+        }
+    );
+    setWorkDialogOpen(true);
+};
+
+const submitMainImage = (
+    {
+        auth,
+        notification,
+        setMainImageUrl
+    }: {
+        auth: AuthValue,
+        notification: NotificationValue,
+        setMainImageUrl: React.Dispatch<React.SetStateAction<string | undefined>>
+    }
+) => async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!auth.token) {
+        notification.notification("error", "Need Sign in");
+        return;
+    }
+
+    if (!e.target.files) {
+        notification.notification("error", "Required set image");
+        return;
+    }
+
+    const image = e.target.files![0];
+    const result = await createSignedUrl({
+        jwt: auth.token!.jwtToken,
+        userId: auth.token!.payload.sub,
+        type: "work",
+        mimetype: image.type
+    });
+    await fileUploadToS3({
+        url: result.signedUrl,
+        file: image
+    });
+    setMainImageUrl(result.uploadedUrl);
+};
+
+const handleHostSubmit = (
+    {
+        createWork,
+        updateWork,
+        auth,
+        notification,
+        titleInputElement,
+        tags,
+        imageUrl,
+        description,
+        isPublic,
+        routerHistory
+    }: {
+        createWork: MutationFn<any, OperationVariables>,
+        updateWork: MutationFn<any, OperationVariables>,
+        auth: AuthValue,
+        notification: NotificationValue,
+        titleInputElement: React.RefObject<HTMLInputElement>,
+        tags: string[],
+        imageUrl?: string,
+        description: string,
+        isPublic: boolean,
+        routerHistory: RouterHistoryValue
+    }
+) => async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!auth.token) {
+        notification.notification("error", "Need Sign in");
+        return;
+    }
+
+    const work = await new Promise<Work>(resolve => createWork({
+        variables: {
+            work: {
+                description,
+                imageUrl,
+                isPublic,
+                tags,
+                title: titleInputElement.current!.value,
+                userId: auth.token!.payload.sub
+            }
+        },
+        optimisticResponse: {
+            __typename: "Mutation",
+            createWork: {
+                description,
+                imageUrl,
+                isPublic,
+                tags,
+                id: "new",
+                title: titleInputElement.current!.value,
+                userId: auth.token!.payload.sub,
+                createdAt: +new Date(),
+                __typename: "Work"
+            }
+        },
+        update: (_, { data: { createWork } }) => createWork.id !== "new" && resolve(createWork as Work)
+    }));
+
+    // TODO: 下これいる？なんでやってるの？
+    await updateWork({
+        variables: {
+            work: {
+                id: work.id,
+                userId: auth.token!.payload.sub,
+            }
+        },
+        optimisticResponse: {
+            __typename: "Mutation",
+            updateWork: {
+                imageUrl,
+                isPublic,
+                tags,
+                id: "new",
+                title: titleInputElement.current!.value,
+                userId: auth.token!.payload.sub,
+                createdAt: +new Date(),
+                __typename: "Work"
+            }
+        }
+    });
+
+    notification.notification("info", "Created Work!");
+    routerHistory.history.push("/");
+};
+
+const handleMarkdownSupportsChangeValue = (
+    {
+        setDescription,
+        setAdjustLine,
+        setUpdatedByMarkdownSupport,
+    }: {
+        setDescription: React.Dispatch<React.SetStateAction<string>>,
+        setAdjustLine: React.Dispatch<React.SetStateAction<[number, number]>>,
+        setUpdatedByMarkdownSupport: React.Dispatch<React.SetStateAction<boolean>>
+    }
+) => (description: string, lines: [number, number]) => {
+    setUpdatedByMarkdownSupport(true);
+    setAdjustLine(lines);
+    setDescription(description);
+};

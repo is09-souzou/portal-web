@@ -95,7 +95,7 @@ export default (
     </LocalizationContext.Consumer>
 );
 
-const Transition = (props:SlideProps) =>  <Slide direction="up" {...props} />;
+const Transition = (props:SlideProps) =>  <Slide direction="up" {...props}/>;
 
 const StyledDialogContent = styled(DialogContent as React.SFC<DialogContentProps>)`
     && {

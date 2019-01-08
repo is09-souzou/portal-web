@@ -1,11 +1,7 @@
 import { MuiThemeProvider } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 import React from "react";
-import {
-    match,
-    BrowserRouter as Router,
-    RouteComponentProps
-} from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import ComposingRoute from "src/components/atoms/ComposingRoute";
 import ComposingSwitch from "src/components/atoms/ComposingSwitch";
 import Root from "src/Root";

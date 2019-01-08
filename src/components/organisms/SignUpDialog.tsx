@@ -14,7 +14,7 @@ import NotificationContext, { NotificationValue } from "src/contexts/Notificatio
 import styled from "styled-components";
 import uuidv4 from "uuid/v4";
 
-const Transition = (props: SlideProps) =>  <Slide direction="up" {...props} />;
+const Transition = (props: SlideProps) =>  <Slide direction="up" {...props}/>;
 
 const handleFormSubmit = (
     onSignUp: SingUp,

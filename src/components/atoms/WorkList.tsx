@@ -6,7 +6,7 @@ import styled from "styled-components";
 interface Props {
     works: Work[];
     workListRow: number;
-    onWorkItemClick: (x: Work) => () => void;
+    onWorkItemClick: (x: Work) => void;
 }
 
 export default (
@@ -30,7 +30,7 @@ export default (
                         <WorkItem
                             work={x}
                             key={x.id}
-                            onClick={onWorkItemClick(x)}
+                            onClick={() => onWorkItemClick(x)}
                         />
                     )
                 )}

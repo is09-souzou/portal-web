@@ -69,7 +69,7 @@ export default (
                         color="inherit"
                         onClick={onClose || _onClose}
                     >
-                        <StyledCloseIcon />
+                        <StyledCloseIcon/>
                     </IconButton>
                 ]}
             />

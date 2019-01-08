@@ -28,13 +28,14 @@ export default (
             }
         }
     };
+
     useEffect(
         () => {
             onScroll();
             window.addEventListener("scroll", onScroll, false);
             return () => window.removeEventListener("scroll", onScroll, false);
         },
-        [hostElement]
+        []
     );
 
     if (disable)

@@ -11,6 +11,7 @@
         "trailing-comma"          : false,
         "jsx-boolean-value"       : false,
         "jsx-no-multiline-js"     : false,
+        "jsx-no-lambda"           : false,
         "ter-arrow-parens"        : false,
         "jsx-curly-spacing"       : false,
         "no-else-after-return"    : false,
