@@ -9,7 +9,6 @@ import AppBar, { AppBarProps } from "@material-ui/core/AppBar";
 import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
 import Typography, { TypographyProps } from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
-import * as H from "history";
 import React, { useContext, useState, Fragment } from "react";
 import ReactMarkdown from "react-markdown";
 import FormatStringDate from "src/components/atoms/FormatStringDate";
