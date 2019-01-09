@@ -299,10 +299,12 @@ const Host = styled.div`
 `;
 
 const Title = styled(Typography as React.SFC<TypographyProps>)`
-    padding-top: 2.5rem;
-    padding-bottom: .5rem;
-    text-align: center;
-    letter-spacing: .4rem;
+    && {
+        padding-top: 2.5rem;
+        padding-bottom: .5rem;
+        text-align: center;
+        letter-spacing: .4rem;
+    }
 `;
 
 const NestedListItem = styled(ListItem as React.SFC<ListItemProps>)`

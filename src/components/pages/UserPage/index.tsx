@@ -26,7 +26,7 @@ import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import LocalizationContext from "src/contexts/LocalizationContext";
 import NotificationContext from "src/contexts/NotificationContext";
-import RouterHistoryContext from "src/contexts/RouterHistoryContext";
+import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { User, Work, WorkConnection } from "src/graphQL/type";
 
 const QueryGetUser = gql(`
@@ -63,11 +63,12 @@ const QueryGetUser = gql(`
 export default (props: React.Props<{}>) => {
     const auth = useContext(AuthContext);
     const notification = useContext(NotificationContext);
+    const routerHistory = useContext(RouterHistoryContext);
 
     return (
         <Query
             query={QueryGetUser}
-            variables={{ id: auth.token!.payload.sub }}
+            variables={{ id: routerHistory.match!.params.id }}
             fetchPolicy="network-only"
         >
             {(query =>
@@ -88,6 +89,7 @@ export default (props: React.Props<{}>) => {
                           :                                     (
                                 <UserPage
                                     auth={auth}
+                                    routerHistory={routerHistory}
                                     query={query}
                                 />
                             )
@@ -99,21 +101,21 @@ export default (props: React.Props<{}>) => {
     );
 };
 
-interface Props extends React.Props<{}> {
-    auth: AuthValue;
-    query: QueryResult<any, {
-        id: any;
-    }>;
-}
-
 const UserPage = (
     {
         auth,
+        routerHistory,
         query: {
             data,
             fetchMore
         }
-    }: Props
+    }: {
+        auth: AuthValue;
+        routerHistory: RouterHistoryValue,
+        query: QueryResult<any, {
+            id: any;
+        }>;
+    }
 ) => {
 
     const [selectedWork, setSelectedWork] = useState<Work | undefined>(undefined);
@@ -121,7 +123,6 @@ const UserPage = (
     const [workListRow, setWorkListRow] = useState<number>(4);
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
-    const routerHistory = useContext(RouterHistoryContext);
     const localization = useContext(LocalizationContext);
 
     useEffect(

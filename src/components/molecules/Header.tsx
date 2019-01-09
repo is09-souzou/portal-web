@@ -6,7 +6,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import MenuIcon from "@material-ui/icons/Menu";
 import gql from "graphql-tag";
 import React, { useContext, useState, Fragment } from "react";
-import { Query } from "react-apollo";
+import { Query, QueryResult } from "react-apollo";
 import { Redirect } from "react-router";
 import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
@@ -14,11 +14,12 @@ import Link from "src/components/atoms/Link";
 import InitialRegistrationDialog from "src/components/organisms/InitialRegistrationDialog";
 import SignInDialog from "src/components/organisms/SignInDialog";
 import SignUpDialog from "src/components/organisms/SignUpDialog";
-import AuthContext from "src/contexts/AuthContext";
+import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import DrawerContext from "src/contexts/DrawerContext";
-import LocalizationContext from "src/contexts/LocalizationContext";
+import LocalizationContext, { LocalizationValue } from "src/contexts/LocalizationContext";
 import NotificationContext from "src/contexts/NotificationContext";
 import RouterHistoryContext from "src/contexts/RouterHistoryContext";
+import { User } from "src/graphQL/type";
 import styled from "styled-components";
 
 const QueryGetUser = gql(`
@@ -32,7 +33,6 @@ const QueryGetUser = gql(`
 `);
 
 export default (props: React.Props<{}>) => {
-    const [userMenuVisibled] = useState<boolean>(false);
     const [userMenuAnchorElement, setUserMenuAnchorElement] = useState<HTMLElement | undefined>(undefined);
 
     const auth = useContext(AuthContext);
@@ -52,14 +52,9 @@ export default (props: React.Props<{}>) => {
     // };
 
     const closeMenu = () => setUserMenuAnchorElement(undefined);
-    const openSignInDialog = () => routerHistory.history.push("?sign-in=true");
-    const openSignUpDialog = () => routerHistory.history.push("?sign-up=true");
-    const closeSignInDialog = () => routerHistory.history.push("?sign-in=false");
-    const closeSignUpDialog = () => routerHistory.history.push("?sign-up=false");
-    const closeInitialRegistrationDialog = () => routerHistory.history.push("?initial-registration=false");
     const signIn = async (email: string, password: string) => {
         await auth.signIn(email, password);
-        closeSignInDialog();
+        routerHistory.history.push("?sign-in=false");
         closeMenu();
     };
 
@@ -89,7 +84,7 @@ export default (props: React.Props<{}>) => {
                     </Typography>
                     <div>
                         {!auth.token ?
-                            <Button onClick={openSignInDialog} >
+                            <Button onClick={() => routerHistory.history.push("?sign-in=true")} >
                                 {localization.locationText.header.signIn}
                             </Button>
                     :     (
@@ -98,74 +93,28 @@ export default (props: React.Props<{}>) => {
                                     variables={{ id: auth.token!.payload.sub }}
                                     fetchPolicy="cache-and-network"
                                 >
-                                    {({ loading, error, data }) => {
-                                        if (loading) return <GraphQLProgress size={24}/>;
-                                        if (error) {
-                                            console.error(error);
-                                            return (
-                                                <Fragment>
-                                                    <div>?</div>
-                                                    <notification.ErrorComponent error={error}/>
-                                                </Fragment>
-                                            );
-                                        }
-
-                                        if (!data.getUser)
-                                            return <Redirect to="/profile?initial-registration=true"/>;
-
-                                        return (
+                                {(query =>
+                                    (
+                                        query.loading                       ? <GraphQLProgress size={24}/>
+                                      : query.error                         ? (
                                             <Fragment>
-                                                <IconButton
-                                                    aria-owns={userMenuVisibled ? "menu-appbar" : undefined}
-                                                    aria-haspopup="true"
-                                                    onClick={handleMenu}
-                                                    color="inherit"
-                                                >
-                                                    <AccountCircleIcon/>
-                                                </IconButton>
-                                                <Popover
-                                                    id="menu-appbar"
-                                                    anchorEl={userMenuAnchorElement}
-                                                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                                                    transformOrigin={{ vertical: "top", horizontal: "right" }}
-                                                    open={!!userMenuAnchorElement}
-                                                    onClose={closeMenu}
-                                                >
-                                                    <PopoverContent>
-                                                        <div>
-                                                            <div>
-                                                                <Typography variant="caption">{localization.locationText.header.name}</Typography>
-                                                                <Typography gutterBottom>
-                                                                    {data.getUser.displayName}
-                                                                </Typography>
-                                                            </div>
-                                                            <div>
-                                                                <Typography variant="caption">{localization.locationText.header.mailAdress}</Typography>
-                                                                <Typography gutterBottom>
-                                                                    {data.getUser.email}
-                                                                </Typography>
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <Link
-                                                                to={("/users/") + auth.token!.payload.sub}
-                                                                onClick={closeMenu}
-                                                            >
-                                                                <Button>
-                                                                    {localization.locationText.header.profile}
-                                                                </Button>
-                                                            </Link>
-                                                            <Button
-                                                                onClick={auth.signOut}
-                                                            >
-                                                                {localization.locationText.header.signOut}
-                                                            </Button>
-                                                        </div>
-                                                    </PopoverContent>
-                                                </Popover>
+                                                <div>?</div>
+                                                <notification.ErrorComponent error={query.error}/>
                                             </Fragment>
-                                        );
-                                    }}
+                                        )
+                                      : !(query.data && query.data.getUser) ? <Redirect to="/profile?initial-registration=true"/>
+                                      :                                       (
+                                            <HeaderUser
+                                                auth={auth}
+                                                localization={localization}
+                                                closeMenu={closeMenu}
+                                                handleMenu={handleMenu}
+                                                userMenuAnchorElement={userMenuAnchorElement}
+                                                query={query}
+                                            />
+                                        )
+                                    )
+                                )}
                                 </Query>
                             )
                         }
@@ -173,20 +122,96 @@ export default (props: React.Props<{}>) => {
                 </StyledToolbar>
             <SignInDialog
                 open={signInDialogVisible}
-                onClose={closeSignUpDialog}
+                onClose={() => routerHistory.history.push("?sign-up=false")}
                 onSignIn={signIn}
-                onCreateAcountButtonClick={openSignUpDialog}
+                onCreateAcountButtonClick={() => routerHistory.history.push("?sign-up=true")}
             />
             <SignUpDialog
                 open={signUpDialogVisible}
-                onClose={closeSignInDialog}
+                onClose={() => routerHistory.history.push("?sign-in=false")}
                 onSignUp={auth.signUp}
             />
             <InitialRegistrationDialog
                 open={initialRegistrationDialogVisible}
-                onClose={closeInitialRegistrationDialog}
+                onClose={() => routerHistory.history.push("?initial-registration=false")}
             />
         </StyledAppBar>
+    );
+};
+
+const HeaderUser = (
+    {
+        auth,
+        localization,
+        closeMenu,
+        handleMenu,
+        userMenuAnchorElement,
+        query: {
+            data
+        }
+    }: {
+        auth: AuthValue,
+        localization: LocalizationValue,
+        closeMenu: () => void,
+        handleMenu:  (e: React.MouseEvent<HTMLElement, MouseEvent>) => void,
+        userMenuAnchorElement?:  HTMLElement,
+        query: QueryResult<any, {
+            id: any;
+        }>
+    }
+) => {
+    const user = data.getUser as User;
+    return (
+        <Fragment>
+            <IconButton
+                aria-owns={"menu-appbar"}
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
+            >
+                <AccountCircleIcon/>
+            </IconButton>
+            <Popover
+                id="menu-appbar"
+                anchorEl={userMenuAnchorElement}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+                open={!!userMenuAnchorElement}
+                onClose={closeMenu}
+            >
+                <PopoverContent>
+                    <div>
+                        <div>
+                            <Typography variant="caption">{localization.locationText.header.name}</Typography>
+                            <Typography gutterBottom>
+                                {user.displayName}
+                            </Typography>
+                        </div>
+                        <div>
+                            <Typography variant="caption">{localization.locationText.header.mailAdress}</Typography>
+                            <Typography gutterBottom>
+                                {user.email}
+                            </Typography>
+                        </div>
+                    </div>
+                    <div>
+                        <Link
+                            to={("/users/") + auth.token!.payload.sub}
+                            onClick={closeMenu}
+                        >
+                            <Button>
+                                {localization.locationText.header.profile}
+                            </Button>
+                        </Link>
+                        <Button
+                            onClick={auth.signOut}
+                        >
+                            {localization.locationText.header.signOut}
+                        </Button>
+                    </div>
+                </PopoverContent>
+            </Popover>
+        </Fragment>
     );
 };
 
