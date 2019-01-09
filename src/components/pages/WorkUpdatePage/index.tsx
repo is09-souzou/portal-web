@@ -62,6 +62,12 @@ export default (props: React.Props<{}>) => {
     const routerHistory = useContext(RouterHistoryContext);
     const notification = useContext(NotificationContext);
 
+    const urlMatch = routerHistory.location.pathname.match(/\/works\/update-work\/(.*)/);
+    if (urlMatch)
+        return (<NotFound/>);
+
+    const workId = urlMatch![1];
+
     return (
         <Page
             {...props}
@@ -70,7 +76,7 @@ export default (props: React.Props<{}>) => {
             <Header/>
             <Query
                 query={QueryGetWorkById}
-                variables={{ id: routerHistory.match!.params.id }}
+                variables={{ id: workId }}
                 fetchPolicy="cache-and-network"
             >
                 {query => (
@@ -86,6 +92,7 @@ export default (props: React.Props<{}>) => {
                         <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
                             {(updateWork, { error: updateWorkError }) => (
                                 <WorkUpdatePage
+                                    workId={workId}
                                     query={query}
                                     updateWork={updateWork}
                                     updateWorkError={updateWorkError}
@@ -103,6 +110,7 @@ export default (props: React.Props<{}>) => {
 
 const WorkUpdatePage = (
     {
+        workId,
         query: {
             data
         },
@@ -111,6 +119,7 @@ const WorkUpdatePage = (
         routerHistory,
         notification
     }: {
+        workId: string,
         query: QueryResult<any, {
             id: any;
         }>,
@@ -155,6 +164,7 @@ const WorkUpdatePage = (
                 auth,
                 notification,
                 titleInputElement,
+                workId,
                 tags,
                 description,
                 isPublic,
@@ -367,6 +377,7 @@ const handleHostSubmit = (
         auth,
         notification,
         titleInputElement,
+        workId,
         tags,
         imageUrl,
         description,
@@ -377,6 +388,7 @@ const handleHostSubmit = (
         auth: AuthValue,
         notification: NotificationValue,
         titleInputElement: React.RefObject<HTMLInputElement>,
+        workId: string,
         tags: string[],
         imageUrl?: string,
         description: string,
@@ -402,7 +414,7 @@ const handleHostSubmit = (
                 description,
                 imageUrl,
                 isPublic,
-                id: routerHistory.match!.params.id,
+                id: workId,
                 title: titleInputElement.current!.value,
                 userId: auth.token!.payload.sub,
             }
@@ -414,7 +426,7 @@ const handleHostSubmit = (
                 description,
                 imageUrl,
                 isPublic,
-                id: routerHistory.match!.params.id,
+                id: workId,
                 title: titleInputElement.current!.value,
                 userId: auth.token!.payload.sub,
                 __typename: "Work"
