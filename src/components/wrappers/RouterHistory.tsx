@@ -7,10 +7,11 @@ export default withRouter(
     ({
         history,
         match,
+        location,
         ...props
     }) => (
         <RouterHistoryContext.Provider
-            value={{ history, match }}
+            value={{ history, match, location }}
             {...props}
         />
     )

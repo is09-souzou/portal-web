@@ -65,10 +65,16 @@ export default (props: React.Props<{}>) => {
     const notification = useContext(NotificationContext);
     const routerHistory = useContext(RouterHistoryContext);
 
+    const urlMatch = routerHistory.location.pathname.match(/\/users\/(.*)/);
+    if (!urlMatch)
+        return (<NotFound/>);
+
+    const userId = urlMatch![1];
+
     return (
         <Query
             query={QueryGetUser}
-            variables={{ id: routerHistory.match!.params.id }}
+            variables={{ id: userId }}
             fetchPolicy="network-only"
         >
             {(query =>

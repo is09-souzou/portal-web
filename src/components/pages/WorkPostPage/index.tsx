@@ -164,7 +164,6 @@ const WorkPostPage = (
                                 rowsMax={30}
                                 fullWidth
                                 inputRef={descriptionTextAreaElement}
-                                defaultValue={description}
                                 value={description}
                                 onChange={e => setDescription(e.target.value)}
                             />

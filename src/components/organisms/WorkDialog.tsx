@@ -37,12 +37,9 @@ export default (
     }: Props
 ) => {
 
-    const [visibile, setVisibility] = useState<boolean>(false);
+    const [imageDialogOpend, setImageDialogOpen] = useState<boolean>(false);
     const routerHistory = useContext<RouterHistoryValue>(RouterHistoryContext);
     const localization = useContext<LocalizationValue>(LocalizationContext);
-
-    const handleOpenDialog = () => setVisibility(true);
-    const handleHiddenDialog = () => setVisibility(false);
 
     if (!work)
         return null;
@@ -80,7 +77,7 @@ export default (
                         <MainImageWrapper>
                             <MainImage
                                 src={work.imageUrl}
-                                onClick={handleOpenDialog}
+                                onClick={() => setImageDialogOpen(true)}
                                 width="100%"
                                 rotate={(Math.random() > 0.5 ? "-" : "") + Math.floor(Math.random() * (8 - 4 + 1) + 4)}
                             />
@@ -161,12 +158,12 @@ export default (
                 </WorkContent>
             </Dialog>
             <Dialog
-                open={visibile}
-                onClose={close}
+                open={imageDialogOpend}
+                onClose={() => setImageDialogOpen(false)}
             >
                 <WorkDialogImage
                     src={work.imageUrl}
-                    onClick={handleHiddenDialog}
+                    onClick={() => setImageDialogOpen(false)}
                 />
             </Dialog>
         </Fragment>
