@@ -74,14 +74,14 @@ export default (props: React.Props<{}>) => {
                 fetchPolicy="cache-and-network"
             >
                 {query => (
-                    query.loading         ? <GraphQLProgress/>
-                  : query.error           ? (
+                    query.loading                       ? <GraphQLProgress/>
+                  : query.error                         ? (
                         <Fragment>
                             <ErrorTemplate/>
                             <notification.ErrorComponent error={query.error}/>
                         </Fragment>
                     )
-                  : !(query.data.getWork) ? <NotFound/>
+                  : !(query.data && query.data.getWork) ? <NotFound/>
                   :                   (
                         <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
                             {(updateWork, { error: updateWorkError }) => (

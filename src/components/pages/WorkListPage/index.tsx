@@ -76,7 +76,7 @@ export default (props: React.Props<{}>) => {
                                     <notification.ErrorComponent error={query.error}/>
                                 </Fragment>
                             )
-                          : !(query.data.listWorks)                ? <NotFound/>
+                          : !(query.data && query.data.listWorks)  ? <NotFound/>
                           :                                          (
                             <WorkListPage
                                 auth={auth}

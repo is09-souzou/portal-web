@@ -77,14 +77,14 @@ export default (props: React.Props<{}>) => {
                         {...props}
                     >
                         {
-                            query.loading         ? <GraphQLProgress/>
-                          : query.error           ? (
+                            query.loading                       ? <GraphQLProgress/>
+                          : query.error                         ? (
                                 <Fragment>
                                     <ErrorTemplate/>
                                     <notification.ErrorComponent error={query.error}/>
                                 </Fragment>
                             )
-                          : !(query.data.getUser) ? <NotFound/>
+                          : !(query.data && query.data.getUser) ? <NotFound/>
                           :                   (
                                 <UserPage
                                     auth={auth}
