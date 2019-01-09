@@ -9,9 +9,9 @@ import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 import Fab from "src/components/atoms/Fab";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import StreamSpinner from "src/components/atoms/StreamSpinner";
+import ViewPager from "src/components/atoms/ViewPager";
 import WorkList from "src/components/atoms/WorkList";
 import NotFound from "src/components/molecules/NotFound";
-import ViewPager from "src/components/organisms/ViewPager";
 import WorkDialog from "src/components/organisms/WorkDialog";
 import Footer from "src/components/pages/UserPage/Footer";
 import Host from "src/components/pages/UserPage/Host";
@@ -123,7 +123,6 @@ const UserPage = (
         }>;
     }
 ) => {
-
     const [selectedWork, setSelectedWork] = useState<Work | undefined>(undefined);
     const [workDialogOpend, setWorkDialogOpen] = useState<boolean>(false);
     const [workListRow, setWorkListRow] = useState<number>(4);
@@ -138,6 +137,7 @@ const UserPage = (
                 if (row !== workListRow)
                     setWorkListRow(row);
             };
+            resize();
             window.addEventListener("resize", resize);
 
             return () => window.removeEventListener("resize", resize);
@@ -331,7 +331,7 @@ const handleStreamSpinnerVisible = (
                             exclusiveStartKey: fetchMoreResult.getUser.works.exclusiveStartKey
                         }
                     }
-                })               : previousResult
+                })                                 : previousResult
         });
     }
 };

@@ -1,3 +1,5 @@
+import { MuiThemeProvider } from "@material-ui/core";
+import { createMuiTheme } from "@material-ui/core/styles";
 import React from "react";
 import AppSyncClient from "src/components/wrappers/AppSyncClient";
 import Auth from "src/components/wrappers/Auth";
@@ -12,14 +14,47 @@ export default (
     }: React.Props<{}>
 ) => (
     <RouterHistory>
-        <Notification>
-            <Auth>
-                <AppSyncClient>
-                    <MainLayout>
-                        {children}
-                    </MainLayout>
-                </AppSyncClient>
-            </Auth>
-        </Notification>
+        <MuiThemeProvider theme={theme}>
+            <Notification>
+                <Auth>
+                    <AppSyncClient>
+                        <MainLayout>
+                            {children}
+                        </MainLayout>
+                    </AppSyncClient>
+                </Auth>
+            </Notification>
+        </MuiThemeProvider>
     </RouterHistory>
 );
+
+const theme = createMuiTheme({
+    typography: {
+        useNextVariants: true,
+    },
+    overrides: {
+        MuiDrawer: {
+            paper: {
+                backgroundColor: "#fafbfd"
+            },
+            paperAnchorDockedLeft: {
+                borderRight: "none"
+            }
+        },
+        MuiDialog: {
+            paper: {
+                border: 0,
+                borderRadius: 8,
+                color: "white",
+            },
+        },
+    },
+    palette: {
+        primary: {
+            contrastText: "#fff",
+            dark: "#c56200",
+            light: "#ffc246",
+            main: "#ff9100",
+        },
+    }
+});

@@ -13,8 +13,8 @@ export default (
         ...props
     }: Props
 ) => (
-    <Component>
-       {React.Children.toArray(children).map(
+    <Host>
+        {React.Children.toArray(children).map(
             (x: any) => React.cloneElement(
                 x,
                 {
@@ -25,10 +25,10 @@ export default (
                 }
             )
         )}
-    </Component>
+    </Host>
 );
 
-const Component = styled.div`
+const Host = styled.div`
     display: flex;
     overflow: hidden;
     > * {

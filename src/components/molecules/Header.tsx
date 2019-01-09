@@ -217,7 +217,7 @@ const HeaderUser = (
 
 const StyledAppBar = styled(AppBar as React.SFC<AppBarProps>)`
     && {
-        width: calc(100% - 15rem - 6rem);
+        width: calc(100% - 16rem - 6rem);
         margin: 1rem 3rem 0 2rem;
         border-radius: 8px;
         color: #333;

@@ -78,7 +78,7 @@ export default (props: React.Props<{}>) => {
                                     <notification.ErrorComponent error={query.error}/>
                                 </Fragment>
                             )
-                          : !(query.data && query.data.listWorks)  ? <NotFound/>
+                          : !(query.data && query.data.listWorks && query.data.listWorks.items.length !== 0)  ? <NotFound/>
                           :                                          (
                                 <WorkListPage
                                     auth={auth}
@@ -121,7 +121,6 @@ const WorkListPage = (
         }
     }: Props
 ) => {
-
     const [selectedWork, setSelectedWork] = useState<Work | undefined>(undefined);
     const [workDialogOpend, setWorkDialogOpen] = useState<boolean>(false);
     const [workListRow, setWorkListRow] = useState<number>(4);
@@ -133,6 +132,7 @@ const WorkListPage = (
                 if (row !== workListRow)
                     setWorkListRow(row);
             };
+            resize();
             window.addEventListener("resize", resize);
 
             return () => window.removeEventListener("resize", resize);
@@ -215,6 +215,6 @@ const handleStreamSpinnerVisible = (
                         ),
                         exclusiveStartKey: fetchMoreResult.listWorks.exclusiveStartKey
                     }
-                })               : previousResult
+                })                                    : previousResult
         });
 };

@@ -63,7 +63,7 @@ export default (props: React.Props<{}>) => {
     const notification = useContext(NotificationContext);
 
     const urlMatch = routerHistory.location.pathname.match(/\/works\/update-work\/(.*)/);
-    if (urlMatch)
+    if (!urlMatch)
         return (<NotFound/>);
 
     const workId = urlMatch![1];
@@ -223,7 +223,6 @@ const WorkUpdatePage = (
                                 fullWidth
                                 inputRef={descriptionTextAreaElement}
                                 onChange={e => setDescription(e.target.value)}
-                                defaultValue={currentWork.description}
                                 value={description}
                             />
                             <MarkdownSupports
@@ -280,9 +279,7 @@ const WorkUpdatePage = (
                     </Button>
                 </ActionArea>
             </div>
-            {(updateWorkError) &&
-                <notification.ErrorComponent message={updateWorkError}/>
-            }
+            {updateWorkError && <notification.ErrorComponent message={updateWorkError}/>}
             <WorkDialog
                 open={workDialogOpend}
                 onClose={() => {

@@ -9,6 +9,7 @@ import {
     ListItemText,
     ListSubheader,
 } from "@material-ui/core";
+import { ListProps } from "@material-ui/core/List";
 import ListItem, { ListItemProps } from "@material-ui/core/ListItem";
 import Typography, { TypographyProps } from "@material-ui/core/Typography";
 import ColorLensIcon from "@material-ui/icons/ColorLens";
@@ -17,7 +18,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import LanguageIcon from "@material-ui/icons/Language";
 import NewReleasesIcon from "@material-ui/icons/NewReleases";
 import SettingsIcon from "@material-ui/icons/Settings";
-import StarIcon from "@material-ui/icons/Star";
+// import StarIcon from "@material-ui/icons/Star";
 import gql from "graphql-tag";
 import React, { Fragment } from "react";
 import { Query } from "react-apollo";
@@ -80,7 +81,7 @@ const QueryListPopularTags = gql(`
 class Navigator extends React.Component<Props, State> {
 
     state: State = {
-        tagListVisible: getTagsByURLQueryParam(this.props.routerHistory.history).length !== 0,
+        tagListVisible: true,
         tags: getTagsByURLQueryParam(this.props.routerHistory.history)
     };
 
@@ -111,7 +112,7 @@ class Navigator extends React.Component<Props, State> {
 
         return (
             <Host {...props}>
-                <Title variant="h5">
+                <Title variant="h2">
                     <Link to="/">
                         PORTAL
                     </Link>
@@ -120,7 +121,8 @@ class Navigator extends React.Component<Props, State> {
                 <List
                     subheader={<ListSubheader component="div">{locationText.navigator.works}</ListSubheader>}
                 >
-                    <Link
+                    {/* TODO: Not work */}
+                    {/* <Link
                         to="/works/popular"
                     >
                         <ListItem button>
@@ -137,7 +139,7 @@ class Navigator extends React.Component<Props, State> {
                                 }
                             />
                         </ListItem>
-                    </Link>
+                    </Link> */}
                     <Link to="/works/new">
                         <ListItem button>
                             <ListItemIcon>
@@ -189,17 +191,16 @@ class Navigator extends React.Component<Props, State> {
                                 const popularTags = (data.listPopularTags as PopularTags).map(x => x.name);
 
                                 return (
-                                    <List disablePadding>
+                                    <TagList disablePadding>
                                         {popularTags.concat(this.state.tags)
                                             .filter((x, i, self) => self.indexOf(x) === i)
                                             .map(tag => (
                                                 <Link
                                                     to={
                                                         (location.pathname.indexOf("/works") === -1 ? "/works" : "")
-                                                        + formatTagsOfURLQueryParam(
+                                                      + formatTagsOfURLQueryParam(
                                                             tags.includes(tag) ? tags.filter(x => x !== tag)
-                                                        :
-                                                            tags.concat(tag)
+                                                          :                      tags.concat(tag)
                                                         )
                                                     }
                                                     key={tag}
@@ -219,13 +220,14 @@ class Navigator extends React.Component<Props, State> {
                                                 </Link>
                                             )
                                         )}
-                                    </List>
+                                    </TagList>
                                 );
                             }}
                         </Query>
                     </Collapse>
                 </List>
-                <List
+                {/* TODO: Not work */}
+                {/* <List
                     subheader={<ListSubheader component="div">{locationText.navigator.designer}</ListSubheader>}
                 >
                     <ListItem button>
@@ -240,8 +242,8 @@ class Navigator extends React.Component<Props, State> {
                         </ListItemIcon>
                         <ListItemText primary={locationText.navigator.new}/>
                     </ListItem>
-                </List>
-                <div>
+                </List> */}
+                <BottomList>
                     <Divider/>
                     <List>
                         <ListItem
@@ -276,7 +278,7 @@ class Navigator extends React.Component<Props, State> {
                             </ListItem>
                         </Link>
                     </List>
-                </div>
+                </BottomList>
             </Host>
         );
     }
@@ -285,25 +287,34 @@ class Navigator extends React.Component<Props, State> {
 const Host = styled.div`
     display: flex;
     flex-direction: column;
-    height: max-content;
-    min-height: 100%;
+    min-height: calc(100vh - 2rem);
+    max-height: calc(100vh - 2rem);
     width: 15rem;
     overflow: auto;
-    > :last-child {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        justify-content: flex-end;
-        min-height: max-content;
-    }
+    margin: 1rem;
+    box-sizing: border-box;
+`;
+
+const BottomList = styled.div`
+    display: flex;
+    flex-direction: column;
+    min-height: max-content;
+    margin-top: auto;
 `;
 
 const Title = styled(Typography as React.SFC<TypographyProps>)`
     && {
-        padding-top: 2.5rem;
-        padding-bottom: .5rem;
+        font-size: 2rem;
+        padding-top: 1.5rem;
+        padding-bottom: 1rem;
         text-align: center;
         letter-spacing: .4rem;
+    }
+`;
+
+const TagList = styled(List as React.SFC<ListProps>)`
+    && {
+        overflow: auto;
     }
 `;
 

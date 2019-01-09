@@ -37,6 +37,7 @@ const WorkImage = styled.img`
     width: 100%;
     border-radius: 8px;
     transition: all 0.15s ease-in-out;
+    min-height: 4rem;
     cursor: pointer;
     :hover {
         background-color: #fff;
@@ -46,6 +47,7 @@ const WorkImage = styled.img`
 `;
 
 const WorkItemBase = styled.div`
+    min-height: 10rem;
     margin-bottom: 2rem;
     width: 100%;
 `;

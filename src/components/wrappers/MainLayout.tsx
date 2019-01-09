@@ -85,8 +85,8 @@ const Host = styled.div`
 
 const Content = styled.div`
     position: relative;
-    width: calc(100% - 15rem);
-    margin-left: 15rem;
+    width: calc(100% - 16rem);
+    margin-left: 16rem;
     @media (max-width: 767px) {
         width: 100%;
         margin-left: 0rem;

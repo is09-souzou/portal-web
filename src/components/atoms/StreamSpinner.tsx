@@ -20,7 +20,7 @@ export default (
     const onScroll = () => {
         if (!disable && hostElement.current) {
             const rect = hostElement.current!.getBoundingClientRect();
-            if (rect.top < window.innerHeight && visibled) {
+            if (rect.top < window.innerHeight && !visibled) {
                 onVisible && onVisible();
                 setVisiblity(true);
             } else if (visibled) {
