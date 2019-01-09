@@ -48,28 +48,43 @@ const MutationCreateWork = gql(`
     }
 `);
 
-export default (props: React.Props<{}>) => (
-    <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
-        {(createWork, { error: createWorkError }) => (
-            <Page
-                {...props}
-                ref={props.ref as any}
-            >
-                <Header/>
-                <WorkPostPage
-                    createWork={createWork}
-                    createWorkError={createWorkError}
-                />
-            </Page>
-        )}
-    </Mutation>
-);
+export default (props: React.Props<{}>) => {
+    const auth = useContext(AuthContext);
+    const routerHistory = useContext(RouterHistoryContext);
+    if (!auth.token) {
+        routerHistory.history.push("/?sign-up=true");
+        return null;
+    }
+
+    return (
+        <Page
+            {...props}
+            ref={props.ref as any}
+        >
+            <Header/>
+                <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
+                    {(createWork, { error: createWorkError }) => (
+                        <WorkPostPage
+                            auth={auth}
+                            routerHistory={routerHistory}
+                            createWork={createWork}
+                            createWorkError={createWorkError}
+                        />
+                    )}
+                </Mutation>
+        </Page>
+    );
+};
 
 const WorkPostPage = (
     {
+        auth,
+        routerHistory,
         createWork,
         createWorkError
     }: {
+        auth: AuthValue,
+        routerHistory: RouterHistoryValue,
         createWork: MutationFn<any, OperationVariables>,
         createWorkError: ApolloError | undefined
     }
@@ -87,9 +102,7 @@ const WorkPostPage = (
     const descriptionTextAreaElement = useRef<HTMLTextAreaElement>(null);
     const titleInputElement = useRef<HTMLInputElement>(null);
 
-    const auth = useContext(AuthContext);
     const notification = useContext(NotificationContext);
-    const routerHistory = useContext(RouterHistoryContext);
     const localization = useContext(LocalizationContext);
 
     useEffect(

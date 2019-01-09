@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 export default styled(Typography as React.SFC<TypographyProps>)`
     && {
-        font-size: 1.1rem;
+        font-size: 1rem;
         margin-left: 1.5rem;
         white-space: pre-wrap;
         letter-spacing: .1rem;

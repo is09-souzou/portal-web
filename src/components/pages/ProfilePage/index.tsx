@@ -44,45 +44,6 @@ const QueryGetUser = gql(`
     }
 `);
 
-export default (props: React.Props<{}>) => {
-    const auth = useContext(AuthContext);
-    const notification = useContext(NotificationContext);
-
-    return (
-        <Query
-            query={QueryGetUser}
-            variables={{ id: auth.token!.payload.sub }}
-            fetchPolicy="network-only"
-        >
-            {(query =>
-                (
-                    <Host
-                        {...props}
-                    >
-                        {
-                            query.loading                       ? <GraphQLProgress/>
-                          : query.error                         ? (
-                                <Fragment>
-                                    <ErrorTemplate/>
-                                    <notification.ErrorComponent error={query.error}/>
-                                </Fragment>
-                            )
-                          : !(query.data && query.data.getUser) ? <NotFound/>
-                          :                                       (
-                                <ProfilePage
-                                    auth={auth}
-                                    notification={notification}
-                                    query={query}
-                                />
-                            )
-                        }
-                    </Host>
-                )
-            )}
-        </Query>
-    );
-};
-
 const MutationUpdateUser = gql(`
     mutation updateUser(
         $user: UserUpdate!
@@ -95,18 +56,63 @@ const MutationUpdateUser = gql(`
     }
 `);
 
+export default (props: React.Props<{}>) => {
+    const auth = useContext(AuthContext);
+    const notification = useContext(NotificationContext);
+
+    return (
+        <Host
+            {...props}
+        >
+            <Query
+                query={QueryGetUser}
+                variables={{ id: auth.token!.payload.sub }}
+                fetchPolicy="network-only"
+            >
+                {(query => (
+                    query.loading                       ? <GraphQLProgress/>
+                  : query.error                         ? (
+                        <Fragment>
+                            <ErrorTemplate/>
+                            <notification.ErrorComponent error={query.error}/>
+                        </Fragment>
+                    )
+                  : !(query.data && query.data.getUser) ? <NotFound/>
+                  :                                       (
+                        <Mutation
+                            mutation={MutationUpdateUser}
+                            refetchQueries={[]}
+                        >
+                            {updateUser => (
+                                <ProfilePage
+                                    auth={auth}
+                                    notification={notification}
+                                    query={query}
+                                    updateUser={updateUser}
+                                />
+                            )}
+                        </Mutation>
+                    )
+                ))}
+            </Query>
+        </Host>
+    );
+};
+
 interface Props extends React.Props<{}> {
     auth: AuthValue;
     notification: NotificationValue;
     query: QueryResult<any, {
         id: any;
     }>;
+    updateUser: MutationFn<any, OperationVariables>;
 }
 
 const ProfilePage = (
     {
         auth,
         notification,
+        updateUser,
         query: {
             data,
             refetch
@@ -128,162 +134,155 @@ const ProfilePage = (
     const routerHistory = useContext(RouterHistoryContext);
 
     return (
-        <Mutation
-            mutation={MutationUpdateUser}
-            refetchQueries={[]}
+        <form
+            onSubmit={
+                handleUpdateUserFormSubmit({
+                    skillList,
+                    updateUser,
+                    user,
+                    auth,
+                    notification,
+                    routerHistory,
+                    displayNameInputElement,
+                    emailInputElement,
+                    messageInputElement,
+                    careerInputElement
+                })
+            }
         >
-            {updateUser => (
+            <ProfilePageHeader>
+                <img
+                    src={user.avatarUri}
+                />
+                <div>
+                    <UserAvatar
+                        src={user.avatarUri}
+                        onClick={() => setEditableAvatarDialogOpen(true)}
+                    />
+                    <div>
+                        <TextField
+                            id="profile-name"
+                            margin="dense"
+                            label={localization.locationText.profile.displayName}
+                            defaultValue={user.displayName}
+                            required
+                            inputRef={displayNameInputElement}
+                        />
+                        <TextField
+                            id="profile-email"
+                            margin="dense"
+                            label={localization.locationText.profile.mailAdress}
+                            type="email"
+                            defaultValue={user.email}
+                            inputRef={emailInputElement}
+                        />
+                    </div>
+                </div>
+            </ProfilePageHeader>
+            <Divider />
+            <ProfileContent>
+                <TextField
+                    id="profile-message"
+                    label={localization.locationText.profile.message}
+                    margin="normal"
+                    defaultValue={user.message}
+                    inputRef={messageInputElement}
+                />
+                <TextField
+                    id="profile-career"
+                    label={localization.locationText.profile.career}
+                    margin="normal"
+                    defaultValue={user.career}
+                    multiline
+                    rows={4}
+                    inputRef={careerInputElement}
+                />
+                <div>
+                    <TextField
+                        label={localization.locationText.profile.skill}
+                        placeholder={localization.locationText.profile.inputSkill}
+                        onKeyDown={tagInputKeyDown({ skillList, setSkillList })}
+                        margin="normal"
+                        inputProps={{
+                            maxLength: 10,
+                        }}
+                    />
+                    <ChipList>
+                        {skillList.map(skill =>
+                            <Chip
+                                key={skill}
+                                clickable={false}
+                                label={skill}
+                                onDelete={() => setSkillList(skillList.filter(x => x === skill))}
+                            />
+                        )}
+                    </ChipList>
+                </div>
+                <div>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => routerHistory.history.push(`/users/${user.id}`)}
+                    >
+                        {localization.locationText.profile.cancel}
+                    </Button>
+                    <Button
+                        type="submit"
+                        component="button"
+                        variant="contained"
+                        color="primary"
+                    >
+                        {localization.locationText.profile.save}
+                    </Button>
+                </div>
+            </ProfileContent>
+            <Dialog
+                open={editableAvatarDialogOpend}
+                onClose={() => setEditableAvatarDialogOpen(false)}
+                aria-labelledby="editable-avatar-dialog-title"
+            >
                 <form
                     onSubmit={
-                        handleUpdateUserFormSubmit({
-                            skillList,
+                        handleUpdateAvatarFormSubmit({
                             updateUser,
-                            user,
+                            refetch,
                             auth,
                             notification,
-                            routerHistory,
-                            displayNameInputElement,
-                            emailInputElement,
-                            messageInputElement,
-                            careerInputElement
+                            setEditableAvatarDialogOpen,
+                            setUploadingAvatarImage
                         })
                     }
                 >
-                    <ProfilePageHeader>
-                        <img
-                            src={user.avatarUri}
-                        />
-                        <div>
-                            <UserAvatar
-                                src={user.avatarUri}
-                                onClick={() => setEditableAvatarDialogOpen(true)}
-                            />
-                            <div>
-                                <TextField
-                                    id="profile-name"
-                                    margin="dense"
-                                    label={localization.locationText.profile.displayName}
-                                    defaultValue={user.displayName}
-                                    required
-                                    inputRef={displayNameInputElement}
-                                />
-                                <TextField
-                                    id="profile-email"
-                                    margin="dense"
-                                    label={localization.locationText.profile.mailAdress}
-                                    type="email"
-                                    defaultValue={user.email}
-                                    inputRef={emailInputElement}
-                                />
-                            </div>
-                        </div>
-                    </ProfilePageHeader>
-                    <Divider />
-                    <ProfileContent>
-                        <TextField
-                            id="profile-message"
-                            label={localization.locationText.profile.message}
-                            margin="normal"
-                            defaultValue={user.message}
-                            inputRef={messageInputElement}
-                        />
-                        <TextField
-                            id="profile-career"
-                            label={localization.locationText.profile.career}
-                            margin="normal"
-                            defaultValue={user.career}
-                            multiline
-                            rows={4}
-                            inputRef={careerInputElement}
-                        />
-                        <div>
-                            <TextField
-                                label={localization.locationText.profile.skill}
-                                placeholder={localization.locationText.profile.inputSkill}
-                                onKeyDown={tagInputKeyDown({ skillList, setSkillList })}
-                                margin="normal"
-                                inputProps={{
-                                    maxLength: 10,
-                                }}
-                            />
-                            <ChipList>
-                                {skillList.map(skill =>
-                                    <Chip
-                                        key={skill}
-                                        clickable={false}
-                                        label={skill}
-                                        onDelete={() => setSkillList(skillList.filter(x => x === skill))}
-                                    />
-                                )}
-                            </ChipList>
-                        </div>
-                        <div>
-                            <Button
-                                variant="outlined"
-                                color="primary"
-                                onClick={() => routerHistory.history.push(`/users/${user.id}`)}
-                            >
-                                {localization.locationText.profile.cancel}
-                            </Button>
-                            <Button
-                                type="submit"
-                                component="button"
-                                variant="contained"
-                                color="primary"
-                            >
-                                {localization.locationText.profile.save}
-                            </Button>
-                        </div>
-                    </ProfileContent>
-                    <Dialog
-                        open={editableAvatarDialogOpend}
-                        onClose={() => setEditableAvatarDialogOpen(false)}
-                        aria-labelledby="editable-avatar-dialog-title"
+                    <DialogTitle
+                        id="editable-avatar-dialog-title"
                     >
-                        <form
-                            onSubmit={
-                                handleUpdateAvatarFormSubmit({
-                                    updateUser,
-                                    refetch,
-                                    auth,
-                                    notification,
-                                    setEditableAvatarDialogOpen,
-                                    setUploadingAvatarImage
-                                })
-                            }
+                        {localization.locationText.profile.dialog.title}
+                    </DialogTitle>
+                    <DialogContent>
+                        <ImageInput
+                            name="newAvatarImage"
+                            width="256"
+                            height="256"
+                        />
+                    </DialogContent>
+                    {uploadingAvatarImage && <LinearProgress/>}
+                    <DialogActions>
+                        <Button
+                            onClick={() => setEditableAvatarDialogOpen(true)}
                         >
-                            <DialogTitle
-                                id="editable-avatar-dialog-title"
-                            >
-                                {localization.locationText.profile.dialog.title}
-                            </DialogTitle>
-                            <DialogContent>
-                                <ImageInput
-                                    name="newAvatarImage"
-                                    width="256"
-                                    height="256"
-                                />
-                            </DialogContent>
-                            {uploadingAvatarImage && <LinearProgress/>}
-                            <DialogActions>
-                                <Button
-                                    onClick={() => setEditableAvatarDialogOpen(true)}
-                                >
-                                    {localization.locationText.profile.dialog.cancel}
-                                </Button>
-                                <Button
-                                    component="button"
-                                    color="primary"
-                                    type="submit"
-                                >
-                                    {localization.locationText.profile.dialog.submit}
-                                </Button>
-                            </DialogActions>
-                        </form>
-                    </Dialog>
+                            {localization.locationText.profile.dialog.cancel}
+                        </Button>
+                        <Button
+                            component="button"
+                            color="primary"
+                            type="submit"
+                        >
+                            {localization.locationText.profile.dialog.submit}
+                        </Button>
+                    </DialogActions>
                 </form>
-            )}
-        </Mutation>
+            </Dialog>
+        </form>
     );
 };
 

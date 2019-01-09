@@ -54,9 +54,7 @@ export default (
                     <DrawerContext.Provider
                         value={{ toggleDrawer }}
                     >
-                        <Main>
-                            {children}
-                        </Main>
+                        {children}
                     </DrawerContext.Provider>
                 </Content>
             </LocalizationContext.Provider>
@@ -83,7 +81,7 @@ const Host = styled.div`
     }
 `;
 
-const Content = styled.div`
+const Content = styled.main`
     position: relative;
     width: calc(100% - 16rem);
     margin-left: 16rem;
@@ -91,9 +89,4 @@ const Content = styled.div`
         width: 100%;
         margin-left: 0rem;
     }
-`;
-
-const Main = styled.main`
-    min-height: calc(100vh - 7rem);
-    margin-top: 7rem;
 `;

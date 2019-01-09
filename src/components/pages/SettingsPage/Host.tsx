@@ -3,7 +3,7 @@ import Page from "src/components/atoms/Page";
 import Header from "src/components/molecules/Header";
 import styled from "styled-components";
 
-const PageHost = styled(Page)`
+const StyledPage = styled(Page)`
     max-width: 40rem;
     margin-left: auto;
     margin-right: auto;
@@ -27,10 +27,10 @@ export default (
         ...props
     }: React.Props<{}>
 ) => (
-    <PageHost ref={ref as any} {...props}>
+    <StyledPage ref={ref as any} {...props}>
         <Header/>
         <div>
             {children}
         </div>
-    </PageHost>
+    </StyledPage>
 );

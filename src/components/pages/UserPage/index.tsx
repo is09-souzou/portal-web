@@ -1,4 +1,4 @@
-import { Divider, Tabs, Typography } from "@material-ui/core";
+import { Divider, Typography } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import { ApolloQueryResult, FetchMoreOptions, FetchMoreQueryOptions } from "apollo-client";
 import { DocumentNode } from "apollo-link";
@@ -16,9 +16,7 @@ import WorkDialog from "src/components/organisms/WorkDialog";
 import Footer from "src/components/pages/UserPage/Footer";
 import Host from "src/components/pages/UserPage/Host";
 import SkillTag from "src/components/pages/UserPage/SkillTag";
-import StyledTab from "src/components/pages/UserPage/StyledTab";
 import StyledTypography from "src/components/pages/UserPage/StyledTypography";
-import UserAvatar from "src/components/pages/UserPage/UserAvatar";
 import UserContent from "src/components/pages/UserPage/UserContent";
 import UserPageHeader from "src/components/pages/UserPage/UserPageHeader";
 import WorkContent from "src/components/pages/UserPage/WorkContent";
@@ -72,38 +70,34 @@ export default (props: React.Props<{}>) => {
     const userId = urlMatch![1];
 
     return (
-        <Query
-            query={QueryGetUser}
-            variables={{ id: userId }}
-            fetchPolicy="network-only"
+        <Host
+            ref={props.ref as any}
+            {...props}
         >
-            {(query =>
-                (
-                    <Host
-                        ref={props.ref as any}
-                        {...props}
-                    >
-                        {
-                            query.loading                       ? <GraphQLProgress/>
-                          : query.error                         ? (
-                                <Fragment>
-                                    <ErrorTemplate/>
-                                    <notification.ErrorComponent error={query.error}/>
-                                </Fragment>
-                            )
-                          : !(query.data && query.data.getUser) ? <NotFound/>
-                          :                                     (
-                                <UserPage
-                                    auth={auth}
-                                    routerHistory={routerHistory}
-                                    query={query}
-                                />
-                            )
-                        }
-                    </Host>
-                )
-            )}
-        </Query>
+            <Query
+                query={QueryGetUser}
+                variables={{ id: userId }}
+                fetchPolicy="network-only"
+            >
+                {(query => (
+                    query.loading                       ? <GraphQLProgress/>
+                  : query.error                         ? (
+                        <Fragment>
+                            <ErrorTemplate/>
+                            <notification.ErrorComponent error={query.error}/>
+                        </Fragment>
+                    )
+                  : !(query.data && query.data.getUser) ? <NotFound/>
+                  :                                     (
+                        <UserPage
+                            auth={auth}
+                            routerHistory={routerHistory}
+                            query={query}
+                        />
+                    )
+                ))}
+            </Query>
+        </Host>
     );
 };
 
@@ -126,7 +120,6 @@ const UserPage = (
     const [selectedWork, setSelectedWork] = useState<Work | undefined>(undefined);
     const [workDialogOpend, setWorkDialogOpen] = useState<boolean>(false);
     const [workListRow, setWorkListRow] = useState<number>(4);
-    const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
     const localization = useContext(LocalizationContext);
 
@@ -151,54 +144,28 @@ const UserPage = (
 
     const user = data.getUser as User;
     const workConnection = user.works as WorkConnection;
+    const contents = [
+        {
+            text: localization.locationText.tab.profile,
+            value: "user"
+        },
+        {
+            text: `${localization.locationText.tab.workList}(${workConnection.items.length})`,
+            value: "work"
+        }
+    ];
 
     return (
-        <Host>
-            <UserPageHeader>
-                <img
-                    src={user.avatarUri}
-                />
-                <div>
-                    <UserAvatar
-                        src={user.avatarUri}
-                    />
-                    <div>
-                        <StyledTypography gutterBottom>
-                            {user.displayName}
-                        </StyledTypography>
-                        <StyledTypography>
-                            {user.email}
-                        </StyledTypography>
-                    </div>
-                    <Tabs
-                        value={contentType}
-                        indicatorColor="primary"
-                        textColor="primary"
-                    >
-                        <StyledTab
-                            disableRipple
-                            label={localization.locationText.tab.profile}
-                            value="user"
-                            onClick={() => {
-                                routerHistory.history.push("?content=user");
-                                setSelectedIndex(0);
-                            }}
-                        />
-                        <StyledTab
-                            disableRipple
-                            label={`${localization.locationText.tab.workList}(${workConnection.items.length})`}
-                            value="work"
-                            onClick={() => {
-                                routerHistory.history.push("?content=work");
-                                setSelectedIndex(1);
-                            }}
-                        />
-                    </Tabs>
-                </div>
-            </UserPageHeader>
-            <Divider />
+        <Fragment>
+            <UserPageHeader
+                user={user}
+                selectedContentValue={contentType}
+                contents={contents}
+                onSelectContent={x => routerHistory.history.push(`?content=${x.value}`)}
+            />
+            <Divider/>
             <ViewPager
-                selectedIndex={selectedIndex}
+                selectedIndex={contentType === "user" ? 0 : 1}
             >
                 <UserContent>
                     <div>
@@ -239,7 +206,7 @@ const UserPage = (
                         open={workDialogOpend}
                         onClose={() => setWorkDialogOpen(false)}
                         work={selectedWork}
-                        userId={auth.token!.payload.sub}
+                        userId={user.id}
                     />
                     <StreamSpinner
                         key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
@@ -248,43 +215,22 @@ const UserPage = (
                     />
                 </WorkContent>
             </ViewPager>
-            <Footer>
-                <Tabs
-                    value={contentType}
-                    indicatorColor="primary"
-                    textColor="primary"
-                >
-                    <StyledTab
-                        disableRipple
-                        label={localization.locationText.tab.profile}
-                        value="user"
-                        onClick={() => {
-                            routerHistory.history.push("?content=user");
-                            setSelectedIndex(0);
-                        }}
-                    />
-                    <StyledTab
-                        disableRipple
-                        label={`${localization.locationText.tab.workList}(${workConnection.items.length})`}
-                        value="work"
-                        onClick={() => {
-                            routerHistory.history.push("?content=work");
-                            setSelectedIndex(1);
-                        }}
-                    />
-                </Tabs>
-            </Footer>
+            <Footer
+                selectedContentValue={contentType}
+                contents={contents}
+                onSelectContent={x => routerHistory.history.push(`?content=${x.value}`)}
+            />
             <Fab
                 style={{
                     visibility: (
-                        (auth.token && user.id === auth.token!.payload.sub) && contentType === "user" ? "visible" : "hidden"
+                        (auth.token && user.id === user.id) && contentType === "user" ? "visible" : "hidden"
                     )
                 }}
                 onClick={() => routerHistory.history.push("/profile")}
             >
                 <EditIcon />
             </Fab>
-        </Host>
+        </Fragment>
     );
 };
 

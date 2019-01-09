@@ -52,50 +52,46 @@ export default (props: React.Props<{}>) => {
     const routerHistory = useContext(RouterHistoryContext);
 
     return (
-        <Query
-            query={QueryListWorks}
-            variables={{
-                limit: 15,
-                exclusiveStartKey: null,
-                option: {
-                    tags: getTagsByURLQueryParam(routerHistory.history)
-                }
-            }}
-            fetchPolicy="network-only"
+        <Host
+            ref={props.ref as any}
+            {...props}
         >
-            {(query =>
-                (
-                    <Host
-                        ref={props.ref as any}
-                        {...props}
-                    >
-                        <Header/>
-                        {
-                            query.loading || !query.data.listWorks ? <GraphQLProgress/>
-                          : query.error                            ? (
-                                <Fragment>
-                                    <ErrorTemplate/>
-                                    <notification.ErrorComponent error={query.error}/>
-                                </Fragment>
-                            )
-                          : !(query.data && query.data.listWorks && query.data.listWorks.items.length !== 0)  ? <NotFound/>
-                          :                                          (
-                                <WorkListPage
-                                    auth={auth}
-                                    routerHistory={routerHistory}
-                                    query={query}
-                                />
-                            )
-                        }
-                        <Fab
-                            onClick={() => routerHistory. history.push("/works/create-work")}
-                        >
-                            <AddIcon />
-                        </Fab>
-                    </Host>
-                )
-            )}
-        </Query>
+            <Header/>
+            <Query
+                query={QueryListWorks}
+                variables={{
+                    limit: 15,
+                    exclusiveStartKey: null,
+                    option: {
+                        tags: getTagsByURLQueryParam(routerHistory.history)
+                    }
+                }}
+                fetchPolicy="network-only"
+            >
+                {(query => (
+                    query.loading || !query.data.listWorks ? <GraphQLProgress/>
+                  : query.error                            ? (
+                        <Fragment>
+                            <ErrorTemplate/>
+                            <notification.ErrorComponent error={query.error}/>
+                        </Fragment>
+                    )
+                  : !(query.data && query.data.listWorks && query.data.listWorks.items.length !== 0)  ? <NotFound/>
+                  :                                          (
+                        <WorkListPage
+                            auth={auth}
+                            routerHistory={routerHistory}
+                            query={query}
+                        />
+                    )
+                ))}
+            </Query>
+            <Fab
+                onClick={() => routerHistory. history.push("/works/create-work")}
+            >
+                <AddIcon />
+            </Fab>
+        </Host>
     );
 };
 
@@ -143,7 +139,7 @@ const WorkListPage = (
     const workConnection = data.listWorks as WorkConnection;
 
     return (
-        <Host>
+        <Fragment>
             <WorkList
                 works={workConnection.items}
                 workListRow={workListRow}
@@ -152,18 +148,18 @@ const WorkListPage = (
                     setSelectedWork(x);
                 }}
             />
+            <StreamSpinner
+                key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${getTagsByURLQueryParam(routerHistory.history).join("_")}`}
+                disable={!workConnection.exclusiveStartKey ? true : false}
+                onVisible={handleStreamSpinnerVisible(workConnection, fetchMore)}
+            />
             <WorkDialog
                 open={workDialogOpend}
                 onClose={() => setWorkDialogOpen(false)}
                 work={selectedWork}
                 userId={auth.token ? auth.token.payload.sub : ""}
             />
-            <StreamSpinner
-                key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${getTagsByURLQueryParam(routerHistory.history).join("_")}`}
-                disable={!workConnection.exclusiveStartKey ? true : false}
-                onVisible={handleStreamSpinnerVisible(workConnection, fetchMore)}
-            />
-        </Host>
+        </Fragment>
     );
 };
 
