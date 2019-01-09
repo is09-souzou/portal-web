@@ -82,7 +82,7 @@ export default (props: React.Props<{}>) => {
                         </Fragment>
                     )
                   : !(query.data && query.data.getWork) ? <NotFound/>
-                  :                   (
+                  :                                       (
                         <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
                             {(updateWork, { error: updateWorkError }) => (
                                 <WorkUpdatePage

@@ -78,11 +78,11 @@ export default (props: React.Props<{}>) => {
                             )
                           : !(query.data && query.data.listWorks)  ? <NotFound/>
                           :                                          (
-                            <WorkListPage
-                                auth={auth}
-                                routerHistory={routerHistory}
-                                query={query}
-                            />
+                                <WorkListPage
+                                    auth={auth}
+                                    routerHistory={routerHistory}
+                                    query={query}
+                                />
                             )
                         }
                     </Host>

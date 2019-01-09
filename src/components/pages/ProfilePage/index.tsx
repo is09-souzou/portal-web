@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import { ApolloQueryResult } from "apollo-client";
 import gql from "graphql-tag";
-import React, { useContext, useEffect, useRef, useState, Fragment } from "react";
+import React, { useContext, useRef, useState, Fragment } from "react";
 import { Mutation,  MutationFn, OperationVariables, Query, QueryResult } from "react-apollo";
 import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
@@ -29,11 +29,6 @@ import LocalizationContext from "src/contexts/LocalizationContext";
 import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { User } from "src/graphQL/type";
-
-interface Chip {
-    key  : string;
-    label: string;
-}
 
 const QueryGetUser = gql(`
     query($id: ID!) {
@@ -73,7 +68,7 @@ export default (props: React.Props<{}>) => {
                                 </Fragment>
                             )
                           : !(query.data && query.data.getUser) ? <NotFound/>
-                          :                   (
+                          :                                       (
                                 <ProfilePage
                                     auth={auth}
                                     notification={notification}
@@ -118,8 +113,9 @@ const ProfilePage = (
         }
     }: Props
 ) => {
+    const user = data.getUser as User;
 
-    const [chipsData, setChipsData] = useState<Chip[]>([]);
+    const [skillList, setSkillList] = useState<string[]>(user.skillList || []);
     const [editableAvatarDialogOpend, setEditableAvatarDialogOpen] = useState<boolean>(false);
     const [uploadingAvatarImage, setUploadingAvatarImage] = useState<boolean>(false);
 
@@ -131,15 +127,6 @@ const ProfilePage = (
     const localization = useContext(LocalizationContext);
     const routerHistory = useContext(RouterHistoryContext);
 
-    const currentUser = data.getUser as User;
-
-    useEffect(
-        () => {
-            setChipsData((currentUser.skillList || []).map((label: string) => ({ label, key: label })));
-        },
-        [currentUser.skillList]
-    );
-
     return (
         <Mutation
             mutation={MutationUpdateUser}
@@ -149,9 +136,9 @@ const ProfilePage = (
                 <form
                     onSubmit={
                         handleUpdateUserFormSubmit({
-                            chipsData,
+                            skillList,
                             updateUser,
-                            currentUser,
+                            user,
                             auth,
                             notification,
                             routerHistory,
@@ -164,11 +151,11 @@ const ProfilePage = (
                 >
                     <ProfilePageHeader>
                         <img
-                            src={currentUser.avatarUri}
+                            src={user.avatarUri}
                         />
                         <div>
                             <UserAvatar
-                                src={currentUser.avatarUri}
+                                src={user.avatarUri}
                                 onClick={() => setEditableAvatarDialogOpen(true)}
                             />
                             <div>
@@ -176,7 +163,7 @@ const ProfilePage = (
                                     id="profile-name"
                                     margin="dense"
                                     label={localization.locationText.profile.displayName}
-                                    defaultValue={currentUser.displayName}
+                                    defaultValue={user.displayName}
                                     required
                                     inputRef={displayNameInputElement}
                                 />
@@ -185,7 +172,7 @@ const ProfilePage = (
                                     margin="dense"
                                     label={localization.locationText.profile.mailAdress}
                                     type="email"
-                                    defaultValue={currentUser.email}
+                                    defaultValue={user.email}
                                     inputRef={emailInputElement}
                                 />
                             </div>
@@ -197,14 +184,14 @@ const ProfilePage = (
                             id="profile-message"
                             label={localization.locationText.profile.message}
                             margin="normal"
-                            defaultValue={currentUser.message}
+                            defaultValue={user.message}
                             inputRef={messageInputElement}
                         />
                         <TextField
                             id="profile-career"
                             label={localization.locationText.profile.career}
                             margin="normal"
-                            defaultValue={currentUser.career}
+                            defaultValue={user.career}
                             multiline
                             rows={4}
                             inputRef={careerInputElement}
@@ -213,19 +200,19 @@ const ProfilePage = (
                             <TextField
                                 label={localization.locationText.profile.skill}
                                 placeholder={localization.locationText.profile.inputSkill}
-                                onKeyDown={tagInputKeyDown({ chipsData, setChipsData })}
+                                onKeyDown={tagInputKeyDown({ skillList, setSkillList })}
                                 margin="normal"
                                 inputProps={{
                                     maxLength: 10,
                                 }}
                             />
                             <ChipList>
-                                {chipsData.map(chip =>
+                                {skillList.map(skill =>
                                     <Chip
-                                        key={chip.key}
+                                        key={skill}
                                         clickable={false}
-                                        label={chip.label}
-                                        onDelete={deleteChip({ chip, chipsData, setChipsData })}
+                                        label={skill}
+                                        onDelete={() => setSkillList(skillList.filter(x => x === skill))}
                                     />
                                 )}
                             </ChipList>
@@ -234,7 +221,7 @@ const ProfilePage = (
                             <Button
                                 variant="outlined"
                                 color="primary"
-                                onClick={() => routerHistory.history.push(`/users/${currentUser.id}`)}
+                                onClick={() => routerHistory.history.push(`/users/${user.id}`)}
                             >
                                 {localization.locationText.profile.cancel}
                             </Button>
@@ -302,9 +289,9 @@ const ProfilePage = (
 
 const handleUpdateUserFormSubmit = (
     {
-        chipsData,
+        skillList,
         updateUser,
-        currentUser,
+        user,
         auth,
         notification,
         routerHistory,
@@ -313,9 +300,9 @@ const handleUpdateUserFormSubmit = (
         messageInputElement,
         careerInputElement
     }: {
-        chipsData: Chip[],
+        skillList: string[],
         updateUser: MutationFn<any, OperationVariables>,
-        currentUser: User
+        user: User
         auth: AuthValue,
         notification: NotificationValue,
         routerHistory: RouterHistoryValue,
@@ -334,12 +321,12 @@ const handleUpdateUserFormSubmit = (
     await updateUser({
         variables: {
             user: {
+                skillList,
                 id: auth.token!.payload.sub,
                 displayName: displayNameInputElement.current!.value,
                 email: emailInputElement.current!.value,
                 message: messageInputElement.current!.value,
-                career: careerInputElement.current!.value,
-                skillList: chipsData.map(x => x.label) as string[],
+                career: careerInputElement.current!.value
             }
         },
         optimisticResponse: {
@@ -350,54 +337,34 @@ const handleUpdateUserFormSubmit = (
                 email: emailInputElement!.current!.value,
                 message: messageInputElement!.current!.value,
                 career: careerInputElement!.current!.value,
-                skillList: chipsData.map(x => x.label) as string[],
                 __typename: "User"
             }
         },
     });
 
     notification.notification("info", "Update Profile!");
-    routerHistory.history.push(`/users/${currentUser.id}`);
-};
-
-const deleteChip = (
-    {
-        chip,
-        chipsData,
-        setChipsData
-    }: {
-        chip: Chip,
-        chipsData: Chip[],
-        setChipsData: React.Dispatch<React.SetStateAction<Chip[]>>
-    }
-) => () => {
-    setChipsData(chipsData.filter((x: Chip): boolean => chip.key !== x.key));
+    routerHistory.history.push(`/users/${user.id}`);
 };
 
 const tagInputKeyDown = (
     {
-        chipsData,
-        setChipsData
+        skillList,
+        setSkillList
     }: {
-        chipsData: Chip[],
-        setChipsData: React.Dispatch<React.SetStateAction<Chip[]>>
+        skillList: string[],
+        setSkillList: React.Dispatch<React.SetStateAction<string[]>>
     }
 ) => (e: React.KeyboardEvent) => {
     e.preventDefault();
-    if (chipsData.length >= 5)
+    if (skillList.length >= 5)
         return;
 
     const inputValue = (e.target as any).value;
     if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
         e.preventDefault();
         if (inputValue.length > 1) {
-            if (!chipsData.some(x => x.label === inputValue))
-                setChipsData(
-                    chipsData.concat({
-                        key: (e.target as any).value,
-                        label: (e.target as any).value
-                    })
-                );
+            if (!skillList.some(x => x === inputValue))
+                setSkillList(skillList.concat((e.target as any).value));
 
             (e.target as any).value = "";
         }

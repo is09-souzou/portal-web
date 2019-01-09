@@ -85,7 +85,7 @@ export default (props: React.Props<{}>) => {
                                 </Fragment>
                             )
                           : !(query.data && query.data.getUser) ? <NotFound/>
-                          :                   (
+                          :                                     (
                                 <UserPage
                                     auth={auth}
                                     query={query}
@@ -179,7 +179,7 @@ const UserPage = (
                         />
                         <StyledTab
                             disableRipple
-                            label={`localization.locationText.tab.workList(${workConnection.items.length})`}
+                            label={`${localization.locationText.tab.workList}(${workConnection.items.length})`}
                             value="work"
                             onClick={() => {
                                 routerHistory.history.push("?content=work");

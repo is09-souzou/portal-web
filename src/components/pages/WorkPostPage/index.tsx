@@ -48,44 +48,19 @@ const MutationCreateWork = gql(`
     }
 `);
 
-const MutationUpdateWork = gql(`
-    mutation updateWork(
-        $work: WorkUpdate!
-    ) {
-        updateWork(
-            work: $work
-        ) {
-            id
-            description
-            imageUrl
-            userId
-            title
-            tags
-            isPublic
-            createdAt
-        }
-    }
-`);
-
 export default (props: React.Props<{}>) => (
     <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
         {(createWork, { error: createWorkError }) => (
-            <Mutation mutation={MutationUpdateWork} refetchQueries={[]}>
-                {(updateWork, { error: updateWorkError }) => (
-                    <Page
-                        {...props}
-                        ref={props.ref as any}
-                    >
-                        <Header/>
-                        <WorkPostPage
-                            createWork={createWork}
-                            updateWork={updateWork}
-                            createWorkError={createWorkError}
-                            updateWorkError={updateWorkError}
-                        />
-                    </Page>
-                )}
-            </Mutation>
+            <Page
+                {...props}
+                ref={props.ref as any}
+            >
+                <Header/>
+                <WorkPostPage
+                    createWork={createWork}
+                    createWorkError={createWorkError}
+                />
+            </Page>
         )}
     </Mutation>
 );
@@ -93,14 +68,10 @@ export default (props: React.Props<{}>) => (
 const WorkPostPage = (
     {
         createWork,
-        updateWork,
-        createWorkError,
-        updateWorkError
+        createWorkError
     }: {
         createWork: MutationFn<any, OperationVariables>,
-        updateWork: MutationFn<any, OperationVariables>,
-        createWorkError: ApolloError | undefined,
-        updateWorkError: ApolloError | undefined
+        createWorkError: ApolloError | undefined
     }
 ) => {
 
@@ -135,7 +106,6 @@ const WorkPostPage = (
             onSubmit={
                 handleHostSubmit({
                     createWork,
-                    updateWork,
                     auth,
                     notification,
                     titleInputElement,
@@ -261,10 +231,7 @@ const WorkPostPage = (
                 work={previewWork}
                 userId={auth.token!.payload.sub}
             />
-            {
-                (createWorkError || updateWorkError)
-             && <notification.ErrorComponent message={createWorkError || updateWorkError}/>
-            }
+            {createWorkError && <notification.ErrorComponent message={createWorkError}/>}
         </Host>
     );
 };
@@ -377,7 +344,6 @@ const submitMainImage = (
 const handleHostSubmit = (
     {
         createWork,
-        updateWork,
         auth,
         notification,
         titleInputElement,
@@ -388,7 +354,6 @@ const handleHostSubmit = (
         routerHistory
     }: {
         createWork: MutationFn<any, OperationVariables>,
-        updateWork: MutationFn<any, OperationVariables>,
         auth: AuthValue,
         notification: NotificationValue,
         titleInputElement: React.RefObject<HTMLInputElement>,
@@ -405,7 +370,7 @@ const handleHostSubmit = (
         return;
     }
 
-    const work = await new Promise<Work>(resolve => createWork({
+    await new Promise<Work>(resolve => createWork({
         variables: {
             work: {
                 description,
@@ -432,29 +397,6 @@ const handleHostSubmit = (
         },
         update: (_, { data: { createWork } }) => createWork.id !== "new" && resolve(createWork as Work)
     }));
-
-    // TODO: 下これいる？なんでやってるの？
-    await updateWork({
-        variables: {
-            work: {
-                id: work.id,
-                userId: auth.token!.payload.sub,
-            }
-        },
-        optimisticResponse: {
-            __typename: "Mutation",
-            updateWork: {
-                imageUrl,
-                isPublic,
-                tags,
-                id: "new",
-                title: titleInputElement.current!.value,
-                userId: auth.token!.payload.sub,
-                createdAt: +new Date(),
-                __typename: "Work"
-            }
-        }
-    });
 
     notification.notification("info", "Created Work!");
     routerHistory.history.push("/");
