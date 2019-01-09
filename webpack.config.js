@@ -4,7 +4,6 @@ const convert                 = require('koa-connect');
 const history                 = require('connect-history-api-fallback');
 const BundleAnalyzerPlugin    = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const HtmlWebpackPlugin       = require('html-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 // const UglifyJsPlugin          = require("uglifyjs-webpack-plugin");
 
 const NODE_ENV = process.env.NODE_ENV || "development";
@@ -67,7 +66,6 @@ module.exports = {
     },
     plugins: [
         // new BundleAnalyzerPlugin(),
-        ...(NODE_ENV === "development" ? [new HardSourceWebpackPlugin()] : []),
         new DefinePlugin(
             Object.entries(process.env)
                 .map(x => ({["process.env." + x[0]]: JSON.stringify(x[1])}))
