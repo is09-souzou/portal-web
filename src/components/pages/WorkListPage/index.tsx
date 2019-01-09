@@ -1,8 +1,10 @@
+import AddIcon from "@material-ui/icons/Add";
 import { ApolloQueryResult, FetchMoreOptions, FetchMoreQueryOptions } from "apollo-client";
 import { DocumentNode } from "apollo-link/lib/types";
 import gql from "graphql-tag";
 import React, { useContext, useEffect, useState, Fragment } from "react";
 import { Query, QueryResult } from "react-apollo";
+import Fab from "src/components/atoms/Fab";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import StreamSpinner from "src/components/atoms/StreamSpinner";
 import WorkList from "src/components/atoms/WorkList";
@@ -85,6 +87,11 @@ export default (props: React.Props<{}>) => {
                                 />
                             )
                         }
+                        <Fab
+                            onClick={() => routerHistory. history.push("/works/create-work")}
+                        >
+                            <AddIcon />
+                        </Fab>
                     </Host>
                 )
             )}

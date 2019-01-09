@@ -20,12 +20,12 @@ export default class extends React.Component<React.HTMLAttributes<HTMLDivElement
                 unselectable={undefined}
             >
                 <Typography
-                    variant="display3"
+                    variant="h2"
                 >
                     {this.state.emoji}
                 </Typography>
                 <Typography
-                    variant="display1"
+                    variant="h4"
                 >
                     Oops! Something is wrong...
                 </Typography>

@@ -15,12 +15,12 @@ export default (
             unselectable={undefined}
         >
             <Typography
-                variant="display3"
+                variant="h2"
             >
                 {emoji}
             </Typography>
             <Typography
-                variant="display1"
+                variant="h4"
             >
                 Not Found
             </Typography>
