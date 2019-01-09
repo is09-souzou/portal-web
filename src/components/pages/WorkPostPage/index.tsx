@@ -222,7 +222,7 @@ const WorkPostPage = (
                                     Range setting
                                 </Switch>
                             }
-                            label="公開する"
+                            label={localization.locationText.works.publish}
                             labelPlacement="start"
                         />
                     </FormGroup>

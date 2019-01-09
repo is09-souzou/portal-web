@@ -25,7 +25,8 @@ export type LocationText = {
         image: string,
         preview: string,
         create: string,
-        update: string
+        update: string,
+        publish: string
     },
     tab: {
         profile: string,
@@ -91,7 +92,8 @@ const locationTextList:{ [key in Location]: LocationText } = {
             image: "Image",
             preview: "Preview",
             create: "Create",
-            update: "Update"
+            update: "Update",
+            publish: "Publish"
         },
         tab: {
             profile: "Profile",
@@ -155,7 +157,8 @@ const locationTextList:{ [key in Location]: LocationText } = {
             inputDiscription: "説明文を入力してください",
             preview: "プレビュー",
             create: "作成",
-            update: "更新"
+            update: "更新",
+            publish: "公開する"
         },
         tab: {
             profile: "プロフィール",

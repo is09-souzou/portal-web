@@ -53,7 +53,7 @@ export default (props: React.Props<{}>) => {
         <Query
             query={QueryListWorks}
             variables={{
-                limit: 6,
+                limit: 15,
                 exclusiveStartKey: null,
                 option: {
                     tags: getTagsByURLQueryParam(routerHistory.history)

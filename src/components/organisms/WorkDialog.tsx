@@ -88,7 +88,7 @@ export default (
                         <StyledDialogContent>
                             <div>
                                 <WorkTitle
-                                    variant="subheading"
+                                    variant="subtitle1"
                                 >
                                     {work.title}
                                 </WorkTitle>
