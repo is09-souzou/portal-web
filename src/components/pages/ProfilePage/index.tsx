@@ -272,7 +272,7 @@ const ProfilePage = (
                     {uploadingAvatarImage && <LinearProgress/>}
                     <DialogActions>
                         <Button
-                            onClick={() => setEditableAvatarDialogOpen(true)}
+                            onClick={() => setEditableAvatarDialogOpen(false)}
                         >
                             {<LocationText text="Cancel"/>}
                         </Button>
