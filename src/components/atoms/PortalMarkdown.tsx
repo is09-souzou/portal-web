@@ -14,6 +14,19 @@ export default (
 
 const MarkdownStyles = styled.div`
     & {
+        blockquote {
+            color: #666;
+            margin: 0;
+            padding-left: 3em;
+            border-left: 0.5em #eee solid;
+        }
+        code {
+            background: #EEE;
+            color: #333;
+            display: block;
+            overflow-x: auto;
+            padding: 0.5em;
+        }
         h1 {
             padding-bottom: 0.5rem;
         }
@@ -21,16 +34,22 @@ const MarkdownStyles = styled.div`
             border-bottom: thin solid #BBB;
             padding-bottom: 0.3rem;
         }
+        hr {
+            color: #BBB;
+        }
         table {
             border-spacing: 0;
             border-collapse: collapse;
         }
+        td, th{
+            border: 1px solid #CCC;
+            padding: 6px 13px;
+        }
         tr {
             border-top: 1px solid #CCC;
         }
-        th, td{
-            border: 1px solid #CCC;
-            padding: 6px 13px;
+        pre {
+            border: 1px solid #ccc;
         }
     }
 `;

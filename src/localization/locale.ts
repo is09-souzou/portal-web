@@ -8,7 +8,6 @@ export type LocationText = (
     "Profile" | "Work list" | "Works" | "Designer" | "Popular" | "New" | "Languages" | "Language" | "Settings" | "Sign in" | "Sign out" | "Password" |
     "Create account" | "location" | "Initial registration profile" | "Input tags" | "User list" | "Work post" | "Work update" | "New mail address" |
     "Credential" | "Update a credential email" | "Update password" | "New password" | "Old password"
-
 );
 
 export type LocationTextList = { [key in LocationText]: string };

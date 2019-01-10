@@ -4,11 +4,13 @@ export { default as convertToHeading }       from "src/util/markdown/convertToHe
 export { default as convertToItalic }        from "src/util/markdown/convertToItalic";
 export { default as convertToList }          from "src/util/markdown/convertToList";
 export { default as convertToListNumber }    from "src/util/markdown/convertToListNumber";
+export { default as convertToQuote }         from "src/util/markdown/convertToQuote";
 export { default as convertToStrikethrough } from "src/util/markdown/convertToStrikethrough";
 export { default as getLine }                from "src/util/markdown/getLine";
 export { default as getLineNumber }          from "src/util/markdown/getLineNumber";
 export { default as getLines }               from "src/util/markdown/getLines";
 export { default as getSelectionNumbers }    from "src/util/markdown/getSelectionNumbers";
 export { default as insertSeparator }        from "src/util/markdown/insertSeparator";
+export { default as insertSnippet }          from "src/util/markdown/insertSnippet";
 export { default as insertTable }            from "src/util/markdown/insertTable";
 export { default as baseTextConverter }      from "src/util/markdown/baseTextConverter";

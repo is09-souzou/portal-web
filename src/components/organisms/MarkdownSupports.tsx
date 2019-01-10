@@ -1,7 +1,9 @@
 import {
+    CodeRounded               as CodeIcon,
     FormatBoldRounded         as BoldIcon,
     FormatItalicRounded       as ItalicIcon,
     FormatListNumberedRounded as ListIcon,
+    FormatQuoteRounded        as QuoteIcon,
     LinkRounded               as LinkIcon,
     StrikethroughSRounded     as StrikeIcon,
     TableChartRounded         as TableChartIcon
@@ -16,9 +18,11 @@ import {
     convertToItalic,
     convertToList,
     convertToListNumber,
+    convertToQuote,
     convertToStrikethrough,
     getSelectionNumbers,
     insertSeparator,
+    insertSnippet,
     insertTable
 } from "src/util/markdown";
 
@@ -28,7 +32,7 @@ export type MarkdownSupportsProps = {
 };
 
 const handleConvert = (
-    type: "anchor" | "bold" | "heading" | "italic" | "list" | "listNumber" | "strikethrough" | "separator" | "table",
+    type: "anchor" | "bold" | "heading" | "italic" | "list" | "listNumber" | "quote" | "snippet" | "strikethrough" | "separator" | "table" ,
     onChangeValue: MarkdownSupportsProps["onChangeValue"],
     element?: HTMLInputElement | HTMLTextAreaElement
 ) => () => {
@@ -43,8 +47,10 @@ const handleConvert = (
       : type === "italic"        ? convertToItalic
       : type === "list"          ? convertToList
       : type === "listNumber"    ? convertToListNumber
+      : type === "quote"         ? convertToQuote
       : type === "strikethrough" ? convertToStrikethrough
       : type === "separator"     ? insertSeparator
+      : type === "snippet"       ? insertSnippet
       : type === "table"         ? insertTable
       :                            insertTable
     );
@@ -91,6 +97,20 @@ export default (
             <LinkIcon/>
         </ToolItem>
         <ToolItem
+            onClick={handleConvert("quote", onChangeValue, element)}
+        >
+            <QuoteIcon/>
+        </ToolItem>
+        <ToolItem
+            onClick={handleConvert("snippet", onChangeValue, element)}
+        >
+            <CodeIcon/>
+        </ToolItem><ToolItem
+            onClick={handleConvert("table", onChangeValue, element)}
+        >
+            <TableChartIcon/>
+        </ToolItem>
+        <ToolItem
             onClick={handleConvert("strikethrough", onChangeValue, element)}
         >
             <StrikeIcon/>
@@ -104,11 +124,6 @@ export default (
             onClick={handleConvert("italic", onChangeValue, element)}
         >
             <ItalicIcon/>
-        </ToolItem>
-        <ToolItem
-            onClick={handleConvert("table", onChangeValue, element)}
-        >
-            <TableChartIcon/>
         </ToolItem>
     </ToolList>
 );
