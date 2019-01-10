@@ -6,7 +6,8 @@ export type LocationText = (
     "Name" | "Display name" | "Mail address" | "Career" | "Message" |"Skill" | "Input skill" | "Save" | "Cancel" | "Submit" | "Select avatar image" |
     "Upload avatar" |"Title" | "Input title" | "Tags" | "Description" | "Input description" | "Image" | "Preview" | "Create" | "Update" | "Publish" |
     "Profile" | "Work list" | "Works" | "Designer" | "Popular" | "New" | "Languages" | "Language" | "Settings" | "Sign in" | "Sign out" | "Password" |
-    "Create account" | "location" | "Initial registration profile" | "Input tags" | "User list" | "Work post" | "Work update"
+    "Create account" | "location" | "Initial registration profile" | "Input tags" | "User list" | "Work post" | "Work update" | "New mail address" |
+    "Credential" | "Update a credential email" | "Update password" | "New password" | "Old password"
 );
 
 export type LocationTextList = { [key in LocationText]: string };
@@ -53,7 +54,13 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Initial registration profile": "Initial Registration Profile",
         "User list": "User list",
         "Work post": "Work post",
-        "Work update": "Work update"
+        "Work update": "Work update",
+        "New mail address" : "New Mail Address",
+        "Credential" : "Credential",
+        "Update a credential email" : "Update a credential email",
+        "Update password": "Update Password",
+        "New password" : "New Password",
+        "Old password" : "Old Password"
     },
     jp: {
         "Name": "名前",
@@ -96,7 +103,13 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Initial registration profile": "プロフィールの初期登録",
         "User list": "ユーザ一覧",
         "Work post": "作品投稿",
-        "Work update": "作品更新"
+        "Work update": "作品更新",
+        "New mail address" : "新しいメールアドレス",
+        "Credential" : "認証情報",
+        "Update a credential email" : "認証用メールアドレスの更新",
+        "Update password": "認証用パスワードの更新",
+        "New password" : "新しいパスワード",
+        "Old password" : "元のパスワード"
     }
 };
 

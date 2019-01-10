@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import React, { useContext, useState } from "react";
 import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
+import LocationText from "src/components/atoms/LocationText";
 import NotFound from "src/components/molecules/NotFound";
 import Host from "src/components/pages/SettingsPage/Host";
 import StyledDialogContent from "src/components/pages/SettingsPage/StyledDialogContent";
@@ -44,21 +45,21 @@ export default () => {
                 onSubmit={handleUpdateEmailFromSubmit({ auth, notification })}
             >
                 <Typography gutterBottom variant="h6">
-                    Credential
+                    {<LocationText text="Credential"/>}
                 </Typography>
                 <div>
                     <TextField
                         id="profile-credential-email"
-                        label="New Mail Address"
+                        label={<LocationText text="New mail address"/>}
                         margin="none"
-                        helperText="Update a Credential Email"
+                        helperText={<LocationText text="Update a credential email"/>}
                         InputProps={{
                             endAdornment: (
                                 whileEditingItem.includes("credentialEmail") && (
                                     <Button
                                         type="submit"
                                     >
-                                        Update
+                                        {<LocationText text="Update"/>}
                                     </Button>
                                 )
                             )
@@ -73,7 +74,7 @@ export default () => {
                     variant="contained"
                     color="primary"
                 >
-                    Update password
+                    {<LocationText text="Update password"/>}
                 </Button>
             </form>
             <Dialog
@@ -86,19 +87,19 @@ export default () => {
                     <DialogTitle
                         id="profile-update-password"
                     >
-                        Update password
+                        {<LocationText text="Update password"/>}
                     </DialogTitle>
                     <StyledDialogContent>
                         <TextField
                             id="profile-old-password"
-                            label="Old password"
+                            label={<LocationText text="Old password"/>}
                             margin="normal"
                             type="password"
                             required
                         />
                         <TextField
                             id="profile-new-password"
-                            label="New password"
+                            label={<LocationText text="New password"/>}
                             margin="normal"
                             type="password"
                             required
@@ -108,14 +109,14 @@ export default () => {
                         <Button
                             onClick={() => setUpdatePasswordDialogOpen(false)}
                         >
-                            Cancel
+                            {<LocationText text="Cancel"/>}
                         </Button>
                         <Button
                             component="button"
                             color="primary"
                             type="submit"
                         >
-                            Submit
+                            {<LocationText text="Update"/>}
                         </Button>
                     </DialogActions>
                 </form>
