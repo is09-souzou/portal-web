@@ -1,9 +1,9 @@
 import { createContext } from "react";
-import locationTextList, { Location, LocationText } from "src/localization/locale";
+import locationTextList, { Location, LocationTextList } from "src/localization/locale";
 
 export type LocalizationValue = {
     location: Location;
-    locationText: LocationText;
+    locationText: LocationTextList;
     handleLocale: () => void
 };
 

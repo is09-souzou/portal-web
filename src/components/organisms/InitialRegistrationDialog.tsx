@@ -14,6 +14,7 @@ import { Mutation, MutationFn, MutationUpdaterFn, OperationVariables } from "rea
 import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
 import ImageInput from "src/components/atoms/ImageInput";
+import LocationText from "src/components/atoms/LocationText";
 import AuthContext from "src/contexts/AuthContext";
 import NotificationContext from "src/contexts/NotificationContext";
 import styled from "styled-components";
@@ -163,7 +164,7 @@ export default (
                         onSubmit={handleFormSubmit(createUser)}
                     >
                         <DialogTitle id="alert-dialog-slide-title">
-                            Initial Registration Profile
+                            <LocationText text="Initial registration profile"/>
                         </DialogTitle>
                         <StyledDialogContent>
                             <div>

@@ -6,6 +6,7 @@ import { Mutation, MutationFn, OperationVariables, Query, QueryResult } from "re
 import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
+import LocationText from "src/components/atoms/LocationText";
 import Page from "src/components/atoms/Page";
 import PortalMarkdown from "src/components/atoms/PortalMarkdown";
 import Header from "src/components/molecules/Header";
@@ -21,7 +22,6 @@ import WorkContentArea from "src/components/pages/WorkPostPage/WorkContentArea";
 import WorkImage from "src/components/pages/WorkUpdatePage/WorkImage";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
-import LocalizationContext from "src/contexts/LocalizationContext";
 import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { Work } from "src/graphQL/type";
@@ -146,7 +146,6 @@ const WorkUpdatePage = (
     const descriptionTextAreaElement = useRef<HTMLTextAreaElement>(null);
 
     const auth = useContext(AuthContext);
-    const localization = useContext(LocalizationContext);
 
     useEffect(
         () => {
@@ -267,7 +266,7 @@ const WorkUpdatePage = (
                             imageUrl: mainImageUrl
                         })}
                     >
-                        {localization.locationText.works.preview}
+                        <LocationText text="Preview"/>
                     </Button>
                     <Button
                         type="submit"
@@ -275,7 +274,7 @@ const WorkUpdatePage = (
                         variant="contained"
                         color="primary"
                     >
-                        {localization.locationText.works.update}
+                        <LocationText text="Update"/>
                     </Button>
                 </ActionArea>
             </div>
