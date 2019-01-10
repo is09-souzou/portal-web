@@ -68,7 +68,7 @@ export default (
     const handleFormSubmit = (createUser: MutationFn<any, OperationVariables>) => async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (auth.token)
+        if (!auth.token)
             return;
 
         const target = e.target as any;

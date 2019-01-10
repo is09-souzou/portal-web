@@ -5,4 +5,6 @@ export default styled(Page)`
     display: flex;
     flex-direction: column;
     transition: all .3s ease-out;
+    margin-top: 0;
+    min-height: 100vh;
 `;

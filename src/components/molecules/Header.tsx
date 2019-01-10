@@ -79,54 +79,54 @@ export default (
             position="fixed"
             {...props}
         >
-                <StyledToolbar>
-                    <MenuIconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={drawer.toggleDrawer}
-                    >
-                        <MenuIcon/>
-                    </MenuIconButton>
-                    <Typography variant="h6" color="inherit">
-                        {title}
-                    </Typography>
-                    <div>
-                        {!auth.token ?
-                            <Button onClick={() => routerHistory.history.push("?sign-in=true")} >
-                                <LocationText text="Sign in"/>
-                            </Button>
-                    :     (
-                                <Query
-                                    query={QueryGetUser}
-                                    variables={{ id: auth.token!.payload.sub }}
-                                    fetchPolicy="cache-and-network"
-                                >
-                                {(query =>
-                                    (
-                                        query.loading                       ? <GraphQLProgress size={24}/>
-                                      : query.error                         ? (
-                                            <Fragment>
-                                                <div>?</div>
-                                                <notification.ErrorComponent error={query.error}/>
-                                            </Fragment>
-                                        )
-                                      : !(query.data && query.data.getUser) ? <Redirect to="/profile?initial-registration=true"/>
-                                      :                                       (
-                                            <HeaderUser
-                                                auth={auth}
-                                                closeMenu={closeMenu}
-                                                handleMenu={handleMenu}
-                                                userMenuAnchorElement={userMenuAnchorElement}
-                                                query={query}
-                                            />
-                                        )
+            <StyledToolbar>
+                <MenuIconButton
+                    color="inherit"
+                    aria-label="open drawer"
+                    onClick={drawer.toggleDrawer}
+                >
+                    <MenuIcon/>
+                </MenuIconButton>
+                <Typography variant="h6" color="inherit">
+                    {title}
+                </Typography>
+                <div>
+                    {!auth.token ?
+                        <Button onClick={() => routerHistory.history.push("?sign-in=true")} >
+                            <LocationText text="Sign in"/>
+                        </Button>
+                :     (
+                            <Query
+                                query={QueryGetUser}
+                                variables={{ id: auth.token!.payload.sub }}
+                                fetchPolicy="cache-and-network"
+                            >
+                            {(query =>
+                                (
+                                    query.loading                       ? <GraphQLProgress size={24}/>
+                                    : query.error                         ? (
+                                        <Fragment>
+                                            <div>?</div>
+                                            <notification.ErrorComponent error={query.error}/>
+                                        </Fragment>
                                     )
-                                )}
-                                </Query>
-                            )
-                        }
-                    </div>
-                </StyledToolbar>
+                                    : !(query.data && query.data.getUser) ? <Redirect to="/profile?initial-registration=true"/>
+                                    :                                       (
+                                        <HeaderUser
+                                            auth={auth}
+                                            closeMenu={closeMenu}
+                                            handleMenu={handleMenu}
+                                            userMenuAnchorElement={userMenuAnchorElement}
+                                            query={query}
+                                        />
+                                    )
+                                )
+                            )}
+                            </Query>
+                        )
+                    }
+                </div>
+            </StyledToolbar>
             <SignInDialog
                 open={signInDialogVisible}
                 onClose={() => routerHistory.history.push("?sign-up=false")}
@@ -222,7 +222,7 @@ const HeaderUser = (
 
 const StyledAppBar = styled(AppBar as React.SFC<AppBarProps>)`
     && {
-        width: calc(100% - 16rem - 6rem);
+        width: calc(100% - 17rem - 6rem);
         margin: 1rem 3rem 0 2rem;
         border-radius: 8px;
         color: #333;
