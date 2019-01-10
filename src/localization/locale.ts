@@ -6,7 +6,7 @@ export type LocationText = (
     "Name" | "Display name" | "Mail address" | "Career" | "Message" |"Skill" | "Input skill" | "Save" | "Cancel" | "Submit" | "Select avatar image" |
     "Upload avatar" |"Title" | "Input title" | "Tags" | "Description" | "Input description" | "Image" | "Preview" | "Create" | "Update" | "Publish" |
     "Profile" | "Work list" | "Works" | "Designer" | "Popular" | "New" | "Languages" | "Language" | "Settings" | "Sign in" | "Sign out" | "Password" |
-    "Create account" | "location" | "Initial registration profile" | "Input tags"
+    "Create account" | "location" | "Initial registration profile" | "Input tags" | "User list" | "Work post" | "Work update"
 );
 
 export type LocationTextList = { [key in LocationText]: string };
@@ -50,7 +50,10 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Password": "Password",
         "Create account": "Create Acount",
         "location": "location",
-        "Initial registration profile": "Initial Registration Profile"
+        "Initial registration profile": "Initial Registration Profile",
+        "User list": "User list",
+        "Work post": "Work post",
+        "Work update": "Work update"
     },
     jp: {
         "Name": "名前",
@@ -90,7 +93,10 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Password": "パスワード",
         "Create account": "アカウントを作成",
         "location": "日本",
-        "Initial registration profile": "プロフィールの初期登録"
+        "Initial registration profile": "プロフィールの初期登録",
+        "User list": "ユーザ一覧",
+        "Work post": "作品投稿",
+        "Work update": "作品更新"
     }
 };
 

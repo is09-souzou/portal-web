@@ -73,7 +73,9 @@ export default (props: React.Props<{}>) => {
             {...props}
             ref={props.ref as any}
         >
-            <Header/>
+            <Header
+                title={<LocationText text="Work update"/>}
+            />
             <Query
                 query={QueryGetWorkById}
                 variables={{ id: workId }}

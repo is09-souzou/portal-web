@@ -1,4 +1,5 @@
 import React from "react";
+import LocationText from "src/components/atoms/LocationText";
 import Page from "src/components/atoms/Page";
 import Header from "src/components/molecules/Header";
 import styled from "styled-components";
@@ -28,7 +29,9 @@ export default (
     }: React.Props<{}>
 ) => (
     <StyledPage ref={ref as any} {...props}>
-        <Header/>
+        <Header
+            title={<LocationText text="Settings"/>}
+        />
         <div>
             {children}
         </div>

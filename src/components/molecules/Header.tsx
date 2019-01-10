@@ -22,6 +22,10 @@ import RouterHistoryContext from "src/contexts/RouterHistoryContext";
 import { User } from "src/graphQL/type";
 import styled from "styled-components";
 
+export interface HeaderProps extends React.Props<{}> {
+    title: JSX.Element;
+}
+
 const QueryGetUser = gql(`
     query($id: ID!) {
         getUser(id: $id) {
@@ -32,7 +36,12 @@ const QueryGetUser = gql(`
     }
 `);
 
-export default (props: React.Props<{}>) => {
+export default (
+    {
+        title,
+        ...props
+    }: HeaderProps
+) => {
     const [userMenuAnchorElement, setUserMenuAnchorElement] = useState<HTMLElement | undefined>(undefined);
 
     const auth = useContext(AuthContext);
@@ -79,7 +88,7 @@ export default (props: React.Props<{}>) => {
                         <MenuIcon/>
                     </MenuIconButton>
                     <Typography variant="h6" color="inherit">
-                        Work List
+                        {title}
                     </Typography>
                     <div>
                         {!auth.token ?
