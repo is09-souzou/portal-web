@@ -178,7 +178,10 @@ const WorkPostPage = (
                                 fullWidth
                                 inputRef={descriptionTextAreaElement}
                                 value={description}
-                                onChange={e => setDescription(e.target.value)}
+                                onChange={e => {
+                                    setDescription(e.target.value);
+                                    setUpdatedByMarkdownSupport(false);
+                                }}
                             />
                             <MarkdownSupports
                                 element={descriptionTextAreaElement.current ? descriptionTextAreaElement.current : undefined}
