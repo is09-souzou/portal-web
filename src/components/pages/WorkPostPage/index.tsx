@@ -12,6 +12,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Mutation, MutationFn, OperationVariables } from "react-apollo";
 import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
+import LocationText from "src/components/atoms/LocationText";
 import Page from "src/components/atoms/Page";
 import PortalMarkdown from "src/components/atoms/PortalMarkdown";
 import Header from "src/components/molecules/Header";
@@ -133,16 +134,16 @@ const WorkPostPage = (
                 <Head>
                     <TextField
                         id="title"
-                        label={localization.locationText.works.title}
-                        placeholder={localization.locationText.works.inputTitle}
+                        label={<LocationText text="Title"/>}
+                        placeholder={localization.locationText["Input title"]}
                         margin="normal"
                         fullWidth
                         required
                     />
                     <div>
                         <TextField
-                            label={localization.locationText.works.tags}
-                            placeholder={"Input Tags!"}
+                            label={<LocationText text="Input tags"/>}
+                            placeholder={localization.locationText["Input tags"]}
                             onKeyDown={tagInputKeyDown({ tags, setTags })}
                             margin="normal"
                             inputProps={{
@@ -164,16 +165,16 @@ const WorkPostPage = (
                 <WorkContentArea>
                     <div>
                         <MainImageInput
-                            labelText={localization.locationText.works.image}
+                            labelText={localization.locationText["Image"]}
                             onChange={submitMainImage({ auth, notification, setMainImageUrl })}
                         />
                         <div>
                             <TextField
-                                label={localization.locationText.works.description}
+                                label={<LocationText text="Description"/>}
                                 multiline
                                 margin="normal"
                                 required
-                                placeholder={localization.locationText.works.inputDiscription}
+                                placeholder={localization.locationText["Input description"]}
                                 rowsMax={30}
                                 fullWidth
                                 inputRef={descriptionTextAreaElement}
@@ -204,7 +205,7 @@ const WorkPostPage = (
                                     Range setting
                                 </Switch>
                             }
-                            label={localization.locationText.works.publish}
+                            label={<LocationText text="Publish"/>}
                             labelPlacement="start"
                         />
                     </FormGroup>
@@ -222,7 +223,7 @@ const WorkPostPage = (
                             imageUrl: mainImageUrl
                         })}
                     >
-                        {localization.locationText.works.preview}
+                        <LocationText text="Preview"/>
                     </Button>
                     <Button
                         type="submit"
@@ -230,7 +231,7 @@ const WorkPostPage = (
                         variant="contained"
                         color="primary"
                     >
-                        {localization.locationText.works.create}
+                        <LocationText text="Create"/>
                     </Button>
                 </ActionArea>
             </div>

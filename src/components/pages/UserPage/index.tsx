@@ -8,6 +8,7 @@ import { Query, QueryResult } from "react-apollo";
 import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 import Fab from "src/components/atoms/Fab";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
+import LocationText from "src/components/atoms/LocationText";
 import StreamSpinner from "src/components/atoms/StreamSpinner";
 import ViewPager from "src/components/atoms/ViewPager";
 import WorkList from "src/components/atoms/WorkList";
@@ -146,11 +147,11 @@ const UserPage = (
     const workConnection = user.works as WorkConnection;
     const contents = [
         {
-            text: localization.locationText.tab.profile,
+            text: localization.locationText["Profile"],
             value: "user"
         },
         {
-            text: `${localization.locationText.tab.workList}(${workConnection.items.length})`,
+            text: `${localization.locationText["Work list"]}(${workConnection.items.length})`,
             value: "work"
         }
     ];
@@ -170,7 +171,7 @@ const UserPage = (
                 <UserContent>
                     <div>
                         <Typography gutterBottom variant="caption">
-                            {localization.locationText.profile.message}
+                            <LocationText text="Message"/>
                         </Typography>
                         <StyledTypography gutterBottom>
                             {user.message}
@@ -178,7 +179,7 @@ const UserPage = (
                     </div>
                     <div>
                         <Typography gutterBottom variant="caption">
-                            {localization.locationText.profile.career}
+                            <LocationText text="Career"/>
                         </Typography>
                         <StyledTypography gutterBottom>
                             {user.career}
@@ -186,7 +187,7 @@ const UserPage = (
                     </div>
                     <div>
                         <Typography gutterBottom variant="caption">
-                            {localization.locationText.profile.skill}
+                            <LocationText text="Skill"/>
                         </Typography>
                         {user.skillList && user.skillList.map(x =>
                             <SkillTag key={x}>{x}</SkillTag>

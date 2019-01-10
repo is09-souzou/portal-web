@@ -8,7 +8,7 @@ import {
 import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
 import Slide, { SlideProps } from "@material-ui/core/Slide";
 import React from "react";
-import LocalizationContext from "src/contexts/LocalizationContext";
+import LocationText from "src/components/atoms/LocationText";
 import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
 import styled from "styled-components";
 
@@ -16,7 +16,7 @@ interface Props {
     open: boolean;
     onClose: () => void;
     onSignIn: (email: string, password: string) => void;
-    onCreateAcountButtonClick: () => void;
+    onCreateAccountButtonClick: () => void;
 }
 
 const handleFormSubmit = (onSignIn: Props["onSignIn"], notification: NotificationValue["notification"]) => async (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,62 +37,58 @@ export default (
         open = false,
         onClose,
         onSignIn,
-        onCreateAcountButtonClick,
+        onCreateAccountButtonClick,
         ...props
     }: Props
 ) => (
-    <LocalizationContext.Consumer>
-        {({ locationText }) => (
-            <NotificationContext.Consumer>
-                {({ notification }) => (
-                    <Dialog
-                        open={open}
-                        onClose={onClose}
-                        TransitionComponent={Transition}
-                        keepMounted
-                        aria-labelledby="alert-dialog-slide-title"
-                        {...props}
+    <NotificationContext.Consumer>
+        {({ notification }) => (
+            <Dialog
+                open={open}
+                onClose={onClose}
+                TransitionComponent={Transition}
+                keepMounted
+                aria-labelledby="alert-dialog-slide-title"
+                {...props}
+            >
+            <form
+                onSubmit={handleFormSubmit(onSignIn, notification)}
+            >
+                <DialogTitle id="alert-dialog-slide-title">
+                    <LocationText text="Sign in"/>
+                </DialogTitle>
+                <StyledDialogContent>
+                    <TextField
+                        id="sign-in-email"
+                        label={<LocationText text="Mail address"/>}
+                        margin="normal"
+                        type="email"
+                        required
+                    />
+                    <TextField
+                        id="sign-in-password"
+                        label={<LocationText text="Password"/>}
+                        margin="normal"
+                        type="password"
+                        required
+                    />
+                </StyledDialogContent>
+                <DialogActions>
+                    <Button onClick={onCreateAccountButtonClick} color="primary">
+                        <LocationText text="Create account"/>
+                    </Button>
+                    <Button
+                        component="button"
+                        color="primary"
+                        type="submit"
                     >
-                    <form
-                        onSubmit={handleFormSubmit(onSignIn, notification)}
-                    >
-                        <DialogTitle id="alert-dialog-slide-title">
-                            {locationText.signInDialog.signIn}
-                        </DialogTitle>
-                        <StyledDialogContent>
-                            <TextField
-                                id="sign-in-email"
-                                label={locationText.signInDialog.email}
-                                margin="normal"
-                                type="email"
-                                required
-                            />
-                            <TextField
-                                id="sign-in-password"
-                                label={locationText.signInDialog.password}
-                                margin="normal"
-                                type="password"
-                                required
-                            />
-                        </StyledDialogContent>
-                        <DialogActions>
-                            <Button onClick={onCreateAcountButtonClick} color="primary">
-                                {locationText.signInDialog.createAcount}
-                            </Button>
-                            <Button
-                                component="button"
-                                color="primary"
-                                type="submit"
-                            >
-                                {locationText.signInDialog.signIn}
-                            </Button>
-                        </DialogActions>
-                    </form>
-                    </Dialog>
-                )}
-            </NotificationContext.Consumer>
+                        <LocationText text="Sign in"/>
+                    </Button>
+                </DialogActions>
+            </form>
+            </Dialog>
         )}
-    </LocalizationContext.Consumer>
+    </NotificationContext.Consumer>
 );
 
 const Transition = (props:SlideProps) =>  <Slide direction="up" {...props}/>;

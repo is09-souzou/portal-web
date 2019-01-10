@@ -17,6 +17,7 @@ import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import ImageInput from "src/components/atoms/ImageInput";
+import LocationText from "src/components/atoms/LocationText";
 import NotFound from "src/components/molecules/NotFound";
 import ChipList from "src/components/pages/ProfilePage/ChipList";
 import Host from "src/components/pages/ProfilePage/Host";
@@ -130,7 +131,6 @@ const ProfilePage = (
     const careerInputElement = useRef<HTMLInputElement>(null);
     const messageInputElement = useRef<HTMLInputElement>(null);
 
-    const localization = useContext(LocalizationContext);
     const routerHistory = useContext(RouterHistoryContext);
 
     return (
@@ -163,7 +163,7 @@ const ProfilePage = (
                         <TextField
                             id="profile-name"
                             margin="dense"
-                            label={localization.locationText.profile.displayName}
+                            label={<LocationText text="Display name"/>}
                             defaultValue={user.displayName}
                             required
                             inputRef={displayNameInputElement}
@@ -171,7 +171,7 @@ const ProfilePage = (
                         <TextField
                             id="profile-email"
                             margin="dense"
-                            label={localization.locationText.profile.mailAdress}
+                            label={<LocationText text="Mail address"/>}
                             type="email"
                             defaultValue={user.email}
                             inputRef={emailInputElement}
@@ -183,14 +183,14 @@ const ProfilePage = (
             <ProfileContent>
                 <TextField
                     id="profile-message"
-                    label={localization.locationText.profile.message}
+                    label={<LocationText text="Message"/>}
                     margin="normal"
                     defaultValue={user.message}
                     inputRef={messageInputElement}
                 />
                 <TextField
                     id="profile-career"
-                    label={localization.locationText.profile.career}
+                    label={<LocationText text="Career"/>}
                     margin="normal"
                     defaultValue={user.career}
                     multiline
@@ -198,15 +198,19 @@ const ProfilePage = (
                     inputRef={careerInputElement}
                 />
                 <div>
-                    <TextField
-                        label={localization.locationText.profile.skill}
-                        placeholder={localization.locationText.profile.inputSkill}
-                        onKeyDown={tagInputKeyDown({ skillList, setSkillList })}
-                        margin="normal"
-                        inputProps={{
-                            maxLength: 10,
-                        }}
-                    />
+                    <LocalizationContext.Consumer>
+                        {({ locationText }) => (
+                            <TextField
+                                label={<LocationText text="Skill"/>}
+                                placeholder={locationText["Input skill"]}
+                                onKeyDown={tagInputKeyDown({ skillList, setSkillList })}
+                                margin="normal"
+                                inputProps={{
+                                    maxLength: 10,
+                                }}
+                            />
+                        )}
+                    </LocalizationContext.Consumer>
                     <ChipList>
                         {skillList.map(skill =>
                             <Chip
@@ -224,7 +228,7 @@ const ProfilePage = (
                         color="primary"
                         onClick={() => routerHistory.history.push(`/users/${user.id}`)}
                     >
-                        {localization.locationText.profile.cancel}
+                        {<LocationText text="Cancel"/>}
                     </Button>
                     <Button
                         type="submit"
@@ -232,7 +236,7 @@ const ProfilePage = (
                         variant="contained"
                         color="primary"
                     >
-                        {localization.locationText.profile.save}
+                        {<LocationText text="Save"/>}
                     </Button>
                 </div>
             </ProfileContent>
@@ -256,7 +260,7 @@ const ProfilePage = (
                     <DialogTitle
                         id="editable-avatar-dialog-title"
                     >
-                        {localization.locationText.profile.dialog.title}
+                        {<LocationText text="Upload avatar"/>}
                     </DialogTitle>
                     <DialogContent>
                         <ImageInput
@@ -270,14 +274,14 @@ const ProfilePage = (
                         <Button
                             onClick={() => setEditableAvatarDialogOpen(true)}
                         >
-                            {localization.locationText.profile.dialog.cancel}
+                            {<LocationText text="Cancel"/>}
                         </Button>
                         <Button
                             component="button"
                             color="primary"
                             type="submit"
                         >
-                            {localization.locationText.profile.dialog.submit}
+                            {<LocationText text="Submit"/>}
                         </Button>
                     </DialogActions>
                 </form>

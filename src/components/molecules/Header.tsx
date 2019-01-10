@@ -11,12 +11,12 @@ import { Redirect } from "react-router";
 import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import Link from "src/components/atoms/Link";
+import LocationText from "src/components/atoms/LocationText";
 import InitialRegistrationDialog from "src/components/organisms/InitialRegistrationDialog";
 import SignInDialog from "src/components/organisms/SignInDialog";
 import SignUpDialog from "src/components/organisms/SignUpDialog";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import DrawerContext from "src/contexts/DrawerContext";
-import LocalizationContext, { LocalizationValue } from "src/contexts/LocalizationContext";
 import NotificationContext from "src/contexts/NotificationContext";
 import RouterHistoryContext from "src/contexts/RouterHistoryContext";
 import { User } from "src/graphQL/type";
@@ -37,7 +37,6 @@ export default (props: React.Props<{}>) => {
 
     const auth = useContext(AuthContext);
     const drawer = useContext(DrawerContext);
-    const localization = useContext(LocalizationContext);
     const routerHistory = useContext(RouterHistoryContext);
     const notification = useContext(NotificationContext);
 
@@ -85,7 +84,7 @@ export default (props: React.Props<{}>) => {
                     <div>
                         {!auth.token ?
                             <Button onClick={() => routerHistory.history.push("?sign-in=true")} >
-                                {localization.locationText.header.signIn}
+                                <LocationText text="Sign in"/>
                             </Button>
                     :     (
                                 <Query
@@ -106,7 +105,6 @@ export default (props: React.Props<{}>) => {
                                       :                                       (
                                             <HeaderUser
                                                 auth={auth}
-                                                localization={localization}
                                                 closeMenu={closeMenu}
                                                 handleMenu={handleMenu}
                                                 userMenuAnchorElement={userMenuAnchorElement}
@@ -124,7 +122,7 @@ export default (props: React.Props<{}>) => {
                 open={signInDialogVisible}
                 onClose={() => routerHistory.history.push("?sign-up=false")}
                 onSignIn={signIn}
-                onCreateAcountButtonClick={() => routerHistory.history.push("?sign-up=true")}
+                onCreateAccountButtonClick={() => routerHistory.history.push("?sign-up=true")}
             />
             <SignUpDialog
                 open={signUpDialogVisible}
@@ -142,7 +140,6 @@ export default (props: React.Props<{}>) => {
 const HeaderUser = (
     {
         auth,
-        localization,
         closeMenu,
         handleMenu,
         userMenuAnchorElement,
@@ -151,7 +148,6 @@ const HeaderUser = (
         }
     }: {
         auth: AuthValue,
-        localization: LocalizationValue,
         closeMenu: () => void,
         handleMenu:  (e: React.MouseEvent<HTMLElement, MouseEvent>) => void,
         userMenuAnchorElement?:  HTMLElement,
@@ -182,13 +178,13 @@ const HeaderUser = (
                 <PopoverContent>
                     <div>
                         <div>
-                            <Typography variant="caption">{localization.locationText.header.name}</Typography>
+                            <Typography variant="caption"><LocationText text="Name"/></Typography>
                             <Typography gutterBottom>
                                 {user.displayName}
                             </Typography>
                         </div>
                         <div>
-                            <Typography variant="caption">{localization.locationText.header.mailAdress}</Typography>
+                            <Typography variant="caption"><LocationText text="Mail address"/></Typography>
                             <Typography gutterBottom>
                                 {user.email}
                             </Typography>
@@ -200,13 +196,13 @@ const HeaderUser = (
                             onClick={closeMenu}
                         >
                             <Button>
-                                {localization.locationText.header.profile}
+                                <LocationText text="Profile"/>
                             </Button>
                         </Link>
                         <Button
                             onClick={auth.signOut}
                         >
-                            {localization.locationText.header.signOut}
+                            <LocationText text="Sign out"/>
                         </Button>
                     </div>
                 </PopoverContent>

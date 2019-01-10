@@ -24,6 +24,7 @@ import React, { Fragment } from "react";
 import { Query } from "react-apollo";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import Link from "src/components/atoms/Link";
+import LocationText from "src/components/atoms/LocationText";
 import LocalizationContext, { LocalizationValue } from "src/contexts/LocalizationContext";
 import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
@@ -103,7 +104,6 @@ class Navigator extends React.Component<Props, State> {
                 history
             },
             localization: {
-                locationText,
                 handleLocale
             },
             notification,
@@ -119,7 +119,7 @@ class Navigator extends React.Component<Props, State> {
                 </Title>
                 <Divider/>
                 <List
-                    subheader={<ListSubheader component="div">{locationText.navigator.works}</ListSubheader>}
+                    subheader={<ListSubheader component="div"><LocationText text="Works"/></ListSubheader>}
                 >
                     {/* TODO: Not work */}
                     {/* <Link
@@ -134,7 +134,7 @@ class Navigator extends React.Component<Props, State> {
                                     <StyledText
                                         selected={history.location.pathname === "/works/popular"}
                                     >
-                                        {locationText.navigator.popular}
+                                        <LocationText text="Popular"/>
                                     </StyledText>
                                 }
                             />
@@ -150,7 +150,7 @@ class Navigator extends React.Component<Props, State> {
                                     <StyledText
                                         selected={history.location.pathname === "/works/new"}
                                     >
-                                        {locationText.navigator.new}
+                                        <LocationText text="New"/>
                                     </StyledText>
                                 }
                             />
@@ -163,7 +163,7 @@ class Navigator extends React.Component<Props, State> {
                         <ListItemIcon>
                             <ColorLensIcon/>
                         </ListItemIcon>
-                        <ListItemText primary={locationText.navigator.tags}/>
+                        <ListItemText primary={<LocationText text="Tags"/>}/>
                         {this.state.tagListVisible ? <ExpandLessIcon /> : <ExpandMoreIcon/>}
                     </ListItem>
                     <Collapse in={this.state.tagListVisible} timeout="auto" unmountOnExit>
@@ -228,19 +228,19 @@ class Navigator extends React.Component<Props, State> {
                 </List>
                 {/* TODO: Not work */}
                 {/* <List
-                    subheader={<ListSubheader component="div">{locationText.navigator.designer}</ListSubheader>}
+                    subheader={<ListSubheader component="div">{locationText["Designer"]}</ListSubheader>}
                 >
                     <ListItem button>
                         <ListItemIcon>
                             <StarIcon/>
                         </ListItemIcon>
-                        <ListItemText primary={locationText.navigator.popular}/>
+                        <ListItemText primary={locationText["Popular"]}/>
                     </ListItem>
                     <ListItem button>
                         <ListItemIcon>
                             <NewReleasesIcon/>
                         </ListItemIcon>
-                        <ListItemText primary={locationText.navigator.new}/>
+                        <ListItemText primary={locationText["New"]}/>
                     </ListItem>
                 </List> */}
                 <BottomList>
@@ -254,7 +254,7 @@ class Navigator extends React.Component<Props, State> {
                                 <LanguageIcon/>
                             </ListItemIcon>
                             <ListItemText>
-                                {locationText.navigator.language}
+                                <LocationText text="Language"/>
                             </ListItemText>
                         </ListItem>
                         <Link
@@ -271,7 +271,7 @@ class Navigator extends React.Component<Props, State> {
                                         <StyledText
                                             selected={history.location.pathname === "/settings"}
                                         >
-                                            {locationText.navigator.settings}
+                                            <LocationText text="Settings"/>
                                         </StyledText>
                                     }
                                 />
