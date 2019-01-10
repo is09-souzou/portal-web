@@ -1,4 +1,4 @@
-import { Divider, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import { ApolloQueryResult, FetchMoreOptions, FetchMoreQueryOptions } from "apollo-client";
 import { DocumentNode } from "apollo-link";
@@ -164,7 +164,6 @@ const UserPage = (
                 contents={contents}
                 onSelectContent={x => routerHistory.history.push(`?content=${x.value}`)}
             />
-            <Divider/>
             <ViewPager
                 selectedIndex={contentType === "user" ? 0 : 1}
             >

@@ -96,7 +96,7 @@ export default (
                             <LocationText text="Cancel"/>
                         </Button>
                         <Button component="button" color="primary" type="submit" variant="contained">
-                            <LocationText text="Submit"/>
+                            <LocationText text="Create"/>
                         </Button>
                     </DialogActions>
                 </form>

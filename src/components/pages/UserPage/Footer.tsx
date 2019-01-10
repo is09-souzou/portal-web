@@ -20,6 +20,7 @@ export default (
             value={selectedContentValue}
             indicatorColor="primary"
             textColor="primary"
+            variant="fullWidth"
         >
             {contents.map(x =>
                 <Tab
@@ -39,8 +40,9 @@ const Host = styled.div`
     bottom: 0;
     width: 100%;
     background-color: white;
-    visibility: hidden;
+    display: none;
+    box-shadow: 0px -1px 5px 0px rgba(0,0,0,.3);
     @media (max-width: 768px) {
-        visibility: visible;
+        display: flex;
     }
 `;
