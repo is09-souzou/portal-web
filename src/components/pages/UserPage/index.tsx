@@ -207,7 +207,7 @@ const UserPage = (
                         open={workDialogOpend}
                         onClose={() => setWorkDialogOpen(false)}
                         work={selectedWork}
-                        userId={user.id}
+                        userId={auth.token ? auth.token.payload.sub : ""}
                     />
                     <StreamSpinner
                         key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
