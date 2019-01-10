@@ -4,5 +4,5 @@ export default (value: string, selectionNumbers: [number, number]): [string, [nu
     baseTextConverter({
         value,
         selectionNumbers,
-        syntax: "_"
+        syntax: "*"
     });
