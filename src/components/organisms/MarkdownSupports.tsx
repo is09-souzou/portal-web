@@ -3,7 +3,8 @@ import {
     FormatItalicRounded       as ItalicIcon,
     FormatListNumberedRounded as ListIcon,
     LinkRounded               as LinkIcon,
-    StrikethroughSRounded     as StrikeIcon
+    StrikethroughSRounded     as StrikeIcon,
+    TableChartRounded         as TableChartIcon
 } from "@material-ui/icons";
 import React from "react";
 import ToolItem from "src/components/atoms/ToolItem";
@@ -17,7 +18,8 @@ import {
     convertToListNumber,
     convertToStrikethrough,
     getSelectionNumbers,
-    insertSeparator
+    insertSeparator,
+    insertTable
 } from "src/util/markdown";
 
 export type MarkdownSupportsProps = {
@@ -26,7 +28,7 @@ export type MarkdownSupportsProps = {
 };
 
 const handleConvert = (
-    type: "anchor" | "bold" | "heading" | "italic" | "list" | "listNumber" | "strikethrough" | "separator",
+    type: "anchor" | "bold" | "heading" | "italic" | "list" | "listNumber" | "strikethrough" | "separator" | "table",
     onChangeValue: MarkdownSupportsProps["onChangeValue"],
     element?: HTMLInputElement | HTMLTextAreaElement
 ) => () => {
@@ -43,7 +45,8 @@ const handleConvert = (
       : type === "listNumber"    ? convertToListNumber
       : type === "strikethrough" ? convertToStrikethrough
       : type === "separator"     ? insertSeparator
-      :                            insertSeparator
+      : type === "table"         ? insertTable
+      :                            insertTable
     );
 
     const [value, newSelectionNumbers] = convertFunc(element.value, selectionNumbers);
@@ -101,6 +104,11 @@ export default (
             onClick={handleConvert("italic", onChangeValue, element)}
         >
             <ItalicIcon/>
+        </ToolItem>
+        <ToolItem
+            onClick={handleConvert("table", onChangeValue, element)}
+        >
+            <TableChartIcon/>
         </ToolItem>
     </ToolList>
 );

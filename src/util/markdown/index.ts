@@ -10,4 +10,5 @@ export { default as getLineNumber }          from "src/util/markdown/getLineNumb
 export { default as getLines }               from "src/util/markdown/getLines";
 export { default as getSelectionNumbers }    from "src/util/markdown/getSelectionNumbers";
 export { default as insertSeparator }        from "src/util/markdown/insertSeparator";
+export { default as insertTable }            from "src/util/markdown/insertTable";
 export { default as baseTextConverter }      from "src/util/markdown/baseTextConverter";
