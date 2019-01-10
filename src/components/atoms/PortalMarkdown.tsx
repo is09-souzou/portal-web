@@ -15,7 +15,13 @@ export default (
 const MarkdownStyles = styled.div`
     & {
         h1 {
-            border-bottom: 2px solid red;
+            padding-bottom: 0.5rem;
+        }
+        h2 {
+            border-bottom-color: #BBB;
+            border-bottom-style: solid;
+            border-bottom-width: thin;
+            padding-bottom: 0.3rem;
         }
     }
 `;

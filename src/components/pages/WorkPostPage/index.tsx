@@ -99,7 +99,7 @@ const WorkPostPage = (
     const [workDialogOpend, setWorkDialogOpen] = useState<boolean>(false);
     const [mainImageUrl, setMainImageUrl] = useState<string | undefined>(undefined);
     const [isPublic, setPublic] = useState<boolean>(true);
-    const [isUpdatedByMarkdownSupport, setUpdatedByMarkdownSupport] = useState<boolean>(false);
+    const [isUpdatedByMarkdownSupport, setUpdatedByMarkdownSupport] = useState<boolean>(true);
     const [adjustLine, setAdjustLine] = useState<[number, number]>([0, 0]);
 
     const descriptionTextAreaElement = useRef<HTMLTextAreaElement>(null);
