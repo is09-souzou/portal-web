@@ -224,7 +224,7 @@ const UserPage = (
             <Fab
                 style={{
                     visibility: (
-                        (auth.token && user.id === user.id) && contentType === "user" ? "visible" : "hidden"
+                        (auth.token && auth.token.payload.sub === user.id) && contentType === "user" ? "visible" : "hidden"
                     )
                 }}
                 onClick={() => routerHistory.history.push("/profile")}
