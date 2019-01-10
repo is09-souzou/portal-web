@@ -7,6 +7,7 @@ import gql from "graphql-tag";
 import React, { useContext, Fragment } from "react";
 import { Query, QueryResult } from "react-apollo";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
+import LocationText from "src/components/atoms/LocationText";
 import Page from "src/components/atoms/Page";
 import Header from "src/components/molecules/Header";
 import NotFound from "src/components/molecules/NotFound";
@@ -32,7 +33,9 @@ export default (props: React.Props<{}>) => {
             ref={props.ref as any}
             {...props}
         >
-            <Header/>
+            <Header
+                title={<LocationText text="User list"/>}
+            />
             <Query
                 query={QueryGetUserList}
                 variables={{ limit: 20 }}

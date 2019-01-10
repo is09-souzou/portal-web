@@ -6,6 +6,7 @@ import React, { useContext, useEffect, useState, Fragment } from "react";
 import { Query, QueryResult } from "react-apollo";
 import Fab from "src/components/atoms/Fab";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
+import LocationText from "src/components/atoms/LocationText";
 import StreamSpinner from "src/components/atoms/StreamSpinner";
 import WorkList from "src/components/atoms/WorkList";
 import Header from "src/components/molecules/Header";
@@ -56,7 +57,9 @@ export default (props: React.Props<{}>) => {
             ref={props.ref as any}
             {...props}
         >
-            <Header/>
+            <Header
+                title={<LocationText text="Work list"/>}
+            />
             <Query
                 query={QueryListWorks}
                 variables={{

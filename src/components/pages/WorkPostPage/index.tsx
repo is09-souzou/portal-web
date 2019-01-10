@@ -62,17 +62,19 @@ export default (props: React.Props<{}>) => {
             {...props}
             ref={props.ref as any}
         >
-            <Header/>
-                <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
-                    {(createWork, { error: createWorkError }) => (
-                        <WorkPostPage
-                            auth={auth}
-                            routerHistory={routerHistory}
-                            createWork={createWork}
-                            createWorkError={createWorkError}
-                        />
-                    )}
-                </Mutation>
+            <Header
+                title={<LocationText text="Work post"/>}
+            />
+            <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
+                {(createWork, { error: createWorkError }) => (
+                    <WorkPostPage
+                        auth={auth}
+                        routerHistory={routerHistory}
+                        createWork={createWork}
+                        createWorkError={createWorkError}
+                    />
+                )}
+            </Mutation>
         </Page>
     );
 };
