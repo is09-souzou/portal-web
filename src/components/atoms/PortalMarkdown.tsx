@@ -18,10 +18,19 @@ const MarkdownStyles = styled.div`
             padding-bottom: 0.5rem;
         }
         h2 {
-            border-bottom-color: #BBB;
-            border-bottom-style: solid;
-            border-bottom-width: thin;
+            border-bottom: thin solid #BBB;
             padding-bottom: 0.3rem;
+        }
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+        tr {
+            border-top: 1px solid #CCC;
+        }
+        th, td{
+            border: 1px solid #CCC;
+            padding: 6px 13px;
         }
     }
 `;
