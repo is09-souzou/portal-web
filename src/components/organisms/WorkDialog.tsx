@@ -137,18 +137,19 @@ export default (
                                             </div>
                                         </UserInformation>
                                     </Link>
-                                    <Link
-                                        to={`/works/update-work/${work.id}`}
-                                        onClick={onClose}
-                                    >
-                                        <Button
-                                            style={{ display: editable === true ? work.userId === userId ? "" : "none" : "none" }}
-                                            variant="outlined"
-                                            color="primary"
+                                    {editable === false && work.userId === userId && (
+                                        <Link
+                                            to={`/works/update-work/${work.id}`}
+                                            onClick={onClose}
                                         >
-                                            edit
-                                        </Button>
-                                    </Link>
+                                            <Button
+                                                variant="outlined"
+                                                color="primary"
+                                            >
+                                                edit
+                                            </Button>
+                                        </Link>
+                                    )}
                                 </div>
                             </div>
                         </StyledDialogContent>
