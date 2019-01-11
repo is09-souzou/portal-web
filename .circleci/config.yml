@@ -70,16 +70,21 @@ jobs:
       - run: yarn
       - run:
           name: Run Build
-          command: yarn build
+          command: yarn build:prod
       - persist_to_workspace:
           root: .
           paths: dist
+      - persist_to_workspace:
+          root: .
+          paths: assets
   deploy:
     executor:
       name: awscli
     steps:
       - attach_workspace:
           at: dist
+      - attach_workspace:
+          at: assets
       - run: aws configure set aws_access_key_id ${AWS_ACCESS_KEY}
       - run: aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
       - run: aws configure set default.region ap-northeast-1
