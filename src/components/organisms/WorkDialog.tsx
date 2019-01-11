@@ -46,8 +46,6 @@ export default (
     if (!work)
         return null;
 
-    console.log(editable);
-
     return (
         <Fragment>
             <Dialog

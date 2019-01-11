@@ -139,6 +139,7 @@ const WorkPostPage = (
                         id="title"
                         label={<LocationText text="Title"/>}
                         placeholder={localization.locationText["Input title"]}
+                        inputRef={titleInputElement}
                         margin="normal"
                         fullWidth
                         required
@@ -334,11 +335,13 @@ const submitMainImage = (
 ) => async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!auth.token) {
         notification.notification("error", "Need Sign in");
+        console.error(new Error("Need Sign in"));
         return;
     }
 
     if (!e.target.files) {
         notification.notification("error", "Required set image");
+        console.error("Required set image");
         return;
     }
 
@@ -382,6 +385,19 @@ const handleHostSubmit = (
     e.preventDefault();
     if (!auth.token) {
         notification.notification("error", "Need Sign in");
+        console.error(new Error("Need Sign in"));
+        return;
+    }
+
+    if (!titleInputElement.current) {
+        notification.notification("error", "Title input element is not found");
+        console.error(new Error("Title input element is not found"));
+        return;
+    }
+
+    if (!imageUrl) {
+        notification.notification("error", "Required main image");
+        console.error(new Error("Required main image"));
         return;
     }
 

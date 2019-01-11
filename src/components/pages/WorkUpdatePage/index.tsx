@@ -399,11 +399,13 @@ const handleHostSubmit = (
     e.preventDefault();
     if (!auth.token) {
         notification.notification("error", "Need Sign in");
+        console.error(new Error("Need Sign in"));
         return;
     }
 
     if (!titleInputElement.current) {
-        notification.notification("error", "title input element is not found");
+        notification.notification("error", "Title input element is not found");
+        console.error(new Error("Title input element is not found"));
         return;
     }
 
@@ -468,11 +470,13 @@ const submitMainImage = (
 ) => async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!auth.token) {
         notification.notification("error", "Need Sign in");
+        console.error(new Error("Need Sign in"));
         return;
     }
 
     if (!e.target.files) {
         notification.notification("error", "Required set image");
+        console.error(new Error("Required set image"));
         return;
     }
 
