@@ -2,6 +2,7 @@ import {
     CodeRounded               as CodeIcon,
     FormatBoldRounded         as BoldIcon,
     FormatItalicRounded       as ItalicIcon,
+    FormatListBulletedRounded as ListBulletedIcon,
     FormatListNumberedRounded as ListIcon,
     FormatQuoteRounded        as QuoteIcon,
     LinkRounded               as LinkIcon,
@@ -91,7 +92,7 @@ export default (
         <ToolItem
             onClick={handleConvert("list", onChangeValue, element)}
         >
-            <span>・</span>
+            <ListBulletedIcon/>
         </ToolItem>
         <ToolItem
             onClick={handleConvert("separator", onChangeValue, element)}
