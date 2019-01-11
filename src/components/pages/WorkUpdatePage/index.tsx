@@ -283,6 +283,7 @@ const WorkUpdatePage = (
             </div>
             {updateWorkError && <notification.ErrorComponent message={updateWorkError}/>}
             <WorkDialog
+                editable={true}
                 open={workDialogOpend}
                 onClose={() => {
                     setWorkDialogOpen(false);

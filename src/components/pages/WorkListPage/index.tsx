@@ -159,6 +159,7 @@ const WorkListPage = (
                 onVisible={handleStreamSpinnerVisible(workConnection, fetchMore)}
             />
             <WorkDialog
+                editable={false}
                 open={workDialogOpend}
                 onClose={() => setWorkDialogOpen(false)}
                 work={selectedWork}

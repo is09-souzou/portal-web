@@ -237,6 +237,7 @@ const WorkPostPage = (
                 </ActionArea>
             </div>
             <WorkDialog
+                editable={true}
                 open={workDialogOpend}
                 onClose={() => {
                     setPreviewWork(undefined);

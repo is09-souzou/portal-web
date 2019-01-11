@@ -205,6 +205,7 @@ const UserPage = (
                         }}
                     />
                     <WorkDialog
+                        editable={false}
                         open={workDialogOpend}
                         onClose={() => setWorkDialogOpen(false)}
                         work={selectedWork}

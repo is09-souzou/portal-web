@@ -21,6 +21,7 @@ import getTagsByURLQueryParam from "src/util/getTagsByURLQueryParam";
 import styled from "styled-components";
 
 interface Props {
+    editable: boolean;
     open: boolean;
     onClose: () => void;
     work?: Work;
@@ -29,6 +30,7 @@ interface Props {
 
 export default (
     {
+        editable = false,
         open = false,
         onClose,
         work,
@@ -43,6 +45,8 @@ export default (
 
     if (!work)
         return null;
+
+    console.log(editable);
 
     return (
         <Fragment>
@@ -138,7 +142,7 @@ export default (
                                         onClick={onClose}
                                     >
                                         <Button
-                                            style={{ display: work.userId === userId ? "" : "none" }}
+                                            style={{ display: editable === true ? "none" : work.userId === userId ? "" : "none" }}
                                             variant="outlined"
                                             color="primary"
                                         >
