@@ -15,41 +15,47 @@ export default (
 const MarkdownStyles = styled.div`
     & {
         blockquote {
-            color: #666;
+            color: #555;
             margin: 0;
-            padding-left: 3em;
-            border-left: 0.5em #eee solid;
+            padding-left: 1rem;
+            border-left: 0.3rem #555 solid;
         }
-        code {
-            background: #EEE;
-            color: #333;
-            display: block;
-            overflow-x: auto;
-            padding: 0.5em;
-        }
+
         h1 {
             padding-bottom: 0.5rem;
         }
+
         h2 {
-            border-bottom: thin solid #BBB;
+            border-bottom: thin solid #bbb;
             padding-bottom: 0.3rem;
         }
+
         hr {
-            color: #BBB;
+            color: #bbb;
         }
+
         table {
             border-spacing: 0;
             border-collapse: collapse;
         }
-        td, th{
-            border: 1px solid #CCC;
-            padding: 6px 13px;
-        }
-        tr {
-            border-top: 1px solid #CCC;
-        }
-        pre {
+
+        td,
+        th {
             border: 1px solid #ccc;
+            padding: .5rem 1rem;
+        }
+
+        tr {
+            border-top: 1px solid #ccc;
+        }
+
+        pre {
+            margin: .5rem;
+            border-radius: 4px;
+            padding: .5rem 1rem;
+            border: 1px solid #333;
+            background-color: #282c34;
+            color: white;
         }
     }
 `;
