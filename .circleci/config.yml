@@ -80,9 +80,6 @@ jobs:
     steps:
       - attach_workspace:
           at: dist
-      - run:
-          name: Install awscli
-          command: sudo pip install awscli
       - run: aws configure set aws_access_key_id ${AWS_ACCESS_KEY}
       - run: aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
       - run: aws configure set default.region ap-northeast-1
