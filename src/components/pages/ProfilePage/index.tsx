@@ -209,7 +209,7 @@ const ProfilePage = (
                             <TextField
                                 label={<LocationText text="Skill"/>}
                                 placeholder={locationText["Input skill"]}
-                                onKeyDown={tagInputKeyDown({ skillList, setSkillList })}
+                                onKeyPress={tagInputKeyPress({ skillList, setSkillList })}
                                 margin="normal"
                                 inputProps={{
                                     maxLength: 10,
@@ -223,7 +223,7 @@ const ProfilePage = (
                                 key={skill}
                                 clickable={false}
                                 label={skill}
-                                onDelete={() => setSkillList(skillList.filter(x => x === skill))}
+                                onDelete={() => setSkillList(skillList.filter(x => x !== skill))}
                             />
                         )}
                     </ChipList>
@@ -234,7 +234,7 @@ const ProfilePage = (
                         color="primary"
                         onClick={() => routerHistory.history.push(`/users/${user.id}`)}
                     >
-                        {<LocationText text="Cancel"/>}
+                        <LocationText text="Cancel"/>
                     </Button>
                     <Button
                         type="submit"
@@ -242,7 +242,7 @@ const ProfilePage = (
                         variant="contained"
                         color="primary"
                     >
-                        {<LocationText text="Save"/>}
+                        <LocationText text="Save"/>
                     </Button>
                 </div>
             </ProfileContent>
@@ -266,7 +266,7 @@ const ProfilePage = (
                     <DialogTitle
                         id="editable-avatar-dialog-title"
                     >
-                        {<LocationText text="Upload avatar"/>}
+                        <LocationText text="Upload avatar"/>
                     </DialogTitle>
                     <DialogContent>
                         <ImageInput
@@ -280,14 +280,14 @@ const ProfilePage = (
                         <Button
                             onClick={() => setEditableAvatarDialogOpen(false)}
                         >
-                            {<LocationText text="Cancel"/>}
+                            <LocationText text="Cancel"/>
                         </Button>
                         <Button
                             component="button"
                             color="primary"
                             type="submit"
                         >
-                            {<LocationText text="Submit"/>}
+                            <LocationText text="Submit"/>
                         </Button>
                     </DialogActions>
                 </form>
@@ -355,16 +355,15 @@ const handleUpdateUserFormSubmit = (
     routerHistory.history.push(`/users/${user.id}`);
 };
 
-const tagInputKeyDown = (
+const tagInputKeyPress = (
     {
         skillList,
         setSkillList
     }: {
         skillList: string[],
-        setSkillList: React.Dispatch<React.SetStateAction<string[]>>
+        setSkillList: React.Dispatch<React.SetStateAction<string[]>>,
     }
 ) => (e: React.KeyboardEvent) => {
-    e.preventDefault();
     if (skillList.length >= 5)
         return;
 

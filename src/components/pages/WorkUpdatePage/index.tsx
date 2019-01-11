@@ -192,7 +192,7 @@ const WorkUpdatePage = (
                         <TextField
                             label={<LocationText text="Tags"/>}
                             placeholder={localization.locationText["Input tags"]}
-                            onKeyDown={tagInputKeyDown({ tags, setTags })}
+                            onKeyDown={tagInputKeyPress({ tags, setTags })}
                             margin="normal"
                             inputProps={{
                                 maxLength: 10,
@@ -300,7 +300,7 @@ const WorkUpdatePage = (
     );
 };
 
-const tagInputKeyDown = (
+const tagInputKeyPress = (
     {
         tags,
         setTags,
