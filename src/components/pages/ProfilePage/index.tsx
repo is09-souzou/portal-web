@@ -5,7 +5,6 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    Divider,
     LinearProgress,
     TextField,
 } from "@material-ui/core";
@@ -19,11 +18,11 @@ import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import ImageInput from "src/components/atoms/ImageInput";
 import LocationText from "src/components/atoms/LocationText";
 import NotFound from "src/components/molecules/NotFound";
+import UserHeader from "src/components/molecules/UserHeader";
 import ChipList from "src/components/pages/ProfilePage/ChipList";
 import Host from "src/components/pages/ProfilePage/Host";
 import ProfileContent from "src/components/pages/ProfilePage/ProfileContent";
-import ProfilePageHeader from "src/components/pages/ProfilePage/ProfilePageHeader";
-import UserAvatar from "src/components/pages/ProfilePage/UserAvatar";
+import ShortTextField from "src/components/pages/ProfilePage/ShortTextField";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import LocalizationContext from "src/contexts/LocalizationContext";
@@ -70,6 +69,7 @@ export default (props: React.Props<{}>) => {
     return (
         <Host
             {...props}
+            ref={props.ref as any}
         >
             <Query
                 query={QueryGetUser}
@@ -86,19 +86,24 @@ export default (props: React.Props<{}>) => {
                     )
                   : !(query.data && query.data.getUser) ? <NotFound/>
                   :                                       (
-                        <Mutation
-                            mutation={MutationUpdateUser}
-                            refetchQueries={[]}
-                        >
-                            {updateUser => (
-                                <ProfilePage
-                                    auth={auth}
-                                    notification={notification}
-                                    query={query}
-                                    updateUser={updateUser}
-                                />
-                            )}
-                        </Mutation>
+                        <Fragment>
+                            <UserHeader
+                                user={query.data.getUser}
+                            />
+                            <Mutation
+                                mutation={MutationUpdateUser}
+                                refetchQueries={[]}
+                            >
+                                {updateUser => (
+                                    <ProfilePage
+                                        auth={auth}
+                                        notification={notification}
+                                        query={query}
+                                        updateUser={updateUser}
+                                    />
+                                )}
+                            </Mutation>
+                        </Fragment>
                     )
                 ))}
             </Query>
@@ -156,37 +161,23 @@ const ProfilePage = (
                 })
             }
         >
-            <ProfilePageHeader>
-                <img
-                    src={user.avatarUri}
-                />
-                <div>
-                    <UserAvatar
-                        src={user.avatarUri}
-                        onClick={() => setEditableAvatarDialogOpen(true)}
-                    />
-                    <div>
-                        <TextField
-                            id="profile-name"
-                            margin="dense"
-                            label={<LocationText text="Display name"/>}
-                            defaultValue={user.displayName}
-                            required
-                            inputRef={displayNameInputElement}
-                        />
-                        <TextField
-                            id="profile-email"
-                            margin="dense"
-                            label={<LocationText text="Mail address"/>}
-                            type="email"
-                            defaultValue={user.email}
-                            inputRef={emailInputElement}
-                        />
-                    </div>
-                </div>
-            </ProfilePageHeader>
-            <Divider />
             <ProfileContent>
+                <ShortTextField
+                    id="profile-name"
+                    margin="dense"
+                    label={<LocationText text="Display name"/>}
+                    defaultValue={user.displayName}
+                    required
+                    inputRef={displayNameInputElement}
+                />
+                <ShortTextField
+                    id="profile-email"
+                    margin="dense"
+                    label={<LocationText text="Mail address"/>}
+                    type="email"
+                    defaultValue={user.email}
+                    inputRef={emailInputElement}
+                />
                 <TextField
                     id="profile-message"
                     label={<LocationText text="Message"/>}

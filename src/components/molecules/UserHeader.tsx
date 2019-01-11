@@ -1,7 +1,7 @@
-import { Tab, Tabs } from "@material-ui/core";
 import AppBar, { AppBarProps } from "@material-ui/core/AppBar";
 import IconButton, { IconButtonProps } from "@material-ui/core/IconButton";
-import { TabProps } from "@material-ui/core/Tab";
+import Tab, { TabProps } from "@material-ui/core/Tab";
+import Tabs, { TabsProps } from "@material-ui/core/Tabs";
 import Typography, { TypographyProps } from "@material-ui/core/Typography";
 import MenuIcon from "@material-ui/icons/Menu";
 import React, { useContext } from "react";
@@ -19,9 +19,9 @@ export default (
         onSelectContent
     }: {
         user: User,
-        contents: Content[],
-        selectedContentValue: string,
-        onSelectContent: (content: Content) => void
+        contents?: Content[],
+        selectedContentValue?: string,
+        onSelectContent?: (content: Content) => void
     }
 ) => {
     const { toggleDrawer } = useContext(DrawerContext);
@@ -50,21 +50,23 @@ export default (
                         {user.email}
                     </Email>
                 </Info>
-                <Tabs
-                    value={selectedContentValue}
-                    indicatorColor="primary"
-                    textColor="primary"
-                >
-                    {contents.map(x =>
-                        <StyledTab
-                            disableRipple
-                            key={x.value}
-                            label={x.text}
-                            value={x.value}
-                            onClick={() => onSelectContent(x)}
-                        />
-                    )}
-                </Tabs>
+                {contents && (
+                    <ContentTabs
+                        value={selectedContentValue}
+                        indicatorColor="primary"
+                        textColor="primary"
+                    >
+                        {contents.map(x =>
+                            <ContentTab
+                                disableRipple
+                                key={x.value}
+                                label={x.text}
+                                value={x.value}
+                                onClick={() => onSelectContent!(x)}
+                            />
+                        )}
+                    </ContentTabs>
+                )}
             </Content>
         </Host>
     );
@@ -138,15 +140,6 @@ const Content = styled.div`
     align-items: flex-end;
     padding: 0 1rem;
     background-color: rgba(0, 0, 0, .5);
-    > :last-child {
-        align-self: flex-end;
-        margin-left: auto;
-    }
-    @media (max-width: 768px) {
-        > :last-child {
-            visibility: hidden;
-        }
-    }
 `;
 
 const Info = styled.div`
@@ -172,7 +165,17 @@ const Email = styled(Typography as React.SFC<TypographyProps>)`
     }
 `;
 
-const StyledTab = styled(Tab as React.SFC<TabProps>)`
+const ContentTabs = styled(Tabs as React.SFC<TabsProps>)`
+    && {
+        align-self: flex-end;
+        margin-left: auto;
+        @media (max-width: 768px) {
+            visibility: hidden;
+        }
+    }
+`;
+
+const ContentTab = styled(Tab as React.SFC<TabProps>)`
     && {
         font-size: 1rem;
         color: white;
