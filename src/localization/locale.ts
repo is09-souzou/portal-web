@@ -7,7 +7,7 @@ export type LocationText = (
     "Upload avatar" |"Title" | "Input title" | "Tags" | "Description" | "Input description" | "Image" | "Preview" | "Create" | "Update" | "Publish" |
     "Profile" | "Work list" | "Works" | "Designer" | "Popular" | "New" | "Languages" | "Language" | "Settings" | "Sign in" | "Sign out" | "Password" |
     "Create account" | "location" | "Initial registration profile" | "Input tags" | "User list" | "Work post" | "Work update" | "New mail address" |
-    "Credential" | "Update a credential email" | "Update password" | "New password" | "Old password"
+    "Credential" | "Update a credential email" | "Update password" | "New password" | "Old password" | "Not Found"
 );
 
 export type LocationTextList = { [key in LocationText]: string };
@@ -60,7 +60,8 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Update a credential email" : "Update a credential email",
         "Update password": "Update password",
         "New password" : "New password",
-        "Old password" : "Old Password"
+        "Old password" : "Old password",
+        "Not Found": "Not Found"
     },
     jp: {
         "Name": "名前",
@@ -109,7 +110,8 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Update a credential email" : "認証用メールアドレスの更新",
         "Update password": "認証用パスワードの更新",
         "New password" : "新しいパスワード",
-        "Old password" : "元のパスワード"
+        "Old password" : "元のパスワード",
+        "Not Found": "Not Found"
     }
 };
 

@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Root from "src/Root";
 import {
+    NotFoundPage,
     ProfilePage,
     SettingsPage,
     UserListPage,
@@ -54,6 +55,7 @@ export default () => (
                     component={ProfilePage}
                     exact={true}
                 />
+                <Route component={NotFoundPage}/>
             </Switch>
         </Root>
     </BrowserRouter>
