@@ -142,7 +142,7 @@ export default (
                                         onClick={onClose}
                                     >
                                         <Button
-                                            style={{ display: editable === true ? "none" : work.userId === userId ? "" : "none" }}
+                                            style={{ display: editable === true ? work.userId === userId ? "" : "none" : "none" }}
                                             variant="outlined"
                                             color="primary"
                                         >
