@@ -130,6 +130,8 @@ const WorkListPage = (
                 const row = getRow();
                 if (row !== workListRow)
                     setWorkListRow(row);
+                else
+                    setWorkListRow(workListRow);
             };
             resize();
             window.addEventListener("resize", resize);
