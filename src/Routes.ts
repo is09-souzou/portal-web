@@ -28,6 +28,7 @@
 //     loading: Loading,
 // });
 
+export { default as NotFoundPage   } from "src/components/pages/NotFoundPage";
 export { default as WorkPostPage   } from "src/components/pages/WorkPostPage";
 export { default as WorkUpdatePage } from "src/components/pages/WorkUpdatePage";
 export { default as WorkListPage   } from "src/components/pages/WorkListPage";
