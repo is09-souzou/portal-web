@@ -66,6 +66,7 @@ jobs:
       name: default
       node_version: << parameters.node_version >>
     steps:
+      - checkout
       - run:
           name: Run Build
           command: yarn build
