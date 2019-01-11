@@ -82,9 +82,9 @@ jobs:
       name: awscli
     steps:
       - attach_workspace:
-          at: dist
+          at: .
       - attach_workspace:
-          at: assets
+          at: .
       - run: aws configure set aws_access_key_id ${AWS_ACCESS_KEY}
       - run: aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
       - run: aws configure set default.region ap-northeast-1
