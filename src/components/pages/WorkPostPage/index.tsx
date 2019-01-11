@@ -145,7 +145,7 @@ const WorkPostPage = (
                     />
                     <div>
                         <TextField
-                            label={<LocationText text="Input tags"/>}
+                            label={<LocationText text="Tags"/>}
                             placeholder={localization.locationText["Input tags"]}
                             onKeyDown={tagInputKeyDown({ tags, setTags })}
                             margin="normal"

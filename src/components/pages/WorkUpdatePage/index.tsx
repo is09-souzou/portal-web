@@ -180,7 +180,7 @@ const WorkUpdatePage = (
                 <Head>
                     <TextField
                         id="title"
-                        label={<LocationText text="Title" />}
+                        label={<LocationText text="Title"/>}
                         placeholder={localization.locationText["Input title"]}
                         margin="normal"
                         fullWidth
@@ -190,7 +190,7 @@ const WorkUpdatePage = (
                     />
                     <div>
                         <TextField
-                            label={<LocationText text="Tags" />}
+                            label={<LocationText text="Tags"/>}
                             placeholder={localization.locationText["Input tags"]}
                             onKeyDown={tagInputKeyDown({ tags, setTags })}
                             margin="normal"
@@ -218,7 +218,7 @@ const WorkUpdatePage = (
                         />
                         <div>
                             <TextField
-                                label="Description"
+                                label={<LocationText text="Description"/>}
                                 multiline
                                 margin="normal"
                                 required
