@@ -13,13 +13,13 @@ import StreamSpinner from "src/components/atoms/StreamSpinner";
 import ViewPager from "src/components/atoms/ViewPager";
 import WorkList from "src/components/atoms/WorkList";
 import NotFound from "src/components/molecules/NotFound";
+import UserHeader from "src/components/molecules/UserHeader";
 import WorkDialog from "src/components/organisms/WorkDialog";
 import Footer from "src/components/pages/UserPage/Footer";
 import Host from "src/components/pages/UserPage/Host";
 import SkillTag from "src/components/pages/UserPage/SkillTag";
 import StyledTypography from "src/components/pages/UserPage/StyledTypography";
 import UserContent from "src/components/pages/UserPage/UserContent";
-import UserPageHeader from "src/components/pages/UserPage/UserPageHeader";
 import WorkContent from "src/components/pages/UserPage/WorkContent";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
@@ -73,8 +73,8 @@ export default (props: React.Props<{}>) => {
 
     return (
         <Host
-            ref={props.ref as any}
             {...props}
+            ref={props.ref as any}
         >
             <Query
                 query={QueryGetUser}
@@ -111,7 +111,7 @@ export default (props: React.Props<{}>) => {
 
                             return (
                                 <Fragment>
-                                    <UserPageHeader
+                                    <UserHeader
                                         user={query.data.getUser}
                                         selectedContentValue={contentType}
                                         contents={contents}
