@@ -132,8 +132,8 @@ export default (
             ]);
             onClose && onClose();
         } catch (error) {
-            console.error(error);
             notification.notification("error", error.message);
+            console.error(error);
         }
         setProcessing(false);
     };

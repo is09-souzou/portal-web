@@ -141,8 +141,9 @@ const handleUpdateEmailFromSubmit = (
     try {
         await auth.updateEmail(email);
         notification.notification("info", "Send Mail");
-    } catch (e) {
-        notification.notification("error", e.message);
+    } catch (error) {
+        notification.notification("error", error.message);
+        console.error(error);
     }
 };
 
@@ -165,8 +166,8 @@ const handleUpdatePasswordSubmit = (
         await auth.updatePassword(oldPassword, newPassword);
         setUpdatePasswordDialogOpen(false);
         notification.notification("info", "Success update password");
-    } catch (e) {
-        console.error(e);
-        notification.notification("error", e.message);
+    } catch (error) {
+        notification.notification("error", error.message);
+        console.error(error);
     }
 };

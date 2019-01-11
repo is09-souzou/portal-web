@@ -439,8 +439,9 @@ const handleUpdateAvatarFormSubmit = (
         refetch();
         setUploadingAvatarImage(false);
         setEditableAvatarDialogOpen(false);
-    } catch (e) {
+    } catch (error) {
         setUploadingAvatarImage(false);
-        notification.notification("error", e);
+        notification.notification("error", error.message);
+        console.error(error);
     }
 };
