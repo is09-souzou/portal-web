@@ -1,9 +1,13 @@
 import {
+    CodeRounded               as CodeIcon,
     FormatBoldRounded         as BoldIcon,
     FormatItalicRounded       as ItalicIcon,
+    FormatListBulletedRounded as ListBulletedIcon,
     FormatListNumberedRounded as ListIcon,
+    FormatQuoteRounded        as QuoteIcon,
     LinkRounded               as LinkIcon,
-    StrikethroughSRounded     as StrikeIcon
+    StrikethroughSRounded     as StrikeIcon,
+    TableChartRounded         as TableChartIcon
 } from "@material-ui/icons";
 import React from "react";
 import ToolItem from "src/components/atoms/ToolItem";
@@ -15,24 +19,34 @@ import {
     convertToItalic,
     convertToList,
     convertToListNumber,
+    convertToQuote,
     convertToStrikethrough,
     getSelectionNumbers,
-    insertSeparator
+    insertSeparator,
+    insertSnippet,
+    insertTable
 } from "src/util/markdown";
 
 export type MarkdownSupportsProps = {
-    element?: HTMLInputElement | HTMLTextAreaElement;
+    element: HTMLTextAreaElement | React.RefObject<HTMLTextAreaElement>;
     onChangeValue: (value: string, selections: [number, number]) => void
 };
 
 const handleConvert = (
-    type: "anchor" | "bold" | "heading" | "italic" | "list" | "listNumber" | "strikethrough" | "separator",
+    type: "anchor" | "bold" | "heading" | "italic" | "list" | "listNumber" | "quote" | "snippet" | "strikethrough" | "separator" | "table" ,
     onChangeValue: MarkdownSupportsProps["onChangeValue"],
-    element?: HTMLInputElement | HTMLTextAreaElement
+    element: HTMLTextAreaElement | React.RefObject<HTMLTextAreaElement>
 ) => () => {
-    if (!element) return;
+    let _element: HTMLTextAreaElement | null;
+    if (element instanceof HTMLTextAreaElement) {
+        _element = element;
+    } else {
+        _element = (element as React.RefObject<HTMLTextAreaElement>).current;
+    }
 
-    const selectionNumbers = getSelectionNumbers(element);
+    if (!_element) return;
+
+    const selectionNumbers = getSelectionNumbers(_element);
 
     const convertFunc: (value: string, selectionNumbers: [number, number]) => [string, [number, number]] = (
         type === "anchor"        ? convertToAnchor
@@ -41,12 +55,15 @@ const handleConvert = (
       : type === "italic"        ? convertToItalic
       : type === "list"          ? convertToList
       : type === "listNumber"    ? convertToListNumber
+      : type === "quote"         ? convertToQuote
       : type === "strikethrough" ? convertToStrikethrough
       : type === "separator"     ? insertSeparator
-      :                            insertSeparator
+      : type === "snippet"       ? insertSnippet
+      : type === "table"         ? insertTable
+      :                            insertTable
     );
 
-    const [value, newSelectionNumbers] = convertFunc(element.value, selectionNumbers);
+    const [value, newSelectionNumbers] = convertFunc(_element.value, selectionNumbers);
 
     onChangeValue(
         value,
@@ -75,7 +92,7 @@ export default (
         <ToolItem
             onClick={handleConvert("list", onChangeValue, element)}
         >
-            <span>・</span>
+            <ListBulletedIcon/>
         </ToolItem>
         <ToolItem
             onClick={handleConvert("separator", onChangeValue, element)}
@@ -86,6 +103,20 @@ export default (
             onClick={handleConvert("anchor", onChangeValue, element)}
         >
             <LinkIcon/>
+        </ToolItem>
+        <ToolItem
+            onClick={handleConvert("quote", onChangeValue, element)}
+        >
+            <QuoteIcon/>
+        </ToolItem>
+        <ToolItem
+            onClick={handleConvert("snippet", onChangeValue, element)}
+        >
+            <CodeIcon/>
+        </ToolItem><ToolItem
+            onClick={handleConvert("table", onChangeValue, element)}
+        >
+            <TableChartIcon/>
         </ToolItem>
         <ToolItem
             onClick={handleConvert("strikethrough", onChangeValue, element)}

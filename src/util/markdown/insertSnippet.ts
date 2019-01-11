@@ -6,7 +6,7 @@ export default (value: string, selectionNumbers: [number, number]): [string, [nu
     const convertedValue = value.split("\n")
         .map((x: string, i: number) => {
             if (i + 1 === lines[1]) {
-                return x.replace(/$/g, "\n---");
+                return x.replace(/$/g, "\n```\n\n```");
             }
             return x;
         })

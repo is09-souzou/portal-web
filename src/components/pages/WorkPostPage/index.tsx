@@ -112,6 +112,7 @@ const WorkPostPage = (
         () => {
             if (descriptionTextAreaElement.current && isUpdatedByMarkdownSupport) {
                 descriptionTextAreaElement.current!.setSelectionRange(adjustLine[0], adjustLine[1]);
+                setUpdatedByMarkdownSupport(false);
             }
         },
         [description]
@@ -144,7 +145,7 @@ const WorkPostPage = (
                     />
                     <div>
                         <TextField
-                            label={<LocationText text="Input tags"/>}
+                            label={<LocationText text="Tags"/>}
                             placeholder={localization.locationText["Input tags"]}
                             onKeyDown={tagInputKeyDown({ tags, setTags })}
                             margin="normal"
@@ -184,7 +185,7 @@ const WorkPostPage = (
                                 onChange={e => setDescription(e.target.value)}
                             />
                             <MarkdownSupports
-                                element={descriptionTextAreaElement.current ? descriptionTextAreaElement.current : undefined}
+                                element={descriptionTextAreaElement}
                                 onChangeValue={handleMarkdownSupportsChangeValue({ setAdjustLine, setDescription, setUpdatedByMarkdownSupport })}
                             />
                         </div>
@@ -203,9 +204,7 @@ const WorkPostPage = (
                                     onChange={() => setPublic(!isPublic)}
                                     color="primary"
                                     checked={isPublic}
-                                >
-                                    Range setting
-                                </Switch>
+                                />
                             }
                             label={<LocationText text="Publish"/>}
                             labelPlacement="start"
