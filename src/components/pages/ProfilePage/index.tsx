@@ -60,6 +60,12 @@ const MutationUpdateUser = gql(`
 export default (props: React.Props<{}>) => {
     const auth = useContext(AuthContext);
     const notification = useContext(NotificationContext);
+    const routerHistory = useContext(RouterHistoryContext);
+
+    if (!auth.token) {
+        routerHistory.history.push("/?sign-up=true");
+        return null;
+    }
 
     return (
         <Host
