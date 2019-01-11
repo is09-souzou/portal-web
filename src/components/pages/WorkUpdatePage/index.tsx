@@ -22,6 +22,7 @@ import WorkContentArea from "src/components/pages/WorkPostPage/WorkContentArea";
 import WorkImage from "src/components/pages/WorkUpdatePage/WorkImage";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
+import LocalizationContext from "src/contexts/LocalizationContext";
 import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { Work } from "src/graphQL/type";
@@ -148,11 +149,13 @@ const WorkUpdatePage = (
     const descriptionTextAreaElement = useRef<HTMLTextAreaElement>(null);
 
     const auth = useContext(AuthContext);
+    const localization = useContext(LocalizationContext);
 
     useEffect(
         () => {
             if (descriptionTextAreaElement.current && isUpdatedByMarkdownSupport) {
                 descriptionTextAreaElement.current!.setSelectionRange(adjustLine[0], adjustLine[1]);
+                setUpdatedByMarkdownSupport(false);
             }
         },
         [description]
@@ -177,8 +180,8 @@ const WorkUpdatePage = (
                 <Head>
                     <TextField
                         id="title"
-                        label="Title"
-                        placeholder={"Input Title!"}
+                        label={<LocationText text="Title" />}
+                        placeholder={localization.locationText["Input title"]}
                         margin="normal"
                         fullWidth
                         defaultValue={currentWork.title}
@@ -187,8 +190,8 @@ const WorkUpdatePage = (
                     />
                     <div>
                         <TextField
-                            label="Tags"
-                            placeholder={"Input Tags!"}
+                            label={<LocationText text="Tags" />}
+                            placeholder={localization.locationText["Input tags"]}
                             onKeyDown={tagInputKeyDown({ tags, setTags })}
                             margin="normal"
                             inputProps={{
@@ -219,7 +222,7 @@ const WorkUpdatePage = (
                                 multiline
                                 margin="normal"
                                 required
-                                placeholder={"Input Description!"}
+                                placeholder={localization.locationText["Input description"]}
                                 rowsMax={30}
                                 fullWidth
                                 inputRef={descriptionTextAreaElement}
@@ -227,7 +230,7 @@ const WorkUpdatePage = (
                                 value={description}
                             />
                             <MarkdownSupports
-                                element={descriptionTextAreaElement.current ? descriptionTextAreaElement.current : undefined}
+                                element={descriptionTextAreaElement}
                                 onChangeValue={handleMarkdownSupportsChangeValue({ setAdjustLine, setDescription, setUpdatedByMarkdownSupport })}
                             />
                         </div>
@@ -246,11 +249,9 @@ const WorkUpdatePage = (
                                     onChange={() => setPublic(!isPublic)}
                                     color="primary"
                                     checked={isPublic}
-                                >
-                                    Range setting
-                                </Switch>
+                                />
                             }
-                            label="公開する"
+                            label={<LocationText text="Publish" />}
                             labelPlacement="start"
                         />
                     </FormGroup>

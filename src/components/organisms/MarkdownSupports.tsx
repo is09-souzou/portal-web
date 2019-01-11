@@ -27,18 +27,25 @@ import {
 } from "src/util/markdown";
 
 export type MarkdownSupportsProps = {
-    element?: HTMLInputElement | HTMLTextAreaElement;
+    element: HTMLTextAreaElement | React.RefObject<HTMLTextAreaElement>;
     onChangeValue: (value: string, selections: [number, number]) => void
 };
 
 const handleConvert = (
     type: "anchor" | "bold" | "heading" | "italic" | "list" | "listNumber" | "quote" | "snippet" | "strikethrough" | "separator" | "table" ,
     onChangeValue: MarkdownSupportsProps["onChangeValue"],
-    element?: HTMLInputElement | HTMLTextAreaElement
+    element: HTMLTextAreaElement | React.RefObject<HTMLTextAreaElement>
 ) => () => {
-    if (!element) return;
+    let _element: HTMLTextAreaElement | null;
+    if (element instanceof HTMLTextAreaElement) {
+        _element = element;
+    } else {
+        _element = (element as React.RefObject<HTMLTextAreaElement>).current;
+    }
 
-    const selectionNumbers = getSelectionNumbers(element);
+    if (!_element) return;
+
+    const selectionNumbers = getSelectionNumbers(_element);
 
     const convertFunc: (value: string, selectionNumbers: [number, number]) => [string, [number, number]] = (
         type === "anchor"        ? convertToAnchor
@@ -55,7 +62,7 @@ const handleConvert = (
       :                            insertTable
     );
 
-    const [value, newSelectionNumbers] = convertFunc(element.value, selectionNumbers);
+    const [value, newSelectionNumbers] = convertFunc(_element.value, selectionNumbers);
 
     onChangeValue(
         value,

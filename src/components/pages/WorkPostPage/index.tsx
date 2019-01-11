@@ -99,7 +99,7 @@ const WorkPostPage = (
     const [workDialogOpend, setWorkDialogOpen] = useState<boolean>(false);
     const [mainImageUrl, setMainImageUrl] = useState<string | undefined>(undefined);
     const [isPublic, setPublic] = useState<boolean>(true);
-    const [isUpdatedByMarkdownSupport, setUpdatedByMarkdownSupport] = useState<boolean>(true);
+    const [isUpdatedByMarkdownSupport, setUpdatedByMarkdownSupport] = useState<boolean>(false);
     const [adjustLine, setAdjustLine] = useState<[number, number]>([0, 0]);
 
     const descriptionTextAreaElement = useRef<HTMLTextAreaElement>(null);
@@ -112,6 +112,7 @@ const WorkPostPage = (
         () => {
             if (descriptionTextAreaElement.current && isUpdatedByMarkdownSupport) {
                 descriptionTextAreaElement.current!.setSelectionRange(adjustLine[0], adjustLine[1]);
+                setUpdatedByMarkdownSupport(false);
             }
         },
         [description]
@@ -181,13 +182,10 @@ const WorkPostPage = (
                                 fullWidth
                                 inputRef={descriptionTextAreaElement}
                                 value={description}
-                                onChange={e => {
-                                    setDescription(e.target.value);
-                                    setUpdatedByMarkdownSupport(false);
-                                }}
+                                onChange={e => setDescription(e.target.value)}
                             />
                             <MarkdownSupports
-                                element={descriptionTextAreaElement.current ? descriptionTextAreaElement.current : undefined}
+                                element={descriptionTextAreaElement}
                                 onChangeValue={handleMarkdownSupportsChangeValue({ setAdjustLine, setDescription, setUpdatedByMarkdownSupport })}
                             />
                         </div>
@@ -206,9 +204,7 @@ const WorkPostPage = (
                                     onChange={() => setPublic(!isPublic)}
                                     color="primary"
                                     checked={isPublic}
-                                >
-                                    Range setting
-                                </Switch>
+                                />
                             }
                             label={<LocationText text="Publish"/>}
                             labelPlacement="start"
