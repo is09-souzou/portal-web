@@ -67,13 +67,13 @@ module.exports = {
     plugins: [
         // new BundleAnalyzerPlugin(),
         new DefinePlugin(
-            Object.entries(process.env)
+            Object.entries({ ...process.env, VERSION: require("./package.json").version })
                 .map(x => ({["process.env." + x[0]]: JSON.stringify(x[1])}))
-                .reduce((x, y) => Object.assign(x, y), {}),
+                .reduce((x, y) => Object.assign(x, y), {})
         ),
         new HtmlWebpackPlugin({
             hash: true,
-            title: "Portal" + NODE_ENV === "development" ? " - dev" : "",
+            title: "Portal" + (NODE_ENV === "development" ? " - dev" : ""),
             minify: (
                 NODE_ENV === "production" ? {
                     caseSensitive: true,
