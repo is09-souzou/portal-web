@@ -12,8 +12,7 @@ import {
 } from "src/Routes";
 
 export default () => (
-    <BrowserRouter
-    >
+    <BrowserRouter>
         <Root>
             <Switch>
                 <Route

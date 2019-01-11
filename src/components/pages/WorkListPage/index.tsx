@@ -58,7 +58,7 @@ export default (props: React.Props<{}>) => {
             {...props}
         >
             <Header
-                title={<LocationText text="Work list"/>}
+                title={<LocationText text="Works"/>}
             />
             <Query
                 query={QueryListWorks}
