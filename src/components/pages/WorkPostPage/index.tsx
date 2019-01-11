@@ -382,9 +382,6 @@ const handleHostSubmit = (
         routerHistory: RouterHistoryValue
     }
 ) => async (e: React.FormEvent) => {
-    console.log("0");
-    console.log(titleInputElement);
-    console.log("1");
     e.preventDefault();
     if (!auth.token) {
         notification.notification("error", "Need Sign in");
