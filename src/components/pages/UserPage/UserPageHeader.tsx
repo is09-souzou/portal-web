@@ -94,6 +94,9 @@ const MenuIconButton = styled(IconButton as React.SFC<IconButtonProps>)`
         position: absolute;
         top: 0;
         left: 0;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, .8);
+        margin: .2rem;
         @media (min-width: 768px) {
             display: none;
         }

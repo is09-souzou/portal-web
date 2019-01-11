@@ -25,7 +25,7 @@ import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import LocalizationContext from "src/contexts/LocalizationContext";
 import NotificationContext from "src/contexts/NotificationContext";
-import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
+import RouterHistoryContext from "src/contexts/RouterHistoryContext";
 import { User, Work, WorkConnection } from "src/graphQL/type";
 
 const QueryGetUser = gql(`
@@ -63,6 +63,7 @@ export default (props: React.Props<{}>) => {
     const auth = useContext(AuthContext);
     const notification = useContext(NotificationContext);
     const routerHistory = useContext(RouterHistoryContext);
+    const localization = useContext(LocalizationContext);
 
     const urlMatch = routerHistory.location.pathname.match(/\/users\/(.*)/);
     if (!urlMatch)
@@ -89,12 +90,58 @@ export default (props: React.Props<{}>) => {
                         </Fragment>
                     )
                   : !(query.data && query.data.getUser) ? <NotFound/>
-                  :                                     (
-                        <UserPage
-                            auth={auth}
-                            routerHistory={routerHistory}
-                            query={query}
-                        />
+                  :                                       (
+                        (() => {
+                            const queryParam = toObjectFromURIQuery(routerHistory.history.location.search);
+                            const contentType = queryParam ? queryParam["content"]
+                                                :            "user";
+
+                            const user = query.data.getUser as User;
+                            const workConnection = user.works as WorkConnection;
+                            const contents = [
+                                {
+                                    text: localization.locationText["Profile"],
+                                    value: "user"
+                                },
+                                {
+                                    text: `${localization.locationText["Work list"]}(${workConnection.items.length})`,
+                                    value: "work"
+                                }
+                            ];
+
+                            return (
+                                <Fragment>
+                                    <UserPageHeader
+                                        user={query.data.getUser}
+                                        selectedContentValue={contentType}
+                                        contents={contents}
+                                        onSelectContent={x => routerHistory.history.push(`?content=${x.value}`)}
+                                    />
+                                    <UserPage
+                                        auth={auth}
+                                        query={query}
+                                        user={user}
+                                        workConnection={workConnection}
+                                        contentType={contentType}
+                                    />
+                                    <Footer
+                                        selectedContentValue={contentType}
+                                        contents={contents}
+                                        onSelectContent={x => routerHistory.history.push(`?content=${x.value}`)}
+                                    />
+                                    <Fab
+                                        style={{
+                                            visibility: (
+                                                (auth.token && auth.token.payload.sub === user.id) && contentType === "user" ? "visible" : "hidden"
+                                            )
+                                        }}
+                                        onClick={() => routerHistory.history.push("/profile")}
+                                    >
+                                        <EditIcon />
+                                    </Fab>
+                                </Fragment>
+                            );
+                        })()
                     )
                 ))}
             </Query>
@@ -105,24 +152,25 @@ export default (props: React.Props<{}>) => {
 const UserPage = (
     {
         auth,
-        routerHistory,
         query: {
-            data,
             fetchMore
-        }
+        },
+        user,
+        workConnection,
+        contentType
     }: {
         auth: AuthValue;
-        routerHistory: RouterHistoryValue,
         query: QueryResult<any, {
             id: any;
         }>;
+        user: User,
+        workConnection: WorkConnection,
+        contentType: string
     }
 ) => {
     const [selectedWork, setSelectedWork] = useState<Work | undefined>(undefined);
     const [workDialogOpend, setWorkDialogOpen] = useState<boolean>(false);
     const [workListRow, setWorkListRow] = useState<number>(4);
-
-    const localization = useContext(LocalizationContext);
 
     useEffect(
         () => {
@@ -141,99 +189,59 @@ const UserPage = (
         []
     );
 
-    const queryParam = toObjectFromURIQuery(routerHistory.history.location.search);
-    const contentType = queryParam ? queryParam["content"]
-                      :              "user";
-
-    const user = data.getUser as User;
-    const workConnection = user.works as WorkConnection;
-    const contents = [
-        {
-            text: localization.locationText["Profile"],
-            value: "user"
-        },
-        {
-            text: `${localization.locationText["Work list"]}(${workConnection.items.length})`,
-            value: "work"
-        }
-    ];
-
     return (
-        <Fragment>
-            <UserPageHeader
-                user={user}
-                selectedContentValue={contentType}
-                contents={contents}
-                onSelectContent={x => routerHistory.history.push(`?content=${x.value}`)}
-            />
-            <ViewPager
-                selectedIndex={contentType === "user" ? 0 : 1}
-            >
-                <UserContent>
-                    <div>
-                        <Typography gutterBottom variant="caption">
-                            <LocationText text="Message"/>
-                        </Typography>
-                        <StyledTypography gutterBottom>
-                            {user.message}
-                        </StyledTypography>
-                    </div>
-                    <div>
-                        <Typography gutterBottom variant="caption">
-                            <LocationText text="Career"/>
-                        </Typography>
-                        <StyledTypography gutterBottom>
-                            {user.career}
-                        </StyledTypography>
-                    </div>
-                    <div>
-                        <Typography gutterBottom variant="caption">
-                            <LocationText text="Skill"/>
-                        </Typography>
-                        {user.skillList && user.skillList.map(x =>
-                            <SkillTag key={x}>{x}</SkillTag>
-                        )}
-                    </div>
-                </UserContent>
-                <WorkContent>
-                    <WorkList
-                        works={workConnection.items}
-                        workListRow={workListRow}
-                        onWorkItemClick={(x: Work) => {
-                            setWorkDialogOpen(true);
-                            setSelectedWork(x);
-                        }}
-                    />
-                    <WorkDialog
-                        editable={false}
-                        open={workDialogOpend}
-                        onClose={() => setWorkDialogOpen(false)}
-                        work={selectedWork}
-                        userId={auth.token ? auth.token.payload.sub : ""}
-                    />
-                    <StreamSpinner
-                        key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
-                        disable={!workConnection.exclusiveStartKey ? true : false}
-                        onVisible={handleStreamSpinnerVisible(workConnection, fetchMore)}
-                    />
-                </WorkContent>
-            </ViewPager>
-            <Footer
-                selectedContentValue={contentType}
-                contents={contents}
-                onSelectContent={x => routerHistory.history.push(`?content=${x.value}`)}
-            />
-            <Fab
-                style={{
-                    visibility: (
-                        (auth.token && auth.token.payload.sub === user.id) && contentType === "user" ? "visible" : "hidden"
-                    )
-                }}
-                onClick={() => routerHistory.history.push("/profile")}
-            >
-                <EditIcon />
-            </Fab>
-        </Fragment>
+        <ViewPager
+            selectedIndex={contentType === "user" ? 0 : 1}
+        >
+            <UserContent>
+                <div>
+                    <Typography gutterBottom variant="caption">
+                        <LocationText text="Message"/>
+                    </Typography>
+                    <StyledTypography gutterBottom>
+                        {user.message}
+                    </StyledTypography>
+                </div>
+                <div>
+                    <Typography gutterBottom variant="caption">
+                        <LocationText text="Career"/>
+                    </Typography>
+                    <StyledTypography gutterBottom>
+                        {user.career}
+                    </StyledTypography>
+                </div>
+                <div>
+                    <Typography gutterBottom variant="caption">
+                        <LocationText text="Skill"/>
+                    </Typography>
+                    {user.skillList && user.skillList.map(x =>
+                        <SkillTag key={x}>{x}</SkillTag>
+                    )}
+                </div>
+            </UserContent>
+            <WorkContent>
+                <WorkList
+                    works={workConnection.items}
+                    workListRow={workListRow}
+                    onWorkItemClick={(x: Work) => {
+                        setWorkDialogOpen(true);
+                        setSelectedWork(x);
+                    }}
+                />
+                <WorkDialog
+                    editable={false}
+                    open={workDialogOpend}
+                    onClose={() => setWorkDialogOpen(false)}
+                    work={selectedWork}
+                    userId={auth.token ? auth.token.payload.sub : ""}
+                />
+                <StreamSpinner
+                    key={`spinner-${workConnection && workConnection.exclusiveStartKey}`}
+                    disable={!workConnection.exclusiveStartKey ? true : false}
+                    onVisible={handleStreamSpinnerVisible(workConnection, fetchMore)}
+                />
+            </WorkContent>
+        </ViewPager>
     );
 };
 
