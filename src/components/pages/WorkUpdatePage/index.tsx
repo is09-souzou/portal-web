@@ -87,7 +87,7 @@ export default (props: React.Props<{}>) => {
                   : query.error                         ? (
                         <Fragment>
                             <ErrorTemplate/>
-                            <notification.ErrorComponent error={query.error}/>
+                            <notification.ErrorComponent message={query.error.message}/>
                         </Fragment>
                     )
                   : !(query.data && query.data.getWork) ? <NotFound/>
@@ -281,7 +281,7 @@ const WorkUpdatePage = (
                     </Button>
                 </ActionArea>
             </div>
-            {updateWorkError && <notification.ErrorComponent message={updateWorkError}/>}
+            {updateWorkError && <notification.ErrorComponent message={updateWorkError.message}/>}
             <WorkDialog
                 editable={true}
                 open={workDialogOpend}

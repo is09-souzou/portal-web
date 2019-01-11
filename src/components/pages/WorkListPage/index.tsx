@@ -76,7 +76,7 @@ export default (props: React.Props<{}>) => {
                   : query.error                            ? (
                         <Fragment>
                             <ErrorTemplate/>
-                            <notification.ErrorComponent error={query.error}/>
+                            <notification.ErrorComponent message={query.error.message}/>
                         </Fragment>
                     )
                   : !(query.data && query.data.listWorks && query.data.listWorks.items.length !== 0)  ? <NotFound/>

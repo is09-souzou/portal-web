@@ -246,7 +246,7 @@ const WorkPostPage = (
                 work={previewWork}
                 userId={auth.token!.payload.sub}
             />
-            {createWorkError && <notification.ErrorComponent message={createWorkError}/>}
+            {createWorkError && <notification.ErrorComponent message={createWorkError.message}/>}
         </Host>
     );
 };

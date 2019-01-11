@@ -24,7 +24,7 @@ export default (
         <Fragment>
             <NotificationContext.Provider
                 value={{
-                    ErrorComponent: (props: any) => <NotificationComponent type="error" {...props}/>,
+                    ErrorComponent: ({ message }) => <NotificationComponent type="error" message={message}/>,
                     notification: (type: "info" | "error", message: string) => {
                         setNotification(
                             notifications.concat({
@@ -33,7 +33,7 @@ export default (
                                 key  : Date.now()
                             })
                         );
-                    },
+                    }
                 }}
             >
                 {children}

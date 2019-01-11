@@ -182,7 +182,7 @@ class Navigator extends React.Component<Props, State> {
                                                     primary={<span style={{ color: "red" }}>Error</span>}
                                                 />
                                             </NestedListItem>
-                                            <notification.ErrorComponent error={error}/>
+                                            <notification.ErrorComponent message={error.message}/>
                                         </Fragment>
                                     );
                                 }
@@ -316,6 +316,7 @@ const TagList = styled(List as React.SFC<ListProps>)`
     && {
         overflow: auto;
         max-height: 50vh;
+        min-height: 10rem;
     }
 `;
 

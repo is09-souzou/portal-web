@@ -13,7 +13,7 @@ import React, { useState } from "react";
 import { TransitionProps } from "react-transition-group/Transition";
 import styled from "styled-components";
 
-interface Props extends StandardProps<
+export interface NotificationProps extends StandardProps<
     React.HTMLAttributes<HTMLDivElement> & Partial<TransitionHandlerProps>,
     SnackbarClassKey
 > {
@@ -40,7 +40,7 @@ export default (
         type,
         message,
         ...props
-    }: Props
+    }: NotificationProps
 ) => {
     const [visibled, setVisibility] = useState<boolean>(true);
     const _onClose = () => setVisibility(false);
@@ -52,7 +52,8 @@ export default (
                 vertical: "bottom"
             }}
             onClose={onClose || _onClose}
-            autoHideDuration={6000}
+            // autoHideDuration={6000}
+            autoHideDuration={120000}
             ContentProps={{
                 "aria-describedby": "message-id",
             }}

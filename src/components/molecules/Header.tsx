@@ -49,9 +49,6 @@ export default (
     const routerHistory = useContext(RouterHistoryContext);
     const notification = useContext(NotificationContext);
 
-    const handleMenu = (e: React.MouseEvent<HTMLElement>): void =>
-        setUserMenuAnchorElement(e.currentTarget);
-
     // const handleSearch = (e: React.KeyboardEvent) => {
     //     const value = (e.target as any).value;
     //     if (e.keyCode && e.keyCode === 13) {
@@ -59,11 +56,10 @@ export default (
     //     }
     // };
 
-    const closeMenu = () => setUserMenuAnchorElement(undefined);
     const signIn = async (email: string, password: string) => {
         await auth.signIn(email, password);
         routerHistory.history.push("?sign-in=false");
-        closeMenu();
+        setUserMenuAnchorElement(undefined);
     };
 
     const queryParam = toObjectFromURIQuery(routerHistory.history.location.search);
@@ -104,18 +100,18 @@ export default (
                             {(query =>
                                 (
                                     query.loading                       ? <GraphQLProgress size={24}/>
-                                    : query.error                         ? (
+                                  : query.error                         ? (
                                         <Fragment>
                                             <div>?</div>
-                                            <notification.ErrorComponent error={query.error}/>
+                                            <notification.ErrorComponent message={query.error.message}/>
                                         </Fragment>
                                     )
-                                    : !(query.data && query.data.getUser) ? <Redirect to="/profile?initial-registration=true"/>
-                                    :                                       (
+                                 : !(query.data && query.data.getUser) ? <Redirect to="/profile?initial-registration=true"/>
+                                 :                                       (
                                         <HeaderUser
                                             auth={auth}
-                                            closeMenu={closeMenu}
-                                            handleMenu={handleMenu}
+                                            closeMenu={() => setUserMenuAnchorElement(undefined)}
+                                            handleMenu={e => setUserMenuAnchorElement(e.currentTarget)}
                                             userMenuAnchorElement={userMenuAnchorElement}
                                             query={query}
                                         />
