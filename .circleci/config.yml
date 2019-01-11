@@ -1,38 +1,89 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
-version: 2
-jobs:
-  build:
+version: 2.1
+workflows:
+  main:
+    jobs:
+      - test:
+          name: test_node_10
+          node_version: 10.11.0
+      - build:
+          name: build_node_10
+          node_version: 10.11.0
+          filters:
+            branches:
+              only: master
+      - deploy:
+          name: deploy_node_10
+          filters:
+            branches:
+              only: master
+          requires:
+            - test_node_10
+            - build_node_10
+
+executors:
+  default:
+    parameters: &node_version_parameters
+      node_version:
+        type: enum
+        enum: ["10.11.0", "8.12.0", "6.14.4"]
+    working_directory: ~/workspace
     docker:
-      # specify the version you desire here
-      - image: circleci/node:10.2
+      - image: circleci/node:<< parameters.node_version >>
+  awscli:
+    docker:
+      - image: cdssnc/aws-cli
+    working_directory: ~/workspace
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-
-    working_directory: ~/repo
-
+jobs:
+  test:
+    parameters: *node_version_parameters
+    executor:
+      name: default
+      node_version: << parameters.node_version >>
     steps:
       - checkout
-
-      # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-      - run: yarn install
-
+            - v1-dependencies-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-dependencies-{{ .Branch }}-
+            - v1-dependencies-
+      - run:
+          name: Install dependencies
+          command: yarn install
       - save_cache:
+          key: v1-dependencies-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-
-      # run tests!
-      - run: yarn test
-
+      - run:
+          name: Check diff (yarn.lock)
+          command: git diff --exit-code
+      - run:
+          name: Run Test
+          command: yarn test
+  build:
+    parameters: *node_version_parameters
+    executor:
+      name: default
+      node_version: << parameters.node_version >>
+    steps:
+      - run:
+          name: Run Build
+          command: yarn build
+      - persist_to_workspace:
+          root: .
+          paths: dist
+  deploy:
+    executor:
+      name: awscli
+    steps:
+      - attach_workspace:
+          at: dist
+      - run:
+          name: Install awscli
+          command: sudo pip install awscli
+      - run: aws configure set aws_access_key_id ${AWS_ACCESS_KEY}
+      - run: aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
+      - run: aws configure set default.region ap-northeast-1
+      - run:
+          name: Run Deploy
+          command: yarn deploy
