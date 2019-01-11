@@ -137,7 +137,7 @@ export default (
                                             </div>
                                         </UserInformation>
                                     </Link>
-                                    ({!editable && work.userId === userId) && (
+                                    {(!editable && work.userId === userId) && (
                                         <Link
                                             to={`/works/update-work/${work.id}`}
                                             onClick={onClose}
