@@ -16,11 +16,7 @@ import uuidv4 from "uuid/v4";
 
 const Transition = (props: SlideProps) =>  <Slide direction="up" {...props}/>;
 
-const handleFormSubmit = (
-    onSignUp: SingUp,
-    onClose: DialogProps["onClose"],
-    notification: NotificationValue["notification"]
-) => async (e: React.FormEvent<HTMLFormElement>) => {
+const handleFormSubmit = (onSignUp: SingUp, notification: NotificationValue["notification"]) => async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const userName = uuidv4();
 
@@ -38,22 +34,24 @@ const handleFormSubmit = (
         notification("error", e);
         return;
     }
-    onClose && onClose(e);
 };
 interface Props extends DialogProps {
     onSignUp: SingUp;
+    onSignInButtonClick: () => void;
 }
 
 export default (
     {
         onClose,
         onSignUp,
+        onSignInButtonClick,
         ...props
     }: Props
 ) => (
     <NotificationContext.Consumer>
         {({ notification }) => (
             <Dialog
+                onClose={onClose}
                 TransitionComponent={Transition}
                 keepMounted
                 aria-labelledby="alert-dialog-slide-title"
@@ -61,7 +59,7 @@ export default (
                 {...props}
             >
                 <form
-                    onSubmit={handleFormSubmit(onSignUp, onClose, notification)}
+                    onSubmit={handleFormSubmit(onSignUp, notification)}
                 >
                     <DialogTitle id="alert-dialog-slide-title">
                         <LocationText text="Create account"/>
@@ -90,10 +88,8 @@ export default (
                         />
                     </StyledDialogContent>
                     <DialogActions>
-                        <Button
-                            onClick={onClose}
-                        >
-                            <LocationText text="Cancel"/>
+                        <Button onClick={onSignInButtonClick} color="primary">
+                            <LocationText text="Sign in"/>
                         </Button>
                         <Button component="button" color="primary" type="submit" variant="contained">
                             <LocationText text="Create"/>

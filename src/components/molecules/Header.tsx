@@ -137,6 +137,7 @@ export default (
                 open={signUpDialogVisible}
                 onClose={() => routerHistory.history.push("?sign-in=false")}
                 onSignUp={auth.signUp}
+                onSignInButtonClick={() => routerHistory.history.push("?sign-in=true")}
             />
             <InitialRegistrationDialog
                 open={initialRegistrationDialogVisible}
