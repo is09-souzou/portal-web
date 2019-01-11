@@ -315,6 +315,7 @@ const Title = styled(Typography as React.SFC<TypographyProps>)`
 const TagList = styled(List as React.SFC<ListProps>)`
     && {
         overflow: auto;
+        max-height: 50vh;
     }
 `;
 
