@@ -30,7 +30,7 @@ export default () => {
     if (!auth.token) {
         const queryParam = toObjectFromURIQuery(routerHistory.history.location.search);
         if (!((queryParam && queryParam["sign-in"] === "true") || (queryParam && queryParam["sign-up"] === "true")))
-            routerHistory.history.push("?sign-in=true");
+            routerHistory.history.push("/?sign-in=true");
 
         return (
             <Host>
