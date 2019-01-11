@@ -5,8 +5,8 @@ export default (value: string, selectionNumbers: [number, number]): [string, [nu
 
     const convertedValue = value.split("\n")
         .map((x: string, i: number) => {
-            if (i + 1 >= lines[0] && i + 1 <= lines[1]) {
-                return x.replace(/^/g, "\n| 左揃え | 中央揃え | 右揃え |\n| :- | :-: | -: |\n| text | text | text |\n");
+            if (i + 1 === lines[1]) {
+                return x.replace(/$/g, "\n| 左揃え | 中央揃え | 右揃え |\n| :- | :-: | -: |\n| text | text | text |");
             }
             return x;
         })
@@ -14,9 +14,6 @@ export default (value: string, selectionNumbers: [number, number]): [string, [nu
 
     return [
         convertedValue,
-        [
-            selectionNumbers[0],
-            selectionNumbers[1]
-        ]
+        selectionNumbers
     ];
 };
