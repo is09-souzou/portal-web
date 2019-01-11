@@ -1,4 +1,4 @@
-import getLines from "./getLines";
+import getLines from "src/util/markdown/getLines";
 
 interface BaseTextConverterArgs {
     value: string;

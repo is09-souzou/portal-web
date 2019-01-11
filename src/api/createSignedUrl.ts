@@ -1,5 +1,5 @@
-import config     from "../config";
-import toURIQuery from "./toURIQuery";
+import toURIQuery from "src/api/toURIQuery";
+import config from "src/config";
 
 interface Props {
     userId  : string;
@@ -24,11 +24,11 @@ export default async (
     const response = await fetch(
         `${config.apiGateway.uri}/signed-url?${toURIQuery({ userId, type, mimetype })}`,
         {
-            method : "GET",
             headers: {
                 Authorization: jwt,
                 Date: new Date().toUTCString()
-            }
+            },
+            method : "GET"
         }
     );
 

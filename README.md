@@ -71,6 +71,10 @@ Default region name [None]:
 Default output format [None]: 
 ```
 
+##### Develop
+###### Editor setup
+https://github.com/styled-components/vscode-styled-components
+
 ##### Deploy
 ```bash
 $ yarn deploy
