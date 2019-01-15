@@ -1,3 +1,4 @@
+import { Tooltip } from "@material-ui/core";
 import {
     CodeRounded               as CodeIcon,
     FormatBoldRounded         as BoldIcon,
@@ -79,59 +80,82 @@ export default (
     }: MarkdownSupportsProps
 ) => (
     <ToolList>
-        <ToolItem
-            onClick={handleConvert("heading", onChangeValue, element)}
-        >
-            <span>H</span>
-        </ToolItem>
-        <ToolItem
-            onClick={handleConvert("listNumber", onChangeValue, element)}
-        >
-            <ListIcon/>
-        </ToolItem>
-        <ToolItem
-            onClick={handleConvert("list", onChangeValue, element)}
-        >
-            <ListBulletedIcon/>
-        </ToolItem>
-        <ToolItem
-            onClick={handleConvert("separator", onChangeValue, element)}
-        >
-            <span>─</span>
-        </ToolItem>
-        <ToolItem
-            onClick={handleConvert("anchor", onChangeValue, element)}
-        >
-            <LinkIcon/>
-        </ToolItem>
-        <ToolItem
-            onClick={handleConvert("quote", onChangeValue, element)}
-        >
-            <QuoteIcon/>
-        </ToolItem>
-        <ToolItem
-            onClick={handleConvert("snippet", onChangeValue, element)}
-        >
-            <CodeIcon/>
-        </ToolItem><ToolItem
-            onClick={handleConvert("table", onChangeValue, element)}
-        >
-            <TableChartIcon/>
-        </ToolItem>
-        <ToolItem
-            onClick={handleConvert("strikethrough", onChangeValue, element)}
-        >
-            <StrikeIcon/>
-        </ToolItem>
-        <ToolItem
-            onClick={handleConvert("bold", onChangeValue, element)}
-        >
-            <BoldIcon/>
-        </ToolItem>
-        <ToolItem
-            onClick={handleConvert("italic", onChangeValue, element)}
-        >
-            <ItalicIcon/>
-        </ToolItem>
+        <Tooltip title="Heding">
+            <ToolItem
+                onClick={handleConvert("heading", onChangeValue, element)}
+            >
+                <span>H</span>
+            </ToolItem>
+        </Tooltip>
+        <Tooltip title="Numbered List">
+            <ToolItem
+                onClick={handleConvert("listNumber", onChangeValue, element)}
+            >
+                <ListIcon/>
+            </ToolItem>
+        </Tooltip>
+        <Tooltip title="Generic List">
+            <ToolItem
+                onClick={handleConvert("list", onChangeValue, element)}
+            >
+                <ListBulletedIcon/>
+            </ToolItem>
+        </Tooltip>
+        <Tooltip title="Insert Horizontal Line">
+            <ToolItem
+                onClick={handleConvert("separator", onChangeValue, element)}
+            >
+                <span>─</span>
+            </ToolItem>
+        </Tooltip>
+        <Tooltip title="Create Link">
+            <ToolItem
+                onClick={handleConvert("anchor", onChangeValue, element)}
+            >
+                <LinkIcon/>
+            </ToolItem>
+        </Tooltip>
+        <Tooltip title="Quote">
+            <ToolItem
+                onClick={handleConvert("quote", onChangeValue, element)}
+            >
+                <QuoteIcon/>
+            </ToolItem>
+        </Tooltip>
+        <Tooltip title="Code">
+            <ToolItem
+                onClick={handleConvert("snippet", onChangeValue, element)}
+            >
+                <CodeIcon/>
+            </ToolItem>
+        </Tooltip>
+        <Tooltip title="Insert Table">
+            <ToolItem
+                onClick={handleConvert("table", onChangeValue, element)}
+            >
+                <TableChartIcon/>
+            </ToolItem>
+        </Tooltip>
+        <Tooltip title="Strikethrough">
+            <ToolItem
+                onClick={handleConvert("strikethrough", onChangeValue, element)}
+            >
+                <StrikeIcon/>
+            </ToolItem>
+        </Tooltip>
+        <Tooltip title="Bold">
+            <ToolItem
+                onClick={handleConvert("bold", onChangeValue, element)}
+            >
+                <BoldIcon/>
+            </ToolItem>
+        </Tooltip>
+        <Tooltip title="Italic">
+            <ToolItem
+                onClick={handleConvert("italic", onChangeValue, element)}
+            >
+                <ItalicIcon/>
+            </ToolItem>
+        </Tooltip>
     </ToolList>
 );
