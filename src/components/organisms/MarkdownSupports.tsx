@@ -11,6 +11,7 @@ import {
     TableChartRounded         as TableChartIcon
 } from "@material-ui/icons";
 import React from "react";
+import LocationText from "src/components/atoms/LocationText";
 import ToolItem from "src/components/atoms/ToolItem";
 import ToolList from "src/components/atoms/ToolList";
 import {
@@ -80,77 +81,77 @@ export default (
     }: MarkdownSupportsProps
 ) => (
     <ToolList>
-        <Tooltip title="Heding">
+        <Tooltip title={<LocationText text="Heading"/>}>
             <ToolItem
                 onClick={handleConvert("heading", onChangeValue, element)}
             >
                 <span>H</span>
             </ToolItem>
         </Tooltip>
-        <Tooltip title="Numbered List">
+        <Tooltip title={<LocationText text="Numbered list"/>}>
             <ToolItem
                 onClick={handleConvert("listNumber", onChangeValue, element)}
             >
                 <ListIcon/>
             </ToolItem>
         </Tooltip>
-        <Tooltip title="Generic List">
+        <Tooltip title={<LocationText text="Generic list"/>}>
             <ToolItem
                 onClick={handleConvert("list", onChangeValue, element)}
             >
                 <ListBulletedIcon/>
             </ToolItem>
         </Tooltip>
-        <Tooltip title="Insert Horizontal Line">
+        <Tooltip title={<LocationText text="Insert horizontal line"/>}>
             <ToolItem
                 onClick={handleConvert("separator", onChangeValue, element)}
             >
                 <span>─</span>
             </ToolItem>
         </Tooltip>
-        <Tooltip title="Create Link">
+        <Tooltip title={<LocationText text="Create link"/>}>
             <ToolItem
                 onClick={handleConvert("anchor", onChangeValue, element)}
             >
                 <LinkIcon/>
             </ToolItem>
         </Tooltip>
-        <Tooltip title="Quote">
+        <Tooltip title={<LocationText text="Quote"/>}>
             <ToolItem
                 onClick={handleConvert("quote", onChangeValue, element)}
             >
                 <QuoteIcon/>
             </ToolItem>
         </Tooltip>
-        <Tooltip title="Code">
+        <Tooltip title={<LocationText text="Code"/>}>
             <ToolItem
                 onClick={handleConvert("snippet", onChangeValue, element)}
             >
                 <CodeIcon/>
             </ToolItem>
         </Tooltip>
-        <Tooltip title="Insert Table">
+        <Tooltip title={<LocationText text="Insert table"/>}>
             <ToolItem
                 onClick={handleConvert("table", onChangeValue, element)}
             >
                 <TableChartIcon/>
             </ToolItem>
         </Tooltip>
-        <Tooltip title="Strikethrough">
+        <Tooltip title={<LocationText text="Strikethrough"/>}>
             <ToolItem
                 onClick={handleConvert("strikethrough", onChangeValue, element)}
             >
                 <StrikeIcon/>
             </ToolItem>
         </Tooltip>
-        <Tooltip title="Bold">
+        <Tooltip title={<LocationText text="Bold"/>}>
             <ToolItem
                 onClick={handleConvert("bold", onChangeValue, element)}
             >
                 <BoldIcon/>
             </ToolItem>
         </Tooltip>
-        <Tooltip title="Italic">
+        <Tooltip title={<LocationText text="Italic"/>}>
             <ToolItem
                 onClick={handleConvert("italic", onChangeValue, element)}
             >
