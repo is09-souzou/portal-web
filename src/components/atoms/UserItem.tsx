@@ -1,6 +1,5 @@
 import { Typography } from "@material-ui/core";
 import React from "react";
-import Link from "src/components/atoms/Link";
 import { User } from "src/graphQL/type";
 import styled from "styled-components";
 
@@ -28,7 +27,6 @@ export default (
                 {user.displayName}
             </Typography>
         </div>
-        <Link to={`/users/${user.id}`} />
     </UserItemBase>
 );
 

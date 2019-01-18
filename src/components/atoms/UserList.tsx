@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "src/components/atoms/Link";
 import UserItem from "src/components/atoms/UserItem";
 import { User } from "src/graphQL/type";
 import styled from "styled-components";
@@ -17,7 +18,7 @@ export default (
     }: Props
 ) => (
     <UserList>
-        {[...Array(userListRow).keys()].map(x => console.log("debug", x) || (
+        {[...Array(userListRow).keys()].map(x => (
             <div
                 key={x}
                 style={{
@@ -27,11 +28,16 @@ export default (
                 {users
                     .filter((_, i) => i % userListRow === x)
                     .map(x => (
-                        <UserItem
-                            user={x}
+                        <Link
                             key={x.id}
-                            onClick={() => onUserItemClick(x)}
-                        />
+                            to={`/users/${x.id}`}
+                        >
+                            <UserItem
+                                user={x}
+                                key={x.id}
+                                onClick={() => onUserItemClick(x)}
+                            />
+                        </Link>
                     )
                 )}
             </div>

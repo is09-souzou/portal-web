@@ -76,7 +76,6 @@ const UserListPage = (
         }>
     }
 ) => {
-    const userId = data.listUsers.items as User;
     const [, setSelectedUser] = useState<User | undefined>(undefined);
     const userConnection = data.listUsers as UserConnection;
     const [userListRow, setUserListRow] = useState<number>(4);
@@ -97,7 +96,6 @@ const UserListPage = (
         },
         []
     );
-    console.log(userId);
     return (
         <div>
                 <UserList
