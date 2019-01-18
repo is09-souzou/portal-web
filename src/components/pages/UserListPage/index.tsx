@@ -1,23 +1,18 @@
-import {
-    List,
-    ListItem,
-    ListItemText
-} from "@material-ui/core";
 import { ApolloQueryResult, FetchMoreOptions, FetchMoreQueryOptions } from "apollo-client";
 import { DocumentNode } from "apollo-link/lib/types";
 import gql from "graphql-tag";
-import React, { useContext, Fragment } from "react";
+import React, { useContext, useEffect, useState, Fragment } from "react";
 import { Query, QueryResult } from "react-apollo";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import LocationText from "src/components/atoms/LocationText";
-import Page from "src/components/atoms/Page";
 import StreamSpinner from "src/components/atoms/StreamSpinner";
+import UserList from "src/components/atoms/UserList";
 import Header from "src/components/molecules/Header";
 import NotFound from "src/components/molecules/NotFound";
+import Host from "src/components/pages/WorkListPage/Host";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
-import { UserConnection } from "src/graphQL/type";
-import getTagsByURLQueryParam from "src/util/getTagsByURLQueryParam";
+import { User, UserConnection } from "src/graphQL/type";
 
 const QueryGetUserList = gql(`
     query($limit: Int, $exclusiveStartKey: ID) {
@@ -25,6 +20,7 @@ const QueryGetUserList = gql(`
             items {
                 id
                 displayName
+                avatarUri
             }
         }
     }
@@ -34,7 +30,7 @@ export default (props: React.Props<{}>) => {
     const notification = useContext(NotificationContext);
 
     return (
-        <Page
+        <Host
             ref={props.ref as any}
             {...props}
         >
@@ -63,7 +59,7 @@ export default (props: React.Props<{}>) => {
                     )
                 )}
             </Query>
-        </Page>
+        </Host>
     );
 };
 
@@ -80,24 +76,56 @@ const UserListPage = (
         }>
     }
 ) => {
-
+    const userId = data.listUsers.items as User;
+    const [, setSelectedUser] = useState<User | undefined>(undefined);
     const userConnection = data.listUsers as UserConnection;
+    const [userListRow, setUserListRow] = useState<number>(4);
 
+    useEffect(
+        () => {
+            const resize = () => {
+                const row = getRow();
+                if (row !== userListRow)
+                    setUserListRow(row);
+                else
+                    setUserListRow(userListRow);
+            };
+            resize();
+            window.addEventListener("resize", resize);
+
+            return () => window.removeEventListener("resize", resize);
+        },
+        []
+    );
+    console.log(userId);
     return (
         <div>
-            <List>
-                {data.listUsers.items.map((user: any) => <ListItem key={user.id}>
-                    <ListItemText primary={user.displayName} secondary={user.id} />
-                </ListItem>)}
-            </List>
-            <StreamSpinner
-                key={`spinner-${userConnection && userConnection.exclusiveStartKey}.join("_")}`}
-                disable={!userConnection.exclusiveStartKey ? true : false}
-                onVisible={handleStreamSpinnerVisible(userConnection, fetchMore)}
-            />
+                <UserList
+                    users={userConnection.items}
+                    userListRow={userListRow}
+                    onUserItemClick={(x: User) => {
+                        setSelectedUser(x);
+                    }}
+                />
+                <StreamSpinner
+                    key={`spinner-${userConnection && userConnection.exclusiveStartKey}.join("_")}`}
+                    disable={!userConnection.exclusiveStartKey ? true : false}
+                    onVisible={handleStreamSpinnerVisible(userConnection, fetchMore)}
+                />
         </div>
     );
 };
+
+const getRow = () => (
+    window.innerWidth > 767 ?
+        window.innerWidth > 1020 ? 4
+      : window.innerWidth > 840  ? 3
+      :                            2
+  :
+        window.innerWidth > 600  ? 3
+      : window.innerWidth > 480  ? 2
+      :                            1
+);
 
 const handleStreamSpinnerVisible = (
     userConnection: UserConnection,
