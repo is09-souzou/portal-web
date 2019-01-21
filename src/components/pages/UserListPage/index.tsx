@@ -15,12 +15,18 @@ import NotificationContext, { NotificationValue } from "src/contexts/Notificatio
 import { User, UserConnection } from "src/graphQL/type";
 
 const QueryGetUserList = gql(`
-    query($limit: Int, $exclusiveStartKey: ID) {
+    query($limit: Int, $exclusiveStartKey: ID, ) {
         listUsers(limit: $limit, exclusiveStartKey: $exclusiveStartKey) {
             items {
                 id
                 displayName
                 avatarUri
+                works(limit: $limit) {
+                    items {
+                        id
+                        userId
+                    }
+                }
             }
         }
     }
@@ -79,6 +85,7 @@ const UserListPage = (
     const [, setSelectedUser] = useState<User | undefined>(undefined);
     const userConnection = data.listUsers as UserConnection;
     const [userListRow, setUserListRow] = useState<number>(4);
+    console.log(data);
 
     useEffect(
         () => {

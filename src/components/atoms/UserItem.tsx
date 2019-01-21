@@ -5,11 +5,13 @@ import styled from "styled-components";
 
 interface UserItemProps extends React.HTMLAttributes<HTMLDivElement> {
     user: User;
+    userWorksLength: number;
 }
 
 export default (
     {
         user,
+        userWorksLength,
         ...props
     }: UserItemProps
 ) => (
@@ -23,8 +25,11 @@ export default (
             )}
         />
         <div>
-            <Typography variant="caption">
+            <Typography variant="subtitle1">
                 {user.displayName}
+            </Typography>
+            <Typography variant="caption">
+                {userWorksLength}
             </Typography>
         </div>
     </UserItemBase>
@@ -34,6 +39,7 @@ const UserImage = styled.img`
     width: 100%;
     border-radius: 8px;
     transition: all 0.15s ease-in-out;
+    max-height: 12rem;
     min-height: 4rem;
     cursor: pointer;
     :hover {
