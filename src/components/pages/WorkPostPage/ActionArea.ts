@@ -8,4 +8,8 @@ export default styled.div`
     > * {
         margin-left: .5rem !important;
     }
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
 `;
