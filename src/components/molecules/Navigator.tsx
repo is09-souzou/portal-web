@@ -187,8 +187,12 @@ class Navigator extends React.Component<Props, State> {
                                     );
                                 }
 
+                                if (!(data && data.listPopularTags)) {
+                                    return null;
+                                }
+
                                 const tags = getTagsByURLQueryParam(this.props.routerHistory.history);
-                                const popularTags = (data.listPopularTags as PopularTags).map(x => x.name);
+                                const popularTags = (data.listPopularTags as PopularTags || []).map(x => x.name);
 
                                 return (
                                     <TagList disablePadding>

@@ -1,5 +1,5 @@
 import { Drawer } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import Navigator from "src/components/molecules/Navigator";
 import InitialRegistrationDialog from "src/components/organisms/InitialRegistrationDialog";
 import SignInDialog from "src/components/organisms/SignInDialog";
@@ -57,12 +57,14 @@ export default (
                     <DrawerContext.Provider
                         value={{ toggleDrawer }}
                     >
-                        {children}
+                        <Fragment>
+                            {children}
+                            <SignInDialog/>
+                            <SignUpDialog/>
+                            <InitialRegistrationDialog/>
+                        </Fragment>
                     </DrawerContext.Provider>
                 </Content>
-                <SignInDialog/>
-                <SignUpDialog/>
-                <InitialRegistrationDialog/>
             </LocalizationContext.Provider>
         </Host>
     );

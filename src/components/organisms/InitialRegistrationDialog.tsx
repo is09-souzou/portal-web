@@ -206,11 +206,6 @@ export default (
                         {isProcessing && <LinearProgress/>}
                         <DialogActions>
                             <Button
-                                onClick={() => routerHistory.history.push("?initial-registration=false")}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
                                 component="button"
                                 color="primary"
                                 type="submit"

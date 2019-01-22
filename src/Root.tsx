@@ -3,6 +3,7 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import React from "react";
 import AppSyncClient from "src/components/wrappers/AppSyncClient";
 import Auth from "src/components/wrappers/Auth";
+import ErrorBoundary from "src/components/wrappers/ErrorBoundary";
 import MainLayout from "src/components/wrappers/MainLayout";
 import Notification from "src/components/wrappers/Notification";
 import RouterHistory from "src/components/wrappers/RouterHistory";
@@ -13,19 +14,21 @@ export default (
         children
     }: React.Props<{}>
 ) => (
-    <RouterHistory>
-        <MuiThemeProvider theme={theme}>
-            <Notification>
-                <Auth>
-                    <AppSyncClient>
-                        <MainLayout>
-                            {children}
-                        </MainLayout>
-                    </AppSyncClient>
-                </Auth>
-            </Notification>
-        </MuiThemeProvider>
-    </RouterHistory>
+    <ErrorBoundary>
+        <RouterHistory>
+            <MuiThemeProvider theme={theme}>
+                <Notification>
+                    <Auth>
+                        <AppSyncClient>
+                            <MainLayout>
+                                {children}
+                            </MainLayout>
+                        </AppSyncClient>
+                    </Auth>
+                </Notification>
+            </MuiThemeProvider>
+        </RouterHistory>
+    </ErrorBoundary>
 );
 
 const theme = createMuiTheme({
