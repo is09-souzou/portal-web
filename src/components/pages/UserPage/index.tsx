@@ -12,6 +12,7 @@ import LocationText from "src/components/atoms/LocationText";
 import StreamSpinner from "src/components/atoms/StreamSpinner";
 import ViewPager from "src/components/atoms/ViewPager";
 import WorkList from "src/components/atoms/WorkList";
+import Header from "src/components/molecules/Header";
 import NotFound from "src/components/molecules/NotFound";
 import UserHeader from "src/components/molecules/UserHeader";
 import WorkDialog from "src/components/organisms/WorkDialog";
@@ -82,14 +83,25 @@ export default (props: React.Props<{}>) => {
                 fetchPolicy="network-only"
             >
                 {(query => (
-                    query.loading                       ? <GraphQLProgress/>
+                    query.loading                       ? (
+                        <Fragment>
+                            <Header title={<LocationText text="User"/>}/>
+                            <GraphQLProgress/>
+                        </Fragment>
+                    )
                   : query.error                         ? (
                         <Fragment>
+                            <Header title={<LocationText text="Error"/>}/>
                             <ErrorTemplate/>
                             <notification.ErrorComponent message={query.error.message}/>
                         </Fragment>
                     )
-                  : !(query.data && query.data.getUser) ? <NotFound/>
+                  : !(query.data && query.data.getUser) ? (
+                        <Fragment>
+                            <Header title={<LocationText text="Not Found"/>}/>
+                            <NotFound/>
+                        </Fragment>
+                  )
                   :                                       (
                         (() => {
                             const queryParam = toObjectFromURIQuery(routerHistory.history.location.search);
