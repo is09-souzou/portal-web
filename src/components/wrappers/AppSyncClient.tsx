@@ -1,6 +1,6 @@
 import { AWSAppSyncClient } from "aws-appsync";
 import { Rehydrated } from "aws-appsync-react";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ApolloProvider } from "react-apollo";
 import config from "src/config";
 import AppSyncClientContext from "src/contexts/AppSyncClientContext";
@@ -24,19 +24,28 @@ export default (
             }
         })
     );
-    authContext.subscribeToken((token) => {
-        setClient(
-            new AWSAppSyncClient({
-                url: token ? config.appSync.graphqlEndpoint : config.publicAppSync.graphqlEndpoint,
-                region: config.appSync.region,
-                auth: {
-                    type: token ? config.appSync.authenticationType : config.publicAppSync.authenticationType,
-                    jwtToken: () => token ? token.jwtToken : "",
-                    apiKey: config.publicAppSync.apiKey
+
+    useEffect(
+        () => {
+            const unmount = authContext.subscribeToken(
+                (token) => {
+                    setClient(
+                        new AWSAppSyncClient({
+                            url: token ? config.appSync.graphqlEndpoint : config.publicAppSync.graphqlEndpoint,
+                            region: config.appSync.region,
+                            auth: {
+                                type: token ? config.appSync.authenticationType : config.publicAppSync.authenticationType,
+                                jwtToken: () => token ? token.jwtToken : "",
+                                apiKey: config.publicAppSync.apiKey
+                            }
+                        })
+                    );
                 }
-            })
-        );
-    });
+            );
+            return unmount;
+        },
+        []
+    );
 
     return (
         <ApolloProvider client={client as any}>
