@@ -4,7 +4,7 @@ import {
     DialogTitle,
     LinearProgress
 } from "@material-ui/core";
-import Dialog, { DialogProps } from "@material-ui/core/Dialog";
+import Dialog from "@material-ui/core/Dialog";
 import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
 import Slide, { SlideProps } from "@material-ui/core/Slide";
 import TextField, { TextFieldProps } from "@material-ui/core/TextField";
@@ -13,15 +13,15 @@ import React, { useContext, useState } from "react";
 import { Mutation, MutationFn, MutationUpdaterFn, OperationVariables } from "react-apollo";
 import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
+import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 import ImageInput from "src/components/atoms/ImageInput";
 import LocationText from "src/components/atoms/LocationText";
 import AuthContext from "src/contexts/AuthContext";
 import NotificationContext from "src/contexts/NotificationContext";
+import RouterHistoryContext from "src/contexts/RouterHistoryContext";
 import styled from "styled-components";
 
-interface Props extends DialogProps {
-    onClose?: () => void;
-}
+interface Props {}
 
 const QueryGetUser = gql(`
     query($id: ID!) {
@@ -55,7 +55,6 @@ const MutationCreateUser = gql(`
 
 export default (
     {
-        onClose,
         ...props
     }: Props
 ) => {
@@ -64,6 +63,11 @@ export default (
 
     const auth = useContext(AuthContext);
     const notification = useContext(NotificationContext);
+    const routerHistory = useContext(RouterHistoryContext);
+
+    const queryParam = toObjectFromURIQuery(routerHistory.history.location.search);
+    const initialRegistrationDialogVisible = queryParam ? queryParam["initial-registration"] === "true"
+                                           :               false;
 
     const handleFormSubmit = (createUser: MutationFn<any, OperationVariables>) => async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -130,7 +134,7 @@ export default (
                     }
                 })
             ]);
-            onClose && onClose();
+            routerHistory.history.push("?initial-registration=false");
         } catch (error) {
             notification.notification("error", error.message);
             console.error(error);
@@ -150,6 +154,7 @@ export default (
 
     return (
         <Dialog
+            open={initialRegistrationDialogVisible}
             TransitionComponent={Transition}
             keepMounted
             aria-labelledby="alert-dialog-slide-title"
@@ -201,7 +206,7 @@ export default (
                         {isProcessing && <LinearProgress/>}
                         <DialogActions>
                             <Button
-                                onClick={onClose}
+                                onClick={() => routerHistory.history.push("?initial-registration=false")}
                             >
                                 Cancel
                             </Button>
