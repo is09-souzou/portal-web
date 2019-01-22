@@ -11,6 +11,7 @@ import {
     TableChartRounded         as TableChartIcon
 } from "@material-ui/icons";
 import React from "react";
+import FlexibleSpace from "src/components/atoms/FlexibleSpace";
 import LocationText from "src/components/atoms/LocationText";
 import ToolItem from "src/components/atoms/ToolItem";
 import ToolList from "src/components/atoms/ToolList";
@@ -111,9 +112,7 @@ export default (
                     </ToolItem>
                 </Tooltip>
             </div>
-            <div
-                style={{ flexGrow: 1 }}
-            />
+            <FlexibleSpace/>
             <div>
                 <Tooltip title={<LocationText text="Code"/>}>
                     <ToolItem
@@ -144,9 +143,7 @@ export default (
                     </ToolItem>
                 </Tooltip>
             </div>
-            <div
-                style={{ flexGrow: 1 }}
-            />
+            <FlexibleSpace/>
             <div>
                 <Tooltip title={<LocationText text="Create link"/>}>
                     <ToolItem
