@@ -27,7 +27,7 @@ import WorkContentArea from "src/components/pages/WorkPostPage/WorkContentArea";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import LocalizationContext from "src/contexts/LocalizationContext";
 import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
-import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
+import RouterHistoryContext from "src/contexts/RouterHistoryContext";
 import { Work } from "src/graphQL/type";
 
 const MutationCreateWork = gql(`
@@ -69,7 +69,6 @@ export default (props: React.Props<{}>) => {
                 {(createWork, { error: createWorkError }) => (
                     <WorkPostPage
                         auth={auth}
-                        routerHistory={routerHistory}
                         createWork={createWork}
                         createWorkError={createWorkError}
                     />
@@ -82,12 +81,10 @@ export default (props: React.Props<{}>) => {
 const WorkPostPage = (
     {
         auth,
-        routerHistory,
         createWork,
         createWorkError
     }: {
         auth: AuthValue,
-        routerHistory: RouterHistoryValue,
         createWork: MutationFn<any, OperationVariables>,
         createWorkError: ApolloError | undefined
     }
@@ -129,7 +126,6 @@ const WorkPostPage = (
                     tags,
                     description,
                     isPublic,
-                    routerHistory,
                     imageUrl: mainImageUrl
                 })}
         >
@@ -368,8 +364,7 @@ const handleHostSubmit = (
         tags,
         imageUrl,
         description,
-        isPublic,
-        routerHistory
+        isPublic
     }: {
         createWork: MutationFn<any, OperationVariables>,
         auth: AuthValue,
@@ -378,8 +373,7 @@ const handleHostSubmit = (
         tags: string[],
         imageUrl?: string,
         description: string,
-        isPublic: boolean,
-        routerHistory: RouterHistoryValue
+        isPublic: boolean
     }
 ) => async (e: React.FormEvent) => {
     e.preventDefault();
@@ -430,7 +424,7 @@ const handleHostSubmit = (
     }));
 
     notification.notification("info", "Created Work!");
-    routerHistory.history.push("/");
+    window.location.replace("/");
 };
 
 const handleMarkdownSupportsChangeValue = (
