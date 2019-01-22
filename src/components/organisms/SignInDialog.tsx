@@ -7,26 +7,33 @@ import {
 } from "@material-ui/core";
 import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
 import Slide, { SlideProps } from "@material-ui/core/Slide";
-import React from "react";
+import React, { useContext } from "react";
+import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 import LocationText from "src/components/atoms/LocationText";
+import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
+import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import styled from "styled-components";
 
 interface Props {
-    open: boolean;
-    onClose: () => void;
-    onSignIn: (email: string, password: string) => void;
-    onCreateAccountButtonClick: () => void;
+    onSignIn?: (email: string, password: string) => void;
 }
 
-const handleFormSubmit = (onSignIn: Props["onSignIn"], notification: NotificationValue["notification"]) => async (e: React.FormEvent<HTMLFormElement>) => {
+const handleFormSubmit = (
+    auth: AuthValue,
+    routerHistory: RouterHistoryValue,
+    onSignIn: Props["onSignIn"],
+    notification: NotificationValue["notification"]
+) => async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const email = (e.target as any).elements["sign-in-email"].value;
     const password = (e.target as any).elements["sign-in-password"].value;
 
     try {
-        await onSignIn(email, password);
+        await auth.signIn(email, password);
+        onSignIn && onSignIn(email, password);
+        routerHistory.history.push("?sign-in=false");
     } catch (e) {
         notification("error", e);
     }
@@ -34,25 +41,30 @@ const handleFormSubmit = (onSignIn: Props["onSignIn"], notification: Notificatio
 
 export default (
     {
-        open = false,
-        onClose,
         onSignIn,
-        onCreateAccountButtonClick,
         ...props
     }: Props
-) => (
-    <NotificationContext.Consumer>
-        {({ notification }) => (
-            <Dialog
-                open={open}
-                onClose={onClose}
-                TransitionComponent={Transition}
-                keepMounted
-                aria-labelledby="alert-dialog-slide-title"
-                {...props}
-            >
+) => {
+
+    const routerHistory = useContext(RouterHistoryContext);
+    const auth = useContext(AuthContext);
+    const notification = useContext(NotificationContext);
+
+    const queryParam = toObjectFromURIQuery(routerHistory.history.location.search);
+    const signInDialogVisible = queryParam ? queryParam["sign-in"] === "true"
+                              :              false;
+
+    return (
+        <Dialog
+            open={signInDialogVisible}
+            onClose={() => routerHistory.history.push("?sign-up=false")}
+            TransitionComponent={Transition}
+            keepMounted
+            aria-labelledby="alert-dialog-slide-title"
+            {...props}
+        >
             <form
-                onSubmit={handleFormSubmit(onSignIn, notification)}
+                onSubmit={handleFormSubmit(auth, routerHistory, onSignIn, notification.notification)}
             >
                 <DialogTitle id="alert-dialog-slide-title">
                     <LocationText text="Sign in"/>
@@ -74,7 +86,10 @@ export default (
                     />
                 </StyledDialogContent>
                 <DialogActions>
-                    <Button onClick={onCreateAccountButtonClick} color="primary">
+                    <Button
+                        onClick={() => routerHistory.history.push("?sign-up=true")}
+                        color="primary"
+                    >
                         <LocationText text="Create account"/>
                     </Button>
                     <Button
@@ -86,10 +101,9 @@ export default (
                     </Button>
                 </DialogActions>
             </form>
-            </Dialog>
-        )}
-    </NotificationContext.Consumer>
-);
+        </Dialog>
+    );
+};
 
 const Transition = (props:SlideProps) =>  <Slide direction="up" {...props}/>;
 

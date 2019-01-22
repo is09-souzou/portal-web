@@ -1,6 +1,9 @@
 import { Drawer } from "@material-ui/core";
 import React, { useState } from "react";
 import Navigator from "src/components/molecules/Navigator";
+import InitialRegistrationDialog from "src/components/organisms/InitialRegistrationDialog";
+import SignInDialog from "src/components/organisms/SignInDialog";
+import SignUpDialog from "src/components/organisms/SignUpDialog";
 import DrawerContext from "src/contexts/DrawerContext";
 import LocalizationContext from "src/contexts/LocalizationContext";
 import locationTextList, { Location } from "src/localization/locale";
@@ -57,6 +60,9 @@ export default (
                         {children}
                     </DrawerContext.Provider>
                 </Content>
+                <SignInDialog/>
+                <SignUpDialog/>
+                <InitialRegistrationDialog/>
             </LocalizationContext.Provider>
         </Host>
     );

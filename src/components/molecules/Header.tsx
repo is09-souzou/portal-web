@@ -8,13 +8,9 @@ import gql from "graphql-tag";
 import React, { useContext, useState, Fragment } from "react";
 import { Query, QueryResult } from "react-apollo";
 import { Redirect } from "react-router";
-import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import Link from "src/components/atoms/Link";
 import LocationText from "src/components/atoms/LocationText";
-import InitialRegistrationDialog from "src/components/organisms/InitialRegistrationDialog";
-import SignInDialog from "src/components/organisms/SignInDialog";
-import SignUpDialog from "src/components/organisms/SignUpDialog";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import DrawerContext from "src/contexts/DrawerContext";
 import NotificationContext from "src/contexts/NotificationContext";
@@ -55,20 +51,6 @@ export default (
     //         console.log(`if: ${value}`);
     //     }
     // };
-
-    const signIn = async (email: string, password: string) => {
-        await auth.signIn(email, password);
-        routerHistory.history.push("?sign-in=false");
-        setUserMenuAnchorElement(undefined);
-    };
-
-    const queryParam = toObjectFromURIQuery(routerHistory.history.location.search);
-    const signInDialogVisible = queryParam ? queryParam["sign-in"] === "true"
-                              :              false;
-    const signUpDialogVisible = queryParam ? queryParam["sign-up"] === "true"
-                              :              false;
-    const initialRegistrationDialogVisible = queryParam ? queryParam["initial-registration"] === "true"
-                                           :               false;
 
     return (
         <StyledAppBar
@@ -123,22 +105,6 @@ export default (
                     }
                 </div>
             </StyledToolbar>
-            <SignInDialog
-                open={signInDialogVisible}
-                onClose={() => routerHistory.history.push("?sign-up=false")}
-                onSignIn={signIn}
-                onCreateAccountButtonClick={() => routerHistory.history.push("?sign-up=true")}
-            />
-            <SignUpDialog
-                open={signUpDialogVisible}
-                onClose={() => routerHistory.history.push("?sign-in=false")}
-                onSignUp={auth.signUp}
-                onSignInButtonClick={() => routerHistory.history.push("?sign-in=true")}
-            />
-            <InitialRegistrationDialog
-                open={initialRegistrationDialogVisible}
-                onClose={() => routerHistory.history.push("?initial-registration=false")}
-            />
         </StyledAppBar>
     );
 };
