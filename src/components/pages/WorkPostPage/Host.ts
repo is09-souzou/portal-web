@@ -6,6 +6,7 @@ export default styled.form`
     justify-content: center;
     margin: 0 2rem;
     width: calc(100% - 4rem);
+    padding-bottom: 2rem;
     > * {
         display: flex;
         flex-direction: column;

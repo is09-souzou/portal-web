@@ -19,6 +19,7 @@ import Header from "src/components/molecules/Header";
 import MarkdownSupports from "src/components/organisms/MarkdownSupports";
 import WorkDialog from "src/components/organisms/WorkDialog";
 import ActionArea from "src/components/pages/WorkPostPage/ActionArea";
+import ActionButtonWrapper from "src/components/pages/WorkPostPage/ActionButtonWrapper";
 import ChipList from "src/components/pages/WorkPostPage/ChipList";
 import Head from "src/components/pages/WorkPostPage/Head";
 import Host from "src/components/pages/WorkPostPage/Host";
@@ -207,30 +208,32 @@ const WorkPostPage = (
                             labelPlacement="start"
                         />
                     </FormGroup>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => handlePreviewWork({
-                            auth,
-                            setPreviewWork,
-                            setWorkDialogOpen,
-                            tags,
-                            description,
-                            isPublic,
-                            titleInputElement,
-                            imageUrl: mainImageUrl
-                        })}
-                    >
-                        <LocationText text="Preview"/>
-                    </Button>
-                    <Button
-                        type="submit"
-                        component="button"
-                        variant="contained"
-                        color="primary"
-                    >
-                        <LocationText text="Create"/>
-                    </Button>
+                    <ActionButtonWrapper>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => handlePreviewWork({
+                                auth,
+                                setPreviewWork,
+                                setWorkDialogOpen,
+                                tags,
+                                description,
+                                isPublic,
+                                titleInputElement,
+                                imageUrl: mainImageUrl
+                            })}
+                        >
+                            <LocationText text="Preview"/>
+                        </Button>
+                        <Button
+                            type="submit"
+                            component="button"
+                            variant="contained"
+                            color="primary"
+                        >
+                            <LocationText text="Create"/>
+                        </Button>
+                    </ActionButtonWrapper>
                 </ActionArea>
             </div>
             <WorkDialog

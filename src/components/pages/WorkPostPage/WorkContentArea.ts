@@ -15,4 +15,13 @@ export default styled.div`
         overflow: auto;
         margin-left: 2rem;
     }
+
+    @media (max-width: 768px) {
+        > * {
+            width: initial;
+        }
+        > :last-child {
+            display: none;
+        }
+    }
 `;

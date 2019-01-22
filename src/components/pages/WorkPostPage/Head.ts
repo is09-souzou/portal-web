@@ -9,4 +9,10 @@ export default styled.div`
     > :nth-child(2) {
         display: flex;
     }
+
+    @media (max-width: 768px) {
+        > :nth-child(2) {
+            flex-direction: column;
+        }
+    }
 `;
