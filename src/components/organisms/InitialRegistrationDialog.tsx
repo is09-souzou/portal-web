@@ -53,11 +53,7 @@ const MutationCreateUser = gql(`
     }
 `);
 
-export default (
-    {
-        ...props
-    }: Props
-) => {
+export default (props: Props) => {
 
     const [isProcessing, setProcessing] = useState<boolean>(false);
 
@@ -134,7 +130,7 @@ export default (
                     }
                 })
             ]);
-            routerHistory.history.push("?initial-registration=false");
+            routerHistory.history.push("/?initial-registration=false");
         } catch (error) {
             notification.notification("error", error.message);
             console.error(error);
@@ -181,14 +177,14 @@ export default (
                                 <div>
                                     <TextField
                                         id="initial-registration-dialog-display-name"
-                                        label="Display Name"
+                                        label={<LocationText text="Display name"/>}
                                         margin="normal"
                                         fullWidth
                                         required
                                     />
                                     <TextField
                                         id="initial-registration-dialog-email"
-                                        label="Public Mail Address"
+                                        label={<LocationText text="Public mail address"/>}
                                         margin="normal"
                                         fullWidth
                                         type="email"
@@ -197,7 +193,7 @@ export default (
                             </div>
                             <CareerTextField
                                 id="initial-registration-dialog-career"
-                                label="Career"
+                                label={<LocationText text="Career"/>}
                                 margin="normal"
                                 fullWidth
                                 multiline
@@ -228,6 +224,7 @@ const StyledDialogContent = styled(DialogContent as React.SFC<DialogContentProps
         flex-direction: column;
         > :nth-child(1) {
             display: flex;
+            flex-direction: row;
             > :nth-child(2) {
                 flex-grow: 1;
                 margin: 0 2rem 2rem;
@@ -235,6 +232,15 @@ const StyledDialogContent = styled(DialogContent as React.SFC<DialogContentProps
                 flex-direction: column;
                 justify-content: flex-end;
                 width: 16rem;
+            }
+        }
+        @media (max-width: 767px) {
+            > :nth-child(1) {
+                flex-direction: column;
+                > :nth-child(2) {
+                    margin: 0;
+                    width: initial;
+                }
             }
         }
     }

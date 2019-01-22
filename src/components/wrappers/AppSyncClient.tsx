@@ -12,7 +12,8 @@ export default (
     }: React.Props<{}>
 ) => {
     const authContext = useContext(AuthContext);
-    const [client] = useState(
+
+    const [client, setClient] = useState(
         new AWSAppSyncClient({
             url: authContext.token ? config.appSync.graphqlEndpoint : config.publicAppSync.graphqlEndpoint,
             region: config.appSync.region,
@@ -23,6 +24,19 @@ export default (
             }
         })
     );
+    authContext.subscribeToken((token) => {
+        setClient(
+            new AWSAppSyncClient({
+                url: token ? config.appSync.graphqlEndpoint : config.publicAppSync.graphqlEndpoint,
+                region: config.appSync.region,
+                auth: {
+                    type: token ? config.appSync.authenticationType : config.publicAppSync.authenticationType,
+                    jwtToken: () => token ? token.jwtToken : "",
+                    apiKey: config.publicAppSync.apiKey
+                }
+            })
+        );
+    });
 
     return (
         <ApolloProvider client={client as any}>
