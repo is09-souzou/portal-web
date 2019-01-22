@@ -3,11 +3,18 @@ import {
     Dialog,
     DialogActions,
     DialogTitle,
+    FormControl,
+    IconButton,
+    Input,
+    InputAdornment,
+    InputLabel,
     TextField
 } from "@material-ui/core";
 import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
 import Slide, { SlideProps } from "@material-ui/core/Slide";
-import React, { useContext } from "react";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
+import React, { useContext, useState } from "react";
 import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 import LocationText from "src/components/atoms/LocationText";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
@@ -45,6 +52,7 @@ export default (
         ...props
     }: Props
 ) => {
+    const [passwordVisibled, setPasswordVisibility] = useState<boolean>(false);
 
     const routerHistory = useContext(RouterHistoryContext);
     const auth = useContext(AuthContext);
@@ -77,13 +85,25 @@ export default (
                         type="email"
                         required
                     />
-                    <TextField
-                        id="sign-in-password"
-                        label={<LocationText text="Password"/>}
+                    <FormControl
                         margin="normal"
-                        type="password"
-                        required
-                    />
+                    >
+                        <InputLabel htmlFor="sign-in-password"><LocationText text="Password"/></InputLabel>
+                        <Input
+                            id="sign-in-password"
+                            type={passwordVisibled ? "text" : "password"}
+                            required
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => setPasswordVisibility(!passwordVisibled)}
+                                    >
+                                        {passwordVisibled ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                        />
+                    </FormControl>
                 </StyledDialogContent>
                 <DialogActions>
                     <Button
@@ -111,6 +131,5 @@ const StyledDialogContent = styled(DialogContent as React.SFC<DialogContentProps
     && {
         display: flex;
         flex-direction: column;
-        width: 16rem;
     }
 `;

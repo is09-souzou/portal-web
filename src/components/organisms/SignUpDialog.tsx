@@ -2,12 +2,19 @@ import {
     Button,
     DialogActions,
     DialogTitle,
+    FormControl,
+    IconButton,
+    Input,
+    InputAdornment,
+    InputLabel,
     TextField,
 } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
 import Slide, { SlideProps } from "@material-ui/core/Slide";
-import React, { useContext } from "react";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
+import React, { useContext, useState } from "react";
 import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 import LocationText from "src/components/atoms/LocationText";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
@@ -55,6 +62,8 @@ export default (
         ...props
     }: Props
 ) => {
+    const [passwordVisibled, setPasswordVisibility] = useState<boolean>(false);
+
     const routerHistory = useContext(RouterHistoryContext);
     const auth = useContext(AuthContext);
     const notification = useContext(NotificationContext);
@@ -87,13 +96,25 @@ export default (
                         type="email"
                         required
                     />
-                    <TextField
-                        name="sign-up-password"
-                        label={<LocationText text="Password"/>}
+                    <FormControl
                         margin="normal"
-                        type="password"
-                        required
-                    />
+                    >
+                        <InputLabel htmlFor="sign-up-password"><LocationText text="Password"/></InputLabel>
+                        <Input
+                            id="sign-up-password"
+                            type={passwordVisibled ? "text" : "password"}
+                            required
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => setPasswordVisibility(!passwordVisibled)}
+                                    >
+                                        {passwordVisibled ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                        />
+                    </FormControl>
                     <TextField
                         name="sign-up-display-name"
                         label={<LocationText text="Display name"/>}
@@ -119,6 +140,5 @@ const StyledDialogContent = styled(DialogContent as React.SFC<DialogContentProps
     && {
         display: flex;
         flex-direction: column;
-        width: 16rem;
     }
 `;
