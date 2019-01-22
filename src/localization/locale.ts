@@ -7,7 +7,8 @@ export type LocationText = (
     "Upload avatar" |"Title" | "Input title" | "Tags" | "Description" | "Input description" | "Image" | "Preview" | "Create" | "Update" | "Publish" |
     "Profile" | "Work list" | "Works" | "Designer" | "Popular" | "New" | "Languages" | "Language" | "Settings" | "Sign in" | "Sign out" | "Password" |
     "Create account" | "location" | "Initial registration profile" | "Input tags" | "User list" | "Work post" | "Work update" | "New mail address" |
-    "Credential" | "Update a credential email" | "Update password" | "New password" | "Old password" | "Not Found"
+    "Credential" | "Update a credential email" | "Update password" | "New password" | "Old password" | "Not Found" | "Bold" | "Heading" | "Italic" |
+    "Numbered list" | "Generic list" | "Insert horizontal line" | "Create link" | "Quote" | "Code" | "Insert table" | "Strikethrough"
 );
 
 export type LocationTextList = { [key in LocationText]: string };
@@ -61,7 +62,18 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Update password": "Update password",
         "New password" : "New password",
         "Old password" : "Old password",
-        "Not Found": "Not Found"
+        "Not Found": "Not Found",
+        "Bold": "Bold",
+        "Heading": "Heading",
+        "Italic" : "Italic",
+        "Numbered list" : "Numbered list",
+        "Generic list" : "Generic list",
+        "Insert horizontal line" : "Insert horizontal line",
+        "Create link" : "Create link",
+        "Quote" : "Quote",
+        "Code" : "Code",
+        "Insert table" : "Insert table",
+        "Strikethrough" : "Strikethrough"
     },
     jp: {
         "Name": "名前",
@@ -111,7 +123,18 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Update password": "認証用パスワードの更新",
         "New password" : "新しいパスワード",
         "Old password" : "元のパスワード",
-        "Not Found": "Not Found"
+        "Not Found": "Not Found",
+        "Bold": "太字",
+        "Heading": "見出し",
+        "Italic" : "斜体",
+        "Numbered list" : "番号付きリスト",
+        "Generic list" : "リスト",
+        "Insert horizontal line" : "横線を挿入",
+        "Create link" : "リンクを作成",
+        "Quote" : "引用",
+        "Code" : "コード",
+        "Insert table" : "テーブルを挿入",
+        "Strikethrough" : "取り消し線"
     }
 };
 

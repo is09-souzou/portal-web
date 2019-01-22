@@ -28,11 +28,19 @@ const StyledDiv = styled.div`
     position: relative;
     :hover {
         background: rgba(0, 0, 0, .1);
+        > :nth-child(1) {
+            > * {
+                color: #000;
+            }
+        }
     }
     > :nth-child(1) {
         display: flex;
         justify-content: center;
         align-items: center;
+        > * {
+            color: #777;
+        }
     }
     > :nth-child(2) {
         min-width: 2rem;
