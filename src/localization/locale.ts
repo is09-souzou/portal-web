@@ -8,7 +8,7 @@ export type LocationText = (
     "Profile" | "Work list" | "Works" | "Designer" | "Popular" | "New" | "Languages" | "Language" | "Settings" | "Sign in" | "Sign out" | "Password" |
     "Create account" | "location" | "Initial registration profile" | "Input tags" | "User list" | "Work post" | "Work update" | "New mail address" |
     "Credential" | "Update a credential email" | "Update password" | "New password" | "Old password" | "Not Found" | "Bold" | "Heading" | "Italic" |
-    "Numbered list" | "Generic list" | "Insert horizontal line" | "Create link" | "Quote" | "Code" | "Insert table" | "Strikethrough"
+    "Numbered list" | "Generic list" | "Insert horizontal line" | "Create link" | "Quote" | "Code" | "Insert table" | "Strikethrough" | "Public mail address"
 );
 
 export type LocationTextList = { [key in LocationText]: string };
@@ -73,7 +73,8 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Quote" : "Quote",
         "Code" : "Code",
         "Insert table" : "Insert table",
-        "Strikethrough" : "Strikethrough"
+        "Strikethrough" : "Strikethrough",
+        "Public mail address": "Public mail address"
     },
     jp: {
         "Name": "名前",
@@ -134,7 +135,8 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Quote" : "引用",
         "Code" : "コード",
         "Insert table" : "テーブルを挿入",
-        "Strikethrough" : "取り消し線"
+        "Strikethrough" : "取り消し線",
+        "Public mail address": "公開用メールアドレス"
     }
 };
 

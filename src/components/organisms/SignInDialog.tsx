@@ -35,7 +35,7 @@ const handleFormSubmit = (
         onSignIn && onSignIn(email, password);
         routerHistory.history.push("?sign-in=false");
     } catch (e) {
-        notification("error", e);
+        notification("error", e.message);
     }
 };
 

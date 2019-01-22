@@ -41,7 +41,7 @@ const handleFormSubmit = (
         onSignUp && onSignUp(email, password);
         notification("info", "Send Mail");
     } catch (e) {
-        notification("error", e);
+        notification("error", e.message);
         return;
     }
 };
