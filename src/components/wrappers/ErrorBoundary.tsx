@@ -2,11 +2,13 @@ import React from "react";
 
 // Make the minimum configuration.
 export interface ErrorBoundaryState {
+    error?: any;
+    info?: any;
     hasError: boolean;
 }
 
 export default class ErrorBoundary extends React.Component<React.Props<{}>, ErrorBoundaryState> {
-    state = { hasError: false };
+    state: ErrorBoundaryState = { hasError: false };
 
     resetPage = () => {
         // Reset localStorage state
@@ -17,7 +19,7 @@ export default class ErrorBoundary extends React.Component<React.Props<{}>, Erro
 
     componentDidCatch(error :any, info: any) {
         // Display fallback UI
-        this.setState({ hasError: true });
+        this.setState({ error, info, hasError: true });
         // You can also log the error to an error reporting service
         console.error(error, info);
     }
@@ -52,6 +54,10 @@ export default class ErrorBoundary extends React.Component<React.Props<{}>, Erro
                     >
                         RELOAD
                     </button>
+                    <hr/>
+                    <h2>Debug message for developer</h2>
+                    <pre>{this.state.error && (this.state.error.message || this.state.error.toString())}</pre>
+                    <pre>{this.state.info}</pre>
                 </div>
             );
         }
