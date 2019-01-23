@@ -35,7 +35,6 @@ export default (
                             <UserItem
                                 user={x}
                                 key={x.id}
-                                userWorksLength={x.works!.items.length}
                                 onClick={() => onUserItemClick(x)}
                             />
                         </Link>

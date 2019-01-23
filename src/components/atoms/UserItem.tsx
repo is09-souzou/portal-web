@@ -5,13 +5,11 @@ import styled from "styled-components";
 
 interface UserItemProps extends React.HTMLAttributes<HTMLDivElement> {
     user: User;
-    userWorksLength: number;
 }
 
 export default (
     {
         user,
-        userWorksLength,
         ...props
     }: UserItemProps
 ) => (
@@ -27,9 +25,6 @@ export default (
         <div>
             <Typography variant="subtitle1">
                 {user.displayName}
-            </Typography>
-            <Typography variant="caption">
-                {userWorksLength}
             </Typography>
         </div>
     </UserItemBase>
