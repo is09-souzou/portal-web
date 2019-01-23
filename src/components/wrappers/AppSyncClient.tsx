@@ -21,7 +21,8 @@ export default (
                 type: authContext.token ? config.appSync.authenticationType : config.publicAppSync.authenticationType,
                 jwtToken: () => authContext.token ? authContext.token.jwtToken : "",
                 apiKey: config.publicAppSync.apiKey
-            }
+            },
+            disableOffline: true
         })
     );
 
@@ -37,7 +38,8 @@ export default (
                                 type: token ? config.appSync.authenticationType : config.publicAppSync.authenticationType,
                                 jwtToken: () => token ? token.jwtToken : "",
                                 apiKey: config.publicAppSync.apiKey
-                            }
+                            },
+                            disableOffline: true
                         })
                     );
                 }
