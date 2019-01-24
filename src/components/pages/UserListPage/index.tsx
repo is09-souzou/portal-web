@@ -90,6 +90,8 @@ class UserListPageWrapper extends React.Component<UserListPageWrapperProps, Stat
         this.setState({ userConnection, loading: false });
     }
 
+    componentDidUpdate() {}
+
     getSnapshotBeforeUpdate() {
         const searchWordList = toArrayFromQueryString("search", this.props.routerHistory.history);
         if (!isSubset(searchWordList, this.state.searchWordList)) {
