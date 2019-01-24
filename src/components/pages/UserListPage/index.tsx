@@ -2,7 +2,8 @@ import { ApolloQueryResult, FetchMoreOptions, FetchMoreQueryOptions } from "apol
 import { DocumentNode } from "apollo-link/lib/types";
 import gql from "graphql-tag";
 import React, { useEffect, useState, Fragment } from "react";
-import { Query, QueryResult } from "react-apollo";
+import { Query } from "react-apollo";
+import getUsersBySearchWords from "src/api/search/getUsersBySearchWords";
 import toArrayFromQueryString from "src/api/toArrayFromQueryString";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import LocationText from "src/components/atoms/LocationText";
@@ -59,21 +60,42 @@ interface UserListPageWrapperProps extends React.Props<{}> {
 }
 
 interface State {
-    tags: string[];
+    searchWordList: string[];
+    // For Elasticsearch result
+    userConnection?: UserConnection;
+    // For Elasticsearch loading state
+    loading: boolean;
 }
 
 // https://reactjs.org/docs/hooks-faq.html#do-hooks-cover-all-use-cases-for-classes
 // After corresponding to getSnapshotBeforeUpdate of React Hooks, migrate to React Hooks
 class UserListPageWrapper extends React.Component<UserListPageWrapperProps, State> {
 
-    state: State = {
-        tags: toArrayFromQueryString("tags", this.props.routerHistory.history)
-    };
+    constructor(props: UserListPageWrapperProps) {
+        super(props);
+        const searchWordList = toArrayFromQueryString("search", this.props.routerHistory.history);
+
+        this.state = {
+            searchWordList,
+            loading: false
+        };
+        if (searchWordList.length !== 0) {
+            this.displaySearchResult();
+        }
+    }
+
+    async displaySearchResult() {
+        this.setState({ loading: true });
+        const userConnection = await getUsersBySearchWords(this.state.searchWordList);
+        this.setState({ userConnection, loading: false });
+    }
 
     getSnapshotBeforeUpdate() {
-        const tags = toArrayFromQueryString("tags", this.props.routerHistory.history);
-        if (!isSubset(tags, this.state.tags))
-            this.setState({ tags: deduplicationFromArray(this.state.tags.concat(tags)) });
+        const searchWordList = toArrayFromQueryString("search", this.props.routerHistory.history);
+        if (!isSubset(searchWordList, this.state.searchWordList)) {
+            this.setState({ searchWordList: deduplicationFromArray(this.state.searchWordList.concat(searchWordList)) });
+            this.displaySearchResult();
+        }
         return null;
     }
 
@@ -85,6 +107,41 @@ class UserListPageWrapper extends React.Component<UserListPageWrapperProps, Stat
             ...props
         } = this.props;
 
+        if (this.state.searchWordList.length === 0) {
+            return (
+                <Host
+                    ref={props.ref as any}
+                    {...props}
+                >
+                    <Header
+                        title={<LocationText text="User list"/>}
+                    />
+                    <Query
+                        query={QueryGetUserList}
+                        variables={{ limit: 16 }}
+                        fetchPolicy="cache-and-network"
+                    >
+                        {query => (
+                            query.loading                                                       ? <GraphQLProgress/>
+                          : query.error                                                         ? (
+                                <Fragment>
+                                    <ErrorTemplate/>
+                                    <notification.ErrorComponent message={query.error.message}/>
+                                </Fragment>
+                            )
+                          : !(query.data && query.data.listUsers && query.data.listUsers.items) ? <NotFound/>
+                          :                                                                       (
+                                <UserListPage
+                                    userConnection={query.data.listUsers}
+                                    fetchMore={handleStreamSpinnerVisible(query.data.listUsers, query.fetchMore)}
+                                />
+                            )
+                        )}
+                    </Query>
+                </Host>
+            );
+        }
+
         return (
             <Host
                 ref={props.ref as any}
@@ -93,95 +150,20 @@ class UserListPageWrapper extends React.Component<UserListPageWrapperProps, Stat
                 <Header
                     title={<LocationText text="User list"/>}
                 />
-                <Query
-                    query={QueryGetUserList}
-                    variables={{ limit: 16 }}
-                    fetchPolicy="cache-and-network"
-                >
-                    {query => (
-                        query.loading                                                       ? <GraphQLProgress/>
-                    : query.error                                                         ? (
-                            <Fragment>
-                                <ErrorTemplate/>
-                                <notification.ErrorComponent message={query.error.message}/>
-                            </Fragment>
-                        )
-                    : !(query.data && query.data.listUsers && query.data.listUsers.items) ? <NotFound/>
-                    :                                                                       (
-                            <UserListPage
-                                notification={notification}
-                                query={query}
-                            />
-                        )
-                    )}
-                </Query>
+                {
+                    this.state.loading                                              ? <GraphQLProgress/>
+                  : !(this.state.userConnection && this.state.userConnection.items) ? <NotFound/>
+                  :                                                                   (
+                        <UserListPage
+                            userConnection={this.state.userConnection}
+                            fetchMore={() => undefined}
+                        />
+                    )
+                }
             </Host>
         );
     }
 }
-
-const UserListPage = (
-    {
-        query: {
-            data,
-            fetchMore
-        }
-    }: {
-        notification: NotificationValue,
-        query: QueryResult<any, {
-            limit: number;
-        }>
-    }
-) => {
-    const [, setSelectedUser] = useState<User | undefined>(undefined);
-    const userConnection = data.listUsers as UserConnection;
-    const [userListRow, setUserListRow] = useState<number>(4);
-    console.log(data);
-
-    useEffect(
-        () => {
-            const resize = () => {
-                const row = getRow();
-                if (row !== userListRow)
-                    setUserListRow(row);
-                else
-                    setUserListRow(userListRow);
-            };
-            resize();
-            window.addEventListener("resize", resize);
-
-            return () => window.removeEventListener("resize", resize);
-        },
-        []
-    );
-    return (
-        <div>
-            <UserList
-                users={userConnection.items}
-                userListRow={userListRow}
-                onUserItemClick={(x: User) => {
-                    setSelectedUser(x);
-                }}
-            />
-            <StreamSpinner
-                key={`spinner-${userConnection && userConnection.exclusiveStartKey}.join("_")}`}
-                disable={!userConnection.exclusiveStartKey ? true : false}
-                onVisible={handleStreamSpinnerVisible(userConnection, fetchMore)}
-            />
-        </div>
-    );
-};
-
-const getRow = () => (
-    window.innerWidth > 767 ?
-        window.innerWidth > 1020 ? 4
-      : window.innerWidth > 840  ? 3
-      :                            2
-  :
-        window.innerWidth > 600  ? 3
-      : window.innerWidth > 480  ? 2
-      :                            1
-);
 
 const handleStreamSpinnerVisible = (
     userConnection: UserConnection,
@@ -215,3 +197,57 @@ const handleStreamSpinnerVisible = (
                 })                                    : previousResult
         });
 };
+
+const UserListPage = (
+    {
+        fetchMore,
+        userConnection
+    }: {
+        fetchMore: () => void,
+        userConnection: UserConnection
+    }
+) => {
+    const [userListRow, setUserListRow] = useState<number>(4);
+
+    useEffect(
+        () => {
+            const resize = () => {
+                const row = getRow();
+                if (row !== userListRow)
+                    setUserListRow(row);
+                else
+                    setUserListRow(userListRow);
+            };
+            resize();
+            window.addEventListener("resize", resize);
+
+            return () => window.removeEventListener("resize", resize);
+        },
+        []
+    );
+    return (
+        <div>
+            <UserList
+                users={userConnection.items}
+                userListRow={userListRow}
+                onUserItemClick={(x: User) => undefined}
+            />
+            <StreamSpinner
+                key={`spinner-${userConnection && userConnection.exclusiveStartKey}.join("_")}`}
+                disable={!userConnection.exclusiveStartKey ? true : false}
+                onVisible={fetchMore}
+            />
+        </div>
+    );
+};
+
+const getRow = () => (
+    window.innerWidth > 767 ?
+        window.innerWidth > 1020 ? 4
+      : window.innerWidth > 840  ? 3
+      :                            2
+  :
+        window.innerWidth > 600  ? 3
+      : window.innerWidth > 480  ? 2
+      :                            1
+);
