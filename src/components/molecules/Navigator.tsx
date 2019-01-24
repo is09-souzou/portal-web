@@ -22,6 +22,8 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import gql from "graphql-tag";
 import React, { Fragment } from "react";
 import { Query } from "react-apollo";
+import convertToQueryString from "src/api/convertToQueryString";
+import toArrayFromQueryParam from "src/api/toArrayFromQueryString";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import Link from "src/components/atoms/Link";
 import LocationText from "src/components/atoms/LocationText";
@@ -30,9 +32,7 @@ import NotificationContext, { NotificationValue } from "src/contexts/Notificatio
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { PopularTags } from "src/graphQL/type";
 import deduplicationFromArray from "src/util/deduplicationFromArray";
-import formatTagsOfURLQueryParam from "src/util/formatTagsOfURLQueryParam";
 import isSubset from "src/util/isSubset";
-import toArrayFromQueryParam from "src/util/toArrayFromQueryString";
 import styled from "styled-components";
 
 export default React.forwardRef((props, ref) => (
@@ -202,7 +202,8 @@ class Navigator extends React.Component<Props, State> {
                                                 <Link
                                                     to={
                                                         (location.pathname.indexOf("/works") === -1 ? "/works" : "")
-                                                      + formatTagsOfURLQueryParam(
+                                                      + convertToQueryString(
+                                                            "tags",
                                                             tags.includes(tag) ? tags.filter(x => x !== tag)
                                                           :                      tags.concat(tag)
                                                         )

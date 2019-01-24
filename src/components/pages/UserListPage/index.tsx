@@ -3,6 +3,7 @@ import { DocumentNode } from "apollo-link/lib/types";
 import gql from "graphql-tag";
 import React, { useEffect, useState, Fragment } from "react";
 import { Query, QueryResult } from "react-apollo";
+import toArrayFromQueryString from "src/api/toArrayFromQueryString";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import LocationText from "src/components/atoms/LocationText";
 import StreamSpinner from "src/components/atoms/StreamSpinner";
@@ -16,7 +17,6 @@ import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHis
 import { User, UserConnection } from "src/graphQL/type";
 import deduplicationFromArray from "src/util/deduplicationFromArray";
 import isSubset from "src/util/isSubset";
-import toArrayFromQueryParam from "src/util/toArrayFromQueryString";
 
 export default React.forwardRef((props, ref) => (
     <RouterHistoryContext.Consumer>
@@ -67,11 +67,11 @@ interface State {
 class UserListPageWrapper extends React.Component<UserListPageWrapperProps, State> {
 
     state: State = {
-        tags: toArrayFromQueryParam("tags", this.props.routerHistory.history)
+        tags: toArrayFromQueryString("tags", this.props.routerHistory.history)
     };
 
     getSnapshotBeforeUpdate() {
-        const tags = toArrayFromQueryParam("tags", this.props.routerHistory.history);
+        const tags = toArrayFromQueryString("tags", this.props.routerHistory.history);
         if (!isSubset(tags, this.state.tags))
             this.setState({ tags: deduplicationFromArray(this.state.tags.concat(tags)) });
         return null;

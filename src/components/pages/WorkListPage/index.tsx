@@ -4,6 +4,7 @@ import { DocumentNode } from "apollo-link/lib/types";
 import gql from "graphql-tag";
 import React, { useContext, useEffect, useState, Fragment } from "react";
 import { Query, QueryResult } from "react-apollo";
+import toArrayFromQueryString from "src/api/toArrayFromQueryString";
 import Fab from "src/components/atoms/Fab";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import LocationText from "src/components/atoms/LocationText";
@@ -18,7 +19,6 @@ import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import NotificationContext from "src/contexts/NotificationContext";
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { Work, WorkConnection } from "src/graphQL/type";
-import toArrayFromQueryString from "src/util/toArrayFromQueryString";
 
 const QueryListWorks = gql(`
     query($limit: Int, $exclusiveStartKey: ID, $option: WorkQueryOption) {
