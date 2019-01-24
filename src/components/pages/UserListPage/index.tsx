@@ -79,15 +79,18 @@ class UserListPageWrapper extends React.Component<UserListPageWrapperProps, Stat
             searchWordList,
             loading: false
         };
-        if (searchWordList.length !== 0) {
-            this.displaySearchResult();
-        }
     }
 
     async displaySearchResult() {
         this.setState({ loading: true });
         const userConnection = await getUsersBySearchWords(this.state.searchWordList);
         this.setState({ userConnection, loading: false });
+    }
+
+    componentDidMount() {
+        if (this.state.searchWordList.length !== 0) {
+            this.displaySearchResult();
+        }
     }
 
     componentDidUpdate() {}
