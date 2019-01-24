@@ -187,17 +187,12 @@ class Navigator extends React.Component<Props, State> {
                                     );
                                 }
 
-<<<<<<< Updated upstream
-                                const tags = getTagsByURLQueryParam(this.props.routerHistory.history);
-                                const popularTags = (data.listPopularTags as PopularTags).map(x => x.name);
-=======
                                 if (!(data && data.listPopularTags)) {
                                     return null;
                                 }
 
                                 const tags = toArrayFromQueryParam("tags", this.props.routerHistory.history);
                                 const popularTags = (data.listPopularTags as PopularTags || []).map(x => x.name);
->>>>>>> Stashed changes
 
                                 return (
                                     <TagList disablePadding>

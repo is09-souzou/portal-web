@@ -53,7 +53,7 @@ const QueryGetUserList = gql(`
     }
 `);
 
-interface UserListPageWrapper extends React.Props<{}> {
+interface UserListPageWrapperProps extends React.Props<{}> {
     routerHistory: RouterHistoryValue;
     notification: NotificationValue;
 }
@@ -64,7 +64,7 @@ interface State {
 
 // https://reactjs.org/docs/hooks-faq.html#do-hooks-cover-all-use-cases-for-classes
 // After corresponding to getSnapshotBeforeUpdate of React Hooks, migrate to React Hooks
-class UserListPageWrapper extends React.Component<UserListPageWrapper, State> {
+class UserListPageWrapper extends React.Component<UserListPageWrapperProps, State> {
 
     state: State = {
         tags: toArrayFromQueryParam("tags", this.props.routerHistory.history)
