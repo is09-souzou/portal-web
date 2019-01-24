@@ -15,7 +15,7 @@ import Host from "src/components/pages/WorkListPage/Host";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
-import { User, UserConnection } from "src/graphQL/type";
+import { UserConnection } from "src/graphQL/type";
 import deduplicationFromArray from "src/util/deduplicationFromArray";
 import isSubset from "src/util/isSubset";
 
