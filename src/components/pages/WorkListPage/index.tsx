@@ -212,20 +212,20 @@ const handleStreamSpinnerVisible = (
                 exclusiveStartKey: workConnection.exclusiveStartKey
             },
             updateQuery: (previousResult, { fetchMoreResult }) =>
-                previousResult.listUsers.items.length ? ({
-                    listUsers: {
-                        __typename: previousResult.listUsers.__typename,
+                previousResult.listWorks.items.length ? ({
+                    listWorks: {
+                        __typename: previousResult.listWorks.__typename,
                         items: (
                             [
-                                ...previousResult.listUsers.items,
-                                ...fetchMoreResult.listUsers.items
+                                ...previousResult.listWorks.items,
+                                ...fetchMoreResult.listWorks.items
                             ].filter((x, i, self) => (
                                 self.findIndex(y => y.id === x.id) === i
                             ))
                         ),
-                        exclusiveStartKey: fetchMoreResult.listUsers.exclusiveStartKey
+                        exclusiveStartKey: fetchMoreResult.listWorks.exclusiveStartKey
                     }
-                })                                    : previousResult
+                })                       : previousResult
         });
 };
 
