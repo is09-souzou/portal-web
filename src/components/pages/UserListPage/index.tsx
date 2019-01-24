@@ -147,8 +147,6 @@ class UserListPageWrapper extends React.Component<UserListPageWrapperProps, Stat
             );
         }
 
-        console.log(this.state);
-
         return (
             <Host
                 ref={props.ref as any}
@@ -162,7 +160,7 @@ class UserListPageWrapper extends React.Component<UserListPageWrapperProps, Stat
                   : !(
                         this.state.userConnection
                      && this.state.userConnection.items
-                     && this.state.userConnection.items.length === 0
+                     && this.state.userConnection.items.length !== 0
                      )                                         ? <NotFound/>
                   :                                              (
                         <UserListPage
