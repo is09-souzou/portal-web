@@ -1,11 +1,11 @@
 import * as H from "history";
 import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 
-export default (history: H.History): string[] => {
+export default (param: string, history: H.History): string[] => {
     const queryParam = toObjectFromURIQuery(history.location.search);
     const tags = !queryParam        ? []
-               : queryParam["tags"] ? queryParam["tags"].split(",")
+               : queryParam[param]  ? queryParam[param].split(",")
                :                      [];
-    return queryParam && !((tags.length === 1 && tags[0] === "") || tags.length === 0) ? queryParam["tags"].split(",").map(x => (decodeURIComponent(x)))
+    return queryParam && !((tags.length === 1 && tags[0] === "") || tags.length === 0) ? queryParam[param].split(",").map(x => (decodeURIComponent(x)))
                        :                                                                 [];
 };

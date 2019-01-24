@@ -17,7 +17,7 @@ import LocalizationContext, { LocalizationValue } from "src/contexts/Localizatio
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { Work } from "src/graphQL/type";
 import formatTagsOfURLQueryParam from "src/util/formatTagsOfURLQueryParam";
-import getTagsByURLQueryParam from "src/util/getTagsByURLQueryParam";
+import toArrayFromQueryString from "src/util/toArrayFromQueryString";
 import styled from "styled-components";
 
 interface Props {
@@ -109,7 +109,7 @@ export default (
                                     {work.tags && work.tags.map(x =>
                                         <Link
                                             to={(() => {
-                                                const tags = getTagsByURLQueryParam(routerHistory.history);
+                                                const tags = toArrayFromQueryString("tags", routerHistory.history);
                                                 return formatTagsOfURLQueryParam(tags.concat(x), tags);
                                             })()}
                                             onClick={onClose}

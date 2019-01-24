@@ -18,7 +18,7 @@ import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import NotificationContext from "src/contexts/NotificationContext";
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { Work, WorkConnection } from "src/graphQL/type";
-import getTagsByURLQueryParam from "src/util/getTagsByURLQueryParam";
+import toArrayFromQueryString from "src/util/toArrayFromQueryString";
 
 const QueryListWorks = gql(`
     query($limit: Int, $exclusiveStartKey: ID, $option: WorkQueryOption) {
@@ -66,7 +66,7 @@ export default (props: React.Props<{}>) => {
                     limit: 15,
                     exclusiveStartKey: null,
                     option: {
-                        tags: getTagsByURLQueryParam(routerHistory.history)
+                        tags: toArrayFromQueryString("tags", routerHistory.history)
                     }
                 }}
                 fetchPolicy="network-only"
@@ -154,7 +154,7 @@ const WorkListPage = (
                 }}
             />
             <StreamSpinner
-                key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${getTagsByURLQueryParam(routerHistory.history).join("_")}`}
+                key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${toArrayFromQueryString("tags", routerHistory.history).join("_")}`}
                 disable={!workConnection.exclusiveStartKey ? true : false}
                 onVisible={handleStreamSpinnerVisible(workConnection, fetchMore)}
             />

@@ -31,8 +31,8 @@ import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHis
 import { PopularTags } from "src/graphQL/type";
 import deduplicationFromArray from "src/util/deduplicationFromArray";
 import formatTagsOfURLQueryParam from "src/util/formatTagsOfURLQueryParam";
-import getTagsByURLQueryParam from "src/util/getTagsByURLQueryParam";
 import isSubset from "src/util/isSubset";
+import toArrayFromQueryParam from "src/util/toArrayFromQueryString";
 import styled from "styled-components";
 
 export default React.forwardRef((props, ref) => (
@@ -83,13 +83,13 @@ class Navigator extends React.Component<Props, State> {
 
     state: State = {
         tagListVisible: true,
-        tags: getTagsByURLQueryParam(this.props.routerHistory.history)
+        tags: toArrayFromQueryParam("tags", this.props.routerHistory.history)
     };
 
     componentDidUpdate() {}
 
     getSnapshotBeforeUpdate() {
-        const tags = getTagsByURLQueryParam(this.props.routerHistory.history);
+        const tags = toArrayFromQueryParam("tags", this.props.routerHistory.history);
         if (!isSubset(tags, this.state.tags))
             this.setState({ tags: deduplicationFromArray(this.state.tags.concat(tags)) });
         return null;
@@ -187,8 +187,17 @@ class Navigator extends React.Component<Props, State> {
                                     );
                                 }
 
+<<<<<<< Updated upstream
                                 const tags = getTagsByURLQueryParam(this.props.routerHistory.history);
                                 const popularTags = (data.listPopularTags as PopularTags).map(x => x.name);
+=======
+                                if (!(data && data.listPopularTags)) {
+                                    return null;
+                                }
+
+                                const tags = toArrayFromQueryParam("tags", this.props.routerHistory.history);
+                                const popularTags = (data.listPopularTags as PopularTags || []).map(x => x.name);
+>>>>>>> Stashed changes
 
                                 return (
                                     <TagList disablePadding>

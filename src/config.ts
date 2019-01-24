@@ -20,5 +20,15 @@ export default {
         region: "ap-northeast-1",
         UserPoolId: "ap-northeast-1_qGTsh79dE",
         ClientId: "4h2qektp3ghm3qg90sth1q9ksu",
+    },
+    elasticsearch: {
+        works: {
+            endPoint: "https://search-works-shwkeqb2lcetyzoqtg7mkqom74.ap-northeast-1.es.amazonaws.com",
+            region: "ap-northeast-1"
+        },
+        users: {
+            endPoint: "https://search-users-qhcm27dqkdpso36y3iu5wb77du.ap-northeast-1.es.amazonaws.com",
+            region: "ap-northeast-1"
+        }
     }
 };
