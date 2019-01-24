@@ -18,12 +18,16 @@ export type SingOut = () => Promise<void>;
 export type UpdateEmail = (email: string) => Promise<void>;
 export type UpdatePassword = (password: string, newPassword: string) => Promise<void>;
 
+export type Subscriber = (token: Token | null) => void;
+export type SubscribeToken = (subscriber: Subscriber) => () => void;
+
 export type AuthValue = {
     signIn: SingIn;
     signUp: SingUp;
     signOut: SingOut;
     updateEmail: UpdateEmail;
     updatePassword: UpdatePassword;
+    subscribeToken: SubscribeToken;
     token: Token | null;
     idToken?: CognitoIdToken;
     cognitoUser?: CognitoUser | null;
@@ -38,6 +42,7 @@ export default createContext<AuthValue>({
     signOut: () => new Promise(() => undefined),
     updateEmail: () => new Promise(() => undefined),
     updatePassword: () => new Promise(() => undefined),
+    subscribeToken: () => () => undefined,
     token: null,
     idToken: undefined,
     cognitoUser: undefined,

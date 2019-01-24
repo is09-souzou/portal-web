@@ -72,15 +72,15 @@ export default (props: React.Props<{}>) => {
                 fetchPolicy="network-only"
             >
                 {(query => (
-                    query.loading || !query.data.listWorks ? <GraphQLProgress/>
-                  : query.error                            ? (
+                    query.loading || !(query.data && query.data.listWorks) ? <GraphQLProgress/>
+                  : query.error                                             ? (
                         <Fragment>
                             <ErrorTemplate/>
                             <notification.ErrorComponent message={query.error.message}/>
                         </Fragment>
                     )
                   : !(query.data && query.data.listWorks && query.data.listWorks.items.length !== 0)  ? <NotFound/>
-                  :                                          (
+                  :                                                           (
                         <WorkListPage
                             auth={auth}
                             routerHistory={routerHistory}

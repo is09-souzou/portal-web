@@ -2,8 +2,8 @@ import styled from "styled-components";
 
 export default styled.div`
     display: flex;
-    > * {
-        display: flex;
-        width: fit-content;
+    justify-content: flex-end;
+    && > * {
+        margin: 0 .5rem;
     }
 `;

@@ -6,9 +6,14 @@ import {
 } from "amazon-cognito-identity-js";
 import React, { useState } from "react";
 import config from "src/config";
-import AuthContext, { Token } from "src/contexts/AuthContext";
+import AuthContext, { Subscriber as AuthSubscriber, Token } from "src/contexts/AuthContext";
 
 const cognitoUserPool = new CognitoUserPool(config.cognito);
+
+type Subscriber = {
+    id: string;
+    fn: AuthSubscriber;
+};
 
 export default (
     {
@@ -17,7 +22,8 @@ export default (
 ) => {
 
     const [cognitoUser, setCognitoUser] = useState<CognitoUser | null>(cognitoUserPool.getCurrentUser());
-    const [token, setToken] = useState<Token | null>(
+    const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
+    const [token, _setToken] = useState<Token | null>(
         () => cognitoUser && cognitoUser.getSession((err: any, session: any) => {
             if (err) {
                 throw err;
@@ -25,6 +31,11 @@ export default (
             return session.accessToken;
         })
     );
+    const updateToken = (token: Token | null) => {
+        _setToken(token);
+        for (const x of subscribers)
+            x.fn(token);
+    };
 
     return (
         <AuthContext.Provider
@@ -57,7 +68,7 @@ export default (
                                 const jwtToken = accessToken.getJwtToken();
                                 const token = { jwtToken, payload: accessToken.decodePayload() };
                                 resolve(token);
-                                setToken(token);
+                                updateToken(token);
                             }
                         }
                     );
@@ -66,14 +77,14 @@ export default (
                     if (cognitoUser !== null) {
                         (cognitoUser as CognitoUser).globalSignOut({
                             onFailure: err => {
-                                setToken(null);
+                                updateToken(null);
                                 setCognitoUser(null);
                                 localStorage.clear();
                                 location.reload();
                                 reject(err);
                             },
                             onSuccess: () => {
-                                setToken(null);
+                                updateToken(null);
                                 setCognitoUser(null);
                                 resolve();
                             }
@@ -119,6 +130,18 @@ export default (
                         (err, result) => (err || !result) ? reject(err) : resolve()
                     )
                 ),
+                subscribeToken: (subscriber) => {
+                    const id = Math.random().toString();
+                    setSubscribers(
+                        subscribers.concat({
+                            id,
+                            fn: subscriber
+                        })
+                    );
+                    return () => setSubscribers(
+                        subscribers.filter(x => x.id !== id)
+                    );
+                }
             }}
         >
             {children}

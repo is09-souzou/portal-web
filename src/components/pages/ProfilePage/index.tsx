@@ -17,6 +17,7 @@ import fileUploadToS3 from "src/api/fileUploadToS3";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import ImageInput from "src/components/atoms/ImageInput";
 import LocationText from "src/components/atoms/LocationText";
+import Header from "src/components/molecules/Header";
 import NotFound from "src/components/molecules/NotFound";
 import UserHeader from "src/components/molecules/UserHeader";
 import ChipList from "src/components/pages/ProfilePage/ChipList";
@@ -77,14 +78,25 @@ export default (props: React.Props<{}>) => {
                 fetchPolicy="network-only"
             >
                 {(query => (
-                    query.loading                       ? <GraphQLProgress/>
+                    query.loading                       ? (
+                        <Fragment>
+                            <Header title={<LocationText text="Profile"/>}/>
+                            <GraphQLProgress/>
+                        </Fragment>
+                    )
                   : query.error                         ? (
                         <Fragment>
+                            <Header title={<LocationText text="Error"/>}/>
                             <ErrorTemplate/>
                             <notification.ErrorComponent message={query.error.message}/>
                         </Fragment>
                     )
-                  : !(query.data && query.data.getUser) ? <NotFound/>
+                  : !(query.data && query.data.getUser) ? (
+                        <Fragment>
+                            <Header title={<LocationText text="Not Found"/>}/>
+                            <NotFound/>
+                        </Fragment>
+                  )
                   :                                       (
                         <Fragment>
                             <UserHeader

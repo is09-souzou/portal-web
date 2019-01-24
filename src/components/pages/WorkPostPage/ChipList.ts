@@ -9,4 +9,8 @@ export default styled.div`
     > :nth-child(n + 1) {
         margin-left: .5rem;
     }
+
+    @media (max-width: 768px) {
+        margin-left: 0;
+    }
 `;
