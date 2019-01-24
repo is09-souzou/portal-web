@@ -230,7 +230,7 @@ const UserListPage = (
             <UserList
                 users={userConnection.items}
                 userListRow={userListRow}
-                onUserItemClick={(x: User) => undefined}
+                onUserItemClick={() => undefined}
             />
             <StreamSpinner
                 key={`spinner-${userConnection && userConnection.exclusiveStartKey}.join("_")}`}
