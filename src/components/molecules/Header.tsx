@@ -1,9 +1,11 @@
 import { Button, Popover, Typography } from "@material-ui/core";
 import AppBar, { AppBarProps } from "@material-ui/core/AppBar";
 import IconButton, { IconButtonProps } from "@material-ui/core/IconButton";
+import InputBase from "@material-ui/core/InputBase";
 import Toolbar, { ToolbarProps } from "@material-ui/core/Toolbar";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import MenuIcon from "@material-ui/icons/Menu";
+import SearchIcon from "@material-ui/icons/Search";
 import gql from "graphql-tag";
 import React, { useContext, useState, Fragment } from "react";
 import { Query, QueryResult } from "react-apollo";
@@ -68,6 +70,14 @@ export default (
                 <Typography variant="h6" color="inherit">
                     {title}
                 </Typography>
+                <SearchContent>
+                    <StyledSearchIcon>
+                        <SearchIcon />
+                    </StyledSearchIcon>
+                    <InputBase
+                        placeholder={"Search..."}
+                    />
+                </SearchContent>
                 <div>
                     {!auth.token ?
                         <Button onClick={() => routerHistory.history.push("?sign-in=true")} >
@@ -211,6 +221,28 @@ const StyledToolbar = styled(Toolbar as React.SFC<ToolbarProps>)`
             flex-grow: 1;
         }
     }
+`;
+
+const SearchContent = styled.div`
+    background-color: #f5f5f5;
+    &:hover {
+        background-color: #eee;
+    };
+    border-radius: 0.3rem;
+    display: flex;
+    margin-right: 1rem;
+    position: relative;
+    width: 100%;
+    @media (min-width: 768px) {
+        width: auto;
+    }
+`;
+
+const StyledSearchIcon = styled.div`
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    margin: 0 0.5rem 0 0.5rem;
 `;
 
 const PopoverContent = styled.div`
