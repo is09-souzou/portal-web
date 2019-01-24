@@ -18,7 +18,7 @@ export default () => (
             <Switch>
                 <Route
                     path="/"
-                    component={WorkListPage}
+                    component={() => <WorkListPage/>}
                     exact={true}
                 />
                 <Route
@@ -33,7 +33,7 @@ export default () => (
                 />
                 <Route
                     path="/works"
-                    component={WorkListPage}
+                    component={() => <WorkListPage/>}
                 />
                 <Route
                     path="/users"

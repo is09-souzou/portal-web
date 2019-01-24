@@ -15,6 +15,7 @@ import Link from "src/components/atoms/Link";
 import LocationText from "src/components/atoms/LocationText";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import DrawerContext from "src/contexts/DrawerContext";
+import LocalizationContext from "src/contexts/LocalizationContext";
 import NotificationContext from "src/contexts/NotificationContext";
 import RouterHistoryContext from "src/contexts/RouterHistoryContext";
 import { User } from "src/graphQL/type";
@@ -46,6 +47,7 @@ export default (
     const drawer = useContext(DrawerContext);
     const routerHistory = useContext(RouterHistoryContext);
     const notification = useContext(NotificationContext);
+    const localization = useContext(LocalizationContext);
 
     // const handleSearch = (e: React.KeyboardEvent) => {
     //     const value = (e.target as any).value;
@@ -75,7 +77,7 @@ export default (
                         <SearchIcon />
                     </StyledSearchIcon>
                     <InputBase
-                        placeholder={"Search..."}
+                        placeholder={localization.locationText["Search"]}
                     />
                 </SearchContent>
                 <div>

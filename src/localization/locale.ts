@@ -9,7 +9,7 @@ export type LocationText = (
     "Create account" | "location" | "Initial registration profile" | "Input tags" | "User list" | "Work post" | "Work update" | "New mail address" |
     "Credential" | "Update a credential email" | "Update password" | "New password" | "Old password" | "Not Found" | "Bold" | "Heading" | "Italic" |
     "Numbered list" | "Generic list" | "Insert horizontal line" | "Create link" | "Quote" | "Code" | "Insert table" | "Strikethrough" | "Public mail address" |
-    "Toggle password visibility" | "Error" | "User" | "How to use Markdown" | "Hint" | "Font style" | "Decoration" | "Table" | "List"
+    "Toggle password visibility" | "Error" | "User" | "How to use Markdown" | "Hint" | "Font style" | "Decoration" | "Table" | "List" | "Search"
 );
 
 export type LocationTextList = { [key in LocationText]: string };
@@ -84,7 +84,8 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Font style": "Font style",
         "Decoration": "Decoration",
         "Table": "Table",
-        "List": "List"
+        "List": "List",
+        "Search": "Search..."
     },
     jp: {
         "Name": "名前",
@@ -155,7 +156,8 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Font style": "フォントスタイル",
         "Decoration": "装飾",
         "Table": "テーブル",
-        "List": "リスト"
+        "List": "リスト",
+        "Search": "検索..."
     }
 };
 

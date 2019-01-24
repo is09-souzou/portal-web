@@ -3,7 +3,7 @@ import config from "src/config";
 import { Work, WorkConnection } from "src/graphQL/type";
 
 export default async (words: string[]): Promise<WorkConnection> => {
-    const x = await esApi(config.elasticsearch.users.endPoint, words);
+    const x = await esApi(config.elasticsearch.works.endPoint, words);
     const result: Work[] = x.hits.hits.map((item: any) =>
         Object
             .entries(item._source)

@@ -34,7 +34,6 @@ const UserImage = styled.img`
     width: 100%;
     border-radius: 8px;
     transition: all 0.15s ease-in-out;
-    max-height: 12rem;
     min-height: 4rem;
     cursor: pointer;
     :hover {

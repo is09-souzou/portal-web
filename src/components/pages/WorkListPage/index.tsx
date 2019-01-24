@@ -3,7 +3,8 @@ import { ApolloQueryResult, FetchMoreOptions, FetchMoreQueryOptions } from "apol
 import { DocumentNode } from "apollo-link/lib/types";
 import gql from "graphql-tag";
 import React, { useContext, useEffect, useState, Fragment } from "react";
-import { Query, QueryResult } from "react-apollo";
+import { Query } from "react-apollo";
+import getWorksBySearchWords from "src/api/search/getWorksBySearchWords";
 import toArrayFromQueryString from "src/api/toArrayFromQueryString";
 import Fab from "src/components/atoms/Fab";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
@@ -15,10 +16,29 @@ import NotFound from "src/components/molecules/NotFound";
 import WorkDialog from "src/components/organisms/WorkDialog";
 import Host from "src/components/pages/WorkListPage/Host";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
-import AuthContext, { AuthValue } from "src/contexts/AuthContext";
-import NotificationContext from "src/contexts/NotificationContext";
+import AuthContext from "src/contexts/AuthContext";
+import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { Work, WorkConnection } from "src/graphQL/type";
+import deduplicationFromArray from "src/util/deduplicationFromArray";
+import isSubset from "src/util/isSubset";
+
+export default React.forwardRef((props, ref) => (
+    <RouterHistoryContext.Consumer>
+        {routerHistory => (
+            <NotificationContext.Consumer>
+                {notification => (
+                    <WorkListPageWrapper
+                        routerHistory={routerHistory}
+                        notification={notification}
+                        {...props}
+                        ref={ref as any}
+                    />
+                )}
+            </NotificationContext.Consumer>
+        )}
+    </RouterHistoryContext.Consumer>
+));
 
 const QueryListWorks = gql(`
     query($limit: Int, $exclusiveStartKey: ID, $option: WorkQueryOption) {
@@ -47,82 +67,183 @@ const QueryListWorks = gql(`
     }
 `);
 
-export default (props: React.Props<{}>) => {
-    const auth = useContext(AuthContext);
-    const notification = useContext(NotificationContext);
-    const routerHistory = useContext(RouterHistoryContext);
+interface WorkListPageWrapperProps extends React.Props<{}> {
+    routerHistory: RouterHistoryValue;
+    notification: NotificationValue;
+}
 
-    return (
-        <Host
-            ref={props.ref as any}
-            {...props}
-        >
-            <Header
-                title={<LocationText text="Works"/>}
-            />
-            <Query
-                query={QueryListWorks}
-                variables={{
-                    limit: 15,
-                    exclusiveStartKey: null,
-                    option: {
-                        tags: toArrayFromQueryString("tags", routerHistory.history)
-                    }
-                }}
-                fetchPolicy="network-only"
+interface State {
+    searchWordList: string[];
+    // For Elasticsearch result
+    workConnection?: WorkConnection;
+    // For Elasticsearch loading state
+    loading: boolean;
+}
+
+class WorkListPageWrapper extends React.Component<WorkListPageWrapperProps, State> {
+
+    constructor(props: WorkListPageWrapperProps) {
+        super(props);
+        const searchWordList = toArrayFromQueryString("search", this.props.routerHistory.history);
+
+        this.state = {
+            searchWordList,
+            loading: false
+        };
+    }
+
+    async displaySearchResult() {
+        this.setState({ loading: true });
+        const workConnection = await getWorksBySearchWords(this.state.searchWordList);
+        this.setState({ workConnection, loading: false });
+    }
+
+    componentDidMount() {
+        if (this.state.searchWordList.length !== 0) {
+            this.displaySearchResult();
+        }
+    }
+
+    componentDidUpdate() {}
+
+    getSnapshotBeforeUpdate() {
+        const searchWordList = toArrayFromQueryString("search", this.props.routerHistory.history);
+        if (!isSubset(searchWordList, this.state.searchWordList)) {
+            this.setState({ searchWordList: deduplicationFromArray(this.state.searchWordList.concat(searchWordList)) });
+            this.displaySearchResult();
+        }
+        return null;
+    }
+
+    render() {
+
+        const {
+            routerHistory,
+            notification,
+            ...props
+        } = this.props;
+
+        if (this.state.searchWordList.length === 0) {
+            return (
+                <Host
+                    ref={props.ref as any}
+                >
+                    <Header
+                        title={<LocationText text="Works"/>}
+                    />
+                    <Query
+                        query={QueryListWorks}
+                        variables={{
+                            limit: 15,
+                            option: {
+                                tags: toArrayFromQueryString("tags", routerHistory.history)
+                            }
+                        }}
+                        fetchPolicy="network-only"
+                    >
+                        {query => (
+                            query.loading                                                     ?  <GraphQLProgress/>
+                          : query.error                                                       ? (
+                                <Fragment>
+                                    <ErrorTemplate/>
+                                    <notification.ErrorComponent message={query.error.message}/>
+                                </Fragment>
+                            )
+                        : !(query.data && query.data.listWorks && query.data.listWorks.items) ? <NotFound/>
+                        :                                                                       (
+                                <WorkListPage
+                                    workConnection={query.data.listWorks}
+                                    routerHistory={routerHistory}
+                                    fetchMore={handleStreamSpinnerVisible(query.data.listWorks, query.fetchMore)}
+                                />
+                            )
+                        )}
+                    </Query>
+                    <Fab
+                        onClick={() => routerHistory. history.push("/works/create-work")}
+                    >
+                        <AddIcon />
+                    </Fab>
+                </Host>
+            );
+        }
+
+        return (
+            <Host
+                ref={props.ref as any}
+                {...props}
             >
-                {(query => (
-                    query.loading || !(query.data && query.data.listWorks) ? <GraphQLProgress/>
-                  : query.error                                             ? (
-                        <Fragment>
-                            <ErrorTemplate/>
-                            <notification.ErrorComponent message={query.error.message}/>
-                        </Fragment>
-                    )
-                  : !(query.data && query.data.listWorks && query.data.listWorks.items.length !== 0)  ? <NotFound/>
-                  :                                                           (
+                <Header
+                    title={<LocationText text="Work list"/>}
+                />
+                {
+                    this.state.loading                         ? <GraphQLProgress/>
+                  : !(
+                        this.state.workConnection
+                     && this.state.workConnection.items
+                     && this.state.workConnection.items.length !== 0
+                   )                                           ? <NotFound/>
+                  :                                              (
                         <WorkListPage
-                            auth={auth}
+                            workConnection={this.state.workConnection}
                             routerHistory={routerHistory}
-                            query={query}
+                            fetchMore={() => undefined}
                         />
                     )
-                ))}
-            </Query>
-            <Fab
-                onClick={() => routerHistory. history.push("/works/create-work")}
-            >
-                <AddIcon />
-            </Fab>
-        </Host>
-    );
-};
-
-interface Props extends React.Props<{}> {
-    auth: AuthValue;
-    routerHistory: RouterHistoryValue;
-    query: QueryResult<any, {
-        limit: number;
-        exclusiveStartKey: null;
-        option: {
-            tags: string[];
-        };
-    }>;
+                }
+            </Host>
+        );
+    }
 }
+
+const handleStreamSpinnerVisible = (
+    workConnection: WorkConnection,
+    fetchMore: (<K extends "limit">(fetchMoreOptions: FetchMoreQueryOptions<{
+        limit: number;
+    }, K> & FetchMoreOptions<any, {
+        limit: number;
+    }>) => Promise<ApolloQueryResult<any>>) & (<TData2, TVariables2, K extends keyof TVariables2>(fetchMoreOptions: {
+        query: DocumentNode;
+    } & FetchMoreQueryOptions<TVariables2, K> & FetchMoreOptions<TData2, TVariables2>) => Promise<ApolloQueryResult<TData2>>)
+) => () => {
+    if (workConnection && workConnection.exclusiveStartKey)
+        fetchMore<any>({
+            variables: {
+                exclusiveStartKey: workConnection.exclusiveStartKey
+            },
+            updateQuery: (previousResult, { fetchMoreResult }) =>
+                previousResult.listUsers.items.length ? ({
+                    listUsers: {
+                        __typename: previousResult.listUsers.__typename,
+                        items: (
+                            [
+                                ...previousResult.listUsers.items,
+                                ...fetchMoreResult.listUsers.items
+                            ].filter((x, i, self) => (
+                                self.findIndex(y => y.id === x.id) === i
+                            ))
+                        ),
+                        exclusiveStartKey: fetchMoreResult.listUsers.exclusiveStartKey
+                    }
+                })                                    : previousResult
+        });
+};
 
 const WorkListPage = (
     {
-        auth,
+        fetchMore,
         routerHistory,
-        query: {
-            data,
-            fetchMore
-        }
-    }: Props
+        workConnection
+    }: {
+        fetchMore: () => void,
+        routerHistory: RouterHistoryValue,
+        workConnection: WorkConnection
+    }
 ) => {
     const [selectedWork, setSelectedWork] = useState<Work | undefined>(undefined);
     const [workDialogOpend, setWorkDialogOpen] = useState<boolean>(false);
     const [workListRow, setWorkListRow] = useState<number>(4);
+    const auth = useContext(AuthContext);
 
     useEffect(
         () => {
@@ -141,8 +262,6 @@ const WorkListPage = (
         []
     );
 
-    const workConnection = data.listWorks as WorkConnection;
-
     return (
         <Fragment>
             <WorkList
@@ -156,7 +275,7 @@ const WorkListPage = (
             <StreamSpinner
                 key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${toArrayFromQueryString("tags", routerHistory.history).join("_")}`}
                 disable={!workConnection.exclusiveStartKey ? true : false}
-                onVisible={handleStreamSpinnerVisible(workConnection, fetchMore)}
+                onVisible={fetchMore}
             />
             <WorkDialog
                 editable={false}
@@ -179,44 +298,3 @@ const getRow = () => (
       : window.innerWidth > 480  ? 2
       :                            1
 );
-
-const handleStreamSpinnerVisible = (
-    workConnection: WorkConnection,
-    fetchMore: (<K extends "limit" | "exclusiveStartKey" | "option">(fetchMoreOptions: FetchMoreQueryOptions<{
-        limit: number;
-        exclusiveStartKey: null;
-        option: {
-            tags: string[];
-        };
-    }, K> & FetchMoreOptions<any, {
-        limit: number;
-        exclusiveStartKey: null;
-        option: {
-            tags: string[];
-        };
-    }>) => Promise<ApolloQueryResult<any>>) & (<TData2, TVariables2, K extends keyof TVariables2>(fetchMoreOptions: {
-        query: DocumentNode;
-    } & FetchMoreQueryOptions<TVariables2, K> & FetchMoreOptions<TData2, TVariables2>) => Promise<ApolloQueryResult<TData2>>)
-) => () => {
-    if (workConnection && workConnection.exclusiveStartKey)
-        fetchMore<any>({
-            variables: {
-                exclusiveStartKey: workConnection.exclusiveStartKey
-            },
-            updateQuery: (previousResult, { fetchMoreResult }) =>
-                previousResult.listWorks.items.length ? ({
-                    listWorks: {
-                        __typename: previousResult.listWorks.__typename,
-                        items: (
-                            [
-                                ...previousResult.listWorks.items,
-                                ...fetchMoreResult.listWorks.items
-                            ].filter((x, i, self) => (
-                                self.findIndex(y => y.id === x.id) === i
-                            ))
-                        ),
-                        exclusiveStartKey: fetchMoreResult.listWorks.exclusiveStartKey
-                    }
-                })                                    : previousResult
-        });
-};
