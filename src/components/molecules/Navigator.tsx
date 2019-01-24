@@ -22,6 +22,8 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import gql from "graphql-tag";
 import React, { Fragment } from "react";
 import { Query } from "react-apollo";
+import convertToQueryString from "src/api/convertToQueryString";
+import toArrayFromQueryParam from "src/api/toArrayFromQueryString";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import Link from "src/components/atoms/Link";
 import LocationText from "src/components/atoms/LocationText";
@@ -30,8 +32,6 @@ import NotificationContext, { NotificationValue } from "src/contexts/Notificatio
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { PopularTags } from "src/graphQL/type";
 import deduplicationFromArray from "src/util/deduplicationFromArray";
-import formatTagsOfURLQueryParam from "src/util/formatTagsOfURLQueryParam";
-import getTagsByURLQueryParam from "src/util/getTagsByURLQueryParam";
 import isSubset from "src/util/isSubset";
 import styled from "styled-components";
 
@@ -83,13 +83,13 @@ class Navigator extends React.Component<Props, State> {
 
     state: State = {
         tagListVisible: true,
-        tags: getTagsByURLQueryParam(this.props.routerHistory.history)
+        tags: toArrayFromQueryParam("tags", this.props.routerHistory.history)
     };
 
     componentDidUpdate() {}
 
     getSnapshotBeforeUpdate() {
-        const tags = getTagsByURLQueryParam(this.props.routerHistory.history);
+        const tags = toArrayFromQueryParam("tags", this.props.routerHistory.history);
         if (!isSubset(tags, this.state.tags))
             this.setState({ tags: deduplicationFromArray(this.state.tags.concat(tags)) });
         return null;
@@ -191,7 +191,7 @@ class Navigator extends React.Component<Props, State> {
                                     return null;
                                 }
 
-                                const tags = getTagsByURLQueryParam(this.props.routerHistory.history);
+                                const tags = toArrayFromQueryParam("tags", this.props.routerHistory.history);
                                 const popularTags = (data.listPopularTags as PopularTags || []).map(x => x.name);
 
                                 return (
@@ -202,7 +202,8 @@ class Navigator extends React.Component<Props, State> {
                                                 <Link
                                                     to={
                                                         (location.pathname.indexOf("/works") === -1 ? "/works" : "")
-                                                      + formatTagsOfURLQueryParam(
+                                                      + convertToQueryString(
+                                                            "tags",
                                                             tags.includes(tag) ? tags.filter(x => x !== tag)
                                                           :                      tags.concat(tag)
                                                         )

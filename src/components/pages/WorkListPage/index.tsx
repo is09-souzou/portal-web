@@ -4,6 +4,7 @@ import { DocumentNode } from "apollo-link/lib/types";
 import gql from "graphql-tag";
 import React, { useContext, useEffect, useState, Fragment } from "react";
 import { Query, QueryResult } from "react-apollo";
+import toArrayFromQueryString from "src/api/toArrayFromQueryString";
 import Fab from "src/components/atoms/Fab";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import LocationText from "src/components/atoms/LocationText";
@@ -18,7 +19,6 @@ import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import NotificationContext from "src/contexts/NotificationContext";
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { Work, WorkConnection } from "src/graphQL/type";
-import getTagsByURLQueryParam from "src/util/getTagsByURLQueryParam";
 
 const QueryListWorks = gql(`
     query($limit: Int, $exclusiveStartKey: ID, $option: WorkQueryOption) {
@@ -66,7 +66,7 @@ export default (props: React.Props<{}>) => {
                     limit: 15,
                     exclusiveStartKey: null,
                     option: {
-                        tags: getTagsByURLQueryParam(routerHistory.history)
+                        tags: toArrayFromQueryString("tags", routerHistory.history)
                     }
                 }}
                 fetchPolicy="network-only"
@@ -154,7 +154,7 @@ const WorkListPage = (
                 }}
             />
             <StreamSpinner
-                key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${getTagsByURLQueryParam(routerHistory.history).join("_")}`}
+                key={`spinner-${workConnection && workConnection.exclusiveStartKey}-${toArrayFromQueryString("tags", routerHistory.history).join("_")}`}
                 disable={!workConnection.exclusiveStartKey ? true : false}
                 onVisible={handleStreamSpinnerVisible(workConnection, fetchMore)}
             />

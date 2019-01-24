@@ -11,13 +11,13 @@ import Typography, { TypographyProps } from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import React, { useContext, useState, Fragment } from "react";
 import ReactMarkdown from "react-markdown";
+import convertToQueryString from "src/api/convertToQueryString";
+import toArrayFromQueryString from "src/api/toArrayFromQueryString";
 import FormatStringDate from "src/components/atoms/FormatStringDate";
 import Link from "src/components/atoms/Link";
 import LocalizationContext, { LocalizationValue } from "src/contexts/LocalizationContext";
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { Work } from "src/graphQL/type";
-import formatTagsOfURLQueryParam from "src/util/formatTagsOfURLQueryParam";
-import getTagsByURLQueryParam from "src/util/getTagsByURLQueryParam";
 import styled from "styled-components";
 
 interface Props {
@@ -109,8 +109,8 @@ export default (
                                     {work.tags && work.tags.map(x =>
                                         <Link
                                             to={(() => {
-                                                const tags = getTagsByURLQueryParam(routerHistory.history);
-                                                return formatTagsOfURLQueryParam(tags.concat(x), tags);
+                                                const tags = toArrayFromQueryString("tags", routerHistory.history);
+                                                return convertToQueryString("tags", tags.concat(x), tags);
                                             })()}
                                             onClick={onClose}
                                             key={x}

@@ -21,6 +21,11 @@ export type Work = {
     isPublic: boolean;
 };
 
+export type UserConnection = {
+    items: User[];
+    exclusiveStartKey: string;
+};
+
 export type WorkConnection = {
     items: Work[];
     exclusiveStartKey: string;
