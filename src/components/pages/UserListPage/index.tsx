@@ -1,7 +1,7 @@
 import { ApolloQueryResult, FetchMoreOptions, FetchMoreQueryOptions } from "apollo-client";
 import { DocumentNode } from "apollo-link/lib/types";
 import gql from "graphql-tag";
-import React, { useContext, useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { Query, QueryResult } from "react-apollo";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import LocationText from "src/components/atoms/LocationText";
@@ -12,7 +12,28 @@ import NotFound from "src/components/molecules/NotFound";
 import Host from "src/components/pages/WorkListPage/Host";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
+import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { User, UserConnection } from "src/graphQL/type";
+import deduplicationFromArray from "src/util/deduplicationFromArray";
+import isSubset from "src/util/isSubset";
+import toArrayFromQueryParam from "src/util/toArrayFromQueryString";
+
+export default React.forwardRef((props, ref) => (
+    <RouterHistoryContext.Consumer>
+        {routerHistory => (
+            <NotificationContext.Consumer>
+                {notification => (
+                    <UserListPageWrapper
+                        routerHistory={routerHistory}
+                        notification={notification}
+                        {...props}
+                        ref={ref as any}
+                    />
+                )}
+            </NotificationContext.Consumer>
+        )}
+    </RouterHistoryContext.Consumer>
+));
 
 const QueryGetUserList = gql(`
     query($limit: Int, $exclusiveStartKey: ID, ) {
@@ -32,42 +53,72 @@ const QueryGetUserList = gql(`
     }
 `);
 
-export default (props: React.Props<{}>) => {
-    const notification = useContext(NotificationContext);
+interface UserListPageWrapper extends React.Props<{}> {
+    routerHistory: RouterHistoryValue;
+    notification: NotificationValue;
+}
 
-    return (
-        <Host
-            ref={props.ref as any}
-            {...props}
-        >
-            <Header
-                title={<LocationText text="User list"/>}
-            />
-            <Query
-                query={QueryGetUserList}
-                variables={{ limit: 16 }}
-                fetchPolicy="cache-and-network"
+interface State {
+    tags: string[];
+}
+
+// https://reactjs.org/docs/hooks-faq.html#do-hooks-cover-all-use-cases-for-classes
+// After corresponding to getSnapshotBeforeUpdate of React Hooks, migrate to React Hooks
+class UserListPageWrapper extends React.Component<UserListPageWrapper, State> {
+
+    state: State = {
+        tags: toArrayFromQueryParam("tags", this.props.routerHistory.history)
+    };
+
+    getSnapshotBeforeUpdate() {
+        const tags = toArrayFromQueryParam("tags", this.props.routerHistory.history);
+        if (!isSubset(tags, this.state.tags))
+            this.setState({ tags: deduplicationFromArray(this.state.tags.concat(tags)) });
+        return null;
+    }
+
+    render() {
+
+        const {
+            routerHistory,
+            notification,
+            ...props
+        } = this.props;
+
+        return (
+            <Host
+                ref={props.ref as any}
+                {...props}
             >
-                {query => (
-                    query.loading                                                       ? <GraphQLProgress/>
-                  : query.error                                                         ? (
-                        <Fragment>
-                            <ErrorTemplate/>
-                            <notification.ErrorComponent message={query.error.message}/>
-                        </Fragment>
-                    )
-                  : !(query.data && query.data.listUsers && query.data.listUsers.items) ? <NotFound/>
-                  :                                                                       (
-                        <UserListPage
-                            notification={notification}
-                            query={query}
-                        />
-                    )
-                )}
-            </Query>
-        </Host>
-    );
-};
+                <Header
+                    title={<LocationText text="User list"/>}
+                />
+                <Query
+                    query={QueryGetUserList}
+                    variables={{ limit: 16 }}
+                    fetchPolicy="cache-and-network"
+                >
+                    {query => (
+                        query.loading                                                       ? <GraphQLProgress/>
+                    : query.error                                                         ? (
+                            <Fragment>
+                                <ErrorTemplate/>
+                                <notification.ErrorComponent message={query.error.message}/>
+                            </Fragment>
+                        )
+                    : !(query.data && query.data.listUsers && query.data.listUsers.items) ? <NotFound/>
+                    :                                                                       (
+                            <UserListPage
+                                notification={notification}
+                                query={query}
+                            />
+                        )
+                    )}
+                </Query>
+            </Host>
+        );
+    }
+}
 
 const UserListPage = (
     {
@@ -105,18 +156,18 @@ const UserListPage = (
     );
     return (
         <div>
-                <UserList
-                    users={userConnection.items}
-                    userListRow={userListRow}
-                    onUserItemClick={(x: User) => {
-                        setSelectedUser(x);
-                    }}
-                />
-                <StreamSpinner
-                    key={`spinner-${userConnection && userConnection.exclusiveStartKey}.join("_")}`}
-                    disable={!userConnection.exclusiveStartKey ? true : false}
-                    onVisible={handleStreamSpinnerVisible(userConnection, fetchMore)}
-                />
+            <UserList
+                users={userConnection.items}
+                userListRow={userListRow}
+                onUserItemClick={(x: User) => {
+                    setSelectedUser(x);
+                }}
+            />
+            <StreamSpinner
+                key={`spinner-${userConnection && userConnection.exclusiveStartKey}.join("_")}`}
+                disable={!userConnection.exclusiveStartKey ? true : false}
+                onVisible={handleStreamSpinnerVisible(userConnection, fetchMore)}
+            />
         </div>
     );
 };
