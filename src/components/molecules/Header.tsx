@@ -10,6 +10,7 @@ import gql from "graphql-tag";
 import React, { useContext, useState, Fragment } from "react";
 import { Query, QueryResult } from "react-apollo";
 import { Redirect } from "react-router";
+import convertToQueryString from "src/api/convertToQueryString";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import Link from "src/components/atoms/Link";
 import LocationText from "src/components/atoms/LocationText";
@@ -17,7 +18,7 @@ import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import DrawerContext from "src/contexts/DrawerContext";
 import LocalizationContext from "src/contexts/LocalizationContext";
 import NotificationContext from "src/contexts/NotificationContext";
-import RouterHistoryContext from "src/contexts/RouterHistoryContext";
+import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { User } from "src/graphQL/type";
 import styled from "styled-components";
 
@@ -49,13 +50,6 @@ export default (
     const notification = useContext(NotificationContext);
     const localization = useContext(LocalizationContext);
 
-    // const handleSearch = (e: React.KeyboardEvent) => {
-    //     const value = (e.target as any).value;
-    //     if (e.keyCode && e.keyCode === 13) {
-    //         console.log(`if: ${value}`);
-    //     }
-    // };
-
     return (
         <StyledAppBar
             position="fixed"
@@ -77,6 +71,7 @@ export default (
                         <SearchIcon />
                     </StyledSearchIcon>
                     <InputBase
+                        onKeyPress={tagInputKeyPress({ routerHistory })}
                         placeholder={localization.locationText["Search"]}
                     />
                 </SearchContent>
@@ -119,6 +114,25 @@ export default (
             </StyledToolbar>
         </StyledAppBar>
     );
+};
+
+const tagInputKeyPress = (
+    {
+        routerHistory
+    }: {
+        routerHistory: RouterHistoryValue
+    }
+) => (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const inputValue: string = (e.target as any).value;
+    if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
+        e.preventDefault();
+        if (inputValue.length > 1) {
+            const searchWordList = inputValue.split(" ");
+            routerHistory.history.push(
+                convertToQueryString("search", searchWordList)
+            );
+        }
+    }
 };
 
 const HeaderUser = (
