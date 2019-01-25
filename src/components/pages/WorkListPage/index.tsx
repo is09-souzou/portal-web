@@ -108,7 +108,6 @@ class WorkListPageWrapper extends React.Component<WorkListPageWrapperProps, Stat
 
     getSnapshotBeforeUpdate() {
         const searchWordList = toArrayFromQueryString("search", this.props.routerHistory.history);
-        console.log(searchWordList);
         if (!arraysEqual(searchWordList, this.state.searchWordList)) {
             this.setState(
                 {
