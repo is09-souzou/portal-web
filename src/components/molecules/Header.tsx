@@ -25,6 +25,7 @@ import styled from "styled-components";
 
 export interface HeaderProps extends React.Props<{}> {
     title: JSX.Element;
+    searchEditable: boolean;
 }
 
 const QueryGetUser = gql(`
@@ -40,6 +41,7 @@ const QueryGetUser = gql(`
 export default (
     {
         title,
+        searchEditable = false,
         ...props
     }: HeaderProps
 ) => {
@@ -68,16 +70,18 @@ export default (
                 <Typography variant="h6" color="inherit">
                     {title}
                 </Typography>
-                <SearchContent>
-                    <StyledSearchIcon>
-                        <SearchIcon />
-                    </StyledSearchIcon>
-                    <InputBase
-                        defaultValue={defaultSearchWord}
-                        onKeyPress={tagInputKeyPress({ routerHistory })}
-                        placeholder={localization.locationText["Search"]}
-                    />
-                </SearchContent>
+                {(searchEditable) && (
+                    <SearchContent>
+                        <StyledSearchIcon>
+                            <SearchIcon />
+                        </StyledSearchIcon>
+                        <InputBase
+                            defaultValue={defaultSearchWord}
+                            onKeyPress={tagInputKeyPress({ routerHistory })}
+                            placeholder={localization.locationText["Search"]}
+                        />
+                    </SearchContent>
+                )}
                 <div>
                     {!auth.token ?
                         <Button onClick={() => routerHistory.history.push("?sign-in=true")} >

@@ -67,6 +67,7 @@ export default (props: React.Props<{}>) => {
         >
             <Header
                 title={<LocationText text="Work post"/>}
+                searchEditable={false}
             />
             <Mutation mutation={MutationCreateWork} refetchQueries={[]}>
                 {(createWork, { error: createWorkError }) => (

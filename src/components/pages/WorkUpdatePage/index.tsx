@@ -78,6 +78,7 @@ export default (props: React.Props<{}>) => {
         >
             <Header
                 title={<LocationText text="Work update"/>}
+                searchEditable={false}
             />
             <Query
                 query={QueryGetWorkById}

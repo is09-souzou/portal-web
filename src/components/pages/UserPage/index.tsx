@@ -85,20 +85,29 @@ export default (props: React.Props<{}>) => {
                 {(query => (
                     query.loading                       ? (
                         <Fragment>
-                            <Header title={<LocationText text="User"/>}/>
+                            <Header
+                                title={<LocationText text="User"/>}
+                                searchEditable={false}
+                            />
                             <GraphQLProgress/>
                         </Fragment>
                     )
                   : query.error                         ? (
                         <Fragment>
-                            <Header title={<LocationText text="Error"/>}/>
+                            <Header
+                                title={<LocationText text="Error"/>}
+                                searchEditable={false}
+                            />
                             <ErrorTemplate/>
                             <notification.ErrorComponent message={query.error.message}/>
                         </Fragment>
                     )
                   : !(query.data && query.data.getUser) ? (
                         <Fragment>
-                            <Header title={<LocationText text="Not Found"/>}/>
+                            <Header
+                                title={<LocationText text="Not Found"/>}
+                                searchEditable={false}
+                            />
                             <NotFound/>
                         </Fragment>
                   )
