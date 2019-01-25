@@ -9,17 +9,31 @@ import AppBar, { AppBarProps } from "@material-ui/core/AppBar";
 import DialogContent, { DialogContentProps } from "@material-ui/core/DialogContent";
 import Typography, { TypographyProps } from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
+import gql from "graphql-tag";
 import React, { useContext, useState, Fragment } from "react";
+import { Query } from "react-apollo";
 import convertToQueryString from "src/api/convertToQueryString";
 import toArrayFromQueryString from "src/api/toArrayFromQueryString";
 import FormatStringDate from "src/components/atoms/FormatStringDate";
+import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import Link from "src/components/atoms/Link";
 import PortalMarkdown from "src/components/atoms/PortalMarkdown";
 import LocalizationContext, { LocalizationValue } from "src/contexts/LocalizationContext";
+import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { Work } from "src/graphQL/type";
 import styled from "styled-components";
 
+const QueryGetUser = gql(`
+    query($id: ID!) {
+        getUser(id: $id) {
+            id
+            displayName
+            avatarUri
+            message
+        }
+    }
+`);
 interface Props {
     editable: boolean;
     open: boolean;
@@ -42,6 +56,7 @@ export default (
     const [imageDialogOpend, setImageDialogOpen] = useState<boolean>(false);
     const routerHistory = useContext<RouterHistoryValue>(RouterHistoryContext);
     const localization = useContext<LocalizationValue>(LocalizationContext);
+    const notification = useContext<NotificationValue>(NotificationContext);
 
     if (!work)
         return null;
@@ -124,16 +139,48 @@ export default (
                                         to={`/users/${work.userId}`}
                                         onClick={onClose}
                                     >
-                                        <UserInformation>
-                                            <Avatar
-                                                alt={work.user && work.user.displayName}
-                                                src={work.user && work.user.avatarUri}
-                                            />
-                                            <div>
-                                                <Typography gutterBottom variant="caption">{work.user && work.user.message}</Typography>
-                                                <Typography gutterBottom>{work.user && work.user.displayName}</Typography>
-                                            </div>
-                                        </UserInformation>
+                                        {
+                                            work.user ? (
+                                                <UserInformation>
+                                                    <Avatar
+                                                        alt={work.user && work.user.displayName}
+                                                        src={work.user && work.user.avatarUri}
+                                                    />
+                                                    <div>
+                                                        <Typography gutterBottom variant="caption">{work.user && work.user.message}</Typography>
+                                                        <Typography gutterBottom>{work.user && work.user.displayName}</Typography>
+                                                    </div>
+                                                </UserInformation>
+                                            )
+                                          :             (
+                                                <Query
+                                                    query={QueryGetUser}
+                                                    variables={{ id: work.userId }}
+                                                    fetchPolicy="network-only"
+                                                >
+                                                    {(query => (
+                                                        query.loading                       ? <GraphQLProgress/>
+                                                      : query.error                         ? <notification.ErrorComponent message={query.error.message}/>
+                                                      :                                       (
+                                                            <UserInformation>
+                                                                <Avatar
+                                                                    alt={query.data && query.data.getUser && query.data.getUser.displayName}
+                                                                    src={query.data && query.data.getUser && query.data.getUser.avatarUri}
+                                                                />
+                                                                <div>
+                                                                    <Typography gutterBottom variant="caption">
+                                                                        {query.data && query.data.getUser && query.data.getUser.message}
+                                                                    </Typography>
+                                                                    <Typography gutterBottom>
+                                                                        {query.data && query.data.getUser && query.data.getUser.displayName}
+                                                                    </Typography>
+                                                                </div>
+                                                            </UserInformation>
+                                                      )
+                                                    ))}
+                                                </Query>
+                                            )
+                                        }
                                     </Link>
                                     {(!editable && work.userId === userId) && (
                                         <Link
