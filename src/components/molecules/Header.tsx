@@ -11,6 +11,7 @@ import React, { useContext, useState, Fragment } from "react";
 import { Query, QueryResult } from "react-apollo";
 import { Redirect } from "react-router";
 import convertToQueryString from "src/api/convertToQueryString";
+import toArrayFromQueryString from "src/api/toArrayFromQueryString";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import Link from "src/components/atoms/Link";
 import LocationText from "src/components/atoms/LocationText";
@@ -49,6 +50,7 @@ export default (
     const routerHistory = useContext(RouterHistoryContext);
     const notification = useContext(NotificationContext);
     const localization = useContext(LocalizationContext);
+    const [defaultSearchWord] = useState(toArrayFromQueryString("search", routerHistory.history).join(" "));
 
     return (
         <StyledAppBar
@@ -71,6 +73,7 @@ export default (
                         <SearchIcon />
                     </StyledSearchIcon>
                     <InputBase
+                        defaultValue={defaultSearchWord}
                         onKeyPress={tagInputKeyPress({ routerHistory })}
                         placeholder={localization.locationText["Search"]}
                     />
@@ -126,7 +129,7 @@ const tagInputKeyPress = (
     const inputValue: string = (e.target as any).value;
     if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
         e.preventDefault();
-        if (inputValue.length > 1) {
+        if (inputValue.length > 0) {
             const searchWordList = inputValue.split(" ");
             routerHistory.history.push(
                 convertToQueryString("search", searchWordList)

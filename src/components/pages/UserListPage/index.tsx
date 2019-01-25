@@ -16,8 +16,8 @@ import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import NotificationContext, { NotificationValue } from "src/contexts/NotificationContext";
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { UserConnection } from "src/graphQL/type";
+import arraysEqual from "src/util/arraysEqual";
 import deduplicationFromArray from "src/util/deduplicationFromArray";
-import isSubset from "src/util/isSubset";
 
 export default React.forwardRef((props, ref) => (
     <RouterHistoryContext.Consumer>
@@ -97,9 +97,14 @@ class UserListPageWrapper extends React.Component<UserListPageWrapperProps, Stat
 
     getSnapshotBeforeUpdate() {
         const searchWordList = toArrayFromQueryString("search", this.props.routerHistory.history);
-        if (!isSubset(searchWordList, this.state.searchWordList)) {
-            this.setState({ searchWordList: deduplicationFromArray(this.state.searchWordList.concat(searchWordList)) });
-            this.displaySearchResult();
+        console.log(searchWordList);
+        if (!arraysEqual(searchWordList, this.state.searchWordList)) {
+            this.setState(
+                {
+                    searchWordList: deduplicationFromArray(searchWordList)
+                },
+                () => this.displaySearchResult()
+            );
         }
         return null;
     }
