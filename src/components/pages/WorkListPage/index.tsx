@@ -132,7 +132,7 @@ class WorkListPageWrapper extends React.Component<WorkListPageWrapperProps, Stat
                 >
                     <Header
                         title={<LocationText text="Works"/>}
-                        searchEditable={true}
+                        searchable={true}
                     />
                     <Query
                         query={QueryListWorks}
@@ -178,7 +178,7 @@ class WorkListPageWrapper extends React.Component<WorkListPageWrapperProps, Stat
             >
                 <Header
                     title={<LocationText text="Work list"/>}
-                    searchEditable={true}
+                    searchable={true}
                 />
                 {
                     this.state.loading                         ? <GraphQLProgress/>

@@ -87,7 +87,7 @@ export default (props: React.Props<{}>) => {
                         <Fragment>
                             <Header
                                 title={<LocationText text="User"/>}
-                                searchEditable={false}
+                                searchable={false}
                             />
                             <GraphQLProgress/>
                         </Fragment>
@@ -96,7 +96,7 @@ export default (props: React.Props<{}>) => {
                         <Fragment>
                             <Header
                                 title={<LocationText text="Error"/>}
-                                searchEditable={false}
+                                searchable={false}
                             />
                             <ErrorTemplate/>
                             <notification.ErrorComponent message={query.error.message}/>
@@ -106,7 +106,7 @@ export default (props: React.Props<{}>) => {
                         <Fragment>
                             <Header
                                 title={<LocationText text="Not Found"/>}
-                                searchEditable={false}
+                                searchable={false}
                             />
                             <NotFound/>
                         </Fragment>

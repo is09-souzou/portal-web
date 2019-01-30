@@ -25,7 +25,7 @@ import styled from "styled-components";
 
 export interface HeaderProps extends React.Props<{}> {
     title: JSX.Element;
-    searchEditable: boolean;
+    searchable: boolean;
 }
 
 const QueryGetUser = gql(`
@@ -41,7 +41,7 @@ const QueryGetUser = gql(`
 export default (
     {
         title,
-        searchEditable = false,
+        searchable = false,
         ...props
     }: HeaderProps
 ) => {
@@ -70,7 +70,7 @@ export default (
                 <Typography variant="h6" color="inherit">
                     {title}
                 </Typography>
-                {(searchEditable) && (
+                {searchable && (
                     <SearchContent>
                         <StyledSearchIcon>
                             <SearchIcon />
@@ -251,7 +251,7 @@ const StyledToolbar = styled(Toolbar as React.SFC<ToolbarProps>)`
 
 const SearchContent = styled.div`
     background-color: #f5f5f5;
-    &:hover {
+    :hover {
         background-color: #eee;
     };
     border-radius: 0.3rem;
@@ -268,7 +268,7 @@ const StyledSearchIcon = styled.div`
     display: flex;
     align-items: center;
     pointer-events: none;
-    margin: 0 0.5rem 0 0.5rem;
+    margin: 0 0.5rem;
 `;
 
 const PopoverContent = styled.div`

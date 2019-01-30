@@ -31,7 +31,7 @@ export default (
     <StyledPage ref={ref as any} {...props}>
         <Header
             title={<LocationText text="Settings"/>}
-            searchEditable={false}
+            searchable={false}
         />
         <div>
             {children}

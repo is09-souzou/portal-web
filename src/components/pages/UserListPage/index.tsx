@@ -123,7 +123,7 @@ class UserListPageWrapper extends React.Component<UserListPageWrapperProps, Stat
                 >
                     <Header
                         title={<LocationText text="User list"/>}
-                        searchEditable={true}
+                        searchable={true}
                     />
                     <Query
                         query={QueryGetUserList}
@@ -158,7 +158,7 @@ class UserListPageWrapper extends React.Component<UserListPageWrapperProps, Stat
             >
                 <Header
                     title={<LocationText text="User list"/>}
-                    searchEditable={true}
+                    searchable={true}
                 />
                 {
                     this.state.loading                         ? <GraphQLProgress/>
