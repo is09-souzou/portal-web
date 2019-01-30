@@ -21,7 +21,6 @@ import NotificationContext, { NotificationValue } from "src/contexts/Notificatio
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { Work, WorkConnection } from "src/graphQL/type";
 import arraysEqual from "src/util/arraysEqual";
-import deduplicationFromArray from "src/util/deduplicationFromArray";
 
 export default React.forwardRef((props, ref) => (
     <RouterHistoryContext.Consumer>
@@ -51,7 +50,6 @@ const QueryListWorks = gql(`
                 id
                 userId
                 imageUrl
-                userId
                 user {
                     displayName
                     message
@@ -111,7 +109,7 @@ class WorkListPageWrapper extends React.Component<WorkListPageWrapperProps, Stat
         if (!arraysEqual(searchWordList, this.state.searchWordList)) {
             this.setState(
                 {
-                    searchWordList: deduplicationFromArray(searchWordList)
+                    searchWordList
                 },
                 () => this.displaySearchResult()
             );
@@ -218,20 +216,19 @@ const handleStreamSpinnerVisible = (
                 exclusiveStartKey: workConnection.exclusiveStartKey
             },
             updateQuery: (previousResult, { fetchMoreResult }) =>
-                previousResult.listWorks.items.length ? ({
+                ({
                     listWorks: {
-                        __typename: previousResult.listWorks.__typename,
+                        __typename: fetchMoreResult.listWorks.__typename,
                         items: (
-                            [
-                                ...previousResult.listWorks.items,
-                                ...fetchMoreResult.listWorks.items
-                            ].filter((x, i, self) => (
-                                self.findIndex(y => y.id === x.id) === i
-                            ))
+                            ((previousResult.listWorks.items || []) as Work[])
+                                .concat(fetchMoreResult.listWorks.items || [])
+                                .filter((x, i, self) => (
+                                    self.findIndex(y => y.id === x.id) === i
+                                ))
                         ),
                         exclusiveStartKey: fetchMoreResult.listWorks.exclusiveStartKey
                     }
-                })                       : previousResult
+                })
         });
 };
 
@@ -246,10 +243,10 @@ const WorkListPage = (
         workConnection: WorkConnection
     }
 ) => {
+    const auth = useContext(AuthContext);
     const [selectedWork, setSelectedWork] = useState<Work | undefined>(undefined);
     const [workDialogOpend, setWorkDialogOpen] = useState<boolean>(false);
     const [workListRow, setWorkListRow] = useState<number>(4);
-    const auth = useContext(AuthContext);
 
     useEffect(
         () => {
