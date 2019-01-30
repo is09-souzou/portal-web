@@ -134,9 +134,12 @@ const tagInputKeyPress = (
     if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
         e.preventDefault();
         if (inputValue.length >= 0) {
-            const searchWordList = inputValue.split(" ");
+            const searchWordList =  inputValue.replace(/(　|,)/, " ").split(/ /);
             routerHistory.history.push(
-                convertToQueryString("search", searchWordList)
+                convertToQueryString(
+                    "search",
+                    searchWordList
+                )
             );
         }
     }
