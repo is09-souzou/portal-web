@@ -17,7 +17,6 @@ import NotificationContext, { NotificationValue } from "src/contexts/Notificatio
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { UserConnection } from "src/graphQL/type";
 import arraysEqual from "src/util/arraysEqual";
-import deduplicationFromArray from "src/util/deduplicationFromArray";
 
 export default React.forwardRef((props, ref) => (
     <RouterHistoryContext.Consumer>
@@ -100,7 +99,7 @@ class UserListPageWrapper extends React.Component<UserListPageWrapperProps, Stat
         if (!arraysEqual(searchWordList, this.state.searchWordList)) {
             this.setState(
                 {
-                    searchWordList: deduplicationFromArray(searchWordList)
+                    searchWordList
                 },
                 () => this.displaySearchResult()
             );
