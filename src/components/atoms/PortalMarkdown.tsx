@@ -1,6 +1,7 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import styled from "styled-components";
+const breaks = require("remark-breaks");
 
 export default (
     props: ReactMarkdown.ReactMarkdownProps
@@ -8,6 +9,7 @@ export default (
     <MarkdownStyles>
         <ReactMarkdown
             {...props}
+            plugins={[breaks]}
         />
     </MarkdownStyles>
 );

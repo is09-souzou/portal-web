@@ -3,8 +3,7 @@ import { ApolloError } from "apollo-client";
 import gql from "graphql-tag";
 import React, { useContext, useEffect, useRef, useState, Fragment } from "react";
 import { Mutation, MutationFn, OperationVariables, Query, QueryResult } from "react-apollo";
-import createSignedUrl from "src/api/createSignedUrl";
-import fileUploadToS3 from "src/api/fileUploadToS3";
+import FlexibleSpace from "src/components/atoms/FlexibleSpace";
 import GraphQLProgress from "src/components/atoms/GraphQLProgress";
 import LocationText from "src/components/atoms/LocationText";
 import Page from "src/components/atoms/Page";
@@ -12,9 +11,12 @@ import PortalMarkdown from "src/components/atoms/PortalMarkdown";
 import Header from "src/components/molecules/Header";
 import ImageInputDialog from "src/components/molecules/ImageInputDialog";
 import NotFound from "src/components/molecules/NotFound";
+import MarkdownHintDialog from "src/components/organisms/MarkdownHintDialog";
 import MarkdownSupports from "src/components/organisms/MarkdownSupports";
 import WorkDialog from "src/components/organisms/WorkDialog";
+import { handleMarkdownSupportsChangeValue, handlePreviewWork, submitMainImage, tagInputKeyPress } from "src/components/pages/WorkPostPage";
 import ActionArea from "src/components/pages/WorkPostPage/ActionArea";
+import ActionButtonWrapper from "src/components/pages/WorkPostPage/ActionButtonWrapper";
 import ChipList from "src/components/pages/WorkPostPage/ChipList";
 import Head from "src/components/pages/WorkPostPage/Head";
 import Host from "src/components/pages/WorkPostPage/Host";
@@ -137,6 +139,7 @@ const WorkUpdatePage = (
 
     const [previewWork, setPreviewWork] = useState<Work | undefined>(undefined);
     const [workDialogOpend, setWorkDialogOpen] = useState<boolean>(false);
+    const [hintDialogOpend, setHintDialogOpen] = useState<boolean>(false);
     const [imageInputDialogOpend, setImageInputDialogOpen] = useState<boolean>(false);
     const [tags, setTags] = useState<string[]>(currentWork.tags || []);
     const [description, setDescription] = useState<string>(currentWork.description);
@@ -241,7 +244,7 @@ const WorkUpdatePage = (
                     />
                 </WorkContentArea>
                 <ActionArea>
-                    <div/>
+                    <FlexibleSpace/>
                     <FormGroup>
                         <FormControlLabel
                             control={
@@ -255,33 +258,47 @@ const WorkUpdatePage = (
                             labelPlacement="start"
                         />
                     </FormGroup>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => handlePreviewWork({
-                            auth,
-                            setPreviewWork,
-                            setWorkDialogOpen,
-                            tags,
-                            description,
-                            isPublic,
-                            titleInputElement,
-                            imageUrl: mainImageUrl
-                        })}
-                    >
-                        <LocationText text="Preview"/>
-                    </Button>
-                    <Button
-                        type="submit"
-                        component="button"
-                        variant="contained"
-                        color="primary"
-                    >
-                        <LocationText text="Update"/>
-                    </Button>
+                    <ActionButtonWrapper>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => setHintDialogOpen(true)}
+                        >
+                            <LocationText text="Hint"/>
+                        </Button>
+                        <FlexibleSpace/>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => handlePreviewWork({
+                                auth,
+                                setPreviewWork,
+                                setWorkDialogOpen,
+                                tags,
+                                description,
+                                isPublic,
+                                titleInputElement,
+                                imageUrl: mainImageUrl
+                            })}
+                        >
+                            <LocationText text="Preview"/>
+                        </Button>
+                        <Button
+                            type="submit"
+                            component="button"
+                            variant="contained"
+                            color="primary"
+                        >
+                            <LocationText text="Update"/>
+                        </Button>
+                    </ActionButtonWrapper>
                 </ActionArea>
             </div>
             {updateWorkError && <notification.ErrorComponent message={updateWorkError.message}/>}
+            <MarkdownHintDialog
+                open={hintDialogOpend}
+                onClose={() => setHintDialogOpen(false)}
+            />
             <WorkDialog
                 editable={true}
                 open={workDialogOpend}
@@ -299,76 +316,6 @@ const WorkUpdatePage = (
             />
         </Host>
     );
-};
-
-const tagInputKeyPress = (
-    {
-        tags,
-        setTags,
-    }: {
-        tags: string[],
-        setTags: React.Dispatch<React.SetStateAction<string[]>>,
-    }
-) => (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (tags.length >= 5)
-        return e.preventDefault();
-
-    const inputValue = (e.target as any).value;
-    if (e.which === 13 || e.keyCode === 13 || e.key === "Enter") {
-        e.preventDefault();
-        if (inputValue.length > 1) {
-            if (!tags.some(x => x === inputValue))
-                setTags(
-                    tags.concat((e.target as any).value)
-                );
-
-            (e.target as any).value = "";
-        }
-    }
-};
-
-const handlePreviewWork = (
-    {
-        auth,
-        setPreviewWork,
-        setWorkDialogOpen,
-        titleInputElement,
-        tags,
-        imageUrl,
-        description,
-        isPublic
-    }: {
-        auth: AuthValue,
-        setPreviewWork: React.Dispatch<React.SetStateAction<Work | undefined>>,
-        setWorkDialogOpen: React.Dispatch<React.SetStateAction<boolean>>,
-        titleInputElement: React.RefObject<HTMLInputElement>,
-        tags: string[],
-        imageUrl?: string,
-        description: string,
-        isPublic: boolean
-    }
-) => {
-    setPreviewWork(
-        {
-            description,
-            tags,
-            isPublic,
-            id: "preview",
-            imageUrl: imageUrl || "",
-            title: titleInputElement.current ? titleInputElement.current!.value : "",
-            userId: (auth.token || { payload: { sub: "xxx" } }).payload.sub,
-            createdAt: +new Date() / 1000,
-            user: {
-                id: "preview",
-                email: "preview",
-                displayName: "display name",
-                career: "career",
-                avatarUri: "/img/no-image.png",
-                message: "message"
-            }
-        }
-    );
-    setWorkDialogOpen(true);
 };
 
 const handleHostSubmit = (
@@ -439,57 +386,4 @@ const handleHostSubmit = (
 
     notification.notification("info", "Updated Work!");
     routerHistory.history.push("/");
-};
-
-const handleMarkdownSupportsChangeValue = (
-    {
-        setDescription,
-        setAdjustLine,
-        setUpdatedByMarkdownSupport,
-    }: {
-        setDescription: React.Dispatch<React.SetStateAction<string>>,
-        setAdjustLine: React.Dispatch<React.SetStateAction<[number, number]>>,
-        setUpdatedByMarkdownSupport: React.Dispatch<React.SetStateAction<boolean>>
-    }
-) => (description: string, lines: [number, number]) => {
-    setUpdatedByMarkdownSupport(true);
-    setAdjustLine(lines);
-    setDescription(description);
-};
-
-const submitMainImage = (
-    {
-        auth,
-        notification,
-        setMainImageUrl
-    }: {
-        auth: AuthValue,
-        notification: NotificationValue,
-        setMainImageUrl: React.Dispatch<React.SetStateAction<string | undefined>>
-    }
-) => async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!auth.token) {
-        notification.notification("error", "Need Sign in");
-        console.error(new Error("Need Sign in"));
-        return;
-    }
-
-    if (!e.target.files) {
-        notification.notification("error", "Required set image");
-        console.error(new Error("Required set image"));
-        return;
-    }
-
-    const image = e.target.files![0];
-    const result = await createSignedUrl({
-        jwt: auth.token!.jwtToken,
-        userId: auth.token!.payload.sub,
-        type: "work",
-        mimetype: image.type
-    });
-    await fileUploadToS3({
-        url: result.signedUrl,
-        file: image
-    });
-    setMainImageUrl(result.uploadedUrl);
 };

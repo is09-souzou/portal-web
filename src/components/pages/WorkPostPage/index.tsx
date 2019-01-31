@@ -12,10 +12,12 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Mutation, MutationFn, OperationVariables } from "react-apollo";
 import createSignedUrl from "src/api/createSignedUrl";
 import fileUploadToS3 from "src/api/fileUploadToS3";
+import FlexibleSpace from "src/components/atoms/FlexibleSpace";
 import LocationText from "src/components/atoms/LocationText";
 import Page from "src/components/atoms/Page";
 import PortalMarkdown from "src/components/atoms/PortalMarkdown";
 import Header from "src/components/molecules/Header";
+import MarkdownHintDialog from "src/components/organisms/MarkdownHintDialog";
 import MarkdownSupports from "src/components/organisms/MarkdownSupports";
 import WorkDialog from "src/components/organisms/WorkDialog";
 import ActionArea from "src/components/pages/WorkPostPage/ActionArea";
@@ -95,6 +97,7 @@ const WorkPostPage = (
     const [description, setDescription] = useState<string>("");
     const [previewWork, setPreviewWork] = useState<Work | undefined>(undefined);
     const [workDialogOpend, setWorkDialogOpen] = useState<boolean>(false);
+    const [hintDialogOpend, setHintDialogOpen] = useState<boolean>(false);
     const [mainImageUrl, setMainImageUrl] = useState<string | undefined>(undefined);
     const [isPublic, setPublic] = useState<boolean>(true);
     const [isUpdatedByMarkdownSupport, setUpdatedByMarkdownSupport] = useState<boolean>(false);
@@ -194,7 +197,7 @@ const WorkPostPage = (
                     />
                 </WorkContentArea>
                 <ActionArea>
-                    <div/>
+                    <FlexibleSpace/>
                     <FormGroup>
                         <FormControlLabel
                             control={
@@ -209,6 +212,14 @@ const WorkPostPage = (
                         />
                     </FormGroup>
                     <ActionButtonWrapper>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => setHintDialogOpen(true)}
+                        >
+                            <LocationText text="Hint"/>
+                        </Button>
+                        <FlexibleSpace/>
                         <Button
                             variant="outlined"
                             color="primary"
@@ -246,12 +257,16 @@ const WorkPostPage = (
                 work={previewWork}
                 userId={auth.token!.payload.sub}
             />
+            <MarkdownHintDialog
+                open={hintDialogOpend}
+                onClose={() => setHintDialogOpen(false)}
+            />
             {createWorkError && <notification.ErrorComponent message={createWorkError.message}/>}
         </Host>
     );
 };
 
-const tagInputKeyPress = (
+export const tagInputKeyPress = (
     {
         tags,
         setTags,
@@ -277,7 +292,7 @@ const tagInputKeyPress = (
     }
 };
 
-const handlePreviewWork = (
+export const handlePreviewWork = (
     {
         auth,
         setPreviewWork,
@@ -321,7 +336,7 @@ const handlePreviewWork = (
     setWorkDialogOpen(true);
 };
 
-const submitMainImage = (
+export const submitMainImage = (
     {
         auth,
         notification,
@@ -430,7 +445,7 @@ const handleHostSubmit = (
     window.location.replace("/");
 };
 
-const handleMarkdownSupportsChangeValue = (
+export const handleMarkdownSupportsChangeValue = (
     {
         setDescription,
         setAdjustLine,

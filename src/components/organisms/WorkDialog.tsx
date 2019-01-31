@@ -10,11 +10,11 @@ import DialogContent, { DialogContentProps } from "@material-ui/core/DialogConte
 import Typography, { TypographyProps } from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import React, { useContext, useState, Fragment } from "react";
-import ReactMarkdown from "react-markdown";
 import convertToQueryString from "src/api/convertToQueryString";
 import toArrayFromQueryString from "src/api/toArrayFromQueryString";
 import FormatStringDate from "src/components/atoms/FormatStringDate";
 import Link from "src/components/atoms/Link";
+import PortalMarkdown from "src/components/atoms/PortalMarkdown";
 import LocalizationContext, { LocalizationValue } from "src/contexts/LocalizationContext";
 import RouterHistoryContext, { RouterHistoryValue } from "src/contexts/RouterHistoryContext";
 import { Work } from "src/graphQL/type";
@@ -153,9 +153,8 @@ export default (
                         </StyledDialogContent>
                     </div>
                     <div>
-                        <ReactMarkdown
+                        <PortalMarkdown
                             source={work.description}
-                            rawSourcePos
                         />
                     </div>
                 </WorkContent>
