@@ -48,7 +48,7 @@ const theme = createMuiTheme({
             paper: {
                 border: 0,
                 borderRadius: 8,
-                color: "white",
+                color: "#333",
             },
         },
     },
