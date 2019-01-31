@@ -35,6 +35,7 @@
     "react-loadable": "^5.5.0",
     "react-markdown": "^4.0.6",
     "react-router-dom": "^4.3.1",
+    "remark-breaks": "^1.0.2",
     "styled-components": "^4.1.3",
     "uuid": "^3.3.2"
   },
