@@ -33,10 +33,17 @@ export default () => (
                 />
                 <Route
                     path="/works"
+                    // https://github.com/ReactTraining/react-router/issues/6056
                     component={() => <WorkListPage/>}
                 />
                 <Route
                     path="/users"
+                    // https://github.com/ReactTraining/react-router/issues/6056
+                    component={() => <UserListPage/>}
+                    exact={true}
+                />
+                <Route
+                    path="/users/new"
                     // https://github.com/ReactTraining/react-router/issues/6056
                     component={() => <UserListPage/>}
                     exact={true}

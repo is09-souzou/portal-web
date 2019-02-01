@@ -231,23 +231,26 @@ class Navigator extends React.Component<Props, State> {
                         </Query>
                     </Collapse>
                 </List>
-                {/* TODO: Not work */}
-                {/* <List
-                    subheader={<ListSubheader component="div">{locationText["Designer"]}</ListSubheader>}
+                <List
+                    subheader={<ListSubheader component="div"><LocationText text="Designer"/></ListSubheader>}
                 >
-                    <ListItem button>
-                        <ListItemIcon>
-                            <StarIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary={locationText["Popular"]}/>
-                    </ListItem>
-                    <ListItem button>
-                        <ListItemIcon>
-                            <NewReleasesIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary={locationText["New"]}/>
-                    </ListItem>
-                </List> */}
+                    <Link to="/users/new">
+                        <ListItem button>
+                            <ListItemIcon>
+                                <NewReleasesIcon/>
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={
+                                    <StyledText
+                                        selected={history.location.pathname === "/users/new"}
+                                    >
+                                        <LocationText text="New"/>
+                                    </StyledText>
+                                }
+                            />
+                        </ListItem>
+                    </Link>
+                </List>
                 <BottomList>
                     <Divider/>
                     <List>
