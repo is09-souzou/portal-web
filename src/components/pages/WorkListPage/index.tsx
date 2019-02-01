@@ -2,7 +2,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { ApolloQueryResult, FetchMoreOptions, FetchMoreQueryOptions } from "apollo-client";
 import { DocumentNode } from "apollo-link/lib/types";
 import gql from "graphql-tag";
-import React, { useContext, useEffect, useState, Fragment } from "react";
+import React, { useContext, useState, Fragment } from "react";
 import { Query } from "react-apollo";
 import getWorksBySearchWords from "src/api/search/getWorksBySearchWords";
 import toArrayFromQueryString from "src/api/toArrayFromQueryString";
@@ -246,30 +246,11 @@ const WorkListPage = (
     const auth = useContext(AuthContext);
     const [selectedWork, setSelectedWork] = useState<Work | undefined>(undefined);
     const [workDialogOpend, setWorkDialogOpen] = useState<boolean>(false);
-    const [workListRow, setWorkListRow] = useState<number>(4);
-
-    useEffect(
-        () => {
-            const resize = () => {
-                const row = getRow();
-                if (row !== workListRow)
-                    setWorkListRow(row);
-                else
-                    setWorkListRow(workListRow);
-            };
-            resize();
-            window.addEventListener("resize", resize);
-
-            return () => window.removeEventListener("resize", resize);
-        },
-        []
-    );
 
     return (
         <Fragment>
             <WorkList
                 works={workConnection.items}
-                workListRow={workListRow}
                 onWorkItemClick={(x: Work) => {
                     setWorkDialogOpen(true);
                     setSelectedWork(x);
@@ -290,14 +271,3 @@ const WorkListPage = (
         </Fragment>
     );
 };
-
-const getRow = () => (
-    window.innerWidth > 767 ?
-        window.innerWidth > 1020 ? 4
-      : window.innerWidth > 840  ? 3
-      :                            2
-  :
-        window.innerWidth > 600  ? 3
-      : window.innerWidth > 480  ? 2
-      :                            1
-);

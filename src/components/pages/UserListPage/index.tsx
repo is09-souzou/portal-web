@@ -1,7 +1,7 @@
 import { ApolloQueryResult, FetchMoreOptions, FetchMoreQueryOptions } from "apollo-client";
 import { DocumentNode } from "apollo-link/lib/types";
 import gql from "graphql-tag";
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment } from "react";
 import { Query } from "react-apollo";
 import getUsersBySearchWords from "src/api/search/getUsersBySearchWords";
 import toArrayFromQueryString from "src/api/toArrayFromQueryString";
@@ -220,48 +220,16 @@ const UserListPage = (
         fetchMore: () => void,
         userConnection: UserConnection
     }
-) => {
-    const [userListRow, setUserListRow] = useState<number>(4);
-
-    useEffect(
-        () => {
-            const resize = () => {
-                const row = getRow();
-                if (row !== userListRow)
-                    setUserListRow(row);
-                else
-                    setUserListRow(userListRow);
-            };
-            resize();
-            window.addEventListener("resize", resize);
-
-            return () => window.removeEventListener("resize", resize);
-        },
-        []
-    );
-    return (
-        <div>
-            <UserList
-                users={userConnection.items}
-                userListRow={userListRow}
-                onUserItemClick={() => undefined}
-            />
-            <StreamSpinner
-                key={`spinner-${userConnection && userConnection.exclusiveStartKey}.join("_")}`}
-                disable={!userConnection.exclusiveStartKey ? true : false}
-                onVisible={fetchMore}
-            />
-        </div>
-    );
-};
-
-const getRow = () => (
-    window.innerWidth > 767 ?
-        window.innerWidth > 1020 ? 4
-      : window.innerWidth > 840  ? 3
-      :                            2
-  :
-        window.innerWidth > 600  ? 3
-      : window.innerWidth > 480  ? 2
-      :                            1
+) => (
+    <div>
+        <UserList
+            users={userConnection.items}
+            onUserItemClick={() => undefined}
+        />
+        <StreamSpinner
+            key={`spinner-${userConnection && userConnection.exclusiveStartKey}`}
+            disable={!userConnection.exclusiveStartKey ? true : false}
+            onVisible={fetchMore}
+        />
+    </div>
 );

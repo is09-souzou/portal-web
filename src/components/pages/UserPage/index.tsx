@@ -3,7 +3,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import { ApolloQueryResult, FetchMoreOptions, FetchMoreQueryOptions } from "apollo-client";
 import { DocumentNode } from "apollo-link";
 import gql from "graphql-tag";
-import React, { useContext, useEffect, useState, Fragment } from "react";
+import React, { useContext, useState, Fragment } from "react";
 import { Query, QueryResult } from "react-apollo";
 import toObjectFromURIQuery from "src/api/toObjectFromURIQuery";
 import Fab from "src/components/atoms/Fab";
@@ -188,24 +188,6 @@ const UserPage = (
 ) => {
     const [selectedWork, setSelectedWork] = useState<Work | undefined>(undefined);
     const [workDialogOpend, setWorkDialogOpen] = useState<boolean>(false);
-    const [workListRow, setWorkListRow] = useState<number>(4);
-
-    useEffect(
-        () => {
-            const resize = () => {
-                const row = getRow();
-                if (row !== workListRow)
-                    setWorkListRow(row);
-                else
-                    setWorkListRow(workListRow);
-            };
-            resize();
-            window.addEventListener("resize", resize);
-
-            return () => window.removeEventListener("resize", resize);
-        },
-        []
-    );
 
     return (
         <ViewPager
@@ -240,7 +222,6 @@ const UserPage = (
             <WorkContent>
                 <WorkList
                     works={workConnection.items}
-                    workListRow={workListRow}
                     onWorkItemClick={(x: Work) => {
                         setWorkDialogOpen(true);
                         setSelectedWork(x);
@@ -262,17 +243,6 @@ const UserPage = (
         </ViewPager>
     );
 };
-
-const getRow = () => (
-    window.innerWidth > 767 ?
-        window.innerWidth > 1020 ? 4
-      : window.innerWidth > 840  ? 3
-      :                            2
-  :
-        window.innerWidth > 600  ? 3
-      : window.innerWidth > 480  ? 2
-      :                            1
-);
 
 const handleStreamSpinnerVisible = (
     workConnection: WorkConnection,
