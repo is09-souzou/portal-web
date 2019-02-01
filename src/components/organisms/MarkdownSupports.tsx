@@ -153,7 +153,7 @@ export default (
                     <LinkIcon/>
                 </ToolItem>
             </Tooltip>
-            <Tooltip title={<LocationText text="Insert table"/>}>
+            <Tooltip title={<LocationText text="Table"/>}>
                 <ToolItem
                     onClick={handleConvert("table", onChangeValue, element)}
                 >
@@ -172,6 +172,7 @@ export default (
 );
 
 const Host = styled(ToolList)`
+    margin-bottom: 1rem;
     @media (max-width: 768px) {
         display: flex;
         flex-wrap: wrap;
