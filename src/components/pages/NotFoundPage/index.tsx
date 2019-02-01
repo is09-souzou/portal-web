@@ -14,7 +14,6 @@ export default (props: React.Props<{}>) => {
         >
             <Header
                 title={<LocationText text="Not Found"/>}
-                searchable={false}
             />
             <Content>
                 <NotFound/>

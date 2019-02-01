@@ -25,7 +25,7 @@ import styled from "styled-components";
 
 export interface HeaderProps extends React.Props<{}> {
     title: JSX.Element;
-    searchable: boolean;
+    searchable?: boolean;
 }
 
 const QueryGetUser = gql(`
@@ -78,7 +78,7 @@ export default (
                         <InputBase
                             defaultValue={defaultSearchWord}
                             onKeyPress={tagInputKeyPress({ routerHistory })}
-                            placeholder={localization.locationText["Search"]}
+                            placeholder={`${localization.locationText["Search"]}...`}
                         />
                     </SearchContent>
                 )}

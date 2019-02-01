@@ -85,7 +85,7 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Decoration": "Decoration",
         "Table": "Table",
         "List": "List",
-        "Search": "Search..."
+        "Search": "Search"
     },
     jp: {
         "Name": "名前",
@@ -157,7 +157,7 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Decoration": "装飾",
         "Table": "テーブル",
         "List": "リスト",
-        "Search": "検索..."
+        "Search": "検索"
     }
 };
 
