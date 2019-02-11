@@ -24,6 +24,7 @@ import ChipList from "src/components/pages/ProfilePage/ChipList";
 import Host from "src/components/pages/ProfilePage/Host";
 import ProfileContent from "src/components/pages/ProfilePage/ProfileContent";
 import ShortTextField from "src/components/pages/ProfilePage/ShortTextField";
+import UserAvatar from "src/components/pages/ProfilePage/UserAvatar";
 import ErrorTemplate from "src/components/templates/ErrorTemplate";
 import AuthContext, { AuthValue } from "src/contexts/AuthContext";
 import LocalizationContext from "src/contexts/LocalizationContext";
@@ -174,22 +175,30 @@ const ProfilePage = (
             }
         >
             <ProfileContent>
-                <ShortTextField
-                    id="profile-name"
-                    margin="dense"
-                    label={<LocationText text="Display name"/>}
-                    defaultValue={user.displayName}
-                    required
-                    inputRef={displayNameInputElement}
-                />
-                <ShortTextField
-                    id="profile-email"
-                    margin="dense"
-                    label={<LocationText text="Mail address"/>}
-                    type="email"
-                    defaultValue={user.email}
-                    inputRef={emailInputElement}
-                />
+                <div>
+                    <UserAvatar
+                        src={user.avatarUri}
+                        onClick={() => setEditableAvatarDialogOpen(true)}
+                    />
+                    <div>
+                        <ShortTextField
+                            id="profile-name"
+                            margin="dense"
+                            label={<LocationText text="Display name"/>}
+                            defaultValue={user.displayName}
+                            required
+                            inputRef={displayNameInputElement}
+                        />
+                        <ShortTextField
+                            id="profile-email"
+                            margin="dense"
+                            label={<LocationText text="Mail address"/>}
+                            type="email"
+                            defaultValue={user.email}
+                            inputRef={emailInputElement}
+                        />
+                    </div>
+                </div>
                 <TextField
                     id="profile-message"
                     label={<LocationText text="Message"/>}
@@ -290,7 +299,7 @@ const ProfilePage = (
                             color="primary"
                             type="submit"
                         >
-                            <LocationText text="Submit"/>
+                            <LocationText text="Update"/>
                         </Button>
                     </DialogActions>
                 </form>
