@@ -163,7 +163,7 @@ class Navigator extends React.Component<Props, State> {
                         <ListItemIcon>
                             <ColorLensIcon/>
                         </ListItemIcon>
-                        <ListItemText primary={<LocationText text="Tags"/>}/>
+                        <ListItemText primary={<LocationText text="Popular tags"/>}/>
                         {this.state.tagListVisible ? <ExpandLessIcon /> : <ExpandMoreIcon/>}
                     </ListItem>
                     <Collapse in={this.state.tagListVisible} timeout="auto" unmountOnExit>
