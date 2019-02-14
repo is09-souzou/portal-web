@@ -9,7 +9,8 @@ export type LocationText = (
     "Create account" | "location" | "Initial registration profile" | "Input tags" | "User list" | "Work post" | "Work update" | "New mail address" |
     "Credential" | "Update a credential email" | "Update password" | "New password" | "Old password" | "Not Found" | "Bold" | "Heading" | "Italic" |
     "Numbered list" | "Generic list" | "Insert horizontal line" | "Create link" | "Quote" | "Code" | "Insert table" | "Strikethrough" | "Public mail address" |
-    "Toggle password visibility" | "Error" | "User" | "How to use Markdown" | "Hint" | "Font style" | "Decoration" | "Table" | "List" | "Popular tags"
+    "Toggle password visibility" | "Error" | "User" | "How to use Markdown" | "Hint" | "Font style" | "Decoration" | "Table" | "List" | "Popular tags" |
+    "Password helpertext"
 );
 
 export type LocationTextList = { [key in LocationText]: string };
@@ -85,7 +86,8 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Decoration": "Decoration",
         "Table": "Table",
         "List": "List",
-        "Popular tags": "Popular tags"
+        "Popular tags": "Popular tags",
+        "Password helpertext": "Please enter using capital and small letters which are combined and more than 8 letters"
     },
     jp: {
         "Name": "名前",
@@ -157,7 +159,8 @@ const locationTextList:{ [key in Location]: LocationTextList } = {
         "Decoration": "装飾",
         "Table": "テーブル",
         "List": "リスト",
-        "Popular tags": "人気のタグ"
+        "Popular tags": "人気のタグ",
+        "Password helpertext": "大文字小文字英数字含む8文字以上で入力してください"
     }
 };
 
