@@ -107,47 +107,48 @@ const DialogContent = styled.div`
 `;
 
 const fontStyleSample = `
-**Bold**
+**太字**
 
 ---
 
-*Italic*
+*斜体*
 
 ---
 
-~~Strikethrough~~
+~~取り消し線~~
 
 ---
 
-# Heading1
-## Heading2
-### Heading3
-#### Heading4
-##### Heading5
-###### Heading6
+# 見出し1
+## 見出し2
+### 見出し3
+#### 見出し4
+##### 見出し5
+###### 見出し6
 `;
 
 const listSample = `
-* Generic list1
-* Generic list2
-* Generic list3
+* リスト1
+* リスト2
+* リスト3
 
 ---
 
-1. Numbered list1
-2. Numbered list2
-3. Numbered list3
+1. 番号付きリスト1
+2. 番号付きリスト2
+3. 番号付きリスト3
 `;
 
 const decorationSample = `
-> Quote
+> 引用
 
 ---
 
-[Link](https://www.souzou-portal.com/)
+[リンク](https://www.souzou-portal.com/)
 
 ---
 
+テーブル
 | Left | Center | Right |
 | ---- | :----: | ----: |
 | a    | b      | c     |
