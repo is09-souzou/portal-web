@@ -1,8 +1,7 @@
-import { Button, Popover, Typography } from "@material-ui/core";
+import { Avatar, Button, Popover, Typography } from "@material-ui/core";
 import AppBar, { AppBarProps } from "@material-ui/core/AppBar";
 import IconButton, { IconButtonProps } from "@material-ui/core/IconButton";
 import Toolbar, { ToolbarProps } from "@material-ui/core/Toolbar";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import MenuIcon from "@material-ui/icons/Menu";
 import gql from "graphql-tag";
 import React, { useContext, useState, Fragment } from "react";
@@ -28,6 +27,7 @@ const QueryGetUser = gql(`
             id
             email
             displayName
+            avatarUri
         }
     }
 `);
@@ -137,7 +137,9 @@ const HeaderUser = (
                 onClick={handleMenu}
                 color="inherit"
             >
-                <AccountCircleIcon/>
+                <Avatar
+                    src={user.avatarUri}
+                />
             </IconButton>
             <Popover
                 id="menu-appbar"
