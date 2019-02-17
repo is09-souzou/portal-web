@@ -101,7 +101,7 @@ export default (
                             id="sign-up-password"
                             label={<LocationText text="Password"/>}
                             type={passwordVisibled ? "text" : "password"}
-                            helperText={<LocationText text="Password helpertext"/>}
+                            helperText={<LocationText text="Please enter using capital and small letters which are combined and more than 8 letters"/>}
                             required
                             InputProps={{
                                 endAdornment: (
