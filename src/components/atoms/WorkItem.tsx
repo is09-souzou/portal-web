@@ -50,11 +50,4 @@ const WorkItemBase = styled.div`
     min-height: 10rem;
     margin-bottom: 2rem;
     width: 100%;
-    @media (max-width: 768px) {
-        > :last-child {
-            > :first-child {
-                font-size: 1rem;
-            }
-        }
-    }
 `;

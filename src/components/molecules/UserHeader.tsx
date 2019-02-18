@@ -1,11 +1,10 @@
 import AppBar, { AppBarProps } from "@material-ui/core/AppBar";
-import Dialog from "@material-ui/core/Dialog";
 import IconButton, { IconButtonProps } from "@material-ui/core/IconButton";
 import Tab, { TabProps } from "@material-ui/core/Tab";
 import Tabs, { TabsProps } from "@material-ui/core/Tabs";
 import Typography, { TypographyProps } from "@material-ui/core/Typography";
 import MenuIcon from "@material-ui/icons/Menu";
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import DrawerContext from "src/contexts/DrawerContext";
 import { User } from "src/graphQL/type";
 import styled from "styled-components";
@@ -25,7 +24,6 @@ export default (
         onSelectContent?: (content: Content) => void
     }
 ) => {
-    const [imageDialogOpend, setImageDialogOpen] = useState<boolean>(false);
     const { toggleDrawer } = useContext(DrawerContext);
 
     return (
@@ -43,7 +41,6 @@ export default (
             <Content>
                 <UserAvatar
                     src={user.avatarUri}
-                    onClick={() => setImageDialogOpen(true)}
                 />
                 <Info>
                     <DisplayName gutterBottom>
@@ -71,15 +68,6 @@ export default (
                     </ContentTabs>
                 )}
             </Content>
-            <Dialog
-                open={imageDialogOpend}
-                onClose={() => setImageDialogOpen(false)}
-            >
-                <UserImageDialog
-                    src={user.avatarUri}
-                    onClick={() => setImageDialogOpen(false)}
-                />
-            </Dialog>
         </Host>
     );
 };
@@ -133,9 +121,6 @@ const UserAvatar = styled.img`
         width: 8rem;
         height: 8rem;
         margin-bottom: 4px;
-        :hover {
-            cursor : pointer;
-        }
         @media (max-width: 768px) {
             min-width: 5rem;
             min-height: 5rem;
@@ -143,12 +128,6 @@ const UserAvatar = styled.img`
             height: 5rem;
         }
     }
-`;
-
-const UserImageDialog = styled.img`
-    min-height: 0;
-    width: 100%;
-    object-fit: cover;
 `;
 
 const Content = styled.div`

@@ -4,7 +4,9 @@ import {
     DialogTitle,
     FormControl,
     IconButton,
+    Input,
     InputAdornment,
+    InputLabel,
     TextField,
 } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
@@ -97,23 +99,20 @@ export default (
                     <FormControl
                         margin="normal"
                     >
-                        <TextField
+                        <InputLabel htmlFor="sign-up-password"><LocationText text="Password"/></InputLabel>
+                        <Input
                             id="sign-up-password"
-                            label={<LocationText text="Password"/>}
                             type={passwordVisibled ? "text" : "password"}
-                            helperText={<LocationText text="Please enter using capital and small letters which are combined and more than 8 letters"/>}
                             required
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            onClick={() => setPasswordVisibility(!passwordVisibled)}
-                                        >
-                                            {passwordVisibled ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => setPasswordVisibility(!passwordVisibled)}
+                                    >
+                                        {passwordVisibled ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
                         />
                     </FormControl>
                     <TextField

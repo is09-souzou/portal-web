@@ -81,6 +81,7 @@ export default (
                                 src={work.imageUrl}
                                 onClick={() => setImageDialogOpen(true)}
                                 width="100%"
+                                rotate={(Math.random() > 0.5 ? "-" : "") + Math.floor(Math.random() * (8 - 4 + 1) + 4)}
                             />
                         </MainImageWrapper>
                         <StyledDialogContent>
@@ -269,6 +270,9 @@ const MainImage = styled("img")`
     display: flex;
     cursor: pointer;
     transition: all .3s ease-out;
+    :hover {
+        transform: scale(1.2) rotate(${(props: { rotate: string }) => props.rotate}deg);
+    }
 `;
 
 const TagList = styled.div`
