@@ -4,7 +4,16 @@ export default styled.div`
     display: flex;
     flex-direction: column;
     margin: 1rem 6rem 1rem 6rem;
-    > :nth-child(3) {
+    > :first-child {
+        display: flex;
+        align-items: center;
+        > :last-child {
+            display: flex;
+            flex-direction: column;
+            margin-left: 5rem;
+        }
+    }
+    > :nth-child(4) {
         display: flex;
         > :first-child {
             min-width: max-content;
@@ -20,7 +29,15 @@ export default styled.div`
     }
     @media (max-width: 768px) {
         margin: 1rem 2rem;
-        > :nth-child(3) {
+        > :first-child {
+            display: flex;
+            flex-direction: column;
+            align-items: initial;
+            > :last-child {
+                margin-left: 0rem;
+            }
+        }
+        > :nth-child(4) {
             display: flex;
             flex-direction: column;
         }
