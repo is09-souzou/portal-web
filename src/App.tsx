@@ -42,6 +42,12 @@ export default () => (
                     exact={true}
                 />
                 <Route
+                    path="/users/new"
+                    // https://github.com/ReactTraining/react-router/issues/6056
+                    component={() => <UserListPage/>}
+                    exact={true}
+                />
+                <Route
                     path="/users/:id"
                     component={UserPage}
                     exact={true}
